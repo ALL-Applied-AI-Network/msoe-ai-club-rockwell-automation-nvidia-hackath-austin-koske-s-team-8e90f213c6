@@ -1,0 +1,15 @@
+# Shared video, labeling, analysis and test environment. Frozen tested versions
+# are recorded separately under requirements/ after host verification.
+numpy>=2.2,<3
+pandas>=2.2,<4
+scipy>=1.15,<2
+matplotlib>=3.10,<4
+pillow>=11,<13
+av>=19,<20
+opencv-python-headless>=4.12,<6
+scikit-image>=0.25,<0.27
+scikit-learn>=1.7,<2
+colour-science>=0.4.6,<0.5
+pytest>=8,<10
+requests>=2.32,<3
+huggingface_hub>=1,<2

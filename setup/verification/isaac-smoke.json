@@ -1,0 +1,12 @@
+{
+  "ok": true,
+  "image": "isaac-smoke.png",
+  "shape": [
+    240,
+    320,
+    4
+  ],
+  "pixel_std": 39.78498017371954,
+  "seconds": 181.81527463800012,
+  "scope": "self-contained RTX render; not CSI optical calibration"
+}

@@ -1,0 +1,16 @@
+# Add to your own ~/.ssh/config, using your own Rosie account and private key.
+Host msoe-bastion
+    HostName dh-mgmt1.hpc.msoe.edu
+    User YOUR_USERNAME@ad.msoe.edu
+    IdentityFile ~/.ssh/rosie
+    IdentitiesOnly yes
+    ServerAliveInterval 60
+    ServerAliveCountMax 3
+
+Host msoe-spark
+    HostName spark8.ai.msoe.edu
+    User hackathon8
+    IdentityFile ~/.ssh/ai_club_spark8_ed25519
+    IdentitiesOnly yes
+    ServerAliveInterval 60
+    ServerAliveCountMax 3

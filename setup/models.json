@@ -1,0 +1,14 @@
+{
+  "checked_date": "2026-10-16",
+  "isaacsim": "6.0.0.1",
+  "transformers": "5.20.1",
+  "spark_torch": "2.11.0+cu130",
+  "rosie_image": "/data/containers/msoe-pytorch-25.05-py3.sif",
+  "rosie_torch": "2.8.0a0+5228986c39.nv25.05",
+  "singularity": "3.10.0",
+  "cosmos_source_revision": "6e2c69afafd6444c1ca14a021aba93fcc6b7996a",
+  "models": {
+    "nvidia/Cosmos3-Edge": "344d602b128d1bbdacb43b08d0a3626f46343e29",
+    "nvidia/Cosmos3-Nano": "e59a53c25979a090fa8706c9acc0c254a6e89b92"
+  }
+}

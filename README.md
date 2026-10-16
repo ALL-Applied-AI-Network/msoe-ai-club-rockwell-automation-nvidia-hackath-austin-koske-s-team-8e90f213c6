@@ -46,6 +46,10 @@ This is your team's repository for the four-week physical AI hackathon run by Ro
 
 ## Working in this repository
 
+Team environment onboarding: **[start here](setup/START_HERE.md)** for laptop
+data work, GB10 Isaac/Cosmos, and Rosie Singularity/Slurm. The
+[setup guide](setup/README.md) includes commands and executed verification.
+
 ```bash
 git clone <this repository's URL from the green "Code" button>
 ```

@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "first-vial-annotation-review"
+version = "0.1.0"
+description = "Local, provenance-preserving human review of existing vial prelabels"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+video = ["av>=14,<20", "Pillow>=10,<13"]
+legacy = ["requests>=2.32,<3", "Pillow>=10,<13", "opencv-python-headless>=4.10,<6"]
+
+[project.scripts]
+annotation-review = "annotation_review.__main__:main"
+
+[tool.setuptools]
+packages = ["annotation_review"]
+package-dir = {annotation_review = "."}
+
+[tool.setuptools.package-data]
+annotation_review = ["static/*"]

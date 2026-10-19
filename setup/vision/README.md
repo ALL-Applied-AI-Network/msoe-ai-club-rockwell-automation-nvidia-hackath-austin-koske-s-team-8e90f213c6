@@ -1,7 +1,8 @@
 # Bootstrap vial/liquid localization
 
 The follow-up [crop segmentation experiment](SEGMENTATION.md) completed on Rosie.
-It passed 7/30 Run 5 windows versus this model's 13/30 baseline under unchanged
+It initially passed 7/30 Run 5 windows; the [post-hoc adapter correction](SEGMENTATION-DEBUG.md)
+recovers fill 30 for 8/30 versus this model's 13/30 baseline under unchanged
 QA, so the baseline remains recommended. The existing vial detector was held
 fixed for cropping/tracking; it does not need another retrain for this comparison.
 

@@ -126,6 +126,7 @@ class VialGeometry:
             # Raw model masks are proposals; the exported final sampling mask
             # still passes the same containment/interior/HSV/morphology gates.
             evidence['proposals']=[{k:v for k,v in b.items() if k!='candidate_mask'} for b in boxes]
+            evidence['mask_stages']={}
         liquids=[]
         for p in boxes:
             if p['class_id']!=1:
@@ -138,11 +139,16 @@ class VialGeometry:
             flags.append('liquid_missing_or_ambiguous_inside_vial')
             return evidence
         liquid=liquids[0]['box']; evidence['liquid_box']=liquid
+        if self.segmenter:
+            evidence['mask_stages']['model_proposal']=liquids[0]['candidate_mask']
+            evidence['mask_stage_pixels']={'model_proposal':int(decode_mask(liquids[0]['candidate_mask'],rgb.shape[:2]).sum())}
         vx,vy,vr,vb=vial; vw,vh=vr-vx,vb-vy
         # Exclude glass walls/base and the upper label/holder. Sampling the lower
         # interior intentionally sacrifices coverage for dark/clear small fills.
         x0=max(liquid[0]+3,int(vx+.2*vw)); x1=min(liquid[2]-3,int(vr-.2*vw))
         y0=max(liquid[1]+4,int(vy+.58*vh)); y1=min(liquid[3]-5,int(vb-.07*vh))
+        if self.segmenter:
+            evidence['sampling_bounds']=[x0,y0,x1,y1]
         mask=np.zeros(rgb.shape[:2],np.uint8)
         if x1<=x0 or y1<=y0:
             flags.append('liquid_interior_too_small')
@@ -150,16 +156,30 @@ class VialGeometry:
         hsv=cv2.cvtColor(rgb[y0:y1,x0:x1],cv2.COLOR_RGB2HSV)
         candidate=((hsv[:,:,1]>=45)&(hsv[:,:,2]>=12)&(hsv[:,:,2]<240)).astype(np.uint8)
         if self.segmenter:
-            candidate &= decode_mask(liquids[0]['candidate_mask'],rgb.shape[:2])[y0:y1,x0:x1]
+            raw=decode_mask(liquids[0]['candidate_mask'],rgb.shape[:2])
+            physical=np.zeros_like(raw);physical[y0:y1,x0:x1]=raw[y0:y1,x0:x1]
+            evidence['mask_stages']['physical_interior']=encode_mask(physical)
+            candidate &= raw[y0:y1,x0:x1]
+        def record_stage(name,region):
+            if self.segmenter:
+                full=np.zeros(rgb.shape[:2],np.uint8);full[y0:y1,x0:x1]=region
+                evidence['mask_stages'][name]=encode_mask(full)
+        record_stage('hsv',candidate)
         # Keep a coherent colored interior, never white glare, clear glass,
         # neutral background, or a disconnected edge reflection.
         candidate=cv2.morphologyEx(candidate,cv2.MORPH_OPEN,np.ones((3,3),np.uint8))
+        record_stage('opened',candidate)
         n,labels,stats,_=cv2.connectedComponentsWithStats(candidate)
         if n>1:
             largest=1+int(np.argmax(stats[1:,cv2.CC_STAT_AREA]))
             region=(labels==largest).astype(np.uint8)
+            record_stage('largest_component',region)
             region=cv2.erode(region,np.ones((3,3),np.uint8))
             mask[y0:y1,x0:x1]=region
+        if self.segmenter:
+            evidence['mask_stages']['eroded']=encode_mask(mask)
+            evidence['mask_stage_pixels']={key:int(decode_mask(value,rgb.shape[:2]).sum())
+                                           for key,value in evidence['mask_stages'].items()}
         pixels=int(mask.sum())
         evidence.update(mask=encode_mask(mask),mask_pixels=pixels)
         if pixels<60 or pixels/max(1,(x1-x0)*(y1-y0))<.35:

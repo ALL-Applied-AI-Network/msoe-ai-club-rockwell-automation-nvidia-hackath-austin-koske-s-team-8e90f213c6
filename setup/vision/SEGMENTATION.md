@@ -5,6 +5,12 @@ windows with unchanged QA. It gained detected fills 8 and 9, but lost 4, 5, 6,
 12, 13, 18, 29 and 30. All fill events, vial proposals/tracks and window frames
 were identical. The model remains an opt-in diagnostic experiment.
 
+**Current adapter:** the subsequent [post-hoc debug audit](SEGMENTATION-DEBUG.md)
+fixes semantic fragments being misclassified as separate instances. It recovers
+fill 30 for **8/30** with the same weights, crop transform and QA constants.
+The other seven regressions remain rejected. The original frozen 7/30 report
+and protocol below are historical; this correction is not a new blind study.
+
 Three lost windows produced tiny base/edge proposals that failed the interior
 gate; five produced multiple disconnected components and failed the single
 liquid-region gate. These are observed failure modes, not adjudicated liquid
@@ -100,8 +106,10 @@ come only from the explicit illustrative plan; they are never inferred.
 
 The registered protocol is
 [`segmentation-experiment-plan.json`](../../replay/verification/segmentation-experiment-plan.json).
-The candidate replaces the liquid box proposal with connected components of the
-learned binary mask. It then intersects with the **unchanged** vial containment,
+The original adapter replaced the liquid box proposal with separate connected
+components of the learned binary mask. The corrected adapter groups the same
+binary field into one vial-conditioned semantic proposal, without adding or
+joining foreground pixels. It intersects with the **unchanged** vial containment,
 wall/base/holder exclusions, HSV gate, opening/erosion, 60-pixel floor and 0.35
 coherent-area floor. Stable tracks, motion/holder QA, clipping, erosion
 sensitivity, three samples, temporal stability and measurement windows retain

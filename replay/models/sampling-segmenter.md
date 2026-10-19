@@ -1,8 +1,10 @@
 # Experimental liquid sampling-interior segmenter
 
-**Not promoted:** 7/30 Run 5 windows pass unchanged QA, versus the baseline's
-13/30. Two windows gained, eight lost. Existing vial detections, tracks, fill
-events and measurement windows were identical. Coverage is not mask accuracy.
+**Not promoted:** the original adapter passed 7/30 Run 5 windows. A post-hoc
+[adapter correction](../../setup/vision/SEGMENTATION-DEBUG.md) recovers fill 30
+for **8/30**, versus the baseline's **13/30**: two gained, seven lost. Model
+weights and all QA thresholds stay fixed. Existing vial detections, tracks,
+fill events and measurement windows are identical. Coverage is not mask accuracy.
 
 This 118,273-parameter binary U-Net consumes RGB `[1,3,384,128]` vial crops and
 returns `[1,1,384,128]` logits. Foreground threshold is logit > 0 (sigmoid > 0.5),
@@ -21,10 +23,11 @@ on Run 4 provisional mask IoU 0.65796. The model metadata and ONNX hashes are
 in `sampling-segmenter.json`. All 78 development binary masks match PyTorch
 exactly after ONNX export. No QA tuning, fallback or mask unions were applied.
 
-The candidate supplies connected components as liquid-region proposals. They
-still pass the original containment, wall/base exclusions, HSV, morphology,
+The corrected adapter supplies one vial-conditioned binary semantic proposal;
+its disconnected fragments are not separate instances. It still passes the
+original containment, wall/base exclusions, HSV, morphology,
 minimum-area, motion, temporal and completed-window checks. Tiny base proposals
-and fragmentation account for the lost windows. The already-inset target and
+and sparse/fragmented foreground account for the remaining lost windows. The already-inset target and
 the retained border exclusions can further shrink small regions. More complete
 target definitions and reviewed masks/negatives are needed before another study.
 

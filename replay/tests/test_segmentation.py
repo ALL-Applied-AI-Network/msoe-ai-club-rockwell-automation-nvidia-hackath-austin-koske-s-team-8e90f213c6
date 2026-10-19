@@ -7,6 +7,7 @@ import unittest
 from unittest.mock import patch
 
 import numpy as np
+import cv2
 
 from replay.config import Config
 from replay.geometry import VialGeometry,encode_mask,decode_mask
@@ -24,6 +25,73 @@ class StubSegmenter:
 
 
 class SegmentationChecks(unittest.TestCase):
+    def test_semantic_fragments_are_not_instances_and_unsafe_pixels_stay_excluded(self):
+        class Net:
+            def setInput(self,value): pass
+            def forward(self):
+                logits=np.full((1,1,384,128),-10,np.float32)
+                logits[:,:,170:185,45:85]=10  # upper label, outside physical domain
+                logits[:,:,275:330,40:90]=10  # liquid sampling interior
+                return logits
+        segmenter=SamplingSegmenter.__new__(SamplingSegmenter);segmenter.net=Net()
+        rgb=np.full((480,640,3),150,np.uint8);rgb[231:253,264:338]=20
+        rgb[300:390,288:330]=(40,120,70)
+        proposals=segmenter.propose(rgb,FIXTURE_BOXES[0]['box'])
+        self.assertEqual(len(proposals),1)
+        self.assertEqual(len(proposals[0]['raw_components']),2)
+        extractor=Extractor(Config());extractor.geometry.segmenter=segmenter
+        with patch.object(VialGeometry,'detect',return_value=FIXTURE_BOXES):
+            for _ in range(3): row=extractor.measure(rgb)
+        self.assertTrue(row['measurement_valid'])
+        raw=decode_mask(proposals[0]['candidate_mask']).astype(bool)
+        final=decode_mask(row['geometry']['mask']).astype(bool)
+        self.assertFalse(np.any(final & ~raw))
+        self.assertFalse(final[:int(65+.58*365)].any())
+        stages=row['geometry']['mask_stages']
+        previous=raw
+        for name in ('physical_interior','hsv','opened','largest_component','eroded'):
+            current=decode_mask(stages[name]).astype(bool)
+            self.assertFalse(np.any(current & ~previous),name)
+            previous=current
+        self.assertFalse(np.any(final & ~previous))
+        # Semantic correction cannot rescue a model that only predicts the base.
+        base=np.zeros((480,640),np.uint8);base[410:423,315:330]=1
+        extractor.geometry.segmenter=StubSegmenter(base,[315,410,330,423])
+        with patch.object(VialGeometry,'detect',return_value=FIXTURE_BOXES):
+            bad=extractor.measure(rgb)
+        self.assertFalse(bad['measurement_valid'])
+        self.assertIn('liquid_interior_too_small',bad['quality_flags'])
+
+    def test_projection_matches_explicit_resize_at_offset_and_clipped_edges(self):
+        logits=np.full((384,128),-4,np.float32);logits[130:350,30:95]=4
+        class Net:
+            def setInput(self,value): pass
+            def forward(self): return logits[None,None]
+        model=SamplingSegmenter.__new__(SamplingSegmenter);model.net=Net()
+        rgb=np.full((480,640,3),100,np.uint8)
+        for vial in ([278,65,340,430],[0,0,30,200],[610,300,640,480]):
+            _,box=crop_input(rgb,vial);x0,y0,x1,y1=box
+            expected=np.zeros((480,640),np.uint8)
+            expected[y0:y1,x0:x1]=(cv2.resize(logits,(x1-x0,y1-y0),interpolation=cv2.INTER_LINEAR)>0)
+            np.testing.assert_array_equal(decode_mask(model.propose(rgb,vial)[0]['candidate_mask']),expected)
+
+    def test_correction_preserves_instance_ambiguity_and_coherent_area_floor(self):
+        rgb=np.full((480,640,3),150,np.uint8);rgb[231:253,264:338]=20
+        rgb[300:390,288:330]=(40,120,70)
+        mask=np.zeros((480,640),np.uint8)
+        mask[310:325,290:300]=1;mask[365:380,315:325]=1
+        extractor=Extractor(Config());extractor.geometry.segmenter=StubSegmenter(mask,[290,310,325,380])
+        with patch.object(VialGeometry,'detect',return_value=FIXTURE_BOXES):
+            for _ in range(3): row=extractor.measure(rgb)
+        self.assertFalse(row['measurement_valid'])
+        self.assertIn('insufficient_coherent_colored_liquid',row['quality_flags'])
+        # Separate detector instances are still ambiguous: no blanket union of
+        # boxes or independently proposed objects, only a vial-conditioned map.
+        geometry=VialGeometry(Config())
+        boxes=FIXTURE_BOXES+[dict(class_id=1,box=[290,310,325,330],confidence=.9)]
+        with patch.object(geometry,'detect',return_value=boxes): row=geometry.update(rgb)
+        self.assertIn('liquid_missing_or_ambiguous_inside_vial',row['quality_flags'])
+
     def test_segmentation_cannot_fall_back_to_old_liquid_box_or_bypass_qa(self):
         rgb=np.full((480,640,3),150,np.uint8);rgb[231:253,264:338]=20;rgb[340:390,288:330]=(40,120,70)
         mask=np.zeros((480,640),np.uint8);mask[340:390,288:330]=1

@@ -1,4 +1,18 @@
-# Sampling segmentation experiment - October 19
+# Segmentation adapter debug - October 19
+
+The post-hoc [debug audit](segmentation-pipeline-debug-run5.json) fixes semantic
+fragments being counted as independent liquid instances. Coverage becomes
+**8/30**, up from 7/30; only fill 30 is recovered. The 13/30 baseline remains
+recommended. Weights, crop transform, QA constants, all 30 events/tracks/windows
+are unchanged. All 24 regression frames reproduce their original component
+coordinates. All 90 measurement samples and 360 review PNGs pass the pixel/mask/
+color audit. No foreground is added by postprocessing; trusted recipe results
+remain unavailable. This is pipeline debugging after inspection of Run 5,
+not another blind benchmark. See [reproduction and per-case findings](../../setup/vision/SEGMENTATION-DEBUG.md).
+
+![Raw model foreground at the eight original regressions](segmentation-regressions-raw.png)
+
+# Original sampling segmentation experiment - October 19
 
 The frozen candidate regressed to **7/30** QA-valid Run 5 windows versus the
 **13/30 baseline**, with identical vial detections, tracks, fill events, windows

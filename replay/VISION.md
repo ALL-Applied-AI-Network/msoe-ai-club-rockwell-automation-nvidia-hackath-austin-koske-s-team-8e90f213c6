@@ -2,9 +2,13 @@
 
 The optional [sampling-interior segmentation experiment](../setup/vision/SEGMENTATION.md)
 was trained on Rosie using Runs 1–3 provisional masks, with Run 4 checkpoint
-selection. It **regressed from 13/30 to 7/30** passing Run 5 windows under unchanged
-QA. Keep `bootstrap-vision.json` as the baseline; `segmentation-vision.json` is
-an opt-in diagnostic candidate. See the [paired evidence](verification/segmentation-run5.json).
+selection. The original adapter passed **7/30** Run 5 windows; a post-hoc
+[semantic-fragment adapter correction](../setup/vision/SEGMENTATION-DEBUG.md)
+recovers fill 30 for **8/30**, with unchanged weights, crop and QA. The remaining
+seven regressions have unusable base-only or sparse raw predictions. Keep the
+**13/30** `bootstrap-vision.json` baseline; `segmentation-vision.json` remains an
+opt-in diagnostic candidate. The [original paired evidence](verification/segmentation-run5.json)
+is preserved separately from the [debug audit](verification/segmentation-pipeline-debug-run5.json).
 
 The earlier fixed color patch could sample the holder/background. Its 19/30 QA
 coverage and example 9.56 ΔE comparison do **not** establish valid liquid color.

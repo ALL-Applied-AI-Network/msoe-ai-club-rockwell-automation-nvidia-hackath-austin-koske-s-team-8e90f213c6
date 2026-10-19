@@ -1,3 +1,20 @@
+# Current tracked-liquid correction â€” October 19
+
+Start with [VISION.md](../VISION.md),
+[Run 5 evidence](tracked-liquid-run5.json),
+[training provenance](bootstrap-training.json), and
+[teacher-box agreement](run5-teacher-box-agreement.json).
+The fixed-patch measurements below are historical and do not validate liquid color.
+
+The new complete replay has 30 detected fills, 13/30 heuristic measurement
+windows passing, and 30/30 trusted assessments unavailable pending geometry
+review. The explicit earlier-vial reference produces one diagnostic deviation
+of 7.42 Î”E2000. Ninety measurement samples and 360 PNGs were audited for exact
+source pixels, masks, colors and aggregates; the v2 review schema passes.
+38 replay and one bootstrap split/augmentation test pass from the source archive.
+
+![Actual measurement frame, proposed geometry and exact sampling mask](tracked-liquid-evidence.png)
+
 # Replay verification
 
 Current image-based detection: [October 18 results](fill-detection.md), including
@@ -9,7 +26,7 @@ October 16, 2026, local Windows data environment from `setup/`.
 All five vial-fill videos decoded completely. All 15 camera files were probed and
 hashed. The batch pass produced 17,450 sampled feature records and 30 annotated
 completed-vial observations. Run 5 had 18 observations pass the fixed pilot QA
-policy and 12 unavailable observations. Runs 1–4 remain unlabeled, so their image
+policy and 12 unavailable observations. Runs 1â€“4 remain unlabeled, so their image
 telemetry does not create guessed fill/recipe or defect records.
 
 | Run | Frames decoded | Samples | Annotated observations | QA-valid observations |
@@ -41,7 +58,7 @@ videos reported the same 935.562216-second MP4 time with no media error. A CSV
 download through frame 27,444 contained exactly 17 observations and none available
 after that frame.
 
-A manually selected development reference from vial 16 gave a 5.96 ΔE2000 review
+A manually selected development reference from vial 16 gave a 5.96 Î”E2000 review
 for vial 17; returning to vial 16 remained unavailable, so its own reference was
 not reused. This tests plumbing, not the correctness of either vial. That test
 reference was moved into a separate verification output folder; the normal app
@@ -56,20 +73,3 @@ those fixes.
 These are software and measurement-coverage checks. There are no independently
 reviewed defect labels here, so no false-alert rate, recall or production-reliability
 claim follows. The older analysis's measurement policy and scores are separate.
-# Current tracked-liquid correction — October 19
-
-Start with [VISION.md](../VISION.md),
-[Run 5 evidence](tracked-liquid-run5.json),
-[training provenance](bootstrap-training.json), and
-[teacher-box agreement](run5-teacher-box-agreement.json).
-The fixed-patch measurements below are historical and do not validate liquid color.
-
-The new complete replay has 30 detected fills, 13/30 heuristic measurement
-windows passing, and 30/30 trusted assessments unavailable pending geometry
-review. The explicit earlier-vial reference produces one diagnostic deviation
-of 7.42 ΔE2000. Ninety measurement samples and 360 PNGs were audited for exact
-source pixels, masks, colors and aggregates; the v2 review schema passes.
-38 replay and one bootstrap split/augmentation test pass from the source archive.
-
-![Actual measurement frame, proposed geometry and exact sampling mask](tracked-liquid-evidence.png)
-

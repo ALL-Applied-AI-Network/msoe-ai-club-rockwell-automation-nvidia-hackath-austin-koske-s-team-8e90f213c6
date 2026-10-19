@@ -1,0 +1,107 @@
+{
+  "schema_version": 1,
+  "complete": true,
+  "requested_target": "GB10",
+  "run": {
+    "schema_version": 1,
+    "complete": true,
+    "captured": 12,
+    "requested": 12,
+    "seconds": 99.17312070901971,
+    "host": "spark8",
+    "isaac_version": "6.0.0.1",
+    "renderer": "PathTracing",
+    "gpu": "NVIDIA GB10, 580.178.04",
+    "resolution": [
+      640,
+      480
+    ],
+    "instance_annotator": "semantic_segmentation",
+    "annotation_encoding": "unique-object-semantic-tags-v1",
+    "fixture_sha256": "60b0e64aa5327a6e3557dc6af83578946dc949feb98501aadd4af6a00e5e67f3",
+    "source_assets": {
+      "ORIGINAL_README.md": "6a4114d4978a3266fc1e09eea75790ea2a18552d943a8cf4f0df57001bff9b06",
+      "cameras/FillCam.json": "11966571ffa71a979297a0c6c730c739f33d86a0578fe0b4b890dd4a7ce1c936",
+      "stations/fill_station/fill_station.usda": "5f58540c187ac16c4426bffb3ebbe559e62d6d63ff359afdb08867fc24b60af9",
+      "stations/fill_station/geometry/fill_station.usdc": "57f578fd047d3a5f2ee25712d841f836272fc745a89c5dfbcc301f0c199191db",
+      "stations/fill_station/geometry/textures/color_B7C6CE.exr": "7b3ff7cc6c709d4b5ae34c40b60277db472b1c7d483a744cf0990ab7023d61cc"
+    },
+    "script_sha256": "baa7c8850af4230ea79306cb3957b49c8cf10f3451c3d3fd31d9f6863685c3c2",
+    "annotation_helper_sha256": "5a99776bcddd5cc265713b2dafe1d3343069b1c5928f1daf88a58ee96b5b0e2a",
+    "source_assets_unchanged": true,
+    "camera_parameters_unchanged": true,
+    "station_frame": 686,
+    "frozen_attributes": 221,
+    "training_eligible": false,
+    "run5_used": false
+  },
+  "verification": {
+    "passed": true,
+    "samples": 12,
+    "unique_rgb_images": 12,
+    "visible_boxes": {
+      "vial": 36,
+      "liquid": 10,
+      "stream": 8
+    },
+    "present_but_unavailable": [],
+    "mask_source": "Replicator semantic_segmentation from documented label passes",
+    "appearance_checks": [
+      {
+        "cases": [
+          "07-mid-blue",
+          "08-mid-pale"
+        ],
+        "shared_liquid_pixels": 3897,
+        "mean_absolute_rgb_difference": 56.34932854332393,
+        "minimum_required": 3,
+        "scope": "stale/material-change capture check, not optical calibration"
+      }
+    ],
+    "synchronization_retries": [],
+    "checks": [
+      "RGB/mask SHA256",
+      "native image dimensions",
+      "binary mask equals saved renderer IDs",
+      "box equals mask bounds",
+      "box within independent camera projection +/- 2px",
+      "YOLO rows equal manifest",
+      "absent object has no mask",
+      "RGB captures unique",
+      "source/camera preservation",
+      "empty case",
+      "stream-only case",
+      "liquid height progression"
+    ],
+    "optical_accuracy_validated": false,
+    "real_detection_accuracy_measured": false,
+    "training_eligible": false
+  },
+  "tests_passed_windows": 9,
+  "tests_passed_gb10": 9,
+  "source_scripts_fixture_match_executed_hashes": true,
+  "supplied_assets_match_earlier_windows_preview": true,
+  "alignment_reference": {
+    "source_video": "C:\\git\\FDS-Dark\\ALL-Applied-AI-Network\\msoe-ai-club-rockwell-automation-nvidia-hackath-austin-koske-s-team-8e90f213c6\\datasets\\dataset2\\csi-vial-fill-dataset\\vial_fill\\videos\\vial_fill_video_1.mp4",
+    "source_video_sha256": "1678ea5e8fa01a532c5114bbfeb9672413fd25b4d883d8ac881786f414804ddf",
+    "source_run": 1,
+    "frame_index_zero_based": 2100,
+    "mp4_timestamp_seconds": 70.0,
+    "fps": 30.0,
+    "image_sha256": "57f5bf1eccd768ca22fef2d2d49584306d7475f2a12bc6df0c29e84354ef44fe",
+    "usage": "visual alignment review only; no evaluation labels or camera fitting"
+  },
+  "reviewed_images": [
+    "contact-boxes.png",
+    "overlays/03-tiny-pale-review.png",
+    "overlays/11-high-clear-proxy-stopped-review.png",
+    "camera-alignment.png"
+  ],
+  "visual_review": "Boxes/masks follow rendered geometry; approximate supplied-camera alignment; remaining neighbor/holder/background and optical differences.",
+  "review_output": "C:\\Users\\Austin\\ai-club-tools\\results\\isaac-camera-boxes-20261019\\gb10-review",
+  "remote_output": "~/ai-club-tools/results/austin/camera-boxes-gb10-parent-tags-20261019",
+  "raw_download_archive_sha256": "a7196fe83a86f3d9886219d7fa5e9578a91e914f7c38f7377138cbbb94de15be",
+  "training_performed": false,
+  "run5_used": false,
+  "additional_complete_repeat_executed": false
+}

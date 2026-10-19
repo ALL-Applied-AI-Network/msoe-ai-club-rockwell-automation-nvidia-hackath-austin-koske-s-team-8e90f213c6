@@ -1,5 +1,14 @@
 # Setup verification
 
+October 19: the **camera-matched box review batch** passed on GB10 Isaac
+6.0.0.1: 12 images, 36 vial / 10 liquid / 8 stream boxes, no unexpected missing
+masks or synchronization retries. Nine tests passed on Windows and GB10. See
+[executed evidence](camera-boxes-gb10.json), [review sheet](camera-boxes-gb10.png),
+and [Cameron/Hayden's handoff](../isaac/BOX-RENDERING.md). Source/camera preservation
+and annotation integrity are verified; physical optics and sim-to-real accuracy
+remain unvalidated. Earlier rejected annotation attempts are documented in
+[the diagnostic report](camera-boxes-gb10-diagnostic.json).
+
 October 16, 2026. Reports and selected smoke images establish which software
 paths actually ran. Weights, environments, credentials and full logs live outside
 the repository. These checks do not measure detection accuracy or calibrate optics.

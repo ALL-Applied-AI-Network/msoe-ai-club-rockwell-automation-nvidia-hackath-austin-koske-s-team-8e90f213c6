@@ -6,7 +6,7 @@ from pathlib import Path
 import numpy as np
 from PIL import Image, ImageDraw
 
-from box_annotations import CLASSES, COLORS, instance_mask, mask_box, sha256, write_json, yolo_line
+from box_annotations import CLASSES, COLORS, instance_mask, semantic_mask, mask_box, sha256, write_json, yolo_line
 
 
 def review(out, real_frame=None):
@@ -22,11 +22,24 @@ def review(out, real_frame=None):
     unavailable = []
     masks_by_name = {}
     case_checks = []
+    synchronization_retries = []
     for row in rows:
         name = row["sample_id"]
         if name in names or row["training_eligible"]:
             raise ValueError("Duplicate case or automatic training eligibility")
         names.add(name)
+        for pass_name, capture in row.get("annotation_capture", {}).items():
+            attempts = capture["attempts"]
+            rejected = capture["rejected_attempts"]
+            if not 1 <= attempts <= 4 or len(rejected) != attempts-1:
+                raise ValueError("Invalid bounded annotation synchronization history")
+            if rejected:
+                for attempt in rejected:
+                    stem = out / attempt["raw_stem"]
+                    if not Path(str(stem)+"-ids.npy").is_file() or not Path(str(stem)+"-mapping.json").is_file():
+                        raise ValueError("Rejected annotation diagnostic is missing")
+                synchronization_retries.append(dict(sample_id=name, label_pass=pass_name,
+                    attempts=attempts, rejected_attempts=rejected))
         rgb_file = out / row["image_file"]
         with Image.open(rgb_file) as image:
             image_size = image.size
@@ -47,8 +60,11 @@ def review(out, real_frame=None):
             pass_name = obj["label_pass"]
             id_file = out / "label-passes" / f"{name}-{pass_name}-ids.npy"
             mapping_file = out / "label-passes" / f"{name}-{pass_name}-mapping.json"
-            expected_mask = instance_mask(dict(data=np.load(id_file, allow_pickle=False), info=dict(
-                idToLabels=json.loads(mapping_file.read_text(encoding="utf-8")))), obj["prim_path"])
+            native_data = dict(data=np.load(id_file, allow_pickle=False), info=dict(
+                idToLabels=json.loads(mapping_file.read_text(encoding="utf-8"))))
+            expected_mask = (semantic_mask(native_data, obj["semantic_label"])
+                if run.get("annotation_encoding") == "unique-object-semantic-tags-v1"
+                else instance_mask(native_data, obj.get("label_prim_path", obj["prim_path"])))
             if not np.array_equal(mask, expected_mask):
                 raise ValueError("Saved mask differs from renderer instance IDs")
             box = mask_box(mask)
@@ -56,6 +72,8 @@ def review(out, real_frame=None):
                 raise ValueError("Mask/box/pixel-count mismatch")
             if not obj["present"] and box is not None:
                 raise ValueError("Absent object has annotation")
+            if obj["present"] and row.get("require_visible_present_objects") and box is None:
+                raise ValueError("Fixture-required visible object has no annotation")
             projected = obj["projected_geometry_bbox_xyxy"]
             if box and (box[0] < projected[0]-2 or box[1] < projected[1]-2 or
                         box[2] > projected[2]+2 or box[3] > projected[3]+2):
@@ -152,8 +170,9 @@ def review(out, real_frame=None):
             mp4_timestamp_seconds=70.0, image_sha256=sha256(real_frame), image_file=str(real_frame),
             usage="visual alignment reference only; no optimization, label fitting, or Run 5 input"))
     result = dict(passed=True, samples=len(rows), unique_rgb_images=len(rgb_hashes), visible_boxes=totals,
-        present_but_unavailable=unavailable, mask_source="Replicator instance_segmentation_fast from documented label passes",
+        present_but_unavailable=unavailable, mask_source="Replicator " + run.get("instance_annotator", "instance_segmentation_fast") + " from documented label passes",
         appearance_checks=appearance_checks,
+        synchronization_retries=synchronization_retries,
         checks=["RGB/mask SHA256", "native image dimensions", "binary mask equals saved renderer IDs",
                 "box equals mask bounds", "box within independent camera projection +/- 2px",
                 "YOLO rows equal manifest", "absent object has no mask",

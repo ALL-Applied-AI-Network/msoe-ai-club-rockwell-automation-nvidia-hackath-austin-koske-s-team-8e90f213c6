@@ -3,6 +3,7 @@
   "purpose": "Small review batch only; no automatic training eligibility",
   "camera": "FillCam; supplied intrinsics and pose unchanged",
   "station_frame": 686,
+  "require_visible_present_objects": true,
   "cases": [
     {"id":"00-empty", "level":0, "stream":"off", "rgb":[0.01,0.20,0.30], "opacity":0.60},
     {"id":"01-first-stream", "level":0, "stream":"short", "rgb":[0.01,0.20,0.30], "opacity":0.60},

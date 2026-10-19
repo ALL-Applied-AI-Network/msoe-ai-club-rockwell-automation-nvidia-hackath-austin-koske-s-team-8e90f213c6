@@ -1,9 +1,8 @@
 """Renderer-independent annotation contract. Boxes use half-open XYXY pixels."""
 import hashlib
 import json
+import math
 from pathlib import Path
-
-import numpy as np
 
 CLASSES = {"vial": 0, "liquid": 1, "stream": 2}
 COLORS = {"vial": (80, 230, 120), "liquid": (255, 185, 40), "stream": (70, 200, 255)}
@@ -14,6 +13,7 @@ def sha256(path):
 
 
 def mask_box(mask):
+    import numpy as np
     ys, xs = np.nonzero(mask)
     if not len(xs):
         return None
@@ -22,19 +22,46 @@ def mask_box(mask):
 
 def lens_mm(usd_values, meters_per_unit):
     """USD camera focal/aperture units are tenths of a stage length unit."""
+    import numpy as np
     return np.asarray(usd_values, dtype=float) * float(meters_per_unit) * 100
 
 
 def instance_mask(data, prim_path):
     """Accept only IDs whose runtime prim path equals or descends from the target."""
+    import numpy as np
     pixels = np.asarray(data["data"])
     if pixels.ndim != 2:
         raise ValueError(f"Expected uint instance plane, got {pixels.shape}")
+    mapping = {int(token): path for token, path in data["info"]["idToLabels"].items()}
+    for token in np.unique(pixels):
+        if token >= 2:
+            path = mapping.get(int(token))
+            if not isinstance(path, str) or not path.startswith("/"):
+                raise ValueError("Renderer instance pixels have an empty prim-path mapping or invalid/missing path; reject ambiguous labels")
     ids = []
     for token, path in data["info"]["idToLabels"].items():
         if not isinstance(path, str):
             raise ValueError("Unexpected Replicator instance ID mapping")
         if path == prim_path or path.startswith(prim_path + "/"):
+            ids.append(int(token))
+    return np.isin(pixels, ids)
+
+
+def semantic_mask(data, object_tag):
+    """Unique scene-authored class tags identify objects without a prim-path LUT."""
+    import numpy as np
+    pixels = np.asarray(data["data"])
+    if pixels.ndim != 2:
+        raise ValueError(f"Expected uint semantic plane, got {pixels.shape}")
+    mapping = {int(token): labels for token, labels in data["info"]["idToLabels"].items()}
+    ids = []
+    for token in np.unique(pixels):
+        if token < 2:
+            continue
+        labels = mapping.get(int(token))
+        if not isinstance(labels, dict) or not isinstance(labels.get("class"), str) or not labels["class"]:
+            raise ValueError("Renderer semantic pixels lack an explicit object tag; reject ambiguous labels")
+        if labels["class"] == object_tag:
             ids.append(int(token))
     return np.isin(pixels, ids)
 
@@ -59,8 +86,11 @@ def validate_fixture(fixture):
         if name in seen or not name or any(c not in "0123456789abcdefghijklmnopqrstuvwxyz-" for c in name):
             raise ValueError("Case IDs must be unique safe file stems")
         seen.add(name)
-        rgb = np.asarray(row["rgb"], dtype=float)
-        if rgb.shape != (3,) or not np.isfinite(rgb).all() or np.any((rgb < 0) | (rgb > 1)):
+        # Keep preflight standard-library-only. Importing NumPy before Kit
+        # changes native library loading on the pinned ARM Isaac runtime.
+        rgb = row["rgb"]
+        if not isinstance(rgb, (list, tuple)) or len(rgb) != 3 or not all(
+                isinstance(x, (int, float)) and math.isfinite(x) and 0 <= x <= 1 for x in rgb):
             raise ValueError("Invalid linear diffuse RGB")
         if not 0 <= row["level"] <= 1 or not 0 < row["opacity"] <= 1:
             raise ValueError("Invalid level/opacity")

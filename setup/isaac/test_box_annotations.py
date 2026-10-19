@@ -3,15 +3,22 @@ import json
 from pathlib import Path
 import unittest
 import tempfile
+import subprocess
+import sys
 
 import numpy as np
 from PIL import Image
 
-from box_annotations import instance_mask, lens_mm, mask_box, sha256, validate_fixture, write_json, yolo_line
+from box_annotations import instance_mask, semantic_mask, lens_mm, mask_box, sha256, validate_fixture, write_json, yolo_line
 from review_box_batch import review
 
 
 class AnnotationContractChecks(unittest.TestCase):
+    def test_render_preflight_does_not_load_numpy_before_kit(self):
+        subprocess.run([sys.executable, "-c", "import sys; from box_annotations import validate_fixture; "
+            "import json; from pathlib import Path; validate_fixture(json.loads(Path('box_fixture.json').read_text())); "
+            "assert 'numpy' not in sys.modules"], cwd=Path(__file__).parent, check=True)
+
     def test_camera_optics_respect_usd_stage_units(self):
         np.testing.assert_allclose(lens_mm([0.40993, 0.36, 0.27], 1), [40.993, 36, 27])
         np.testing.assert_allclose(lens_mm([40.993, 36, 27], 0.01), [40.993, 36, 27])
@@ -32,6 +39,18 @@ class AnnotationContractChecks(unittest.TestCase):
         data = dict(data=np.array([[4, 8, 10, 0]]), info=dict(idToLabels={"4": "/a/vial", "8": "/a/vial/mesh", "10": "/a/vial_neighbour"}))
         np.testing.assert_array_equal(instance_mask(data, "/a/vial"), [[True, True, False, False]])
         self.assertFalse(instance_mask(data, "/absent").any())
+        data["info"]["idToLabels"]["4"] = ""
+        with self.assertRaisesRegex(ValueError, "empty prim-path"):
+            instance_mask(data, "/absent")
+
+    def test_unique_scene_semantics_do_not_depend_on_numeric_id_or_color(self):
+        data = dict(data=np.array([[19, 33, 0, 1]]), info=dict(idToLabels={
+            "19": {"class": "liquid__201"}, "33": {"class": "stream__301"}}))
+        np.testing.assert_array_equal(semantic_mask(data, "liquid__201"), [[True, False, False, False]])
+        self.assertFalse(semantic_mask(data, "vial__101").any())
+        data["info"]["idToLabels"]["19"] = {}
+        with self.assertRaisesRegex(ValueError, "explicit object tag"):
+            semantic_mask(data, "liquid__201")
 
     def test_fixture_rejects_unsafe_names_and_invalid_parameters(self):
         fixture = json.loads(Path(__file__).with_name("box_fixture.json").read_text(encoding="utf-8"))

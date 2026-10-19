@@ -7,18 +7,24 @@ All examples have `training_eligible: false` until appearance and label policy
 are reviewed. It does not change the replay detector, measurement QA, labels,
 recipe comparisons, or existing renderer. No industrial connection is involved.
 
+**Current status:** the complete 12-image batch rendered and passed export
+verification on GB10 Isaac 6.0.0.1. Local review images are ready; review them
+before scaling or training. Interrupted diagnostic batches remain ineligible.
+
 ## Run on the GB10
 
 The shared onboarding copy is `~/ai-club-onboarding`. Use your own SSH key and
 coordinate GPU use; the existing runner holds the team GPU lock. From a current
-checkout on Windows, deploy updated setup and the supplied twin if necessary:
+checkout on Windows, deploy the updated setup (the assets are already on Spark 8):
 
 ```powershell
-pwsh -File setup/deploy.ps1 -Target Spark -IncludeTwin
+pwsh -File setup/deploy.ps1 -Target Spark
 ssh msoe-spark
 ```
 
-The assets remain separately supplied data, outside Git. The renderer requires
+This deployment leaves the mentees' existing twin code and assets in place.
+On a new machine, obtain the supplied asset bundle separately. The assets remain
+separately supplied data, outside Git. The renderer requires
 the original folder structure under
 `datasets/mixing_twin/assets/csi_digital_twin_v1`. It reads only that asset tree;
 it does not depend on or edit the mentees' existing `mixing` renderer code.
@@ -114,11 +120,33 @@ supplied approximations.
 
 ## What the boxes mean, especially through transparent plastic
 
-Replicator `instance_segmentation_fast` supplies the per-pixel instance planes.
-Each target mesh has a class semantic label. Saved runtime instance IDs are
-mapped back to exact USD prim paths; source object identities are separate and
-stable in the manifest. Every visible supplied vial, including neighbors and
+Replicator `semantic_segmentation` supplies the default per-pixel label planes.
+Each persistent object Xform has a unique scene-authored semantic tag, such as
+`vial__101`, `liquid__201`, or `stream__301`. Its child geometry can change
+visibility/material without deliberately removing the object's identity. The
+exporter matches the renderer's explicit semantic label table to those tags;
+it does not guess numeric IDs, infer object identity from color, or use a model.
+YOLO class IDs remain **0 vial / 1 liquid / 2 stream**; the unique object tags
+are an annotation implementation detail, not extra model classes.
+
+`--label-annotator instance_segmentation` or `instance_segmentation_fast` remain
+available for diagnostics. Both showed missing prim-path mappings on the
+GB10, even though the liquid pixels existed in the renderer plane. Legacy
+path-based outputs require valid absolute paths for all rendered object IDs;
+the default semantic output requires explicit nonempty object tags. Ambiguous
+metadata is rejected. The selected annotator and `annotation_encoding` are
+recorded in `run.json`. The original successful Windows preview used the fast
+path-based variant; the reader supports both encodings.
+
+Source object identities and exact geometry paths are separate and stable in
+the manifest. Every visible supplied vial, including neighbors and
 partial edge vials, is included rather than silently becoming a negative.
+The review fixture requires a visible mask for every present object. An
+absent liquid or stream must have an empty mask. After a label-pass visibility
+change, up to four captures of the **unchanged** scene can be attempted for
+metadata synchronization. Missing labels are never accepted; unresolved gaps
+abort the batch. `annotation_capture` records attempts and rejected raw ID/map
+files. This does not change measurement QA or mask/box acceptance requirements.
 
 Two label passes are necessary because the vial and contents overlap:
 
@@ -159,17 +187,20 @@ visible mask gets no box; absent contents never get a fabricated box.
 | `annotations` | One object record per vial/liquid/stream, including absent contents |
 | `annotations[].class_name` | `vial`, `liquid`, or `stream` |
 | `annotations[].instance_id`, `prim_path` | Stable scene identity and exact target mesh |
+| `annotations[].semantic_label`, `label_prim_path` | Unique renderer tag and persistent object Xform |
 | `annotations[].present`, `status` | Present in scene; visible proxy / absent / occluded-or-outside-view |
 | `annotations[].mask_file`, `mask_sha256`, `visible_pixels` | Native binary PNG and pixel count |
 | `annotations[].bbox_xyxy` | Visible geometric half-open pixel box, or null |
 | `annotations[].projected_geometry_bbox_xyxy` | Unclipped full-geometry projection, or null when absent |
 | `annotations[].label_pass`, `bbox_convention` | Which pass made the mask; coordinate definition |
 | `label_policy`, `geometry` | Transparency/occlusion policy and actual proxy dimensions in meters |
+| `require_visible_present_objects`, `annotation_capture` | Fixture visibility requirement; capture attempts and rejected diagnostics |
 | `training_eligible`, `physical_optical_calibration` | Both false for this batch |
 
 `labels/<case>.txt` contains normalized YOLO boxes with class IDs **0 vial,
 1 liquid, 2 stream**. These files are a convenience export, not approval to train.
-`label-passes/*-ids.npy` and `*-mapping.json` preserve raw renderer instance IDs.
+`label-passes/*-ids.npy` and `*-mapping.json` preserve raw renderer ID planes and
+their semantic label tables (legacy outputs use instance prim-path tables).
 `camera.json` stores actual and supplied camera parameters. `run.json` stores
 runtime, host, fixture/script/assets hashes, source preservation, and completion.
 `verification.json` records integrity, projection and negative-case checks.
@@ -202,35 +233,76 @@ neighbor vials treated inconsistently as negatives.
 
 ## Executed evidence, October 19
 
-The GB10 was reachable for source inspection at the start of this work. Campus
-VPN/DNS connectivity then failed (`spark8.ai.msoe.edu` stopped resolving) before
-the new scripts could be uploaded or run. **The GB10 box-rendering path is still
-pending an actual execution.** The earlier 12-image GB10 onboarding smoke was
-RGB only and is not evidence for this new annotation path.
+The GB10 (`spark8`, NVIDIA GB10 driver 580.178.04) rendered the complete 12-case
+fixture on pinned Isaac **6.0.0.1 / PathTracing / 640 x 480** in **99.17 seconds**
+including startup. Export verification passed remotely and again after copying
+back to Windows. There are **36 vial, 10 liquid and 8 stream boxes**, no missing
+expected masks, and **zero synchronization retries** in this accepted batch.
+Nine tests also passed on Windows and GB10.
 
-As a separate debugging check, the existing local Windows Isaac 6.1 RC / RTX
-4080 SUPER rendered the three-case smoke and then the complete 12-case fixture.
-The latter took about 45 seconds including startup. Seven local tests passed;
-the saved 12-case batch passed RGB/mask/ID/box/YOLO/projection and negative-case
-checks. It contains 36 vial boxes, 10 liquid boxes and 8 stream boxes, with no
-unexpected missing masks. A deliberate blue-to-pale material change produced
-mean RGB difference 56.20 inside the common liquid region, guarding against a
-stale appearance capture. This is not a photometric calibration metric.
+The exported boxes equal the saved masks' bounds; masks equal the saved native
+ID planes decoded through explicit semantic tags; boxes lie within independent
+camera projections. Empty/stream-only cases and liquid-height progression pass.
+The deliberate mid-fill blue/pale change produced mean RGB difference **56.35**
+in the shared liquid region (a stale-capture check, not optical calibration).
+The camera and all supplied asset hashes stayed unchanged. Executed renderer,
+helper and fixture hashes match the current setup files. Run 5 was not used.
 
-Austin's local review folder is:
-`C:/Users/Austin/ai-club-tools/results/isaac-camera-boxes-20261019/windows-review`.
-Full RGBs, per-case comparisons, masks, native ID planes, camera metadata and
-manifests are there. The adjacent `run1-frame2100-sequential.json` records the
-reference video/image hashes and sequential frame extraction. A selected sheet
-and executed report are also in `setup/verification/camera-boxes-windows.png`
-and `setup/verification/camera-boxes-windows.json`.
+Austin's **GB10 review output** is:
 
-Visual inspection of the real/render overlay shows approximate alignment, with
-remaining neighbor-vial/holder/background differences. It does not establish an
-exact physical camera match. The liquid/stream shapes and especially clear
-appearance still require review. No scaling, training, or detector promotion
-has occurred.
+`C:/Users/Austin/ai-club-tools/results/isaac-camera-boxes-20261019/gb10-review`
 
-When the VPN is restored, deploy the scripts, run the exact GB10 launcher above
-on the pinned 6.0.0.1 environment, copy back its outputs, and verify them before
-claiming GB10 completion. Do not substitute these Windows results for that check.
+The remote source batch is:
+
+`~/ai-club-tools/results/austin/camera-boxes-gb10-parent-tags-20261019`
+
+Start with `contact-boxes.png`, `camera-alignment.png`, and
+`overlays/03-tiny-pale-review.png`. The folder contains all RGBs, per-case
+comparisons, masks, raw label planes/maps, camera metadata, manifest and YOLO
+labels. `real-run1-frame2100.png` and its JSON record preserve the real alignment
+reference and video/image hashes. The original downloaded archive remains next
+to the review folder. Published evidence is in
+`setup/verification/camera-boxes-gb10.json` and `camera-boxes-gb10.png`.
+
+Visual inspection shows boxes following the rendered vials, liquid bodies and
+streams, including the partial edge vial. Real/render alignment is approximate;
+neighbor-vial/holder/background differences remain. Liquid/stream shapes and
+especially clear appearance still require review. No scaling, training or
+detector promotion has occurred. The previous Windows 6.1 RC preview remains
+in the adjacent `windows-review` folder, with its separate evidence; it is not
+being substituted for the GB10 execution.
+
+### Runtime fixes to preserve
+
+Keep render preflight standard-library-only: importing NumPy before
+`SimulationApp` stalled native startup on this pinned ARM runtime. Deferring it
+resolved startup; the test suite checks this boundary. Retain the runner's
+existing `setarch -R` / libgomp workaround as well.
+
+The first GB10 attempts exposed incomplete instance-to-path tables and lost
+leaf-mesh labels after visibility changes. Liquid pixels existed even when
+metadata could not identify them. Both path-based annotator variants were
+rejected. The working path uses explicit unique semantic tags on **persistent
+object Xforms**, with the renderable mesh/cylinder as a child. Do not move the
+identity labels back onto transient leaf renderables. The accepted complete
+run required no retries. `camera-boxes-gb10-diagnostic.json` preserves an earlier
+failure's evidence and points to the resolved result; those diagnostic exports
+must never be used as training examples.
+
+The VPN disconnected repeatedly during debugging. The successful capture ran
+as a detached GB10 job, which survives the SSH connection closing. For longer
+runs, after exporting the environment variables in the launch section:
+
+```bash
+source setup/env.sh
+out="$AI_CLUB_HOME/results/$TEAM_MEMBER/boxes-review-003"
+log="$AI_CLUB_HOME/logs/$TEAM_MEMBER-boxes-review-003.log"
+nohup bash setup/isaac/render_boxes.sh "$out" 12 > "$log" 2>&1 < /dev/null &
+tail -f "$log"
+```
+
+A dropped VPN still prevents copying results back until it reconnects. Check
+both `run.json` and `verification.json`; a process launch or captured PNG alone
+is not completion. A second complete repeat was not executed after the final
+copy because connectivity dropped again; the evidence above describes one
+complete verified GB10 batch plus a preceding three-case GB10 smoke.

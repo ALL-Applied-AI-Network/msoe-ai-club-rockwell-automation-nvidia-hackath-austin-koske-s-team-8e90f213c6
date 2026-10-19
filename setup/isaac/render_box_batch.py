@@ -16,7 +16,7 @@ import subprocess
 import sys
 import time
 
-from box_annotations import COLORS, instance_mask, lens_mm, mask_box, sha256, validate_fixture, write_json, yolo_line
+from box_annotations import COLORS, instance_mask, semantic_mask, lens_mm, mask_box, sha256, validate_fixture, write_json, yolo_line
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -32,6 +32,9 @@ def main():
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--limit", type=int, default=12)
     parser.add_argument("--subframes", type=int, default=16)
+    parser.add_argument("--label-annotator", "--instance-annotator", dest="label_annotator",
+                        choices=["semantic_segmentation", "instance_segmentation", "instance_segmentation_fast"],
+                        default="semantic_segmentation")
     args = parser.parse_args()
     fixture = json.loads(args.fixture.read_text(encoding="utf-8"))
     validate_fixture(fixture)
@@ -135,11 +138,13 @@ def main():
 
         beauty_mat, beauty_shader = material("LiquidAppearance", (0.01, 0.2, 0.3), 0.6)
         label_mat, _ = material("OpaqueLabelPass", (0.8, 0.8, 0.8), 1)
-        liquid = UsdGeom.Cylinder.Define(stage, "/SyntheticReview/Liquid")
+        UsdGeom.Xform.Define(stage, "/SyntheticReview/Liquid")
+        liquid = UsdGeom.Cylinder.Define(stage, "/SyntheticReview/Liquid/Geometry")
         liquid.GetAxisAttr().Set("Z")
         liquid.GetRadiusAttr().Set(radius)
         liquid_translate = liquid.AddTranslateOp()
-        stream = UsdGeom.Cylinder.Define(stage, "/SyntheticReview/Stream")
+        UsdGeom.Xform.Define(stage, "/SyntheticReview/Stream")
+        stream = UsdGeom.Cylinder.Define(stage, "/SyntheticReview/Stream/Geometry")
         stream.GetAxisAttr().Set("Z")
         stream.GetRadiusAttr().Set(0.0015)
         stream_translate = stream.AddTranslateOp()
@@ -152,7 +157,12 @@ def main():
         objects += [dict(class_name="liquid", instance_id=201, prim_path=str(liquid.GetPath())),
                     dict(class_name="stream", instance_id=301, prim_path=str(stream.GetPath()))]
         for obj in objects:
-            add_labels(stage.GetPrimAtPath(obj["prim_path"]), labels=[obj["class_name"]], taxonomy="class")
+            obj["semantic_label"] = f"{obj['class_name']}__{obj['instance_id']}"
+            obj["label_prim_path"] = str(stage.GetPrimAtPath(obj["prim_path"]).GetParent().GetPath())
+            label = obj["semantic_label"] if args.label_annotator == "semantic_segmentation" else obj["class_name"]
+            # Keep identity on the persistent object Xform. RTX can recreate a
+            # leaf renderable when its visibility/material changes between passes.
+            add_labels(stage.GetPrimAtPath(obj["label_prim_path"]), labels=[label], taxonomy="class")
         vial_objects = [o for o in objects if o["class_name"] == "vial"]
         # Labels look through transparent plastic/guard, but keep opaque paper,
         # barcode, holder and nozzle as occluders. RGB appearance stays untouched.
@@ -183,7 +193,7 @@ def main():
 
         rp = rep.create.render_product(CAMERA, (640, 480))
         rgb_ann = rep.AnnotatorRegistry.get_annotator("rgb")
-        instance_ann = rep.AnnotatorRegistry.get_annotator("instance_segmentation_fast")
+        instance_ann = rep.AnnotatorRegistry.get_annotator(args.label_annotator)
         rgb_ann.attach([rp])
         instance_ann.attach([rp])
         rep.orchestrator.set_capture_on_play(False)
@@ -239,20 +249,43 @@ def main():
             rgb_path = out / "rgb" / (name + ".png")
             Image.fromarray(rgb).save(rgb_path)
             annotations = []
+            annotation_capture = {}
             for mode, targets in [("vial-labels", vial_objects), ("content-labels", objects[-2:])]:
                 configure_pass(mode, row)
-                step()
-                data = instance_ann.get_data()
+                rejected_attempts = []
+                for attempt in range(1, 5):
+                    step()
+                    data = instance_ann.get_data()
+                    measured = []
+                    try:
+                        for obj in targets:
+                            present = obj["class_name"] == "vial" or (row["level"] > 0 if obj["class_name"] == "liquid" else row["stream"] != "off")
+                            mask = (semantic_mask(data, obj["semantic_label"]) if args.label_annotator == "semantic_segmentation"
+                                    else instance_mask(data, obj["label_prim_path"]))
+                            if not present and mask.any():
+                                raise ValueError("Absent object has stale mask")
+                            if present and fixture.get("require_visible_present_objects") and not mask.any():
+                                raise ValueError(f"Fixture requires a visible mask for {obj['semantic_label']}")
+                            if obj["class_name"] == "vial" and "active" in obj["prim_path"] and not mask.any():
+                                raise ValueError("Active vial mask missing")
+                            measured.append((obj, present, mask))
+                    except ValueError as error:
+                        # No scene, threshold or identity change: allow metadata to
+                        # synchronize after visibility/material changes, bounded.
+                        stem = f"{name}-{mode}-rejected-{attempt}"
+                        np.save(out / "label-passes" / (stem+"-ids.npy"), np.asarray(data["data"]))
+                        write_json(out / "label-passes" / (stem+"-mapping.json"), data["info"]["idToLabels"])
+                        rejected_attempts.append(dict(attempt=attempt, reason=str(error), raw_stem="label-passes/"+stem))
+                        if attempt == 4:
+                            raise RuntimeError(f"Annotation metadata did not become valid: {name}/{mode}") from error
+                        print("ANNOTATION SYNC RETRY", name, mode, attempt, str(error), flush=True)
+                        continue
+                    break
+                annotation_capture[mode] = dict(attempts=attempt, rejected_attempts=rejected_attempts)
                 np.save(out / "label-passes" / f"{name}-{mode}-ids.npy", np.asarray(data["data"]))
                 write_json(out / "label-passes" / f"{name}-{mode}-mapping.json", data["info"]["idToLabels"])
                 Image.fromarray(rgb_capture()).save(out / "label-passes" / f"{name}-{mode}.png")
-                for obj in targets:
-                    present = obj["class_name"] == "vial" or (row["level"] > 0 if obj["class_name"] == "liquid" else row["stream"] != "off")
-                    mask = instance_mask(data, obj["prim_path"])
-                    if not present and mask.any():
-                        raise RuntimeError("Absent object has stale mask")
-                    if obj["class_name"] == "vial" and "active" in obj["prim_path"] and not mask.any():
-                        raise RuntimeError("Active vial mask missing")
+                for obj, present, mask in measured:
                     filename = f"masks/{name}-{obj['instance_id']}.png"
                     Image.fromarray(mask.astype(np.uint8)*255).save(out / filename)
                     box = mask_box(mask)
@@ -278,6 +311,8 @@ def main():
             (out / "labels" / (name + ".txt")).write_text("\n".join(yolo_line(o["class_name"], o["bbox_xyxy"])
                 for o in annotations if o["bbox_xyxy"]) + "\n", encoding="utf-8")
             record = dict(schema_version=1, sample_id=name, parameters=row, image_file="rgb/"+name+".png",
+                require_visible_present_objects=bool(fixture.get("require_visible_present_objects")),
+                annotation_capture=annotation_capture,
                 image_sha256=sha256(rgb_path), annotations=annotations, training_eligible=False,
                 label_policy="separate opaque vial and contents passes; transparent shells/guard excluded from contents occlusion; opaque label/holder/nozzle retained",
                 geometry=dict(radius_m=radius, base_z_m=base, liquid_height_m=height if row["level"] else 0,
@@ -294,7 +329,9 @@ def main():
             requested=min(args.limit, len(fixture["cases"])), seconds=time.monotonic()-start,
             host=platform.node(), isaac_version=isaac_version, renderer="PathTracing",
             gpu=subprocess.check_output(["nvidia-smi", "--query-gpu=name,driver_version", "--format=csv,noheader"], text=True).strip(),
-            resolution=[640, 480], fixture_sha256=sha256(args.fixture), source_assets=before,
+            resolution=[640, 480], instance_annotator=args.label_annotator,
+            annotation_encoding=("unique-object-semantic-tags-v1" if args.label_annotator == "semantic_segmentation" else "instance-prim-paths-v1"),
+            fixture_sha256=sha256(args.fixture), source_assets=before,
             script_sha256=sha256(__file__), annotation_helper_sha256=sha256(Path(__file__).with_name("box_annotations.py")),
             source_assets_unchanged=True, camera_parameters_unchanged=True, station_frame=fixture["station_frame"],
             frozen_attributes=len(frozen), training_eligible=False, run5_used=False))

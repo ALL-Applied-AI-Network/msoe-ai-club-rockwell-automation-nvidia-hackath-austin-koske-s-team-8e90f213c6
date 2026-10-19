@@ -135,7 +135,7 @@ def videos(pair,data,cache_path,cache_sha,baseline_model_sha,output):
             for j,(index,rgb) in enumerate(pending):
                 arms=[predictions[0][j],predictions[1][j]]
                 rows.write(json.dumps(dict(frame_index=index,mp4_s=index/30,source_rgb_sha256=hashlib.sha256(rgb.tobytes()).hexdigest(),baseline=arms[0],candidate=arms[1]))+'\n')
-                top=np.hstack([render(rgb,arms[0],'CURRENT: raw full-frame detector'),render(rgb,arms[1],'CANDIDATE: cropped + L-CLAHE detector')])
+                top=np.hstack([render(rgb,arms[0],'CURRENT: raw full-frame detector'),render(rgb,arms[1],getattr(pair,'candidate_title','CANDIDATE: cropped + L-CLAHE detector'))])
                 footer=np.zeros((40,1280,3),np.uint8)
                 caption=f'Source frame {index} / {index/30:.2f}s | Same 0.35 confidence / 0.45 NMS | Overlays on ORIGINAL source pixels'
                 if index in early:

@@ -96,5 +96,8 @@ def validate_fixture(fixture):
             raise ValueError("Invalid level/opacity")
         if row["stream"] not in ("off", "short", "continuous"):
             raise ValueError("Unknown stream mode")
+        for key, low, high in [("light_scale", 0.5, 1.5), ("roughness", 0.03, 0.5), ("stream_radius_m", 0.0005, 0.003)]:
+            if key in row and (not isinstance(row[key], (int, float)) or not math.isfinite(row[key]) or not low <= row[key] <= high):
+                raise ValueError(f"Invalid nuisance parameter: {key}")
     if not seen:
         raise ValueError("Empty fixture")

@@ -32,6 +32,8 @@ def main():
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--limit", type=int, default=12)
     parser.add_argument("--subframes", type=int, default=16)
+    parser.add_argument("--pt-spp", type=int, help="Explicit path-tracing samples per pixel; default preserves runtime settings")
+    parser.add_argument("--compact", action="store_true", help="Keep native ID planes/maps but omit annotation-pass RGB PNGs")
     parser.add_argument("--label-annotator", "--instance-annotator", dest="label_annotator",
                         choices=["semantic_segmentation", "instance_segmentation", "instance_segmentation_fast"],
                         default="semantic_segmentation")
@@ -40,6 +42,8 @@ def main():
     validate_fixture(fixture)
     if args.limit < 1 or args.subframes < 1:
         parser.error("positive limit and subframes required")
+    if args.pt_spp is not None and not 1 <= args.pt_spp <= 32:
+        parser.error("pt-spp must be 1..32")
     out = args.out.resolve()
     if out.exists() and any(out.iterdir()):
         parser.error("Use a fresh output directory")
@@ -65,7 +69,7 @@ def main():
         import omni.usd
         import omni.timeline
         import carb.settings
-        from pxr import Gf, Sdf, Usd, UsdGeom, UsdShade
+        from pxr import Gf, Sdf, Usd, UsdGeom, UsdShade, UsdLux
         try:
             isaac_version = importlib.metadata.version("isaacsim")
         except importlib.metadata.PackageNotFoundError:
@@ -73,6 +77,9 @@ def main():
             from isaacsim.core.version import get_version
             isaac_version = ".".join(get_version()[:2])
         carb.settings.get_settings().set("/omni/replicator/asyncRendering", False)
+        if args.pt_spp is not None:
+            carb.settings.get_settings().set("/rtx/pathtracing/spp", args.pt_spp)
+            carb.settings.get_settings().set("/rtx/pathtracing/totalSpp", args.pt_spp)
         ctx = omni.usd.get_context()
         if not ctx.open_stage(str(source)):
             raise RuntimeError("Could not open supplied fill station")
@@ -94,6 +101,8 @@ def main():
         timeline.pause()
         timeline.set_current_time(0)
         app.update()
+        light_attributes = [(p.GetAttribute("inputs:intensity"), float(p.GetAttribute("inputs:intensity").Get()))
+            for p in stage.Traverse() if p.HasAPI(UsdLux.LightAPI) and p.GetAttribute("inputs:intensity").Get() is not None]
         cam = UsdGeom.Camera(stage.GetPrimAtPath(CAMERA))
         camera_world = np.asarray(UsdGeom.Xformable(cam).ComputeLocalToWorldTransform(Usd.TimeCode.Default())).T
         np.testing.assert_allclose(camera_world, camera_spec["camera_to_world_in_station_file"], atol=1e-6)
@@ -201,7 +210,15 @@ def main():
         def step():
             app.update()
             for _ in range(2):
+                # Stage/render-product startup may restore its renderer defaults.
+                # Apply an explicit training-quality profile at capture time.
+                if args.pt_spp is not None:
+                    carb.settings.get_settings().set("/rtx/pathtracing/spp", args.pt_spp)
+                    carb.settings.get_settings().set("/rtx/pathtracing/totalSpp", args.pt_spp)
                 rep.orchestrator.step(rt_subframes=args.subframes, delta_time=1/30, wait_for_render=True)
+                if args.pt_spp is not None and any(carb.settings.get_settings().get(k)!=args.pt_spp
+                        for k in ["/rtx/pathtracing/spp","/rtx/pathtracing/totalSpp"]):
+                    raise RuntimeError("Runtime changed the explicit path-tracing sample profile")
 
         def rgb_capture():
             rgb = np.asarray(rgb_ann.get_data())[..., :3].astype(np.uint8).copy()
@@ -236,6 +253,10 @@ def main():
             name = row["id"]
             print("CASE", name, flush=True)
             height = max(row["level"] * max_height, 1e-6)
+            for attr, original_intensity in light_attributes:
+                attr.Set(original_intensity * row.get("light_scale", 1.0))
+            stream.GetRadiusAttr().Set(row.get("stream_radius_m", 0.0015))
+            beauty_shader.GetInput("roughness").Set(row.get("roughness", 0.12))
             liquid.GetHeightAttr().Set(height)
             liquid_translate.Set(Gf.Vec3d(float(center[0]), float(center[1]), base + height/2))
             bottom = nozzle_z - 0.012 if row["stream"] == "short" else base + row["level"] * max_height
@@ -284,7 +305,8 @@ def main():
                 annotation_capture[mode] = dict(attempts=attempt, rejected_attempts=rejected_attempts)
                 np.save(out / "label-passes" / f"{name}-{mode}-ids.npy", np.asarray(data["data"]))
                 write_json(out / "label-passes" / f"{name}-{mode}-mapping.json", data["info"]["idToLabels"])
-                Image.fromarray(rgb_capture()).save(out / "label-passes" / f"{name}-{mode}.png")
+                if not args.compact:
+                    Image.fromarray(rgb_capture()).save(out / "label-passes" / f"{name}-{mode}.png")
                 for obj, present, mask in measured:
                     filename = f"masks/{name}-{obj['instance_id']}.png"
                     Image.fromarray(mask.astype(np.uint8)*255).save(out / filename)
@@ -316,7 +338,7 @@ def main():
                 image_sha256=sha256(rgb_path), annotations=annotations, training_eligible=False,
                 label_policy="separate opaque vial and contents passes; transparent shells/guard excluded from contents occlusion; opaque label/holder/nozzle retained",
                 geometry=dict(radius_m=radius, base_z_m=base, liquid_height_m=height if row["level"] else 0,
-                              envelope_height_m=max_height, stream_radius_m=0.0015, nozzle_bottom_z_m=nozzle_z),
+                              envelope_height_m=max_height, stream_radius_m=row.get("stream_radius_m", 0.0015), nozzle_bottom_z_m=nozzle_z),
                 physical_optical_calibration=False)
             records.append(record)
             with (out / "manifest.jsonl").open("a", encoding="utf-8") as stream_file:
@@ -330,6 +352,9 @@ def main():
             host=platform.node(), isaac_version=isaac_version, renderer="PathTracing",
             gpu=subprocess.check_output(["nvidia-smi", "--query-gpu=name,driver_version", "--format=csv,noheader"], text=True).strip(),
             resolution=[640, 480], instance_annotator=args.label_annotator,
+            path_tracing_spp=carb.settings.get_settings().get("/rtx/pathtracing/spp"),
+            path_tracing_total_spp=carb.settings.get_settings().get("/rtx/pathtracing/totalSpp"),
+            subframes=args.subframes, label_pass_rgb_saved=not args.compact,
             annotation_encoding=("unique-object-semantic-tags-v1" if args.label_annotator == "semantic_segmentation" else "instance-prim-paths-v1"),
             fixture_sha256=sha256(args.fixture), source_assets=before,
             script_sha256=sha256(__file__), annotation_helper_sha256=sha256(Path(__file__).with_name("box_annotations.py")),

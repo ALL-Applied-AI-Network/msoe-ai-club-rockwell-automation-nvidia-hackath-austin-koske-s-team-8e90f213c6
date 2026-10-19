@@ -1,5 +1,10 @@
 # Bootstrap vial/liquid localization
 
+The [real + synthetic bbox pilot](REAL-SYNTHETIC.md) has a frozen 768-render
+fixture, a size-matched real-only control, and local video evaluation commands.
+Its execution status is recorded in that guide; preparation is not a training
+result. Run 5 stays outside fitting and checkpoint selection.
+
 **Current next milestone: [box detection and tracking](BOXES.md).** Establish
 vial/liquid localization on reviewed targets before further segmentation or
 color decisions. The existing two-class detector is the starting baseline;

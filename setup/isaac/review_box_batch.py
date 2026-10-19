@@ -123,12 +123,14 @@ def review(out, real_frame=None):
             shared_liquid_pixels=int(region.sum()), mean_absolute_rgb_difference=difference,
             minimum_required=3, scope="stale/material-change capture check, not optical calibration"))
 
+    # Validate every row, but keep review sheets and full-size panels bounded.
+    display_rows = rows if len(rows) <= 24 else [rows[i] for i in np.linspace(0, len(rows)-1, 24, dtype=int)]
     def sheet(folder, filename):
         cols, thumb_w, thumb_h, caption = 3, 480, 360, 28
-        height = ((len(rows)+cols-1)//cols) * (thumb_h+caption)
+        height = ((len(display_rows)+cols-1)//cols) * (thumb_h+caption)
         canvas = Image.new("RGB", (cols*thumb_w, height), "#181c21")
         draw = ImageDraw.Draw(canvas)
-        for index, row in enumerate(rows):
+        for index, row in enumerate(display_rows):
             image_path = out / folder / (row["sample_id"] + ("-composite.png" if folder == "masks" else ".png"))
             with Image.open(image_path) as source:
                 tile = source.convert("RGB").resize((thumb_w, thumb_h))
@@ -139,7 +141,7 @@ def review(out, real_frame=None):
     sheet("rgb", "contact-rgb.png")
     sheet("overlays", "contact-boxes.png")
     sheet("masks", "contact-masks.png")
-    for row in rows:
+    for row in display_rows:
         name = row["sample_id"]
         canvas = Image.new("RGB", (1920, 510), "#181c21")
         draw = ImageDraw.Draw(canvas)

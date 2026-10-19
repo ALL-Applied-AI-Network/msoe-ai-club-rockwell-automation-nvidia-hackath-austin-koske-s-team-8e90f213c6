@@ -64,6 +64,7 @@ also visible with their reasons. Original decoded pixel hashes guard recovery.
 ```powershell
 $python = "$HOME/ai-club-tools/envs/data-windows/Scripts/python.exe"
 $out = "$HOME/ai-club-tools/results/tracked-liquid-demo"
+& $python -m replay make-reference --runs 5 --config replay/examples/bootstrap-vision.json --recipe-plan replay/examples/run5-demo-plan.json --reference-fill 1 --at-frame 900 --out $out
 & $python -m replay analyze --runs 5 --config replay/examples/bootstrap-vision.json --recipe-plan replay/examples/run5-demo-plan.json --out $out
 & $python -m replay export-review --runs 5 --config replay/examples/bootstrap-vision.json --recipe-plan replay/examples/run5-demo-plan.json --out $out
 & $python -m replay validate-detection --runs 5 --config replay/examples/bootstrap-vision.json --out "$HOME/ai-club-tools/results/tracked-liquid-event-evaluation"
@@ -73,6 +74,34 @@ Do not automatically choose a reference. `make-reference` still requires an
 explicit source fill and availability frame before the evaluated fill starts.
 The model/config/code measurement profile invalidates old fixed-patch references.
 Future, current-fill, unknown-recipe and incompatible references remain rejected.
+
+The command above is the explicit **illustrative** choice authorized by Austin:
+fill 1 measured at frame 852, chosen at frame 900, before fill 2 starts at 1374.
+At frame 2244, fill 2 has completed. Its new masked Lab is approximately
+`[5.50,-3.97,1.15]`; the new reference is `[12.06,-9.63,4.61]`. Diagnostic
+deviation is **7.42 ΔE2000**. The unvalidated threshold is 5, and the trusted
+assessment remains **unavailable** because geometry is unreviewed. This partial
+first fill is a development example, not certified clean product. Open
+`http://127.0.0.1:8765/?run=5&frame=2244` and select frame **2226** in the frozen
+panel: 1,377 actual pixels contribute to that sample. Later moving video cannot
+change that source evidence.
+
+Executed results live at Austin's `~/ai-club-tools/results/tracked-liquid-20261019`:
+50,942 decoded frames, 8,491 samples, 30 detected fills and 13/30 heuristic
+measurement windows passing. All 30 still have unavailable trusted assessments;
+one has the explicit diagnostic reference comparison. Independent offline event
+scoring still matches 30/30 supplied intervals with zero misses/extras. The
+90 actual window samples and 120 source-frame/overlay/mask triples (360 PNGs)
+were audited for hashes, exact mask pixels, RGB/Lab and aggregation. The review
+manifest passes its v2 JSON Schema. These consistency checks do not establish
+independent segmentation accuracy.
+
+The 816-image Run 5 **teacher-box agreement** check excludes 29 unknown/manual
+cases. It reports mAP50 0.938 overall, 0.994 for vial and 0.882 for colored liquid;
+overall mAP50–95 is 0.656. The teacher labels are unreviewed, and that teacher was
+previously developed on all five runs. This is distinct from the student fitting
+split, event scoring and mask accuracy. See
+[executed evidence](verification/tracked-liquid-run5.json).
 
 All current masks remain `geometry_review_status=unreviewed_model_proposals`.
 An eligible reference may produce a **diagnostic** `delta_e2000` and

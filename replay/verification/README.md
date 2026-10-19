@@ -56,3 +56,20 @@ those fixes.
 These are software and measurement-coverage checks. There are no independently
 reviewed defect labels here, so no false-alert rate, recall or production-reliability
 claim follows. The older analysis's measurement policy and scores are separate.
+# Current tracked-liquid correction — October 19
+
+Start with [VISION.md](../VISION.md),
+[Run 5 evidence](tracked-liquid-run5.json),
+[training provenance](bootstrap-training.json), and
+[teacher-box agreement](run5-teacher-box-agreement.json).
+The fixed-patch measurements below are historical and do not validate liquid color.
+
+The new complete replay has 30 detected fills, 13/30 heuristic measurement
+windows passing, and 30/30 trusted assessments unavailable pending geometry
+review. The explicit earlier-vial reference produces one diagnostic deviation
+of 7.42 ΔE2000. Ninety measurement samples and 360 PNGs were audited for exact
+source pixels, masks, colors and aggregates; the v2 review schema passes.
+38 replay and one bootstrap split/augmentation test pass from the source archive.
+
+![Actual measurement frame, proposed geometry and exact sampling mask](tracked-liquid-evidence.png)
+

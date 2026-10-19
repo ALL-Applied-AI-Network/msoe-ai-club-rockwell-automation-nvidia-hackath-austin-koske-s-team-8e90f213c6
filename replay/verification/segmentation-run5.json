@@ -886,5 +886,19 @@
     "The inset sampling-mask target and the retained proposal-border exclusions can shrink small regions further.",
     "Provisional-mask agreement and window coverage do not establish independent mask accuracy.",
     "No Run 5-driven checkpoint selection, QA adjustment, mask union or fallback was performed."
-  ]
+  ],
+  "published_source_checks": {
+    "commit": "03a0f06356e40776288a64271ac4ec91bf7aa4d2",
+    "replay_tests_passed": 42,
+    "bootstrap_tests_passed": 2,
+    "model_loaded_with_data_environment": true,
+    "torch_imported_for_runtime": false,
+    "documented_launcher_started": true,
+    "completed_fills": 30,
+    "qa_valid_windows": 7,
+    "regression_frame": 4848,
+    "regression_mask_pixels": 0,
+    "gain_frame": 10866,
+    "gain_mask_pixels": 4006
+  }
 }

@@ -1,9 +1,9 @@
 # Bootstrap vial/liquid localization
 
-The [real + synthetic bbox pilot](REAL-SYNTHETIC.md) has a frozen 768-render
-fixture, a size-matched real-only control, and local video evaluation commands.
-Its execution status is recorded in that guide; preparation is not a training
-result. Run 5 stays outside fitting and checkpoint selection.
+The [real + synthetic bbox pilot](REAL-SYNTHETIC.md) includes a verified
+768-image GB10 batch, completed real-only/mixed/sim-only Rosie runs, Run 5
+results and local comparison videos. Run 5 stays outside fitting and checkpoint
+selection. Current detector and measurement QA remain unchanged.
 
 **Current next milestone: [box detection and tracking](BOXES.md).** Establish
 vial/liquid localization on reviewed targets before further segmentation or
@@ -114,3 +114,4 @@ depend on this optional evaluation environment.
 
 Official task interfaces: [detection](https://docs.ultralytics.com/tasks/detect/),
 [segmentation](https://docs.ultralytics.com/tasks/segment/).
+

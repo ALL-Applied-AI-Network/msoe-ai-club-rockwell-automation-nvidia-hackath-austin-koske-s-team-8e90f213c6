@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "status": "Native batch verified; control retrieved; mixed fit/export complete remotely; sim-only last observed epoch 10; weights retrieval blocked by VPN",
+  "status": "Complete: native batch, three Rosie fits, paired Run 5 scoring and four candidate videos verified; current detector retained",
   "feature_commit": "2efefcb",
   "native_run": {
     "schema_version": 1,
@@ -250,14 +250,18 @@
     {
       "id": 285785,
       "arm": "mixed",
-      "state": "12 epochs and model.json observed; final accounting pending reconnect",
-      "downloaded": false
+      "state": "COMPLETED",
+      "downloaded": true,
+      "exit_code": "0:0",
+      "elapsed": "00:06:40"
     },
     {
       "id": 285786,
       "arm": "sim-only",
-      "state": "Last observed fitting epoch 10 of 12; final accounting pending reconnect",
-      "downloaded": false
+      "state": "COMPLETED",
+      "downloaded": true,
+      "exit_code": "0:0",
+      "elapsed": "00:08:08"
     }
   ],
   "real_only_control": {
@@ -498,14 +502,504 @@
   },
   "comparison_results_available": {
     "real_only_control": true,
-    "mixed": false,
-    "sim_only": false
+    "mixed": true,
+    "sim_only": true
   },
-  "mixed_videos_available": false,
-  "sim_only_videos_available": false,
+  "mixed_videos_available": true,
+  "sim_only_videos_available": true,
   "current_detector_sha256": "89ed11f7046171e5340dc45a9d528010de1cefbba21e163b23b7098151e0880e",
   "measurement_qa_changed": false,
   "detector_promoted": false,
   "local_experiment": "C:\\Users\\Austin\\ai-club-tools\\results\\real-synthetic-detector-20261019",
-  "remote_experiment": "~/ai-club-tools/results/real-synthetic-detector-20261019"
+  "remote_experiment": "~/ai-club-tools/results/real-synthetic-detector-20261019",
+  "trained_candidates_archive_sha256": "a9334572d3b74744536c806b9cb5ec33eb78a2267d0bab4e4102e1459f8c08e0",
+  "models": {
+    "real-only": {
+      "schema_version": 1,
+      "arm": "real-only",
+      "architecture": "yolo11n_detect",
+      "classes": [
+        "vial",
+        "colored_liquid"
+      ],
+      "model_sha256": "762c3773a89584740df22b90c3ddb5bce0d1e2f0424c85ba8bd01c8fbf530ae1",
+      "checkpoint_sha256": "ca13f4c74476a96edc9068ac1833eb79b82c6c286e77484c0682a11de0fdc422",
+      "pretrained_sha256": "0ebbc80d4a7680d14987a577cd21342b65ecfd94632bd9a8da63ae6417644ee1",
+      "experiment_plan_sha256": "ae99e3732be15f1b4c782291c9bec5f98350f29527f82ef302cec5945d7f40ea",
+      "data_provenance_sha256": "81dd2eb3b476ff2daa996b85c1f49e3c76b35c0f14271249cbb0c53806eaad29",
+      "trainer_sha256": "1ee6a72c0ef1c7989c87d2dbb0a3efbe01173cec32b6ae84a55f37b981a04e18",
+      "train_runs": [
+        1,
+        2,
+        3
+      ],
+      "development_runs": [
+        4
+      ],
+      "excluded_runs": [
+        5
+      ],
+      "epochs": 12,
+      "seed": 19,
+      "torch": "2.8.0a0+5228986c39.nv25.05",
+      "ultralytics": "8.4.182",
+      "preprocessing": "Unenhanced native full-frame RGB; ordinary identical YOLO letterboxing in both arms",
+      "target_scope": {
+        "vial": "Fill-position vial only: supplied synthetic object 101",
+        "colored_liquid": "Accumulated liquid body only: supplied synthetic object 201",
+        "omitted_synthetic_targets": "Neighbor vials 102/103 and stream 301; preserve in raw render export"
+      },
+      "counts": {
+        "train": 2210,
+        "val": 157
+      },
+      "automatic_promotion": false
+    },
+    "mixed": {
+      "schema_version": 1,
+      "arm": "mixed",
+      "architecture": "yolo11n_detect",
+      "classes": [
+        "vial",
+        "colored_liquid"
+      ],
+      "model_sha256": "bee5597e75597ee02b6f9a2e6c0dfe78e752b83ffe13312df4bb33ac5c8b6512",
+      "checkpoint_sha256": "5325994eaeb867cc9b963e4bdf496394ff46c0a5d9c800ab3533b860274c72da",
+      "pretrained_sha256": "0ebbc80d4a7680d14987a577cd21342b65ecfd94632bd9a8da63ae6417644ee1",
+      "experiment_plan_sha256": "ae99e3732be15f1b4c782291c9bec5f98350f29527f82ef302cec5945d7f40ea",
+      "data_provenance_sha256": "1abb0ae0465ecd7fad8c9485d7beb1135e5fb880d97e565f89e73587782554d9",
+      "trainer_sha256": "1ee6a72c0ef1c7989c87d2dbb0a3efbe01173cec32b6ae84a55f37b981a04e18",
+      "train_runs": [
+        1,
+        2,
+        3
+      ],
+      "development_runs": [
+        4
+      ],
+      "excluded_runs": [
+        5
+      ],
+      "epochs": 12,
+      "seed": 19,
+      "torch": "2.8.0a0+5228986c39.nv25.05",
+      "ultralytics": "8.4.182",
+      "preprocessing": "Unenhanced native full-frame RGB; ordinary identical YOLO letterboxing in both arms",
+      "target_scope": {
+        "vial": "Fill-position vial only: supplied synthetic object 101",
+        "colored_liquid": "Accumulated liquid body only: supplied synthetic object 201",
+        "omitted_synthetic_targets": "Neighbor vials 102/103 and stream 301; preserve in raw render export"
+      },
+      "counts": {
+        "real_train": 1442,
+        "real_val": 157,
+        "synthetic_train": 768
+      },
+      "automatic_promotion": false
+    },
+    "sim-only": {
+      "schema_version": 1,
+      "arm": "sim-only",
+      "architecture": "yolo11n_detect",
+      "classes": [
+        "vial",
+        "colored_liquid"
+      ],
+      "preprocessing": "Unenhanced native full-frame RGB; ordinary identical YOLO letterboxing in both arms",
+      "target_scope": {
+        "vial": "Fill-position vial only: supplied synthetic object 101",
+        "colored_liquid": "Accumulated liquid body only: supplied synthetic object 201",
+        "omitted_synthetic_targets": "Neighbor vials 102/103 and stream 301; preserve in raw render export"
+      },
+      "checkpoint_sha256": "0bfac07a256eaf190416b632ad1f094a6b534309df1bb11a8c175e9d811b56bc",
+      "model_sha256": "a5a93b0974b8e0e791b3c0e53852716904f0fde01726df828357a55c4cf8c13e",
+      "sim_only_plan_sha256": "a13af47f80fbc7d30e60e4b34ee728ca9e5f509b9bf141bdc7bfa3d029065dfa",
+      "base_plan_sha256": "ae99e3732be15f1b4c782291c9bec5f98350f29527f82ef302cec5945d7f40ea",
+      "data_provenance_sha256": "e6e03b49e54e6d4f392470d838f4b4062420c6f23dd9c0c7ad189cfbeba2e869",
+      "trainer_sha256": "2dcaf96a8512884f0acd9f534ebc9f58d6981c80f8fcfec14cdafb5f1921f501",
+      "shared_preparation_helper_sha256": "1ee6a72c0ef1c7989c87d2dbb0a3efbe01173cec32b6ae84a55f37b981a04e18",
+      "pretrained_sha256": "0ebbc80d4a7680d14987a577cd21342b65ecfd94632bd9a8da63ae6417644ee1",
+      "checkpoint_selection": "Fixed final epoch 12; no real checkpoint selection",
+      "train_runs": [],
+      "development_runs": [],
+      "excluded_real_runs": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "unique_synthetic_images": 768,
+      "training_images": 2210,
+      "epochs": 12,
+      "seed": 19,
+      "torch": "2.8.0a0+5228986c39.nv25.05",
+      "ultralytics": "8.4.182",
+      "generic_real_pretraining": "Same COCO initialization as other arms; sim-only refers to CSI domain fine-tuning",
+      "automatic_promotion": false
+    }
+  },
+  "comparison_report_sha256": "33c301a60a29581af4aedea657579960966fa0caf0bf90427ebc8398baec0cd3",
+  "run5_teacher_agreement": {
+    "current": {
+      "map50": 0.9430060777829511,
+      "map50_95": 0.6528232953194986,
+      "per_class": [
+        {
+          "class_id": 0,
+          "targets": 814,
+          "ap50": 0.9937549407114624,
+          "ap50_95": 0.8138566541156799,
+          "precision_at_035": 0.996319018404908,
+          "recall_at_035": 0.9975429975429976,
+          "tp_at_035": 812,
+          "fp_at_035": 3,
+          "fn_at_035": 2
+        },
+        {
+          "class_id": 1,
+          "targets": 541,
+          "ap50": 0.8922572148544398,
+          "ap50_95": 0.4917899365233172,
+          "precision_at_035": 0.9679802955665024,
+          "recall_at_035": 0.7264325323475046,
+          "tp_at_035": 393,
+          "fp_at_035": 13,
+          "fn_at_035": 148
+        }
+      ]
+    },
+    "real-only": {
+      "map50": 0.9339657281933227,
+      "map50_95": 0.6549870260211895,
+      "per_class": [
+        {
+          "class_id": 0,
+          "targets": 814,
+          "ap50": 0.9930098280098278,
+          "ap50_95": 0.8268312663549565,
+          "precision_at_035": 0.9950980392156863,
+          "recall_at_035": 0.9975429975429976,
+          "tp_at_035": 812,
+          "fp_at_035": 4,
+          "fn_at_035": 2
+        },
+        {
+          "class_id": 1,
+          "targets": 541,
+          "ap50": 0.8749216283768175,
+          "ap50_95": 0.48314278568742247,
+          "precision_at_035": 0.9227467811158798,
+          "recall_at_035": 0.7948243992606284,
+          "tp_at_035": 430,
+          "fp_at_035": 36,
+          "fn_at_035": 111
+        }
+      ]
+    },
+    "mixed": {
+      "map50": 0.9240437786876083,
+      "map50_95": 0.665498924820132,
+      "per_class": [
+        {
+          "class_id": 0,
+          "targets": 814,
+          "ap50": 0.9936598340765005,
+          "ap50_95": 0.8470332975705661,
+          "precision_at_035": 0.9950980392156863,
+          "recall_at_035": 0.9975429975429976,
+          "tp_at_035": 812,
+          "fp_at_035": 4,
+          "fn_at_035": 2
+        },
+        {
+          "class_id": 1,
+          "targets": 541,
+          "ap50": 0.8544277232987161,
+          "ap50_95": 0.48396455206969763,
+          "precision_at_035": 0.86652977412731,
+          "recall_at_035": 0.7800369685767098,
+          "tp_at_035": 422,
+          "fp_at_035": 65,
+          "fn_at_035": 119
+        }
+      ]
+    },
+    "sim-only": {
+      "map50": 0.730997672460872,
+      "map50_95": 0.45974283353936574,
+      "per_class": [
+        {
+          "class_id": 0,
+          "targets": 814,
+          "ap50": 0.9942765077718988,
+          "ap50_95": 0.7161696879471963,
+          "precision_at_035": 0.9975369458128078,
+          "recall_at_035": 0.995085995085995,
+          "tp_at_035": 810,
+          "fp_at_035": 2,
+          "fn_at_035": 4
+        },
+        {
+          "class_id": 1,
+          "targets": 541,
+          "ap50": 0.4677188371498452,
+          "ap50_95": 0.20331597913153518,
+          "precision_at_035": 0.44107142857142856,
+          "recall_at_035": 0.4565619223659889,
+          "tp_at_035": 247,
+          "fp_at_035": 313,
+          "fn_at_035": 294
+        }
+      ]
+    }
+  },
+  "scoring_frames": 816,
+  "excluded_unknown_frames": 29,
+  "paired_source_check": {
+    "matched_source_frames": 9299,
+    "source_pixels_timestamps_and_baseline_predictions_identical": true,
+    "sim_only_checkpoint_is_final_epoch_12": true,
+    "all_four_videos_fully_decoded": true
+  },
+  "export_parity": {
+    "current": {
+      "passed": true,
+      "development_run": 4,
+      "frames": 16,
+      "boxes": 23,
+      "max_source_pixel_error": 9.1552734375e-05,
+      "max_score_error": 5.960464477539062e-07,
+      "backend": "PyTorch CPU vs ONNX Runtime CPU; no quantization",
+      "scope": "Post-freeze export consistency only; does not select or tune checkpoints",
+      "checkpoint_sha256": "10856c18a8a5c485e832adcc6b841b739e726a969dc043fe8db64c49163bb361",
+      "onnx_sha256": "89ed11f7046171e5340dc45a9d528010de1cefbba21e163b23b7098151e0880e",
+      "image_sha256": [
+        "4786122f0746b7103bce66c27ca2d5f73623cd11b29e29d0a48b4ed2d2aaf56b",
+        "c5f023a306294bf84235c57e9a548b6bdb107990f2eec1f6b846fc52a5f2ebdb",
+        "a62b4ec3b41239a59562c85f665d93a93e23b0840546e85b600f1db72cc1942e",
+        "6302b30f52a920ecd33a8215f89b429c390deaf010434fdfd07d5c18bfc69d72",
+        "925c809b4127a944628f37865a4f4acfae1a2f78da37d45a6b8483465d87fba7",
+        "f398b9a5c8e7751ab9a19ee1e2c2b155640c15f3f665693036956049fa3bf47c",
+        "350709f9932340dbf3f779948617aa960a70e8b171d5dc1da35a9bbcc394f631",
+        "d359e57491e7a2019aaf2bfbdd7aed8a9e45e0f8179a4f63ae9f957e6a3a8094",
+        "b9653fed9a12040fa4c3f5e38aa044f4c4de03829c8647e2d75780ddaff96000",
+        "b52760e45c321cf1e6134b066802af89a28b4675646d2fbc3f59db2cfe69a2e6",
+        "5bdaf187ca4637caab7c73101f3b1995fd49103f184f93faaded97ead1a111d9",
+        "a5290cf0a0f0282b050d52b14f75e9ab0a4799225a5e8fa99a5500a2650fce46",
+        "4411702bff56d7e1a087458708232ec92eb21d3948a1a188ab9f8960e95404f9",
+        "eceb17ac72040fc8c800fea61dbcc3ec8d8514a806cdbe04daa8f7d274709b58",
+        "b6ccd22afc4aacae0ad7d184f100697b3eccd077cbfd80939baf9582f2de8daf",
+        "25361ed5e54b41435bd23c986d5b8e5259b0f03c0bac95fc5f925b30050d3fc7"
+      ]
+    },
+    "real-only": {
+      "passed": true,
+      "development_run": 4,
+      "frames": 16,
+      "boxes": 23,
+      "max_source_pixel_error": 6.103515625e-05,
+      "max_score_error": 4.172325134277344e-07,
+      "backend": "PyTorch CPU vs ONNX Runtime CPU; no quantization",
+      "scope": "Post-freeze export consistency only; does not select or tune checkpoints",
+      "checkpoint_sha256": "ca13f4c74476a96edc9068ac1833eb79b82c6c286e77484c0682a11de0fdc422",
+      "onnx_sha256": "762c3773a89584740df22b90c3ddb5bce0d1e2f0424c85ba8bd01c8fbf530ae1",
+      "image_sha256": [
+        "4786122f0746b7103bce66c27ca2d5f73623cd11b29e29d0a48b4ed2d2aaf56b",
+        "c5f023a306294bf84235c57e9a548b6bdb107990f2eec1f6b846fc52a5f2ebdb",
+        "a62b4ec3b41239a59562c85f665d93a93e23b0840546e85b600f1db72cc1942e",
+        "6302b30f52a920ecd33a8215f89b429c390deaf010434fdfd07d5c18bfc69d72",
+        "925c809b4127a944628f37865a4f4acfae1a2f78da37d45a6b8483465d87fba7",
+        "f398b9a5c8e7751ab9a19ee1e2c2b155640c15f3f665693036956049fa3bf47c",
+        "350709f9932340dbf3f779948617aa960a70e8b171d5dc1da35a9bbcc394f631",
+        "d359e57491e7a2019aaf2bfbdd7aed8a9e45e0f8179a4f63ae9f957e6a3a8094",
+        "b9653fed9a12040fa4c3f5e38aa044f4c4de03829c8647e2d75780ddaff96000",
+        "b52760e45c321cf1e6134b066802af89a28b4675646d2fbc3f59db2cfe69a2e6",
+        "5bdaf187ca4637caab7c73101f3b1995fd49103f184f93faaded97ead1a111d9",
+        "a5290cf0a0f0282b050d52b14f75e9ab0a4799225a5e8fa99a5500a2650fce46",
+        "4411702bff56d7e1a087458708232ec92eb21d3948a1a188ab9f8960e95404f9",
+        "eceb17ac72040fc8c800fea61dbcc3ec8d8514a806cdbe04daa8f7d274709b58",
+        "b6ccd22afc4aacae0ad7d184f100697b3eccd077cbfd80939baf9582f2de8daf",
+        "25361ed5e54b41435bd23c986d5b8e5259b0f03c0bac95fc5f925b30050d3fc7"
+      ]
+    },
+    "mixed": {
+      "passed": true,
+      "development_run": 4,
+      "frames": 16,
+      "boxes": 25,
+      "max_source_pixel_error": 6.103515625e-05,
+      "max_score_error": 4.76837158203125e-07,
+      "backend": "PyTorch CPU vs ONNX Runtime CPU; no quantization",
+      "scope": "Post-freeze export consistency only; does not select or tune checkpoints",
+      "checkpoint_sha256": "5325994eaeb867cc9b963e4bdf496394ff46c0a5d9c800ab3533b860274c72da",
+      "onnx_sha256": "bee5597e75597ee02b6f9a2e6c0dfe78e752b83ffe13312df4bb33ac5c8b6512",
+      "image_sha256": [
+        "4786122f0746b7103bce66c27ca2d5f73623cd11b29e29d0a48b4ed2d2aaf56b",
+        "c5f023a306294bf84235c57e9a548b6bdb107990f2eec1f6b846fc52a5f2ebdb",
+        "a62b4ec3b41239a59562c85f665d93a93e23b0840546e85b600f1db72cc1942e",
+        "6302b30f52a920ecd33a8215f89b429c390deaf010434fdfd07d5c18bfc69d72",
+        "925c809b4127a944628f37865a4f4acfae1a2f78da37d45a6b8483465d87fba7",
+        "f398b9a5c8e7751ab9a19ee1e2c2b155640c15f3f665693036956049fa3bf47c",
+        "350709f9932340dbf3f779948617aa960a70e8b171d5dc1da35a9bbcc394f631",
+        "d359e57491e7a2019aaf2bfbdd7aed8a9e45e0f8179a4f63ae9f957e6a3a8094",
+        "b9653fed9a12040fa4c3f5e38aa044f4c4de03829c8647e2d75780ddaff96000",
+        "b52760e45c321cf1e6134b066802af89a28b4675646d2fbc3f59db2cfe69a2e6",
+        "5bdaf187ca4637caab7c73101f3b1995fd49103f184f93faaded97ead1a111d9",
+        "a5290cf0a0f0282b050d52b14f75e9ab0a4799225a5e8fa99a5500a2650fce46",
+        "4411702bff56d7e1a087458708232ec92eb21d3948a1a188ab9f8960e95404f9",
+        "eceb17ac72040fc8c800fea61dbcc3ec8d8514a806cdbe04daa8f7d274709b58",
+        "b6ccd22afc4aacae0ad7d184f100697b3eccd077cbfd80939baf9582f2de8daf",
+        "25361ed5e54b41435bd23c986d5b8e5259b0f03c0bac95fc5f925b30050d3fc7"
+      ]
+    },
+    "sim-only": {
+      "passed": true,
+      "development_run": 4,
+      "frames": 16,
+      "boxes": 31,
+      "max_source_pixel_error": 7.62939453125e-05,
+      "max_score_error": 2.8014183044433594e-06,
+      "backend": "PyTorch CPU vs ONNX Runtime CPU; no quantization",
+      "scope": "Post-freeze export consistency only; does not select or tune checkpoints",
+      "checkpoint_sha256": "0bfac07a256eaf190416b632ad1f094a6b534309df1bb11a8c175e9d811b56bc",
+      "onnx_sha256": "a5a93b0974b8e0e791b3c0e53852716904f0fde01726df828357a55c4cf8c13e",
+      "image_sha256": [
+        "4786122f0746b7103bce66c27ca2d5f73623cd11b29e29d0a48b4ed2d2aaf56b",
+        "c5f023a306294bf84235c57e9a548b6bdb107990f2eec1f6b846fc52a5f2ebdb",
+        "a62b4ec3b41239a59562c85f665d93a93e23b0840546e85b600f1db72cc1942e",
+        "6302b30f52a920ecd33a8215f89b429c390deaf010434fdfd07d5c18bfc69d72",
+        "925c809b4127a944628f37865a4f4acfae1a2f78da37d45a6b8483465d87fba7",
+        "f398b9a5c8e7751ab9a19ee1e2c2b155640c15f3f665693036956049fa3bf47c",
+        "350709f9932340dbf3f779948617aa960a70e8b171d5dc1da35a9bbcc394f631",
+        "d359e57491e7a2019aaf2bfbdd7aed8a9e45e0f8179a4f63ae9f957e6a3a8094",
+        "b9653fed9a12040fa4c3f5e38aa044f4c4de03829c8647e2d75780ddaff96000",
+        "b52760e45c321cf1e6134b066802af89a28b4675646d2fbc3f59db2cfe69a2e6",
+        "5bdaf187ca4637caab7c73101f3b1995fd49103f184f93faaded97ead1a111d9",
+        "a5290cf0a0f0282b050d52b14f75e9ab0a4799225a5e8fa99a5500a2650fce46",
+        "4411702bff56d7e1a087458708232ec92eb21d3948a1a188ab9f8960e95404f9",
+        "eceb17ac72040fc8c800fea61dbcc3ec8d8514a806cdbe04daa8f7d274709b58",
+        "b6ccd22afc4aacae0ad7d184f100697b3eccd077cbfd80939baf9582f2de8daf",
+        "25361ed5e54b41435bd23c986d5b8e5259b0f03c0bac95fc5f925b30050d3fc7"
+      ]
+    }
+  },
+  "video_manifests": {
+    "mixed": {
+      "source_video_sha256": "6f87cec1aeec3b2bae6dac639a317c077a3f175f27abd5fc8430d6953d9d05b9",
+      "source_frames_decoded": 50942,
+      "source_samples_verified": 8491,
+      "full_video_frames": 8491,
+      "full_video_fps": 5,
+      "early_video_frames": 968,
+      "early_video_fps": 30,
+      "early_image_estimated_starts": [
+        1374,
+        2760,
+        4152,
+        5400,
+        6660,
+        8550,
+        10152,
+        11754
+      ],
+      "unique_source_frames_inferred": 9299,
+      "baseline_presence": {
+        "samples_with_vial": 8282,
+        "samples_with_liquid": 4207
+      },
+      "candidate_presence": {
+        "samples_with_vial": 8305,
+        "samples_with_liquid": 4495
+      },
+      "presence_is_not_accuracy": true,
+      "early_starts_are_not_reviewed_flow_onsets": true,
+      "raw_source_pixels_preserved": true,
+      "no_recipe_color_qa_or_tracking_claim": true
+    },
+    "sim-only": {
+      "source_video_sha256": "6f87cec1aeec3b2bae6dac639a317c077a3f175f27abd5fc8430d6953d9d05b9",
+      "source_frames_decoded": 50942,
+      "source_samples_verified": 8491,
+      "full_video_frames": 8491,
+      "full_video_fps": 5,
+      "early_video_frames": 968,
+      "early_video_fps": 30,
+      "early_image_estimated_starts": [
+        1374,
+        2760,
+        4152,
+        5400,
+        6660,
+        8550,
+        10152,
+        11754
+      ],
+      "unique_source_frames_inferred": 9299,
+      "baseline_presence": {
+        "samples_with_vial": 8282,
+        "samples_with_liquid": 4207
+      },
+      "candidate_presence": {
+        "samples_with_vial": 8175,
+        "samples_with_liquid": 5064
+      },
+      "presence_is_not_accuracy": true,
+      "early_starts_are_not_reviewed_flow_onsets": true,
+      "raw_source_pixels_preserved": true,
+      "no_recipe_color_qa_or_tracking_claim": true
+    }
+  },
+  "video_decode_checks": {
+    "mixed": [
+      {
+        "file": "run5-full-comparison.mp4",
+        "decoded_frames": 8491,
+        "fps": 5,
+        "width": 1280,
+        "height": 560,
+        "sha256": "90d0be17f0c61c468cb9cb4559ed9e0ede0cf921fc72706d9e6fa4a2627d7032"
+      },
+      {
+        "file": "run5-early-pours.mp4",
+        "decoded_frames": 968,
+        "fps": 30,
+        "width": 1280,
+        "height": 560,
+        "sha256": "9ad525a08e4e2b2e5ca5a3e4e6829f23aff88ccfd1e5c620ee018e7bc2f390ff"
+      }
+    ],
+    "sim-only": [
+      {
+        "file": "run5-full-comparison.mp4",
+        "decoded_frames": 8491,
+        "fps": 5,
+        "width": 1280,
+        "height": 560,
+        "sha256": "92a753b9672e5bc7216b4651982be47a6f4cdbdc96d21b5a943dc856dea75047"
+      },
+      {
+        "file": "run5-early-pours.mp4",
+        "decoded_frames": 968,
+        "fps": 30,
+        "width": 1280,
+        "height": 560,
+        "sha256": "3e4f23f12dbd290969500e081f92b12d10550b5a3e91f2bdf824ebc72d45ace8"
+      }
+    ]
+  },
+  "figure": {
+    "file": "real-synthetic-run5-example.png",
+    "sha256": "f2f23e083545d0dc6d0a4b7837ff09ce50a6fdb1063bad037d98eba9aa99a775",
+    "source_frame": 1410,
+    "mp4_seconds": 47.0,
+    "scope": "First fixed early-case example: mixed top, sim-only bottom; current left in both. Full clips retain all eight fixed cases."
+  },
+  "conclusions": [
+    "Mixed improves vial localization; liquid AP remains below current and false positives increase at unchanged confidence.",
+    "Sim-only fine-tuning transfers vial detection more successfully than liquid localization.",
+    "Current detector and measurement QA remain unchanged.",
+    "AP is agreement with unreviewed teacher targets, not independent human truth, color accuracy, event timing or QA coverage."
+  ],
+  "accounting_note": "Main jobs and batch steps completed 0:0. A separate read-only CUDA environment probe in job 285786 exited 1 because cleanenv omits that variable; this was not the training step."
 }

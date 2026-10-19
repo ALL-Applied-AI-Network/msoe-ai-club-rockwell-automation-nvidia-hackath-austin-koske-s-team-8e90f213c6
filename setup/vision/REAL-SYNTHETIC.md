@@ -1,7 +1,8 @@
 # Real + synthetic bbox pilot
 
 This compares the current detector with a full-frame YOLO11n trained on real
-Runs 1-3 plus a seeded GB10 synthetic batch. Run 4 alone selects checkpoints.
+Runs 1-3 plus a seeded GB10 synthetic batch. Run 4 alone selects mixed/control
+checkpoints; the supplemental sim-only arm uses its fixed final epoch.
 Run 5 is excluded from fitting, augmentation ancestry and checkpoint selection,
 then scored after the candidates are frozen. The replay model and measurement
 QA are not replaced or modified.
@@ -32,36 +33,85 @@ label scope. Neighbor vials and streams are excluded as training targets in
 this two-class trial; their source labels are never erased. A bbox does not
 certify that every enclosed pixel is liquid: holders/labels can occlude it.
 
-## Current execution status
+## Executed results, October 19
 
-The full **768-image GB10 / Isaac 6.0.0.1** render completed in **2,689.24
-seconds** at effective 32 SPP / one subframe. Remote and local verification
-passed with no unavailable required objects or synchronization retries:
-2,304 vial, 576 liquid-body and 497 stream boxes. Source asset hashes match the
-24-image GB10 preflight. Raw proxy eligibility flags remain unchanged.
+**Keep the current detector for now.** Mixed training improved vial localization,
+while liquid AP fell slightly and liquid false positives rose from 13 to 65.
+Sim-only fine-tuning transferred vial detection, but liquid localization was
+poor on the real footage. No detector promotion or measurement-QA change.
 
-* Control job **285766**: completed, exit `0:0`, downloaded and scored. Its
-  supplementary `control-preview/` videos are playable local files.
-* Mixed job **285785**: all 12 epochs and successful model export observed.
-  Final accounting and model download still need verification.
-* Sim-only job **285786**: last observed at epoch 10/12. Its declared selection
-  is the fixed final checkpoint, with no real CSI data used in fitting or
-  checkpoint selection. Final state and download still need verification.
+All scores below are percent-scale AP50-95 / precision / recall against the
+same **816 provisional Run 5 teacher-labeled frames**. The 29 unknown frames
+remain excluded. Precision/recall and false positives use confidence 0.35 and
+IoU 0.5 matching; NMS IoU stays 0.45. AP uses confidence 0.001. These are frame
+box metrics, separate from event detection, per-fill QA coverage and color.
 
-**Campus connectivity dropped again before retrieving the two candidates.**
-No mixed or sim-only Run 5 score/video is claimed yet. Reconnect, inspect these
-existing jobs, and download their models before evaluating. Do not duplicate
-jobs or rerender the completed batch. Execution evidence is in
-[`real-synthetic-execution.json`](../../replay/verification/real-synthetic-execution.json).
+| Model | mAP50-95 | Vial AP | Liquid AP | Liquid precision | Liquid recall | Liquid FP |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| current | 65.28 | 81.39 | 49.18 | 96.80 | 72.64 | 13 |
+| real-only | 65.50 | 82.68 | 48.31 | 92.27 | 79.48 | 36 |
+| mixed | 66.55 | 84.70 | 48.40 | 86.65 | 78.00 | 65 |
+| sim-only | 45.97 | 71.62 | 20.33 | 44.11 | 45.66 | 313 |
+
+The teacher previously saw all five recordings and Run 5 has been inspected
+repeatedly. These results are diagnostic agreement, not a new blind test or
+independent human accuracy. Review labels and simulated liquid appearance
+before relying on further scale-up. The sim-only arm uses generic COCO real-image
+pretraining; all CSI domain fine-tuning and checkpoint selection are synthetic.
+
+The **768-image GB10 / Isaac 6.0.0.1** render completed in **2,689.24 seconds**
+at effective 32 SPP / one subframe. Remote and local verification passed with
+no unavailable required objects or synchronization retries: 2,304 vial,
+576 liquid-body and 497 stream boxes. Source assets match the preceding GB10
+pilot, and raw proxy eligibility/optical-calibration flags remain unchanged.
+
+Rosie main jobs all completed `0:0`: real-only control **285766** (5:52), mixed
+**285785** (6:40), sim-only **285786** (8:08). All fitted 12 epochs using
+Singularity and the pinned COCO initialization. Control and mixed select by
+Run 4 mAP50-95; sim-only exports its fixed epoch-12 `last.pt` and uses no real
+CSI checkpoint selection. The model/provenance/plan hashes match locally.
+
+All four model exports passed PyTorch/ONNX consistency on 16 Run 4 images after
+checkpoint freeze. Both paired video runs decoded all 50,942 source frames;
+all 9,299 inferred frame identities, source RGB hashes, timestamps and baseline
+predictions match between the mixed and sim-only comparisons. Four output
+movies were fully decoded and inspected at the start, middle, end and fixed
+early cases. No inference crop, CLAHE, threshold change or cached scores.
+
+Execution evidence: [`real-synthetic-execution.json`](../../replay/verification/real-synthetic-execution.json).
+Illustrative frame 1410 / MP4 47.0s:
+[`real-synthetic-run5-example.png`](../../replay/verification/real-synthetic-run5-example.png).
 
 Local experiment:
 `C:/Users/Austin/ai-club-tools/results/real-synthetic-detector-20261019`
 
+* `evaluation/run5-early-pours.mp4`: current left, mixed right; 968 frames at
+  native 30 fps, covering the same eight fixed image-estimated neighborhoods.
+* `evaluation/run5-full-comparison.mp4`: current left, mixed right; the whole
+  recording sampled at 5 fps (8,491 frames, source time preserved).
+* `evaluation/sim-only/`: equivalent early/full videos with sim-only right.
+* `evaluation/comparison.json`: full metrics, candidate/control metadata and hashes.
+* `evaluation/{scoring-predictions.json,video-predictions.jsonl}` plus the
+  corresponding `sim-only/` files: source-level diagnostic predictions.
+* `evaluation/paired-source-check.json`, parity files and video decode checks:
+  model/export and source consistency evidence.
+* `control-preview/`: supplementary current-versus-real-only-control videos.
+* `renders/contact-boxes.png`: native batch review; `dataset-audit.json`: counts
+  and class-mixture limits. Model weights remain outside Git in `models/`.
+
+Exact local reproduction after downloading these artifacts:
+
+```powershell
+& "$HOME/ai-club-tools/results/real-synthetic-detector-20261019/reproduce-run5.ps1"
+```
+
+This uses the published evaluation code and writes a fresh
+`evaluation-reproduced` folder. To reproduce on another machine, use the full
+CLI below with matching model/data artifacts and add `--include-sim-only`.
+
 Rosie experiment: `~/ai-club-tools/results/real-synthetic-detector-20261019`.
 GB10 batch: `~/ai-club-tools/results/austin/real-synthetic-768-20261019`.
-Local native review: `renders/contact-boxes.png`. Training inventories are
-prepared. `reproduce-run5.ps1` in the local experiment supplies the exact
-comparison command once the two candidate models have been retrieved.
+Completed jobs need not be rerun to review the existing results.
 
 ## Prepare on Windows
 

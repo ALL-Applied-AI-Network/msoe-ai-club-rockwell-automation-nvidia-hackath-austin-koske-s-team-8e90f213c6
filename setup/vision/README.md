@@ -114,4 +114,3 @@ depend on this optional evaluation environment.
 
 Official task interfaces: [detection](https://docs.ultralytics.com/tasks/detect/),
 [segmentation](https://docs.ultralytics.com/tasks/segment/).
-

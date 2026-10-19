@@ -1,0 +1,638 @@
+{
+  "schema_version": 1,
+  "kind": "revised_18_render_training_execution",
+  "date": "2026-10-19",
+  "local_result": "C:\\Users\\Austin\\ai-club-tools\\results\\revised-render-detector-20261019",
+  "context": {
+    "host": "AUSTIN-DESKTOP",
+    "training_host": "local Windows GPU",
+    "reason": "Rosie SSH hostname stopped resolving; campus VPN unavailable during launch",
+    "torch": "2.11.0+cu128",
+    "ultralytics": "8.4.182",
+    "gpu": "NVIDIA GeForce RTX 4080 SUPER",
+    "planned_epochs": 12,
+    "hardware_deviation_from_previous_rosie_control": true,
+    "caveat": "Compare practical transfer, not a hardware/library-controlled renderer ablation; input plan stays frozen"
+  },
+  "state": {
+    "complete": true,
+    "training_host": "local RTX 4080 Super; Rosie hostname resolution failed",
+    "mixed_completed": true,
+    "sim_only_completed": true,
+    "run5_evaluation_complete": true,
+    "original_source_checks_passed": true,
+    "all_four_mp4s_fully_decoded": true,
+    "default_detector_changed": false,
+    "selected_review_cases": "evaluation/selected-review-cases.json"
+  },
+  "dataset": {
+    "mixed": {
+      "train_images": 2210,
+      "real_training_source_runs": [
+        1,
+        2,
+        3
+      ],
+      "unique_synthetic_rgb": 18,
+      "class_boxes": {
+        "0": 2210,
+        "1": 1316
+      },
+      "exposure_by_origin": {
+        "real": 1442,
+        "synthetic": 768
+      }
+    },
+    "sim-only": {
+      "train_images": 2210,
+      "real_training_source_runs": [],
+      "unique_synthetic_rgb": 18,
+      "class_boxes": {
+        "0": 2210,
+        "1": 1779
+      },
+      "exposure_by_origin": {
+        "synthetic": 2210
+      }
+    }
+  },
+  "comparison": {
+    "schema_version": 1,
+    "kind": "18_revised_render_transfer_probe",
+    "plan_sha256": "dcfb153dac7c18861c3a5c2a781d4cb31137c15b32ae2abb5afc2bf2a46e6799",
+    "unique_rendered_scenes": 18,
+    "baseline_checkpoint_sha256": "10856c18a8a5c485e832adcc6b841b739e726a969dc043fe8db64c49163bb361",
+    "default_detector_sha256": "89ed11f7046171e5340dc45a9d528010de1cefbba21e163b23b7098151e0880e",
+    "revised": {
+      "mixed": {
+        "model": {
+          "schema_version": 1,
+          "arm": "mixed",
+          "architecture": "yolo11n_detect",
+          "classes": [
+            "vial",
+            "colored_liquid"
+          ],
+          "model_sha256": "5efd9b3d2f1d18270535269c0d59551a326515af1edc8d7a06eb28d92dd24a7e",
+          "checkpoint_sha256": "c47ec8dceec4dd5a0c675b4884fc46c1e8f5d0d80090dfc3e1146a0ccafe95a2",
+          "pretrained_sha256": "0ebbc80d4a7680d14987a577cd21342b65ecfd94632bd9a8da63ae6417644ee1",
+          "experiment_plan_sha256": "dcfb153dac7c18861c3a5c2a781d4cb31137c15b32ae2abb5afc2bf2a46e6799",
+          "data_provenance_sha256": "3fcb4e8030c2c921a11dfee6c5c6d99fa9f228a0a81866441761dd69c272907b",
+          "trainer_sha256": "1ee6a72c0ef1c7989c87d2dbb0a3efbe01173cec32b6ae84a55f37b981a04e18",
+          "train_runs": [
+            1,
+            2,
+            3
+          ],
+          "development_runs": [
+            4
+          ],
+          "excluded_runs": [
+            5
+          ],
+          "epochs": 12,
+          "seed": 19,
+          "torch": "2.11.0+cu128",
+          "ultralytics": "8.4.182",
+          "preprocessing": "Unenhanced native full-frame RGB; ordinary identical YOLO letterboxing in both arms",
+          "target_scope": {
+            "vial": "Fill-position vial only: supplied synthetic object 101",
+            "colored_liquid": "Accumulated liquid body only: supplied synthetic object 201",
+            "omitted_synthetic_targets": "Neighbor vials 102/103 and stream 301; preserve in raw render export"
+          },
+          "counts": {
+            "real_train": 1442,
+            "real_val": 157,
+            "synthetic_train": 768
+          },
+          "automatic_promotion": false
+        },
+        "parity": {
+          "passed": true,
+          "development_run": 4,
+          "frames": 16,
+          "boxes": 23,
+          "max_source_pixel_error": 6.103515625e-05,
+          "max_score_error": 2.980232238769531e-07,
+          "backend": "PyTorch CPU vs ONNX Runtime CPU; no quantization",
+          "scope": "Post-freeze export consistency only; does not select or tune checkpoints",
+          "checkpoint_sha256": "c47ec8dceec4dd5a0c675b4884fc46c1e8f5d0d80090dfc3e1146a0ccafe95a2",
+          "onnx_sha256": "5efd9b3d2f1d18270535269c0d59551a326515af1edc8d7a06eb28d92dd24a7e",
+          "image_sha256": [
+            "4786122f0746b7103bce66c27ca2d5f73623cd11b29e29d0a48b4ed2d2aaf56b",
+            "c5f023a306294bf84235c57e9a548b6bdb107990f2eec1f6b846fc52a5f2ebdb",
+            "a62b4ec3b41239a59562c85f665d93a93e23b0840546e85b600f1db72cc1942e",
+            "6302b30f52a920ecd33a8215f89b429c390deaf010434fdfd07d5c18bfc69d72",
+            "925c809b4127a944628f37865a4f4acfae1a2f78da37d45a6b8483465d87fba7",
+            "f398b9a5c8e7751ab9a19ee1e2c2b155640c15f3f665693036956049fa3bf47c",
+            "350709f9932340dbf3f779948617aa960a70e8b171d5dc1da35a9bbcc394f631",
+            "d359e57491e7a2019aaf2bfbdd7aed8a9e45e0f8179a4f63ae9f957e6a3a8094",
+            "b9653fed9a12040fa4c3f5e38aa044f4c4de03829c8647e2d75780ddaff96000",
+            "b52760e45c321cf1e6134b066802af89a28b4675646d2fbc3f59db2cfe69a2e6",
+            "5bdaf187ca4637caab7c73101f3b1995fd49103f184f93faaded97ead1a111d9",
+            "a5290cf0a0f0282b050d52b14f75e9ab0a4799225a5e8fa99a5500a2650fce46",
+            "4411702bff56d7e1a087458708232ec92eb21d3948a1a188ab9f8960e95404f9",
+            "eceb17ac72040fc8c800fea61dbcc3ec8d8514a806cdbe04daa8f7d274709b58",
+            "b6ccd22afc4aacae0ad7d184f100697b3eccd077cbfd80939baf9582f2de8daf",
+            "25361ed5e54b41435bd23c986d5b8e5259b0f03c0bac95fc5f925b30050d3fc7"
+          ]
+        },
+        "teacher_agreement": {
+          "kind": "paired_teacher_box_agreement",
+          "frames": 816,
+          "excluded_unknown_frames": 29,
+          "gt_boxes_outside_candidate_crop": 0,
+          "ground_truth_boxes_clipped_or_dropped": 0,
+          "confidence_for_ap": 0.001,
+          "nms_iou": 0.45,
+          "baseline": {
+            "map50": 0.9430060777829511,
+            "map50_95": 0.6528232953194986,
+            "per_class": [
+              {
+                "class_id": 0,
+                "targets": 814,
+                "ap50": 0.9937549407114624,
+                "ap50_95": 0.8138566541156799,
+                "precision_at_035": 0.996319018404908,
+                "recall_at_035": 0.9975429975429976,
+                "tp_at_035": 812,
+                "fp_at_035": 3,
+                "fn_at_035": 2
+              },
+              {
+                "class_id": 1,
+                "targets": 541,
+                "ap50": 0.8922572148544398,
+                "ap50_95": 0.4917899365233172,
+                "precision_at_035": 0.9679802955665024,
+                "recall_at_035": 0.7264325323475046,
+                "tp_at_035": 393,
+                "fp_at_035": 13,
+                "fn_at_035": 148
+              }
+            ]
+          },
+          "candidate": {
+            "map50": 0.9127312888787251,
+            "map50_95": 0.6553883229119843,
+            "per_class": [
+              {
+                "class_id": 0,
+                "targets": 814,
+                "ap50": 0.9947665847665849,
+                "ap50_95": 0.8358292541197905,
+                "precision_at_035": 0.9963235294117647,
+                "recall_at_035": 0.9987714987714987,
+                "tp_at_035": 813,
+                "fp_at_035": 3,
+                "fn_at_035": 1
+              },
+              {
+                "class_id": 1,
+                "targets": 541,
+                "ap50": 0.8306959929908653,
+                "ap50_95": 0.4749473917041782,
+                "precision_at_035": 0.9495192307692307,
+                "recall_at_035": 0.7301293900184843,
+                "tp_at_035": 395,
+                "fp_at_035": 21,
+                "fn_at_035": 146
+              }
+            ]
+          },
+          "limitations": [
+            "Unreviewed teacher boxes; not independent human accuracy.",
+            "Unknown/manual/empty records excluded, so not an absent-vial false-positive benchmark.",
+            "Both models use the same PyTorch backend, inference settings and full-source-coordinate matcher.",
+            "Run 5 excluded from fitting/checkpoint selection but already inspected previously."
+          ]
+        },
+        "video": {
+          "source_video_sha256": "6f87cec1aeec3b2bae6dac639a317c077a3f175f27abd5fc8430d6953d9d05b9",
+          "source_frames_decoded": 50942,
+          "source_samples_verified": 8491,
+          "full_video_frames": 8491,
+          "full_video_fps": 5,
+          "early_video_frames": 968,
+          "early_video_fps": 30,
+          "early_image_estimated_starts": [
+            1374,
+            2760,
+            4152,
+            5400,
+            6660,
+            8550,
+            10152,
+            11754
+          ],
+          "unique_source_frames_inferred": 9299,
+          "baseline_presence": {
+            "samples_with_vial": 8282,
+            "samples_with_liquid": 4207
+          },
+          "candidate_presence": {
+            "samples_with_vial": 8306,
+            "samples_with_liquid": 4194
+          },
+          "presence_is_not_accuracy": true,
+          "early_starts_are_not_reviewed_flow_onsets": true,
+          "raw_source_pixels_preserved": true,
+          "no_recipe_color_qa_or_tracking_claim": true
+        },
+        "output_sha256": {
+          "run5-full-comparison.mp4": "9083de539b90fc46f021d7b3ae9a0f45aa822d33b59a9e76ee712a24b5934db5",
+          "run5-early-pours.mp4": "2a42b4a96751224e261f2668b7a155f118a1f3937b75e9d78f5a8d7825342c56",
+          "video-predictions.jsonl": "b5a76fa76a7e8533d5c849c73c59c8da401f6ff37b2bbc280bb264a4a08d1b3f"
+        }
+      },
+      "sim-only": {
+        "model": {
+          "schema_version": 1,
+          "arm": "sim-only",
+          "architecture": "yolo11n_detect",
+          "classes": [
+            "vial",
+            "colored_liquid"
+          ],
+          "preprocessing": "Unenhanced native full-frame RGB; ordinary identical YOLO letterboxing in both arms",
+          "target_scope": {
+            "vial": "Fill-position vial only: supplied synthetic object 101",
+            "colored_liquid": "Accumulated liquid body only: supplied synthetic object 201",
+            "omitted_synthetic_targets": "Neighbor vials 102/103 and stream 301; preserve in raw render export"
+          },
+          "checkpoint_sha256": "4faa935ebe276dde50466277e152eab9380b14866effcb6f2da4fabcf52d447e",
+          "model_sha256": "e62bb506ba1ed45733e145c7729e5f5863988a63e30567f585ffcc029b792e32",
+          "sim_only_plan_sha256": "2c76a8f7cba4f81d6c6fee6ee49056b1ba9cd8674b9a59a163eba75c9342c33f",
+          "base_plan_sha256": "dcfb153dac7c18861c3a5c2a781d4cb31137c15b32ae2abb5afc2bf2a46e6799",
+          "data_provenance_sha256": "31935e86256e00e747275061596f8e6077c4ac4d455ba28bbdc580f8839fefe3",
+          "trainer_sha256": "2dcaf96a8512884f0acd9f534ebc9f58d6981c80f8fcfec14cdafb5f1921f501",
+          "shared_preparation_helper_sha256": "1ee6a72c0ef1c7989c87d2dbb0a3efbe01173cec32b6ae84a55f37b981a04e18",
+          "pretrained_sha256": "0ebbc80d4a7680d14987a577cd21342b65ecfd94632bd9a8da63ae6417644ee1",
+          "checkpoint_selection": "Fixed final epoch 12; no real checkpoint selection",
+          "train_runs": [],
+          "development_runs": [],
+          "excluded_real_runs": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "unique_synthetic_images": 18,
+          "training_images": 2210,
+          "epochs": 12,
+          "seed": 19,
+          "torch": "2.11.0+cu128",
+          "ultralytics": "8.4.182",
+          "generic_real_pretraining": "COCO initialization; renderer also qualitatively guided by Runs 1-3 RGB; fine-tuning/selection use only generated pixels",
+          "automatic_promotion": false
+        },
+        "parity": {
+          "passed": true,
+          "development_run": 4,
+          "frames": 16,
+          "boxes": 34,
+          "max_source_pixel_error": 6.103515625e-05,
+          "max_score_error": 2.5331974029541016e-06,
+          "backend": "PyTorch CPU vs ONNX Runtime CPU; no quantization",
+          "scope": "Post-freeze export consistency only; does not select or tune checkpoints",
+          "checkpoint_sha256": "4faa935ebe276dde50466277e152eab9380b14866effcb6f2da4fabcf52d447e",
+          "onnx_sha256": "e62bb506ba1ed45733e145c7729e5f5863988a63e30567f585ffcc029b792e32",
+          "image_sha256": [
+            "4786122f0746b7103bce66c27ca2d5f73623cd11b29e29d0a48b4ed2d2aaf56b",
+            "c5f023a306294bf84235c57e9a548b6bdb107990f2eec1f6b846fc52a5f2ebdb",
+            "a62b4ec3b41239a59562c85f665d93a93e23b0840546e85b600f1db72cc1942e",
+            "6302b30f52a920ecd33a8215f89b429c390deaf010434fdfd07d5c18bfc69d72",
+            "925c809b4127a944628f37865a4f4acfae1a2f78da37d45a6b8483465d87fba7",
+            "f398b9a5c8e7751ab9a19ee1e2c2b155640c15f3f665693036956049fa3bf47c",
+            "350709f9932340dbf3f779948617aa960a70e8b171d5dc1da35a9bbcc394f631",
+            "d359e57491e7a2019aaf2bfbdd7aed8a9e45e0f8179a4f63ae9f957e6a3a8094",
+            "b9653fed9a12040fa4c3f5e38aa044f4c4de03829c8647e2d75780ddaff96000",
+            "b52760e45c321cf1e6134b066802af89a28b4675646d2fbc3f59db2cfe69a2e6",
+            "5bdaf187ca4637caab7c73101f3b1995fd49103f184f93faaded97ead1a111d9",
+            "a5290cf0a0f0282b050d52b14f75e9ab0a4799225a5e8fa99a5500a2650fce46",
+            "4411702bff56d7e1a087458708232ec92eb21d3948a1a188ab9f8960e95404f9",
+            "eceb17ac72040fc8c800fea61dbcc3ec8d8514a806cdbe04daa8f7d274709b58",
+            "b6ccd22afc4aacae0ad7d184f100697b3eccd077cbfd80939baf9582f2de8daf",
+            "25361ed5e54b41435bd23c986d5b8e5259b0f03c0bac95fc5f925b30050d3fc7"
+          ]
+        },
+        "teacher_agreement": {
+          "kind": "paired_teacher_box_agreement",
+          "frames": 816,
+          "excluded_unknown_frames": 29,
+          "gt_boxes_outside_candidate_crop": 0,
+          "ground_truth_boxes_clipped_or_dropped": 0,
+          "confidence_for_ap": 0.001,
+          "nms_iou": 0.45,
+          "baseline": {
+            "map50": 0.9430060777829511,
+            "map50_95": 0.6528232953194986,
+            "per_class": [
+              {
+                "class_id": 0,
+                "targets": 814,
+                "ap50": 0.9937549407114624,
+                "ap50_95": 0.8138566541156799,
+                "precision_at_035": 0.996319018404908,
+                "recall_at_035": 0.9975429975429976,
+                "tp_at_035": 812,
+                "fp_at_035": 3,
+                "fn_at_035": 2
+              },
+              {
+                "class_id": 1,
+                "targets": 541,
+                "ap50": 0.8922572148544398,
+                "ap50_95": 0.4917899365233172,
+                "precision_at_035": 0.9679802955665024,
+                "recall_at_035": 0.7264325323475046,
+                "tp_at_035": 393,
+                "fp_at_035": 13,
+                "fn_at_035": 148
+              }
+            ]
+          },
+          "candidate": {
+            "map50": 0.6219429151228046,
+            "map50_95": 0.4446374767357678,
+            "per_class": [
+              {
+                "class_id": 0,
+                "targets": 814,
+                "ap50": 0.9936081717356616,
+                "ap50_95": 0.77266602218656,
+                "precision_at_035": 0.9975216852540273,
+                "recall_at_035": 0.9889434889434889,
+                "tp_at_035": 805,
+                "fp_at_035": 2,
+                "fn_at_035": 9
+              },
+              {
+                "class_id": 1,
+                "targets": 541,
+                "ap50": 0.25027765850994776,
+                "ap50_95": 0.11660893128497578,
+                "precision_at_035": 0.3561946902654867,
+                "recall_at_035": 0.2975970425138632,
+                "tp_at_035": 161,
+                "fp_at_035": 291,
+                "fn_at_035": 380
+              }
+            ]
+          },
+          "limitations": [
+            "Unreviewed teacher boxes; not independent human accuracy.",
+            "Unknown/manual/empty records excluded, so not an absent-vial false-positive benchmark.",
+            "Both models use the same PyTorch backend, inference settings and full-source-coordinate matcher.",
+            "Run 5 excluded from fitting/checkpoint selection but already inspected previously."
+          ]
+        },
+        "video": {
+          "source_video_sha256": "6f87cec1aeec3b2bae6dac639a317c077a3f175f27abd5fc8430d6953d9d05b9",
+          "source_frames_decoded": 50942,
+          "source_samples_verified": 8491,
+          "full_video_frames": 8491,
+          "full_video_fps": 5,
+          "early_video_frames": 968,
+          "early_video_fps": 30,
+          "early_image_estimated_starts": [
+            1374,
+            2760,
+            4152,
+            5400,
+            6660,
+            8550,
+            10152,
+            11754
+          ],
+          "unique_source_frames_inferred": 9299,
+          "baseline_presence": {
+            "samples_with_vial": 8282,
+            "samples_with_liquid": 4207
+          },
+          "candidate_presence": {
+            "samples_with_vial": 7842,
+            "samples_with_liquid": 3112
+          },
+          "presence_is_not_accuracy": true,
+          "early_starts_are_not_reviewed_flow_onsets": true,
+          "raw_source_pixels_preserved": true,
+          "no_recipe_color_qa_or_tracking_claim": true
+        },
+        "output_sha256": {
+          "run5-full-comparison.mp4": "bc5522ac909a14b6bc4562b56824bde77ba5576e9135f816b1abaef13ac94462",
+          "run5-early-pours.mp4": "c460c4ecb5cb27c9bec10a2cf6d5e9d8209f1480d0308659419e9e9c1a111a9d",
+          "video-predictions.jsonl": "67a3df443876cd78334cc11d4ddb3d2b7ce29fbdb6154c4a09048b45c2d97cc2"
+        }
+      }
+    },
+    "cached_previous": {
+      "source_comparison_sha256": "33c301a60a29581af4aedea657579960966fa0caf0bf90427ebc8398baec0cd3",
+      "old_mixed": {
+        "map50": 0.9240437786876083,
+        "map50_95": 0.665498924820132,
+        "per_class": [
+          {
+            "class_id": 0,
+            "targets": 814,
+            "ap50": 0.9936598340765005,
+            "ap50_95": 0.8470332975705661,
+            "precision_at_035": 0.9950980392156863,
+            "recall_at_035": 0.9975429975429976,
+            "tp_at_035": 812,
+            "fp_at_035": 4,
+            "fn_at_035": 2
+          },
+          {
+            "class_id": 1,
+            "targets": 541,
+            "ap50": 0.8544277232987161,
+            "ap50_95": 0.48396455206969763,
+            "precision_at_035": 0.86652977412731,
+            "recall_at_035": 0.7800369685767098,
+            "tp_at_035": 422,
+            "fp_at_035": 65,
+            "fn_at_035": 119
+          }
+        ]
+      },
+      "real_only_control": {
+        "map50": 0.9339657281933227,
+        "map50_95": 0.6549870260211895,
+        "per_class": [
+          {
+            "class_id": 0,
+            "targets": 814,
+            "ap50": 0.9930098280098278,
+            "ap50_95": 0.8268312663549565,
+            "precision_at_035": 0.9950980392156863,
+            "recall_at_035": 0.9975429975429976,
+            "tp_at_035": 812,
+            "fp_at_035": 4,
+            "fn_at_035": 2
+          },
+          {
+            "class_id": 1,
+            "targets": 541,
+            "ap50": 0.8749216283768175,
+            "ap50_95": 0.48314278568742247,
+            "precision_at_035": 0.9227467811158798,
+            "recall_at_035": 0.7948243992606284,
+            "tp_at_035": 430,
+            "fp_at_035": 36,
+            "fn_at_035": 111
+          }
+        ]
+      },
+      "old_sim_only": {
+        "map50": 0.730997672460872,
+        "map50_95": 0.45974283353936574,
+        "per_class": [
+          {
+            "class_id": 0,
+            "targets": 814,
+            "ap50": 0.9942765077718988,
+            "ap50_95": 0.7161696879471963,
+            "precision_at_035": 0.9975369458128078,
+            "recall_at_035": 0.995085995085995,
+            "tp_at_035": 810,
+            "fp_at_035": 2,
+            "fn_at_035": 4
+          },
+          {
+            "class_id": 1,
+            "targets": 541,
+            "ap50": 0.4677188371498452,
+            "ap50_95": 0.20331597913153518,
+            "precision_at_035": 0.44107142857142856,
+            "recall_at_035": 0.4565619223659889,
+            "tp_at_035": 247,
+            "fp_at_035": 313,
+            "fn_at_035": 294
+          }
+        ]
+      },
+      "source_policy": "Previously completed frozen models/diagnostics, not refitted under the new plan"
+    },
+    "paired_original_video_sources_verified": 9299,
+    "video_decode_checks": [
+      {
+        "path": "C:\\Users\\Austin\\ai-club-tools\\results\\revised-render-detector-20261019\\evaluation\\mixed\\run5-full-comparison.mp4",
+        "frames_decoded": 8491,
+        "passed": true
+      },
+      {
+        "path": "C:\\Users\\Austin\\ai-club-tools\\results\\revised-render-detector-20261019\\evaluation\\mixed\\run5-early-pours.mp4",
+        "frames_decoded": 968,
+        "passed": true
+      },
+      {
+        "path": "C:\\Users\\Austin\\ai-club-tools\\results\\revised-render-detector-20261019\\evaluation\\sim-only\\run5-full-comparison.mp4",
+        "frames_decoded": 8491,
+        "passed": true
+      },
+      {
+        "path": "C:\\Users\\Austin\\ai-club-tools\\results\\revised-render-detector-20261019\\evaluation\\sim-only\\run5-early-pours.mp4",
+        "frames_decoded": 968,
+        "passed": true
+      }
+    ],
+    "thresholds_unchanged": true,
+    "measurement_pipeline_changed": false,
+    "automatic_promotion": false,
+    "limitations": [
+      "Real targets remain unreviewed teacher proposals.",
+      "Synthetic targets are geometric proxy visibility, not calibrated refracted RGB or physical fluid truth.",
+      "Run 5 was previously inspected and the teacher previously saw it; diagnostic comparison, not a new blind test.",
+      "No detector promotion or measurement-QA change.",
+      "Only 18 unique revised renders, repeated heavily; not 768 new scenes.",
+      "Renderer was qualitatively guided by real Runs 1-3 RGB; sim-only describes domain fine-tuning pixels, not an absence of real design guidance.",
+      "Revised-vs-old comparisons change render diversity as well as appearance/geometry; no causal renderer-only ablation.",
+      "Body/vial classes unchanged. Streams retained raw, excluded as positive targets in this two-class probe."
+    ]
+  },
+  "frozen_inputs": {
+    "plan_sha256": "dcfb153dac7c18861c3a5c2a781d4cb31137c15b32ae2abb5afc2bf2a46e6799",
+    "sim_plan_sha256": "2c76a8f7cba4f81d6c6fee6ee49056b1ba9cd8674b9a59a163eba75c9342c33f",
+    "provenance_sha256": {
+      "real": "81851cba53c05a1811e81c32bc8328c4f4d5236e4f26bf6510505eae029b260c",
+      "mixed": "3fcb4e8030c2c921a11dfee6c5c6d99fa9f228a0a81866441761dd69c272907b",
+      "sim-only": "31935e86256e00e747275061596f8e6077c4ac4d455ba28bbdc580f8839fefe3"
+    },
+    "source_scripts": {
+      "train_mixed_detector.py": "1ee6a72c0ef1c7989c87d2dbb0a3efbe01173cec32b6ae84a55f37b981a04e18",
+      "train_sim_only.py": "2dcaf96a8512884f0acd9f534ebc9f58d6981c80f8fcfec14cdafb5f1921f501",
+      "train_revised_render.py": "f2da687c8036ffeb3e23e54f08ae990b80ce2aebcb3eee60b0f6c41443186779"
+    }
+  },
+  "render_profile": "meniscus-transmission-v2",
+  "appearance_reference_runs": [
+    1,
+    2,
+    3
+  ],
+  "local_example_video_frames": [
+    {
+      "arm": "mixed",
+      "video_frame": 0,
+      "source_frame": 0,
+      "mp4_s": 0.0
+    },
+    {
+      "arm": "mixed",
+      "video_frame": 4245,
+      "source_frame": 25470,
+      "mp4_s": 849.0
+    },
+    {
+      "arm": "mixed",
+      "video_frame": 8490,
+      "source_frame": 50940,
+      "mp4_s": 1698.0
+    },
+    {
+      "arm": "sim-only",
+      "video_frame": 0,
+      "source_frame": 0,
+      "mp4_s": 0.0
+    },
+    {
+      "arm": "sim-only",
+      "video_frame": 4245,
+      "source_frame": 25470,
+      "mp4_s": 849.0
+    },
+    {
+      "arm": "sim-only",
+      "video_frame": 8490,
+      "source_frame": 50940,
+      "mp4_s": 1698.0
+    }
+  ],
+  "evaluation_script_sha256": "68b6b1866404a0675087e7b705d7797595e833e3a90e1f0ead7cc195647429f6",
+  "baseline_unchanged_sha256": "89ed11f7046171e5340dc45a9d528010de1cefbba21e163b23b7098151e0880e",
+  "selected_case_manifest_sha256": "f590dddd4af8689d2733502d9f769554054b8c1ce7ffd8fd8abf2baf05f8ce6f",
+  "checks": {
+    "existing_split_and_integrity_tests_passed": 7,
+    "frozen_source_and_inventory_hashes_passed": true,
+    "all_epochs_completed": 12,
+    "onnx_parity_passed": true,
+    "source_video_frame_hashes_verified": 9299,
+    "delivered_videos_decoded": 4,
+    "selected_images_visually_reviewed": true
+  },
+  "recommendation": "Retain current default; no overall liquid-box agreement improvement. Localized pale example gain does not outweigh regressions.",
+  "limits": [
+    "Real targets remain unreviewed teacher proposals.",
+    "Synthetic targets are geometric proxy visibility, not calibrated refracted RGB or physical fluid truth.",
+    "Run 5 was previously inspected and the teacher previously saw it; diagnostic comparison, not a new blind test.",
+    "No detector promotion or measurement-QA change.",
+    "Only 18 unique revised renders, repeated heavily; not 768 new scenes.",
+    "Renderer was qualitatively guided by real Runs 1-3 RGB; sim-only describes domain fine-tuning pixels, not an absence of real design guidance.",
+    "Revised-vs-old comparisons change render diversity as well as appearance/geometry; no causal renderer-only ablation.",
+    "Body/vial classes unchanged. Streams retained raw, excluded as positive targets in this two-class probe.",
+    "Fitting ran on local Torch 2.11/RTX; prior controls used Torch 2.8/H100."
+  ]
+}

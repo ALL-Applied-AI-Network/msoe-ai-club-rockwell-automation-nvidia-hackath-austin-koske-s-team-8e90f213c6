@@ -1,5 +1,10 @@
 # Real + synthetic bbox pilot
 
+The later [18-render revision probe](REVISED-RENDER-TRAINING.md) tests the new
+transmission/early-pool renderer with explicit provisional admission. It keeps
+the same two-class target, records repeated exposures separately from unique
+scenes, and does not replace this frozen experiment or the default detector.
+
 This compares the current detector with a full-frame YOLO11n trained on real
 Runs 1-3 plus a seeded GB10 synthetic batch. Run 4 alone selects mixed/control
 checkpoints; the supplemental sim-only arm uses its fixed final epoch.

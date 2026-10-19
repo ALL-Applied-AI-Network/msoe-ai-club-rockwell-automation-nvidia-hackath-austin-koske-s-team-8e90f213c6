@@ -50,6 +50,10 @@ Team environment onboarding: **[start here](setup/START_HERE.md)** for laptop
 data work, GB10 Isaac/Cosmos, and Rosie Singularity/Slurm. The
 [setup guide](setup/README.md) includes commands and executed verification.
 
+Recording replay app: run `pwsh -File setup/run-replay.ps1`, then open
+<http://127.0.0.1:8765>. See [replay instructions](replay/README.md) for source
+paths, annotation handoffs, reference timing, batch exports and current limits.
+
 ```bash
 git clone <this repository's URL from the green "Code" button>
 ```

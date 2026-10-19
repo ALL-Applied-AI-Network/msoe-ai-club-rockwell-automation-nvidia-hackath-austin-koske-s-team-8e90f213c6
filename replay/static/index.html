@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>First Vial · Recording replay</title>
+    <link rel="stylesheet" href="/style.css" />
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <main>
+      <header>
+        <div>
+          <p class="eyebrow">AI CLUB / CSI FLUID MIXING</p>
+          <h1>First Vial <span>Recording replay</span></h1>
+        </div>
+        <div class="mode">
+          <span id="mode-label">● IMAGE FILL DETECTION</span>
+          <small>Advisory experiment</small>
+        </div>
+      </header>
+      <div class="toolbar">
+        <label
+          >Recording
+          <select id="run" aria-label="Recording"></select></label
+        ><button id="play">Play</button><button id="restart">Restart</button
+        ><label
+          >Speed
+          <select id="speed" aria-label="Playback speed">
+            <option value=".25">¼×</option>
+            <option selected value="1">1×</option>
+            <option value="2">2×</option>
+            <option value="4">4×</option>
+            <option value="8">8×</option>
+          </select></label
+        ><label class="jump"
+          >Jump to fill
+          <select id="vial" aria-label="Jump to vial">
+            <option value="">Choose a vial</option>
+          </select></label
+        ><button id="completed-jump" disabled>Jump to completed check</button
+        ><label class="toggle"
+          ><input id="overlays" type="checkbox" checked /> Show measurement
+          regions</label
+        >
+      </div>
+      <p id="message" role="status" class="message">Loading recordings…</p>
+      <div class="workspace">
+        <section class="camera-main panel">
+          <div class="panel-label">
+            <span>01 / VIAL FILL</span><span id="frame">FRAME —</span>
+          </div>
+          <div class="camera-wrap">
+            <video
+              id="primary"
+              preload="metadata"
+              muted
+              playsinline
+              controls
+            ></video
+            ><canvas
+              id="overlay"
+              width="640"
+              height="480"
+              aria-label="Fixed measurement regions"
+            ></canvas>
+          </div>
+          <div class="camera-foot">
+            <span id="clock">MP4 00:00.00</span
+            ><span id="wall">Wall time unavailable</span>
+          </div>
+        </section>
+        <aside>
+          <section class="panel recipe">
+            <p class="eyebrow">FILL / RECIPE CONTEXT</p>
+            <h2 id="recipe">Waiting for context</h2>
+            <p id="phase" class="subtle">—</p>
+            <div id="volumes" class="volumes"></div>
+            <p id="order" class="subtle">Dispense order unavailable</p>
+            <p id="hold" class="hold">Baseline policy awaiting context</p>
+          </section>
+          <section id="decision-card" class="panel decision unavailable">
+            <p class="eyebrow">COMPLETED-VIAL CHECK</p>
+            <h2 id="decision">Awaiting measurement</h2>
+            <p id="explanation">
+              A finished-recipe reference is compared only after filling and the
+              sampling window end.
+            </p>
+            <div class="colors">
+              <div>
+                <span id="observed-swatch" class="swatch"></span
+                ><small>Observed</small><strong id="observed-lab">—</strong>
+              </div>
+              <div>
+                <span id="expected-swatch" class="swatch"></span
+                ><small>Reference</small><strong id="expected-lab">—</strong>
+              </div>
+              <div>
+                <small>ΔE2000</small><strong id="delta">—</strong
+                ><small id="threshold">Experimental band</small>
+              </div>
+            </div>
+            <p id="qa" class="subtle">Measurement QA pending</p>
+            <button id="reference" disabled>
+              Use completed vial as development reference</button
+            ><small class="reference-note"
+              >Manual choice, not certified clean product. Eligible only for
+              fills starting after this choice.</small
+            ><a id="reference-download" href="/api/references"
+              >Download reference bank</a
+            >
+          </section>
+        </aside>
+      </div>
+      <div class="supporting">
+        <section class="panel">
+          <div class="panel-label">
+            02 / TANK LEVEL <span class="subtle">Container-time alignment</span>
+          </div>
+          <video id="tank_level" preload="metadata" muted playsinline></video>
+        </section>
+        <section class="panel">
+          <div class="panel-label">
+            03 / CAP &amp; SEAL
+            <span class="subtle">Container-time alignment</span>
+          </div>
+          <video id="cap_seal" preload="metadata" muted playsinline></video>
+        </section>
+        <section class="panel live">
+          <div class="panel-label">CURRENT ROI · CAMERA LAB</div>
+          <p id="live-lab">—</p>
+          <p id="live-quality" class="subtle">—</p>
+          <p id="motion" class="subtle">Carrier motion —</p>
+          <p id="nozzle" class="subtle">Nozzle change —</p>
+          <p id="latency" class="subtle">Processing —</p>
+          <div id="coverage" class="coverage">0 available observations</div>
+        </section>
+      </div>
+      <section class="panel ledger">
+        <div class="ledger-head">
+          <div>
+            <p class="eyebrow">AVAILABLE THROUGH THE PLAYHEAD</p>
+            <h2>Completed-vial ledger</h2>
+          </div>
+          <div class="downloads">
+            <a id="events" href="#">Export events JSONL</a
+            ><a id="observations" href="#">Export observations CSV</a>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Vial / recipe</th>
+                <th>Available at MP4</th>
+                <th>QA</th>
+                <th>Color</th>
+                <th>ΔE2000</th>
+                <th>Assessment</th>
+                <th>Reference</th>
+              </tr>
+            </thead>
+            <tbody id="ledger">
+              <tr>
+                <td colspan="7">
+                  Play or seek past a completed-vial sampling window.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <footer>
+        <p>
+          Image mode detects visible stream episodes and confirms each completed
+          fill at carrier departure. Ingredient pauses remain in the same fill.
+          Recipe identity needs a separate context source. Supplied boundaries
+          are used only by the optional annotation baseline and offline validation.
+          Stage-aware early alerts and defect ground truth are still pending.
+        </p>
+        <p>
+          Camera Lab assumes sRGB/D65. Fixed ROIs and thresholds are pilot
+          settings. Cross-camera physical synchronization remains unverified.
+          Raw recordings and labels are read-only.
+        </p>
+        <p id="provenance"></p>
+      </footer>
+    </main>
+  </body>
+</html>

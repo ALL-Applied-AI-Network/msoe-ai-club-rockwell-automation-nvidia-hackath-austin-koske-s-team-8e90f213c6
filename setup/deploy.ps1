@@ -6,6 +6,7 @@ $archivePath = Join-Path ([System.IO.Path]::GetTempPath()) ('ai-club-setup-' + [
 Push-Location $repositoryRoot
 try {
     $packagePaths = @('setup')
+    if (Test-Path -LiteralPath (Join-Path $repositoryRoot 'replay')) { $packagePaths += 'replay' }
     if ($IncludeTwin) {
         $packagePaths += @('datasets/mixing_twin/README.md', 'datasets/mixing_twin/mixing',
                           'datasets/mixing_twin/scripts/render_isaac.py', 'datasets/mixing_twin/assets')

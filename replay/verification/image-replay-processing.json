@@ -1,0 +1,88 @@
+{
+  "checked_date": "2026-10-18",
+  "regression_tests_passed": 22,
+  "scope": "Processing smoke checks; only Run 5 has supplied boundary evaluation",
+  "runs": [
+    {
+      "run_id": 1,
+      "decoded_frames": 33662,
+      "samples": 5611,
+      "annotations_loaded": 0,
+      "accepted_fills": 19,
+      "qa_valid": 15,
+      "rejected_candidates": 0,
+      "open_fill_at_eof": null,
+      "video_sha256": "1678ea5e8fa01a532c5114bbfeb9672413fd25b4d883d8ac881786f414804ddf",
+      "config_id": "c4feec54d72a7ede",
+      "implementation_id": "1bb1cd5b420b9749"
+    },
+    {
+      "run_id": 2,
+      "decoded_frames": 4802,
+      "samples": 801,
+      "annotations_loaded": 0,
+      "accepted_fills": 3,
+      "qa_valid": 3,
+      "rejected_candidates": 0,
+      "open_fill_at_eof": null,
+      "video_sha256": "d5e07b9ac5d7e1df4b34349d40488c1d97475666986eb52b7b19bf466a06dd01",
+      "config_id": "c4feec54d72a7ede",
+      "implementation_id": "1bb1cd5b420b9749"
+    },
+    {
+      "run_id": 3,
+      "decoded_frames": 5792,
+      "samples": 966,
+      "annotations_loaded": 0,
+      "accepted_fills": 2,
+      "qa_valid": 2,
+      "rejected_candidates": 2,
+      "open_fill_at_eof": null,
+      "video_sha256": "d5229ac81ba353f725b14d666bd40adc9b1ad10b37c7bdf8bc6814d7675481cc",
+      "config_id": "c4feec54d72a7ede",
+      "implementation_id": "1bb1cd5b420b9749"
+    },
+    {
+      "run_id": 4,
+      "decoded_frames": 9482,
+      "samples": 1581,
+      "annotations_loaded": 0,
+      "accepted_fills": 6,
+      "qa_valid": 4,
+      "rejected_candidates": 0,
+      "open_fill_at_eof": null,
+      "video_sha256": "e2de9cdf613817556f3de1edaaf8e5aa4c998cdfdbb7c4c2cee2e76d672db1b9",
+      "config_id": "c4feec54d72a7ede",
+      "implementation_id": "1bb1cd5b420b9749"
+    },
+    {
+      "run_id": 5,
+      "decoded_frames": 50942,
+      "samples": 8491,
+      "annotations_loaded": 0,
+      "accepted_fills": 30,
+      "qa_valid": 19,
+      "rejected_candidates": 0,
+      "open_fill_at_eof": null,
+      "video_sha256": "6f87cec1aeec3b2bae6dac639a317c077a3f175f27abd5fc8430d6953d9d05b9",
+      "config_id": "c4feec54d72a7ede",
+      "implementation_id": "1bb1cd5b420b9749"
+    }
+  ],
+  "run5_annotation_independence": {
+    "checked": true,
+    "comparison": "30 supplied labels present versus annotation loading disabled",
+    "identical": [
+      "detections",
+      "detection_events",
+      "observations"
+    ]
+  },
+  "browser_check": {
+    "run_id": 5,
+    "frame": 21852,
+    "all_three_video_mp4_s": 728.408333,
+    "media_errors": 0,
+    "exported_observation_rows": 14
+  }
+}

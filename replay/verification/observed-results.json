@@ -1,0 +1,93 @@
+{
+  "checked_date": "2026-10-16",
+  "regression_tests_passed": 13,
+  "runs": [
+    {
+      "run_id": 1,
+      "decoded_frames": 33662,
+      "samples": 5611,
+      "observations": 0,
+      "qa_valid": 0,
+      "missing_pts_samples": 0,
+      "analysis_seconds": 10.802879000024404,
+      "feature_processing_p95_ms": 2.240599977085367,
+      "implementation_id": "f6ccd16ded1ced00",
+      "config_id": "681d4a610c09f2c8"
+    },
+    {
+      "run_id": 2,
+      "decoded_frames": 4802,
+      "samples": 801,
+      "observations": 0,
+      "qa_valid": 0,
+      "missing_pts_samples": 0,
+      "analysis_seconds": 1.5852387999766506,
+      "feature_processing_p95_ms": 2.3089000023901463,
+      "implementation_id": "f6ccd16ded1ced00",
+      "config_id": "681d4a610c09f2c8"
+    },
+    {
+      "run_id": 3,
+      "decoded_frames": 5792,
+      "samples": 966,
+      "observations": 0,
+      "qa_valid": 0,
+      "missing_pts_samples": 0,
+      "analysis_seconds": 1.8920918000512756,
+      "feature_processing_p95_ms": 2.196625020587817,
+      "implementation_id": "f6ccd16ded1ced00",
+      "config_id": "681d4a610c09f2c8"
+    },
+    {
+      "run_id": 4,
+      "decoded_frames": 9482,
+      "samples": 1581,
+      "observations": 0,
+      "qa_valid": 0,
+      "missing_pts_samples": 0,
+      "analysis_seconds": 3.101231699984055,
+      "feature_processing_p95_ms": 2.2148999851197004,
+      "implementation_id": "f6ccd16ded1ced00",
+      "config_id": "681d4a610c09f2c8"
+    },
+    {
+      "run_id": 5,
+      "decoded_frames": 50942,
+      "samples": 8491,
+      "observations": 30,
+      "qa_valid": 18,
+      "missing_pts_samples": 0,
+      "analysis_seconds": 16.797577199991792,
+      "feature_processing_p95_ms": 2.326750021893531,
+      "implementation_id": "f6ccd16ded1ced00",
+      "config_id": "681d4a610c09f2c8"
+    }
+  ],
+  "scope": "Software execution and measurement coverage, not defect accuracy",
+  "runtime": {
+    "python": "3.12.12",
+    "architecture": "AMD64",
+    "numpy": "2.5.4",
+    "av": "19.0.1",
+    "opencv": "5.0.0",
+    "skimage": "0.26.0"
+  },
+  "input_video_hashes_unchanged": true,
+  "total_samples": 17450,
+  "batch_analysis_seconds": 34.17901850002818,
+  "browser_checks": {
+    "three_camera_play_and_seek": "passed",
+    "paused_camera_times_s": [
+      935.562216,
+      935.562216,
+      935.562216
+    ],
+    "rapid_run_switch_clears_context": "passed",
+    "completed_check_navigation": "passed",
+    "own_reference_on_backward_seek": "unavailable as required",
+    "development_reference_vial16_to17_de2000": 5.96,
+    "csv_export_frame_cutoff": 27444,
+    "csv_export_rows": 17,
+    "ui_test_reference_isolated_from_default_output": true
+  }
+}

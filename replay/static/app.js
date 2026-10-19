@@ -86,12 +86,16 @@ function overlays() {
     ctx = canvas.getContext("2d");
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   if (!catalog || !el("overlays").checked) return;
-  for (const [name, color, label] of [
-    ["color_roi", "#a6e3c3", "COLOR"],
-    ["holder_roi", "#f5c27b", "QA"],
-    ["nozzle_roi", "#9bc7e5", "NOZZLE"],
+  // Never paint an old feature box onto a later video frame. Between sampled
+  // frames the frozen evidence panel is the authoritative geometry display.
+  if (snapshot?.feature?.frame_index !== sourceFrame()) return;
+  const g = snapshot?.feature?.geometry;
+  for (const [box, color, label] of [
+    [g?.vial_box, "#9bc7e5", `VIAL PROPOSAL · TRACK ${g?.track_id}`],
+    [g?.liquid_box, "#a6e3c3", "LIQUID PROPOSAL"],
   ]) {
-    const [x0, y0, x1, y1] = catalog.config[name];
+    if (!box) continue;
+    const [x0, y0, x1, y1] = box;
     ctx.strokeStyle = color;
     ctx.lineWidth = 1.5;
     ctx.strokeRect(x0, y0, x1 - x0, y1 - y0);
@@ -100,6 +104,33 @@ function overlays() {
     ctx.fillText(label, x0, y0 - 5);
   }
 }
+let evidenceKey = "";
+function renderEvidence(completed) {
+  const rows = completed?.measurement_evidence || [];
+  const key = `${current?.run_id}/${completed?.event_id || "none"}`;
+  if (key !== evidenceKey) {
+    evidenceKey = key;
+    el("evidence-sample").replaceChildren(...rows.map((r) => new Option(
+      `Frame ${r.frame_index} · MP4 ${time(r.video_s)} · ${r.accepted ? "used" : "rejected"}`, String(r.frame_index))));
+    const accepted = rows.filter(r => r.accepted);
+    if (accepted.length) el("evidence-sample").value = String(accepted[Math.floor(accepted.length / 2)].frame_index);
+  }
+  const row = rows.find(r => r.frame_index === Number(el("evidence-sample").value));
+  for (const kind of ["source", "overlay", "mask"]) {
+    const img = el(`evidence-${kind}`);
+    img.hidden = !row;
+    if (row) {
+      const url = `/api/evidence?run=${current.run_id}&frame=${row.frame_index}&at=${completed.available_frame}&kind=${kind}`;
+      if (img.getAttribute("src") !== url) img.src = url;
+    } else img.removeAttribute("src");
+  }
+  el("evidence-note").textContent = completed
+    ? `Detected fill ${completed.vial_id} · ${completed.accepted_sample_frames.length} accepted samples. The displayed frame is one sample; reported color is the median across accepted sample colors. Geometry is unreviewed; this is experimental evidence.`
+    : "No completed measurement yet. Live video above is separate.";
+  el("evidence-detail").textContent = row
+    ? `Frame ${row.frame_index} · MP4 ${time(row.video_s)} · track ${row.geometry?.track_id ?? "unknown"} · ${row.geometry?.mask_pixels || 0} sampled pixels · Lab ${lab(row.lab)} · ${row.accepted ? "heuristic checks passed" : row.quality_flags.join(", ")}` : "";
+}
+el("evidence-sample").onchange = () => renderEvidence(snapshot?.current_completed);
 function sync(force = false) {
   for (const peer of peers) {
     if (!peer.src || peer.readyState < 1) continue;
@@ -241,7 +272,7 @@ function render(state) {
   el("threshold").textContent =
     `Threshold ${catalog.config.review_threshold_de2000.toFixed(2)} · unvalidated`;
   el("qa").textContent = completed
-    ? `${completed.measurement_valid ? "QA accepted" : "QA unavailable"} · ${completed.accepted_sample_frames.length} accepted samples${completed.quality_flags.length ? " · " + completed.quality_flags.join(", ") : ""}`
+    ? `${completed.measurement_valid ? "Heuristic checks passed · geometry unreviewed" : "Measurement unavailable"} · ${completed.accepted_sample_frames.length} accepted samples${completed.quality_flags.length ? " · " + completed.quality_flags.join(", ") : ""}`
     : "Post-fill sampling window has not completed";
   el("reference").disabled = !completed?.measurement_valid || completed?.recipe_id == null;
   el("reference").disabled ||= !!completed?.context_quality_flags?.length;
@@ -254,7 +285,7 @@ function render(state) {
   el("live-lab").textContent = lab(feature?.lab);
   el("live-quality").textContent = feature
     ? feature.measurement_valid
-      ? "ROI QA accepted"
+      ? "Liquid-mask checks passed · unreviewed geometry"
       : feature.quality_flags.join(", ")
     : "No current sample";
   el("motion").textContent =
@@ -263,6 +294,8 @@ function render(state) {
     `Stream contrast ${feature?.stream_contrast != null ? feature.stream_contrast.toFixed(2) : "—"} · episode ${feature?.fill_detection?.episode || 0}`;
   el("latency").textContent =
     `Feature processing ${feature ? feature.processing_ms.toFixed(1) + " ms" : "—"} · excludes replay transport`;
+  renderEvidence(completed);
+  overlays();
   el("coverage").textContent =
     `${state.coverage.valid}/${state.coverage.available} observations pass QA · ${state.coverage.assessed} assessed`;
   el("ledger").replaceChildren();
@@ -336,7 +369,7 @@ async function tick(force = false) {
     if (token !== generation) return;
     if (data.status === "preparing") {
       message(
-        `Preparing ROI telemetry… ${Math.floor(data.progress * 100)}%. Video playback is available.`,
+        `Preparing vial tracks and liquid masks… ${Math.floor(data.progress * 100)}%. Video playback is available.`,
       );
       return;
     }
@@ -494,4 +527,9 @@ async function start() {
   if (params.has("frame") && /^\d+$/.test(params.get("frame"))) seekToFrame(Number(params.get("frame")));
 }
 setInterval(() => tick().catch((error) => message(error.message, true)), 500);
+function videoOverlayFrame() {
+  overlays();
+  if (video.requestVideoFrameCallback) video.requestVideoFrameCallback(videoOverlayFrame);
+}
+if (video.requestVideoFrameCallback) video.requestVideoFrameCallback(videoOverlayFrame);
 start().catch((error) => message(error.message, true));

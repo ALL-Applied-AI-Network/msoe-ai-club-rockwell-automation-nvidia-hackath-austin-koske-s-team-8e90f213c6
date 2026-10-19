@@ -2,11 +2,14 @@ from dataclasses import asdict, dataclass
 import hashlib
 import json
 import math
+import re
 
 
 @dataclass(frozen=True)
 class Config:
     schema_version: int = 1
+    vision_model_path: str | None = None
+    vision_model_sha256: str | None = None
     sample_stride: int = 6
     image_size: tuple = (640, 480)
     color_roi: tuple = (293, 345, 325, 385)
@@ -34,6 +37,10 @@ class Config:
     carrier_settle_s: float = .6
 
     def __post_init__(self):
+        if bool(self.vision_model_path) != bool(self.vision_model_sha256):
+            raise ValueError('Detector path and SHA256 must be supplied together')
+        if self.vision_model_sha256 and not re.fullmatch(r'[0-9a-f]{64}',self.vision_model_sha256):
+            raise ValueError('Detector SHA256 must be 64 lowercase hexadecimal characters')
         if (not isinstance(self.sample_stride, int) or not isinstance(self.minimum_window_samples, int) or
                 self.sample_stride < 1 or self.minimum_window_samples < 1):
             raise ValueError('Stride and sample count must be positive')

@@ -19,7 +19,7 @@ class InputInterrupted(ValueError):
 
 
 def measurement_profile_id(config):
-    code = b''.join((Path(__file__).parent / name).read_text(encoding='utf-8').encode() for name in ('measurement.py', 'observations.py'))
+    code = b''.join((Path(__file__).parent / name).read_text(encoding='utf-8').encode() for name in ('measurement.py', 'observations.py', 'geometry.py'))
     return hashlib.sha256(code + config.fingerprint.encode()).hexdigest()[:20]
 
 
@@ -105,6 +105,7 @@ class MonitorSession:
             measurement['quality_flags'].append('non_cfr_timestamp_mapping')
             measurement['measurement_valid'] = False
         row = dict(frame_index=packet.frame_index, video_s=video_s, pts=packet.pts, time_base=packet.time_base,
+                   source_rgb_sha256=hashlib.sha256(packet.rgb.tobytes()).hexdigest(),
                    estimated_wall_elapsed_s=packet.estimated_wall_elapsed_s, **measurement)
         previous_count = len(self.detector.completed)
         row['fill_detection'] = self.detector.update(row)

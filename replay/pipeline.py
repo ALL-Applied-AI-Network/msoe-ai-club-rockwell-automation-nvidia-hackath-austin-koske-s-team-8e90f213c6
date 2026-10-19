@@ -178,7 +178,9 @@ def analyze(run, config, cache_root, progress=None, fill_source='image'):
                     missing_pts_sample_count=missing_pts, annotation_count=len(run['annotations']),
                     analysis_seconds=time.perf_counter() - started,
                     processing_p95_ms=float(np.percentile([item['processing_ms'] for item in features], 95)),
-                    measurement_kind='fixed_roi_camera_srgb_d65_lab',
+                    measurement_kind='tracked_colored_liquid_mask_camera_srgb_d65_lab',
+                    geometry_model_sha256=config.vision_model_sha256,
+                    geometry_review_status='unreviewed_model_proposals',
                     measurement_profile_id=session.profile_id, input_kind='existing_recording', session_id=session.session_id,
                     clock_status='unreviewed OCR estimate' if clock is not None else 'wall clock unavailable',
                     mode='independent_image_fill_replay' if fill_source == 'image' else 'annotation_guided_completed_vial_replay',
@@ -186,7 +188,8 @@ def analyze(run, config, cache_root, progress=None, fill_source='image'):
                     open_fill_at_eof=features[-1].get('fill_detection', {}).get('detection_id'),
                     limitations=['no stage-aware early alert', 'image mode requires separate recipe context',
                                  'completion waits for carrier departure', 'visible stream boundary is not a pump signal',
-                                 'no defect ground truth', 'fixed pilot ROI', 'unvalidated thresholds'])
+                                 'no defect ground truth', 'weak-label detector and heuristic liquid mask; no reviewed mask accuracy',
+                                 'clear/neutral liquid unavailable', 'unvalidated thresholds'])
     payload = dict(manifest=manifest, annotations=[item.to_dict() for item in run['annotations']],
                    features=features, observations=observations, detections=detections, detection_events=detection_events,
                    session_events=session.session_events)
@@ -199,6 +202,7 @@ def analyze(run, config, cache_root, progress=None, fill_source='image'):
 def export_csv(observations):
     fields = ['run_id', 'vial_id', 'recipe_id', 'start_frame', 'end_frame', 'available_frame', 'available_video_s',
               'measurement_valid', 'quality_flags', 'lab', 'rgb', 'measurement_config_id',
+              'measurement_evidence', 'geometry_review_status', 'measurement_kind',
               'sample_frames', 'accepted_sample_frames', 'source_video_sha256', 'source_annotation_sha256',
               'event_source', 'partial_start_possible', 'baseline_hold_first', 'baseline_hold_first_two',
               'detection_id', 'start_available_frame', 'departure_frame', 'confirmed_frame', 'episodes',
@@ -212,7 +216,7 @@ def export_csv(observations):
         row = {key: item.get(key) for key in fields}
         row.update({key: item['assessment'][key] for key in ('status', 'delta_e2000', 'reference_id', 'threshold_de2000', 'threshold_status')})
         row.update({key: item['assessment'].get(key) for key in ('expected_lab', 'reference_rejections', 'reference_available_frame', 'reference_source_description')})
-        for key in ('quality_flags', 'lab', 'rgb', 'sample_frames', 'accepted_sample_frames', 'episodes',
+        for key in ('quality_flags', 'lab', 'rgb', 'sample_frames', 'accepted_sample_frames', 'episodes', 'measurement_evidence',
                     'recipe_context', 'context_quality_flags', 'reference_rejections', 'expected_lab'):
             row[key] = json.dumps(row[key], allow_nan=False)
         writer.writerow(row)

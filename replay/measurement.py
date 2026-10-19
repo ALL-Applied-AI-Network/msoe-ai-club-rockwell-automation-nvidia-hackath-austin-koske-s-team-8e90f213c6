@@ -1,7 +1,8 @@
-"""Fixed pilot ROI, past-frame motion QA and camera Lab; no future alignment."""
+"""Tracked liquid-mask measurement, past-frame QA; no evaluation labels."""
 import cv2
 import numpy as np
 from skimage.color import deltaE_ciede2000
+from .geometry import VialGeometry, decode_mask, encode_mask
 
 
 def delta_e(left, right):
@@ -26,15 +27,16 @@ def crop(rgb, box):
     return rgb[y0:y1, x0:x1]
 
 
-def color(pixels):
+def color(pixels, trim=True):
     values = pixels.reshape(-1, 3)
     valid = (values.max(axis=1) < 245) & (values.max(axis=1) > 3)
     if not valid.any():
         return None, None, 0.
     selected = values[valid]
     luma = selected @ [.2126, .7152, .0722]
-    low, high = np.percentile(luma, [5, 95])
-    selected = selected[(luma >= low) & (luma <= high)]
+    if trim:
+        low, high = np.percentile(luma, [5, 95])
+        selected = selected[(luma >= low) & (luma <= high)]
     rgb = np.median(selected, axis=0)
     return rgb.tolist(), rgb_to_lab(rgb).tolist(), float(valid.mean())
 
@@ -44,6 +46,7 @@ class Extractor:
         self.config = config
         self.previous_thumb = None
         self.previous_nozzle = None
+        self.geometry = VialGeometry(config)
 
     def measure(self, rgb):
         config = self.config
@@ -60,20 +63,33 @@ class Extractor:
         motion = float(np.abs(thumb - self.previous_thumb).mean()) if self.previous_thumb is not None else None
         nozzle_change = float(np.abs(nozzle - self.previous_nozzle).mean()) if self.previous_nozzle is not None else None
         self.previous_thumb, self.previous_nozzle = thumb, nozzle
-        median_rgb, lab, fraction = color(crop(rgb, config.color_roi))
+        geometry = self.geometry.update(rgb, moving=motion is not None and motion > config.max_motion)
+        mask = decode_mask(geometry['mask'], rgb.shape[:2]).astype(bool)
+        proposed_count = int(mask.sum())
+        mask &= (rgb.max(axis=2) < 245) & (rgb.max(axis=2) > 3)
+        fraction = float(mask.sum() / proposed_count) if proposed_count else 0.
+        if mask.any():
+            luma = rgb @ np.array([.2126, .7152, .0722])
+            low, high = np.percentile(luma[mask], [5,95])
+            mask &= (luma >= low) & (luma <= high)
+        # Export the final actual sample mask, including clipping/luma trimming.
+        geometry.update(mask=encode_mask(mask), mask_pixels=int(mask.sum()))
+        median_rgb, lab, _ = color(rgb[mask], trim=False) if mask.any() else (None, None, 0.)
         holder_fraction = float((crop(rgb, config.holder_roi).max(axis=2) < 80).mean())
         sensitivity = None
         if lab is not None:
             shifts = []
-            for dx, dy in ((-3, 0), (3, 0), (0, -3), (0, 3)):
-                box = [v + (dx if i % 2 == 0 else dy) for i, v in enumerate(config.color_roi)]
-                if not 0 <= box[0] < box[2] <= rgb.shape[1] or not 0 <= box[1] < box[3] <= rgb.shape[0]:
-                    continue
-                _, shifted, _ = color(crop(rgb, box))
+            # Erosion sensitivity stays inside the candidate liquid, rather
+            # than shifting a rectangle onto the wall or glass edge.
+            for radius in (1, 2, 3):
+                interior = cv2.erode(mask.astype(np.uint8), np.ones((2*radius+1, 2*radius+1),np.uint8)).astype(bool)
+                _, shifted, _ = color(rgb[interior], trim=False) if interior.any() else (None,None,0.)
                 if shifted is not None:
                     shifts.append(delta_e(lab, shifted))
             sensitivity = max(shifts, default=0.)
-        flags = []
+        flags = list(geometry['quality_flags'])
+        if geometry['mask_pixels'] < 60:
+            flags.append('insufficient_final_liquid_pixels')
         if fraction < config.valid_fraction_min:
             flags.append('insufficient_unclipped_pixels')
         if holder_fraction < config.holder_dark_fraction_min:
@@ -87,4 +103,4 @@ class Extractor:
         return dict(rgb=median_rgb, lab=lab, valid_fraction=fraction,
                     holder_dark_fraction=holder_fraction, motion=motion,
                     nozzle_change=nozzle_change, stream_contrast=stream_contrast, roi_sensitivity_de2000=sensitivity,
-                    quality_flags=flags, measurement_valid=not flags and lab is not None)
+                    geometry=geometry, quality_flags=flags, measurement_valid=not flags and lab is not None)

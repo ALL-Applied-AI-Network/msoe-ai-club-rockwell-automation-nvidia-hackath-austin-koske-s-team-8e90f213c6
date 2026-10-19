@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "label_status": "unreviewed_jev_boxes_accepted_as_provisional_training_targets_by_Austin",
+  "source_manifest_sha256": "15725cdc382113afc87b0f364670f9ddb9054029d1597b0c5b233a607e1b934e",
+  "source_provenance_sha256": "a7756db7360e4cbf142edc38d7584810e290fcb032401add5bd1bea8e35d3b9e",
+  "split_policy": "Runs 1-3 train; Run 4 development; Run 5 excluded, including exact duplicate images",
+  "counts": {
+    "train": 1442,
+    "val": 157
+  },
+  "parent_training_images": 721,
+  "development_images": 157,
+  "rosie_job": 285667,
+  "slurm_state": "COMPLETED",
+  "slurm_elapsed": "00:03:40",
+  "container": "/data/containers/msoe-pytorch-25.05-py3.sif",
+  "executed_training_script_sha256": "1327b9af667feacdc0e0f2eb07ed762585eb222a187cb2edf26bfdd51f66b2f4",
+  "executed_args_sha256": "d8a30fdb2adafbbd1c2899600d5e2825be9024b13358b7fee5397bb9ad3c8bdf",
+  "model_sha256": "89ed11f7046171e5340dc45a9d528010de1cefbba21e163b23b7098151e0880e",
+  "limitations": [
+    "Teacher labels are unreviewed, incomplete and may include false positives.",
+    "Run 4 scores measure box agreement with the teacher, not segmentation or real defect accuracy.",
+    "The Jev teacher was previously developed using all five recordings; Run 5 exclusion here applies to student fitting and checkpoint selection.",
+    "Masks are heuristic and unreviewed; no trusted comparison is enabled."
+  ]
+}

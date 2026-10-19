@@ -64,6 +64,9 @@ def assess(observation, references, config):
                   reference_available_frame=reference['available_frame'], reference_source_description=reference.get('source_description'),
                   explanation=('Appearance differs from the selected recipe reference; operator review requested.'
                                if mismatch else 'Appearance is within the experimental reference band; this is not a release decision.'))
+    if observation.get('geometry_review_status') == 'unreviewed_model_proposals':
+        result.update(experimental_status=result['status'], status='unavailable',
+                      explanation='Diagnostic color deviation only: vial/liquid geometry is an unreviewed model proposal. Review the actual source frames and sampling masks before trusting this comparison.')
     return result
 
 

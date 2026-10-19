@@ -3,6 +3,9 @@ from pathlib import Path
 import tempfile
 import threading
 import unittest
+import cv2
+import numpy as np
+from unittest.mock import patch
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
@@ -10,9 +13,17 @@ from replay.config import Config
 from replay.dataset import Catalog
 from replay.server import Manager, ReplayServer, byte_range
 from replay.tests.test_pipeline import fixture_video
+from replay.tests.test_geometry import FIXTURE_BOXES
+from replay.geometry import VialGeometry
 
 
 class ServerChecks(unittest.TestCase):
+    def setUp(self):
+        # Known synthetic geometry isolates HTTP/recipe behavior from weights.
+        fixture = patch.object(VialGeometry,'detect',return_value=FIXTURE_BOXES)
+        fixture.start()
+        self.addCleanup(fixture.stop)
+
     def test_manual_recipe_reference_exports_and_application_restart(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
@@ -40,8 +51,23 @@ class ServerChecks(unittest.TestCase):
                 with urlopen(base + '/api/state?run=5&frame=359') as response:
                     state = json.load(response)
                 self.assertEqual(state['completed'][0]['assessment']['status'], 'unavailable')
-                self.assertEqual(state['completed'][1]['assessment']['status'], 'review')
+                self.assertEqual(state['completed'][1]['assessment']['status'], 'unavailable')
+                self.assertEqual(state['completed'][1]['assessment']['experimental_status'], 'review')
                 self.assertEqual(state['completed'][1]['assessment']['reference_id'], r['reference_id'])
+                sample = state['completed'][1]['measurement_evidence'][0]
+                images = {}
+                for kind in ('source','mask','overlay'):
+                    with urlopen(base + f'/api/evidence?run=5&frame={sample["frame_index"]}&at=359&kind={kind}') as response:
+                        self.assertEqual(response.headers['Content-Type'],'image/png')
+                        images[kind]=cv2.imdecode(np.frombuffer(response.read(),np.uint8),cv2.IMREAD_UNCHANGED)
+                selected=images['mask']>0
+                self.assertEqual(int(selected.sum()),sample['geometry']['mask_pixels'])
+                rgb=cv2.cvtColor(images['source'],cv2.COLOR_BGR2RGB)
+                np.testing.assert_allclose(np.median(rgb[selected],axis=0),sample['rgb'])
+                with self.assertRaises(HTTPError):
+                    urlopen(base + f'/api/evidence?run=5&frame={sample["frame_index"]}&at=1&kind=mask')
+                with self.assertRaises(HTTPError):
+                    urlopen(base + '/api/evidence?run=5&frame=1&at=359&kind=source')
                 with urlopen(base + '/api/observations.csv?run=5&frame=359') as response:
                     text = response.read().decode()
                 self.assertIn('recipe_definition_id', text)

@@ -45,6 +45,14 @@ def reference(o, **changes):
 
 
 class RecipeDemoChecks(unittest.TestCase):
+    def test_unreviewed_geometry_keeps_comparison_diagnostic_only(self):
+        o = plan(selection()).bind(observation())
+        o['geometry_review_status']='unreviewed_model_proposals'
+        result=assess(o,[reference(o)],Config())
+        self.assertEqual(result['status'],'unavailable')
+        self.assertEqual(result['experimental_status'],'within_reference_band')
+        self.assertEqual(result['delta_e2000'],0.)
+
     def test_selection_activation_unknown_and_definition_change(self):
         p = plan(selection(), selection(170, volume=40), selection(250, recipe=None))
         a = p.bind(observation())

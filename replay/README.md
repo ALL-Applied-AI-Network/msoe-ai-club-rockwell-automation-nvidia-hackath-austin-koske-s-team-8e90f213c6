@@ -4,7 +4,11 @@ One local browser app and one batch pipeline, using the existing data environmen
 The recordings and supplied labels stay read-only. No GPU, API key, model server,
 Node runtime or frontend build is required to run it.
 
-For the current **recipe-aware completed-vial demo**, exact reproduction,
+For the current **tracked-vial/liquid-mask correction**, start with
+[VISION.md](VISION.md). The model is trained on provisional boxes, masks need
+review, and old fixed-patch color comparisons must not be trusted.
+
+For the earlier **recipe-aware completed-vial plumbing demo**, exact reproduction,
 operator recipe/reference contracts, Aleyna's QA review manifest and the physical
 input boundary, use [HANDOFF.md](HANDOFF.md). Image detection still runs independently
 of evaluation annotations; the intended recipe is a separate explicit input.
@@ -14,7 +18,7 @@ of evaluation annotations; the intended recipe is a separate explicit input.
 From the repository, after the team data bootstrap:
 
 ```powershell
-pwsh -File setup/run-replay.ps1
+pwsh -File setup/run-replay.ps1 -Config replay/examples/bootstrap-vision.json
 ```
 
 Open **http://127.0.0.1:8765**. For a dataset stored elsewhere:
@@ -39,7 +43,7 @@ bundled with the app. The server binds to loopback. For remote use, forward port
 
 ## First useful walkthrough
 
-1. Select Run 5. The first preparation pass decodes the recording and caches ROI
+1. Select Run 5. The first preparation pass decodes the recording and caches tracking/mask
    features; playback can start while preparation finishes.
 2. Use Play, speed, the video scrubber or **Jump to fill**. **Jump to completed
    check** moves to the frame where carrier departure confirms completion.
@@ -73,8 +77,10 @@ alignment, not verified physical synchronization. The UI labels this distinction
   do not become fills. A candidate must have at least 0.6 MP4 seconds of stream
   evidence and peak contrast 6; rejected candidates are logged. These are pilot
   thresholds inspected/tuned on Run 5, not held-out learned parameters.
-- Fixed pilot ROIs produce raw camera Lab, image QA, causal past-frame motion,
-  nozzle frame-change diagnostics and per-sample processing time.
+- A pinned weak-label detector proposes vial/liquid locations. Causal short
+  tracks and a conservative colored-liquid sampling mask produce candidate
+  camera Lab. Exact source frames and actual masks are displayed/exported.
+  Missing geometry makes color unavailable; there is no fixed-patch fallback.
 - A completed observation uses a 0.5 MP4 second stationary tail before departure,
   at least 0.5 MP4 seconds after the final detected stream stop. It is published
   only at departure confirmation. Three valid samples, stable color and no
@@ -84,7 +90,7 @@ alignment, not verified physical synchronization. The UI labels this distinction
   `start_available_frame`, stream episode availability, `departure_frame` and
   `confirmed_frame` preserve what the detector knew and when. A mid-flow first
   frame is marked `partial_start_possible`; EOF never fabricates completion.
-- Comparison uses ΔE2000 with an explicit reference and an **unvalidated** default
+- Comparison uses Î”E2000 with an explicit reference and an **unvalidated** default
   threshold of 5.0. It is separate from the older drift-normalized/transmittance
   analysis; that analysis's threshold must not be transplanted into this policy.
 - Outcomes are `review`, `within_reference_band`, or `unavailable`. No outcome
@@ -96,12 +102,14 @@ The old annotation-guided baseline is retained explicitly:
 & "$HOME/ai-club-tools/envs/data-windows/Scripts/python.exe" -m replay serve --fill-source annotations
 ```
 
-In that mode only, supplied boundaries schedule the original 0.5–1.0 MP4 second
+In that mode only, supplied boundaries schedule the original 0.5â€“1.0 MP4 second
 post-end window, supplied recipe context enables development references, and
 first-vial/first-two holds are separate baseline policies. A reference must be
 published before the next evaluated fill starts; it never certifies clean product.
 
-No learned model is trained. There is no stage-specific early-warning claim,
+A small box model is trained experimentally on provisional Jev labels; no reviewed
+segmentation accuracy is established. Current geometry keeps comparisons unavailable
+while allowing explicit diagnostic deviations. There is no stage-specific early-warning claim,
 carryover-cause classifier, physical concentration estimate or defect accuracy
 metric. Development references from real footage are not synthetic training data.
 
@@ -136,7 +144,7 @@ QA rejections are part of the result, not discarded evaluation trials.
 
 This command reads labels **only for offline evaluation**, after image detection.
 It additionally writes `run5/detection-validation.json`: maximum one-to-one
-chronological matches at interval IoU ≥ 0.5, misses/extras, every matched boundary,
+chronological matches at interval IoU â‰¥ 0.5, misses/extras, every matched boundary,
 signed errors and absolute median/p95 errors. It reports departure confirmation
 delay separately from estimated flow-end error. The first partial fill is excluded
 from start-error aggregates. Missing ground truth produces no precision/recall.

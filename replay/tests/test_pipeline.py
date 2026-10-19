@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 
 import av
 import numpy as np
@@ -145,7 +146,8 @@ class PipelineChecks(unittest.TestCase):
             self.assertEqual([row.previous_recipe_id for row in rows], [None, None, 'A'])
             self.assertEqual([row.position_in_batch for row in rows], [1, 2, 1])
 
-    def test_decode_prefix_is_independent_of_future_images(self):
+    @patch('replay.geometry.VialGeometry.detect',return_value=[dict(class_id=0,box=[278,65,340,430],confidence=.99),dict(class_id=1,box=[288,340,330,390],confidence=.99)])
+    def test_decode_prefix_is_independent_of_future_images(self, _detector):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             left, right = root / 'a.mp4', root / 'b.mp4'

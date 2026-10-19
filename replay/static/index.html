@@ -41,7 +41,7 @@
         ><button id="completed-jump" disabled>Jump to completed check</button
         ><label class="toggle"
           ><input id="overlays" type="checkbox" checked /> Show measurement
-          regions</label
+          vial proposals</label
         >
       </div>
       <p id="message" role="status" class="message">Loading recordings…</p>
@@ -62,7 +62,7 @@
               id="overlay"
               width="640"
               height="480"
-              aria-label="Fixed measurement regions"
+              aria-label="Current detected vial and liquid proposals"
             ></canvas>
           </div>
           <div class="camera-foot">
@@ -131,6 +131,18 @@
           </section>
         </aside>
       </div>
+      <section class="panel evidence-panel">
+        <p class="eyebrow">ACTUAL COMPLETED MEASUREMENT · FROZEN SOURCE EVIDENCE</p>
+        <h2>Pixels behind the color</h2>
+        <p id="evidence-note" class="subtle">No completed measurement yet. Live video above is separate.</p>
+        <label>Measurement sample <select id="evidence-sample" aria-label="Measurement sample"></select></label>
+        <div class="evidence-images">
+          <figure><figcaption>Exact source frame</figcaption><img id="evidence-source" alt="Exact decoded measurement source frame" hidden /></figure>
+          <figure><figcaption>Vial proposal + sampled pixels</figcaption><img id="evidence-overlay" alt="Vial and liquid proposals with sampled pixels highlighted" hidden /></figure>
+          <figure><figcaption>Actual sampling mask · white pixels only</figcaption><img id="evidence-mask" alt="Binary mask of pixels actually used for this sample" hidden /></figure>
+        </div>
+        <p id="evidence-detail" class="subtle"></p>
+      </section>
       <div class="supporting">
         <section class="panel">
           <div class="panel-label">
@@ -146,7 +158,7 @@
           <video id="cap_seal" preload="metadata" muted playsinline></video>
         </section>
         <section class="panel live">
-          <div class="panel-label">CURRENT ROI · CAMERA LAB</div>
+          <div class="panel-label">CURRENT LIQUID CANDIDATE · CAMERA LAB</div>
           <p id="live-lab">—</p>
           <p id="live-quality" class="subtle">—</p>
           <p id="motion" class="subtle">Carrier motion —</p>
@@ -198,8 +210,9 @@
           Stage-aware early alerts and defect ground truth are still pending.
         </p>
         <p>
-          Camera Lab assumes sRGB/D65. Fixed ROIs and thresholds are pilot
-          settings. Cross-camera physical synchronization remains unverified.
+          Camera Lab assumes sRGB/D65. Vial/liquid proposals come from a model trained on provisional boxes;
+          the colored-liquid mask is experimental and needs review. Thresholds are unvalidated.
+          Clear or uncertain liquid is unavailable. Cross-camera synchronization remains unverified.
           Raw recordings and labels are read-only.
         </p>
         <p id="provenance"></p>

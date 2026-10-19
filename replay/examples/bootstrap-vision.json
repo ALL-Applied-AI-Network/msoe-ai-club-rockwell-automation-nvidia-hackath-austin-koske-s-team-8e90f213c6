@@ -1,0 +1,4 @@
+{
+  "vision_model_path": "replay/models/vial-bootstrap.onnx",
+  "vision_model_sha256": "89ed11f7046171e5340dc45a9d528010de1cefbba21e163b23b7098151e0880e"
+}

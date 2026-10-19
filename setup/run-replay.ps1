@@ -1,4 +1,4 @@
-param([string]$Data, [string]$Out, [int]$Port = 8765, [string]$RecipePlan, [string]$References)
+param([string]$Data, [string]$Out, [int]$Port = 8765, [string]$RecipePlan, [string]$References, [string]$Config)
 $ErrorActionPreference = 'Stop'
 $toolRoot = if ($env:AI_CLUB_HOME) { $env:AI_CLUB_HOME } else { Join-Path $env:USERPROFILE 'ai-club-tools' }
 $pythonPath = Join-Path $toolRoot 'envs/data-windows/Scripts/python.exe'
@@ -8,6 +8,7 @@ if ($Data) { $arguments += @('--data', $Data) }
 if ($Out) { $arguments += @('--out', $Out) }
 if ($RecipePlan) { $arguments += @('--recipe-plan', $RecipePlan) }
 if ($References) { $arguments += @('--references', $References) }
+if ($Config) { $arguments += @('--config', $Config) }
 Push-Location (Split-Path $PSScriptRoot -Parent)
 try {
     & $pythonPath @arguments

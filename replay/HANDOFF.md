@@ -1,5 +1,10 @@
 # Recipe-aware completed-vial replay handoff
 
+**Historical plumbing handoff, superseded for image color measurement.** The
+fixed patch could sample background/holder; the 19/30 coverage and 9.56 ΔE below
+are not validated liquid colors. Do not reuse that reference bank. Use
+[VISION.md](VISION.md) for current tracking, exact masks, launch and review gates.
+
 October 19, 2026. Branch: `austin/recipe-aware-replay`.
 The existing independent replay was published in `0782b26` and its documented
 launcher was tested from a fresh `git archive` extraction, with no untracked
@@ -65,7 +70,7 @@ reference choice; ordinary replay/analysis never chooses a reference automatical
 Then open `http://127.0.0.1:8765/?run=5&frame=2244`. Detected fill 2 completes at
 frame 2244. The recipe 5 definition is T100=10, T200=10, T400=10 mL, order
 T200>T400>T100. Its observed Lab is approximately `[5.50,-3.97,1.15]`; the selected
-fill-1 reference is `[10.09,-13.22,6.01]`. Deviation is **9.56 ΔE2000**, so the
+fill-1 reference is `[10.09,-13.22,6.01]`. Deviation is **9.56 Î”E2000**, so the
 provisional **5.0** threshold requests review. The reference was measured at
 frame 852 and explicitly selected at frame 900, before fill 2 starts at frame
 1374. Fill 1 cannot assess itself using that reference.

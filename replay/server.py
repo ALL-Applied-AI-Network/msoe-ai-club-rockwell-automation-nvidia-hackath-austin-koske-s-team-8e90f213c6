@@ -242,7 +242,7 @@ class Handler(BaseHTTPRequestHandler):
             if path == '/api/recipe-plan':
                 with self.manager.lock:
                     return self.respond(self.manager.recipe_plan.to_dict(), filename='recipe-plan.json')
-            if path in ('/api/state', '/api/status', '/api/events.jsonl', '/api/observations.csv', '/api/manifest', '/api/fills'):
+            if path in ('/api/state', '/api/status', '/api/events.jsonl', '/api/observations.csv', '/api/manifest', '/api/fills', '/api/evidence'):
                 run_id = int(query.get('run', ['5'])[0])
                 ready = self.manager.ensure(run_id)
                 if ready['status'] != 'ready' or path == '/api/status':
@@ -255,6 +255,16 @@ class Handler(BaseHTTPRequestHandler):
                     references = list(self.manager.references)
                 if path == '/api/state':
                     return self.respond(data.snapshot(frame, references))
+                if path == '/api/evidence':
+                    at = int(query.get('at', [str(frame)])[0])
+                    if not frame <= at < data.payload['manifest']['frame_count']:
+                        raise ValueError('Measurement evidence must be available by the requested playhead')
+                    feature = next((f for f in data.features if f['frame_index'] == frame), None)
+                    if feature is None:
+                        raise ValueError('Frame was not sampled by the monitor')
+                    from .evidence import preview
+                    return self.respond(preview(self.manager.catalog.runs[run_id]['cameras']['vial_fill'],feature,
+                                               query.get('kind',['source'])[0]), mime='image/png')
                 if path == '/api/manifest':
                     return self.respond(data.payload['manifest'])
                 if path == '/api/fills':

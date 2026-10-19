@@ -492,3 +492,10 @@ footer p + p {
 form label { display: block; margin: .5rem 0; }
 form input { display: block; width: 100%; box-sizing: border-box; padding: .5rem; background: #10191c; color: #e1e9e8; border: 1px solid #3d5057; border-radius: 4px; }
 details { margin: 1rem 0; }
+/* Frozen evidence is deliberately separate from current moving video. */
+.evidence-panel { margin: 18px 0; padding: 20px; }
+.evidence-images { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; }
+.evidence-images figure { margin: 12px 0; }
+.evidence-images img { width: 100%; image-rendering: auto; }
+.evidence-images figcaption { margin-bottom: 8px; font-size: 12px; }
+@media (max-width: 800px) { .evidence-images { grid-template-columns: 1fr; } }

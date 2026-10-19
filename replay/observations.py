@@ -4,6 +4,25 @@ import numpy as np
 from .measurement import delta_e
 
 
+def geometry_evidence(selected, accepted, flags):
+    """Retain exact mask/frame pairs behind the aggregate, including failures."""
+    if not any('geometry' in row for row in selected):
+        return {}  # Legacy synthetic feature fixtures, not production frames.
+    tracks = {row['geometry']['track_id'] for row in accepted if row.get('geometry')}
+    if len(tracks) > 1:
+        flags.append('vial_track_changed_during_measurement')
+    if len(accepted) < len(selected):
+        for row in selected:
+            if not row['measurement_valid']:
+                flags.extend(row.get('geometry',{}).get('quality_flags',[]))
+    flags[:] = list(dict.fromkeys(flags))
+    return dict(measurement_evidence=[dict(frame_index=row['frame_index'], video_s=row['video_s'],
+                accepted=row['measurement_valid'], rgb=row['rgb'], lab=row['lab'], quality_flags=row['quality_flags'],
+                geometry=row.get('geometry')) for row in selected],
+                geometry_review_status='unreviewed_model_proposals',
+                measurement_kind='tracked_colored_liquid_mask_camera_srgb_d65_lab')
+
+
 def build_observations(features, annotations, config, fps, frame_count, run_id):
     frames = [item['frame_index'] for item in features]
     result = []
@@ -26,8 +45,9 @@ def build_observations(features, annotations, config, fps, frame_count, run_id):
         spread = max((delta_e(item['lab'], lab) for item in accepted), default=None)
         if spread is not None and spread > config.max_temporal_de2000:
             flags.append('unstable_post_fill_color')
+        evidence = geometry_evidence(selected, accepted, flags)
         result.append(dict(event_id=f'run{run_id}-vial{annotation.vial_id}', run_id=run_id,
-                           **annotation.to_dict(), available_frame=available_frame,
+                           **annotation.to_dict(), **evidence, available_frame=available_frame,
                            available_video_s=available_frame / fps,
                            sample_frames=[item['frame_index'] for item in selected],
                            accepted_sample_frames=[item['frame_index'] for item in accepted],
@@ -66,7 +86,8 @@ def build_detected_observations(features, detections, config, fps, run_id):
         spread = max((delta_e(row['lab'], lab) for row in accepted), default=None)
         if spread is not None and spread > config.max_temporal_de2000:
             flags.append('unstable_post_fill_color')
-        observations.append(dict(item, event_id=item['detection_id'], run_id=run_id,
+        evidence = geometry_evidence(selected, accepted, flags)
+        observations.append(dict(item, **evidence, event_id=item['detection_id'], run_id=run_id,
                                  recipe_id=None, volumes_ml={}, dispense_order=None, position_in_batch=None,
                                  previous_recipe_id=None, baseline_hold_first=None, baseline_hold_first_two=None,
                                  available_frame=item['confirmed_frame'], available_video_s=item['confirmed_frame'] / fps,

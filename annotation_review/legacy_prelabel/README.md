@@ -1,1 +1,3 @@
 Archived prelabel-generation scripts from the existing experiment. Install the optional legacy dependencies only to reproduce historical generation work. Review uses saved JSON and never imports or executes these scripts. No new model calls are needed. SOURCES.json records hashes of the copied originals. Run scripts directly from this folder so their existing sibling imports resolve.
+
+SOURCES.json hashes identify the original copied bytes before Git line-ending normalization. A checkout may use LF or CRLF; those original-byte hashes are not a promise of checkout byte identity. Review source/media hashes are independent of these archived script hashes.

@@ -8,7 +8,7 @@ import unittest
 from annotation_review.core import Catalog, Reviews
 
 
-class ReviewTests(unittest.TestCase):
+class ReviewFixture:
     def setUp(self):
         self.temp=tempfile.TemporaryDirectory();self.root=Path(self.temp.name)
         self.data=self.root/'data';self.pre=self.root/'pre'
@@ -27,6 +27,8 @@ class ReviewTests(unittest.TestCase):
     def decision(self,status='changed'):
         return dict(sample_id='a',sample_fingerprint=self.catalog.samples['a']['fingerprint'],candidate_id='machine:0',class_id=0,status=status,reviewer='Aleyna',notes='corrected glass base',proposed_box=[.2,.1,.41,.91],expected_revision=0)
 
+
+class ReviewTests(ReviewFixture, unittest.TestCase):
     def test_roundtrip_and_idempotence(self):
         original=copy.deepcopy(self.catalog.samples['a']['candidates'])
         saved=self.reviews.save(self.decision());bundle=self.reviews.export()
@@ -59,6 +61,13 @@ class ReviewTests(unittest.TestCase):
     def test_uncertainty_requires_note(self):
         d=self.decision('uncertain');d['notes']=''
         with self.assertRaises(ValueError):self.reviews.save(d)
+
+    def test_demo_cannot_import_disguised_human_approval(self):
+        demo=Reviews(self.root/'demo/reviews.sqlite',self.catalog,True)
+        demo.save(self.decision());bundle=demo.export()
+        bundle['revisions'][0]['reviewer_kind']='human_self_reported'
+        bundle['revisions'][0]['eligible_as_reviewed_label']=True
+        with self.assertRaises(ValueError):demo.import_bundle(bundle)
 
 
 if __name__=='__main__':unittest.main()

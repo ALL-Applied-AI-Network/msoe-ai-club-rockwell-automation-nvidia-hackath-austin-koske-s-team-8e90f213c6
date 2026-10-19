@@ -1,0 +1,157 @@
+{
+  "schema": "first-vial-spatial-review/v1",
+  "coordinate_convention": "normalized_full_image_xyxy; x in [0,1] relative to original width; y relative to original height",
+  "exported_utc": "2026-10-19T16:36:12.033103+00:00",
+  "purpose": "demonstration",
+  "classes": {
+    "vial_fill": [
+      "fill_position_vial",
+      "colored_liquid"
+    ],
+    "tank_level": [
+      "tank_1_body",
+      "tank_1_visible_liquid",
+      "tank_2_body",
+      "tank_2_visible_liquid",
+      "tank_3_body",
+      "tank_3_visible_liquid",
+      "tank_4_body",
+      "tank_4_visible_liquid"
+    ],
+    "cap_seal": [
+      "good_collection_rack",
+      "scrap_collection_rack",
+      "robot_gripper",
+      "visibly_held_vial"
+    ]
+  },
+  "samples": {
+    "vial_fill_20260923_184630_557477": {
+      "id": "vial_fill_20260923_184630_557477",
+      "source": {
+        "kind": "still",
+        "camera": "vial_fill",
+        "run": "3",
+        "filename": "vial_fill_20260923_184630_557477.jpg",
+        "relative_path": "vial_fill/images/vial_fill_20260923_184630_557477.jpg",
+        "sha256": "cd544d2bf0f20babff149c69e5334e825a10fa6a91369340ec81a26fed262129",
+        "capture_timestamp": "2026-09-23 18:46:30.557477",
+        "frame_index": null,
+        "video_pts_seconds": null,
+        "width": 640,
+        "height": 480
+      },
+      "candidates": [
+        {
+          "id": "machine:0",
+          "class_id": 0,
+          "original_box": [
+            0.42750000000000005,
+            0.09166666666666666,
+            0.5303125,
+            0.8916666666666667
+          ],
+          "machine_record": {
+            "sample_id": "vial_fill_20260923_184630_557477",
+            "class_id": 0,
+            "target": "vial",
+            "box": {
+              "left": 0.42750000000000005,
+              "right": 0.5303125,
+              "top": 0.09166666666666666,
+              "bottom": 0.8916666666666667
+            },
+            "presence": 0.88,
+            "confidence": 0.54,
+            "source": "compact_crop",
+            "strict": true,
+            "draft": true,
+            "manual_only": false,
+            "review_priority": "normal",
+            "annotation_status": "unreviewed_model_candidate"
+          },
+          "machine_record_sha256": "1dee0ec82431dcdf06bf3392a235b8201fac616d979b3078ecf24d59e06458a4",
+          "review_status": "unreviewed"
+        },
+        {
+          "id": "machine:1",
+          "class_id": 1,
+          "original_box": [
+            0.43187499999999995,
+            0.8083333333333333,
+            0.5259375000000001,
+            0.8833333333333333
+          ],
+          "machine_record": {
+            "sample_id": "vial_fill_20260923_184630_557477",
+            "class_id": 1,
+            "target": "liquid",
+            "box": {
+              "left": 0.43187499999999995,
+              "right": 0.5259375000000001,
+              "top": 0.8083333333333333,
+              "bottom": 0.8833333333333333
+            },
+            "presence": 0.15,
+            "confidence": 0.2,
+            "source": "compact_crop",
+            "strict": false,
+            "draft": false,
+            "manual_only": false,
+            "review_priority": "high",
+            "annotation_status": "unreviewed_model_candidate"
+          },
+          "machine_record_sha256": "5a32beef04069046c96ea71dc09dc31c552f574953fdb0cc376f9f59ef4c2e80",
+          "review_status": "unreviewed"
+        }
+      ],
+      "fingerprint": "15d9de8ded64d0174c354f48d0b29de4c8ed5359b6fde3db3fb01e22e77a3b53",
+      "association": {
+        "status": "unmatched",
+        "note": "No reviewed still/video mapping loaded. Capture time is not MP4 presentation time."
+      },
+      "case": {
+        "sample_id": "vial_fill_20260923_184630_557477",
+        "priority": 10,
+        "assignee": "Aleyna",
+        "reason": "Run 3 complete still sweep: inspect faint/partial/missed colored fills, including suppressed candidates.",
+        "cohort": "run3_stills",
+        "association_status": "unmatched"
+      }
+    }
+  },
+  "revisions": [
+    {
+      "event_id": "c7162e40-d768-477f-88bc-a98db24d1c78",
+      "sample_id": "vial_fill_20260923_184630_557477",
+      "candidate_id": "machine:1",
+      "class_id": 1,
+      "status": "changed",
+      "reviewer": "DEMO-ASSISTANT-NOT-A-REVIEWED-LABEL",
+      "reviewer_kind": "demonstration",
+      "notes": "DEMONSTRATION ONLY: exercised numeric liquid-box correction and provenance round trip; not an approved spatial label or timing decision.",
+      "proposed_box": [
+        0.431875,
+        0.808333,
+        0.530938,
+        0.883333
+      ],
+      "original_box": [
+        0.43187499999999995,
+        0.8083333333333333,
+        0.5259375000000001,
+        0.8833333333333333
+      ],
+      "association_at_review": {
+        "status": "unmatched",
+        "note": "No reviewed still/video mapping loaded. Capture time is not MP4 presentation time."
+      },
+      "context_references_at_review": null,
+      "sample_fingerprint": "15d9de8ded64d0174c354f48d0b29de4c8ed5359b6fde3db3fb01e22e77a3b53",
+      "revision": 1,
+      "saved_utc": "2026-10-19T16:36:07.037017+00:00",
+      "eligible_as_reviewed_label": false
+    }
+  ],
+  "temporal_contract": "Recipe identity, vial assignment, timing and measurement decisions are separate reviewed inputs. No clock conversion or still-to-vial join is performed."
+}

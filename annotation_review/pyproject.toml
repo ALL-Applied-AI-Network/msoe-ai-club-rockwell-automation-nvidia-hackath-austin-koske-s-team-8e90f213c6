@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "first-vial-annotation-review"
-version = "0.1.0"
+version = "0.2.0"
 description = "Local, provenance-preserving human review of existing vial prelabels"
 requires-python = ">=3.11"
 dependencies = []
@@ -21,4 +21,4 @@ packages = ["annotation_review"]
 package-dir = {annotation_review = "."}
 
 [tool.setuptools.package-data]
-annotation_review = ["static/*"]
+annotation_review = ["static/*", "*.md", "legacy_prelabel/*.py", "legacy_prelabel/*.json", "legacy_prelabel/*.md", "verification/*.json"]

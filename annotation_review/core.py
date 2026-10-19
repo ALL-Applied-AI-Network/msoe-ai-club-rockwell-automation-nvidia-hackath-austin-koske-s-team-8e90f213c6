@@ -168,6 +168,8 @@ class Reviews:
                 reviewer_kind='demonstration' if self.demo else 'human_self_reported',
                 notes=data.get('notes',''), proposed_box=data.get('proposed_box'),
                 original_box=candidate['original_box'] if candidate else None,
+                association_at_review=sample['association'],
+                context_references_at_review=sample.get('case',{}).get('context_references'),
                 sample_fingerprint=sample['fingerprint'], revision=len(rows)+1,
                 saved_utc=datetime.now(timezone.utc).isoformat(),
                 eligible_as_reviewed_label=not self.demo and data['status'] in ('accepted','changed'))
@@ -201,6 +203,8 @@ class Reviews:
                     raise ValueError('Revision provenance differs from original source/candidate')
                 if record.get('reviewer_kind') not in ('demonstration','human_self_reported'):
                     raise ValueError('Unknown reviewer kind')
+                if (record['reviewer_kind']=='demonstration') != self.demo:
+                    raise ValueError('Revision kind must match the demonstration/human workspace')
                 eligible=record['reviewer_kind']=='human_self_reported' and record['status'] in ('accepted','changed')
                 if record.get('eligible_as_reviewed_label')!=eligible:
                     raise ValueError('Inconsistent label eligibility')

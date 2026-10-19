@@ -4,6 +4,13 @@ Python **3.11+**, a browser, the existing dataset and saved prelabels are enough
 The editor uses the Python standard library. No Austin-specific virtual environment,
 GPU, API credential, Node build or new labeling request is needed.
 
+For the prepared 179-case package, use the ZIP and one-command launcher in
+[HANDOFF.md](HANDOFF.md). Run 3's 95 stills are the first milestone. All saved
+machine metadata remains available. [CONTRACTS.md](CONTRACTS.md) defines the public
+replay adapter, correction export and separate timing/mapping inputs.
+The [verification record](VERIFICATION.md) includes a demonstrated browser
+correction/export/reopen round trip and covered source-integrity checks.
+
 ## Portable launch
 
 Fetch and check out the `annotation-review` branch. Extract `labels-only.zip` from

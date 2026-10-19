@@ -1,0 +1,27 @@
+{
+  "status": "passed",
+  "sample_id": "vial_fill_20260923_184630_557477",
+  "camera": "vial_fill",
+  "run": "3",
+  "source_sha256": "cd544d2bf0f20babff149c69e5334e825a10fa6a91369340ec81a26fed262129",
+  "original_box": [
+    0.43187499999999995,
+    0.8083333333333333,
+    0.5259375000000001,
+    0.8833333333333333
+  ],
+  "proposed_box": [
+    0.431875,
+    0.808333,
+    0.530938,
+    0.883333
+  ],
+  "reviewer": "DEMO-ASSISTANT-NOT-A-REVIEWED-LABEL",
+  "reviewer_kind": "demonstration",
+  "eligible_as_reviewed_label": false,
+  "association": "unmatched",
+  "coordinate_convention": "normalized_full_image_xyxy; x in [0,1] relative to original width; y relative to original height",
+  "sample_provenance_equal": true,
+  "revision_history_equal": true,
+  "browser_export_sha256": "e9958b0b5e536bd6528e6cb2917e610ff9746886417d334fcdbdaf5111dba52d"
+}

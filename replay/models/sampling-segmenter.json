@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "architecture": "tiny_unet_16_32_64_binary_sampling_interior",
+  "parameters": 118273,
+  "model_sha256": "98245db83649176c47978ef07bd510740fde7185b08aad269cf024bee345f430",
+  "source_provenance_sha256": "0d8bb6f18a2e81bbeb7fcb0ca6f61467732a54aaab83ae48227323cb7060288f",
+  "train_runs": [
+    1,
+    2,
+    3
+  ],
+  "development_runs": [
+    4
+  ],
+  "excluded_runs": [
+    5
+  ],
+  "train_images": 104,
+  "development_images": 78,
+  "epochs": 40,
+  "best_epoch": 22,
+  "best_provisional_mask_iou": 0.6579611567939172,
+  "seed": 19,
+  "mask_probability_threshold": 0.5,
+  "input_size": [
+    128,
+    384
+  ],
+  "torch": "2.8.0a0+5228986c39.nv25.05",
+  "elapsed_s": 8.995200470089912,
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "supervision": "unreviewed conservative sampling masks; not full liquid outlines or human truth",
+  "label_positive_fraction": 0.08570587940705128,
+  "positive_loss_weight": 10.0
+}

@@ -1,0 +1,890 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-19",
+  "result": "not_promoted_keep_baseline",
+  "rosie": {
+    "job_id": 285668,
+    "state": "COMPLETED",
+    "exit_code": 0,
+    "elapsed_s": 19,
+    "container": "/data/containers/msoe-pytorch-25.05-py3.sif",
+    "executed_training_script_sha256": "ec029d6314c7062b508b9af69436260dfbe6eb4f9360e3c1c8f61f188833e822",
+    "executed_architecture_sha256": "df467a714452af96ecc84a60e0e1457ee6b2cbc765158efc1006460ed81bb2c1"
+  },
+  "training_split": {
+    "train_runs": [
+      1,
+      2,
+      3
+    ],
+    "development_runs": [
+      4
+    ],
+    "excluded_from_fitting_and_checkpoint_selection": [
+      5
+    ],
+    "training_rows": 104,
+    "unique_source_frames": 52,
+    "unique_training_crops": 52,
+    "development_rows": 78,
+    "train_archive_sha256": "2b4d23a8dd99e09c4644e62164706b37be0c259f2feb578390ddd826722d51a2",
+    "development_archive_sha256": "dde0e7fdca75b9fedb316d9997f583690a76595dfabe8442b60b69508abcf2d9",
+    "per_source_row_run_counts": {
+      "1": 40,
+      "2": 40,
+      "3": 24,
+      "4": 78
+    },
+    "provenance_sha256": "0d8bb6f18a2e81bbeb7fcb0ca6f61467732a54aaab83ae48227323cb7060288f",
+    "all_rows_checked": true
+  },
+  "onnx_parity": {
+    "samples": 78,
+    "max_absolute_logit_error": 1.9073486328125e-05,
+    "minimum_binary_mask_iou": 1.0,
+    "model_sha256": "98245db83649176c47978ef07bd510740fde7185b08aad269cf024bee345f430"
+  },
+  "comparison": {
+    "schema_version": 1,
+    "kind": "controlled_sampling_mask_comparison",
+    "source_video_sha256": "6f87cec1aeec3b2bae6dac639a317c077a3f175f27abd5fc8430d6953d9d05b9",
+    "baseline_cache_sha256": "aff504002184d856ac06451f1730677eace2e840b89110c2cb6c0af39a8850d8",
+    "detected_fills": 30,
+    "samples": 8491,
+    "baseline_qa_valid": 13,
+    "segmentation_qa_valid": 7,
+    "gained": [
+      "run5-fill8",
+      "run5-fill9"
+    ],
+    "lost": [
+      "run5-fill4",
+      "run5-fill5",
+      "run5-fill6",
+      "run5-fill12",
+      "run5-fill13",
+      "run5-fill18",
+      "run5-fill29",
+      "run5-fill30"
+    ],
+    "original_baseline_reproduced_exactly": true,
+    "vial_proposals_and_tracks_identical": true,
+    "measurement_windows_identical": true,
+    "fill_detection_and_events_identical": true,
+    "qa_config_unchanged": true,
+    "plan_sha256": "71ce15c9cc560657929e8d4a44ae59089071977288b9466c12fa89eeb2898bf4",
+    "model": {
+      "schema_version": 1,
+      "architecture": "tiny_unet_16_32_64_binary_sampling_interior",
+      "parameters": 118273,
+      "model_sha256": "98245db83649176c47978ef07bd510740fde7185b08aad269cf024bee345f430",
+      "source_provenance_sha256": "0d8bb6f18a2e81bbeb7fcb0ca6f61467732a54aaab83ae48227323cb7060288f",
+      "train_runs": [
+        1,
+        2,
+        3
+      ],
+      "development_runs": [
+        4
+      ],
+      "excluded_runs": [
+        5
+      ],
+      "train_images": 104,
+      "development_images": 78,
+      "epochs": 40,
+      "best_epoch": 22,
+      "best_provisional_mask_iou": 0.6579611567939172,
+      "seed": 19,
+      "mask_probability_threshold": 0.5,
+      "input_size": [
+        128,
+        384
+      ],
+      "torch": "2.8.0a0+5228986c39.nv25.05",
+      "elapsed_s": 8.995200470089912,
+      "gpu": "NVIDIA H100 80GB HBM3",
+      "supervision": "unreviewed conservative sampling masks; not full liquid outlines or human truth",
+      "label_positive_fraction": 0.08570587940705128,
+      "positive_loss_weight": 10.0
+    },
+    "segmentation_rejection_counts": {
+      "insufficient_valid_post_fill_samples": 23,
+      "motion_during_measurement_window": 11,
+      "liquid_interior_too_small": 4,
+      "vial_track_not_stable": 11,
+      "liquid_missing_or_ambiguous_inside_vial": 14,
+      "insufficient_coherent_colored_liquid": 2
+    },
+    "independent_mask_accuracy": null,
+    "trusted_comparisons_enabled": false,
+    "limitations": [
+      "QA coverage is not segmentation accuracy.",
+      "Targets are unreviewed conservative sampling masks, not complete liquid outlines.",
+      "Positive-only source sampling and unseen colors/backgrounds can bias the model.",
+      "No fallback or union with the baseline mask."
+    ],
+    "cases": [
+      {
+        "detection_id": "run5-fill1",
+        "sample_frames": [
+          828,
+          834,
+          840
+        ],
+        "baseline_qa_valid": true,
+        "segmentation_qa_valid": true,
+        "baseline_reasons": [],
+        "segmentation_reasons": [],
+        "baseline_lab": [
+          12.057363924113691,
+          -9.63117923185773,
+          4.613126810140534
+        ],
+        "segmentation_lab": [
+          11.871647400396206,
+          -10.684695058450364,
+          5.0935267567430556
+        ]
+      },
+      {
+        "detection_id": "run5-fill2",
+        "sample_frames": [
+          2220,
+          2226,
+          2232
+        ],
+        "baseline_qa_valid": true,
+        "segmentation_qa_valid": true,
+        "baseline_reasons": [],
+        "segmentation_reasons": [],
+        "baseline_lab": [
+          5.499698199531437,
+          -3.9746794392326033,
+          1.1540069408857268
+        ],
+        "segmentation_lab": [
+          5.042995141708417,
+          -4.0518690457335556,
+          1.0158982164933494
+        ]
+      },
+      {
+        "detection_id": "run5-fill3",
+        "sample_frames": [
+          3618,
+          3624,
+          3630
+        ],
+        "baseline_qa_valid": false,
+        "segmentation_qa_valid": false,
+        "baseline_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "motion_during_measurement_window",
+          "vial_track_not_stable"
+        ],
+        "segmentation_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "motion_during_measurement_window",
+          "liquid_interior_too_small",
+          "vial_track_not_stable"
+        ],
+        "baseline_lab": [
+          5.410760112930689,
+          -2.466440609879758,
+          2.117429988536079
+        ],
+        "segmentation_lab": null
+      },
+      {
+        "detection_id": "run5-fill4",
+        "sample_frames": [
+          4848,
+          4854,
+          4860
+        ],
+        "baseline_qa_valid": true,
+        "segmentation_qa_valid": false,
+        "baseline_reasons": [],
+        "segmentation_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "liquid_interior_too_small"
+        ],
+        "baseline_lab": [
+          5.464570607245388,
+          -2.2858991417393226,
+          2.697496018878426
+        ],
+        "segmentation_lab": null
+      },
+      {
+        "detection_id": "run5-fill5",
+        "sample_frames": [
+          6108,
+          6114,
+          6120
+        ],
+        "baseline_qa_valid": true,
+        "segmentation_qa_valid": false,
+        "baseline_reasons": [],
+        "segmentation_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "liquid_interior_too_small"
+        ],
+        "baseline_lab": [
+          13.838589860267021,
+          5.560122509361831,
+          12.960566251923067
+        ],
+        "segmentation_lab": null
+      },
+      {
+        "detection_id": "run5-fill6",
+        "sample_frames": [
+          7392,
+          7398,
+          7404
+        ],
+        "baseline_qa_valid": true,
+        "segmentation_qa_valid": false,
+        "baseline_reasons": [],
+        "segmentation_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "liquid_interior_too_small"
+        ],
+        "baseline_lab": [
+          17.46973910173775,
+          16.98251515970123,
+          20.444605018936414
+        ],
+        "segmentation_lab": null
+      },
+      {
+        "detection_id": "run5-fill7",
+        "sample_frames": [
+          9270,
+          9276,
+          9282
+        ],
+        "baseline_qa_valid": false,
+        "segmentation_qa_valid": false,
+        "baseline_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "motion_during_measurement_window",
+          "vial_track_not_stable"
+        ],
+        "segmentation_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "motion_during_measurement_window",
+          "vial_track_not_stable"
+        ],
+        "baseline_lab": [
+          7.902250655282565,
+          -6.959745664330025,
+          2.2435472750872263
+        ],
+        "segmentation_lab": [
+          7.236795747069431,
+          -6.179862171584012,
+          1.5881308484696794
+        ]
+      },
+      {
+        "detection_id": "run5-fill8",
+        "sample_frames": [
+          10860,
+          10866,
+          10872
+        ],
+        "baseline_qa_valid": false,
+        "segmentation_qa_valid": true,
+        "baseline_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "liquid_missing_or_ambiguous_inside_vial"
+        ],
+        "segmentation_reasons": [],
+        "baseline_lab": [
+          15.773187047463164,
+          -6.746347857390866,
+          -14.434816721231458
+        ],
+        "segmentation_lab": [
+          15.316583162082697,
+          -6.73796665428783,
+          -14.100512601094216
+        ]
+      },
+      {
+        "detection_id": "run5-fill9",
+        "sample_frames": [
+          12474,
+          12480,
+          12486
+        ],
+        "baseline_qa_valid": false,
+        "segmentation_qa_valid": true,
+        "baseline_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "liquid_missing_or_ambiguous_inside_vial"
+        ],
+        "segmentation_reasons": [],
+        "baseline_lab": null,
+        "segmentation_lab": [
+          16.174461795327694,
+          -7.19754824981636,
+          -14.157472915569269
+        ]
+      },
+      {
+        "detection_id": "run5-fill10",
+        "sample_frames": [
+          14178,
+          14184,
+          14190
+        ],
+        "baseline_qa_valid": true,
+        "segmentation_qa_valid": true,
+        "baseline_reasons": [],
+        "segmentation_reasons": [],
+        "baseline_lab": [
+          9.102458404099341,
+          -9.206922361865614,
+          0.9474056173109258
+        ],
+        "segmentation_lab": [
+          8.606284403388734,
+          -8.71973196893161,
+          0.3783339438757305
+        ]
+      },
+      {
+        "detection_id": "run5-fill11",
+        "sample_frames": [
+          15882,
+          15888,
+          15894
+        ],
+        "baseline_qa_valid": false,
+        "segmentation_qa_valid": false,
+        "baseline_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "motion_during_measurement_window",
+          "vial_track_not_stable"
+        ],
+        "segmentation_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "motion_during_measurement_window",
+          "vial_track_not_stable"
+        ],
+        "baseline_lab": [
+          8.4816855796823,
+          -5.820486383349491,
+          5.00946664280017
+        ],
+        "segmentation_lab": [
+          8.185215784766083,
+          -5.9435729573615514,
+          4.852928706983281
+        ]
+      },
+      {
+        "detection_id": "run5-fill12",
+        "sample_frames": [
+          17646,
+          17652,
+          17658
+        ],
+        "baseline_qa_valid": true,
+        "segmentation_qa_valid": false,
+        "baseline_reasons": [],
+        "segmentation_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "liquid_missing_or_ambiguous_inside_vial"
+        ],
+        "baseline_lab": [
+          7.753307751112061,
+          -5.429058125081529,
+          5.050007575239462
+        ],
+        "segmentation_lab": null
+      },
+      {
+        "detection_id": "run5-fill13",
+        "sample_frames": [
+          19752,
+          19758,
+          19764
+        ],
+        "baseline_qa_valid": true,
+        "segmentation_qa_valid": false,
+        "baseline_reasons": [],
+        "segmentation_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "liquid_missing_or_ambiguous_inside_vial"
+        ],
+        "baseline_lab": [
+          7.58085543773905,
+          -3.7578550112881275,
+          6.308474410111852
+        ],
+        "segmentation_lab": null
+      },
+      {
+        "detection_id": "run5-fill14",
+        "sample_frames": [
+          21828,
+          21834,
+          21840
+        ],
+        "baseline_qa_valid": false,
+        "segmentation_qa_valid": false,
+        "baseline_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "liquid_missing_or_ambiguous_inside_vial"
+        ],
+        "segmentation_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "insufficient_coherent_colored_liquid",
+          "liquid_missing_or_ambiguous_inside_vial"
+        ],
+        "baseline_lab": null,
+        "segmentation_lab": null
+      },
+      {
+        "detection_id": "run5-fill15",
+        "sample_frames": [
+          23976,
+          23982,
+          23988
+        ],
+        "baseline_qa_valid": false,
+        "segmentation_qa_valid": false,
+        "baseline_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "motion_during_measurement_window",
+          "liquid_missing_or_ambiguous_inside_vial",
+          "vial_track_not_stable"
+        ],
+        "segmentation_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "motion_during_measurement_window",
+          "insufficient_coherent_colored_liquid",
+          "vial_track_not_stable"
+        ],
+        "baseline_lab": null,
+        "segmentation_lab": [
+          4.466539801822194,
+          -2.9384385776335815,
+          1.1906857708209817
+        ]
+      },
+      {
+        "detection_id": "run5-fill16",
+        "sample_frames": [
+          25740,
+          25746,
+          25752
+        ],
+        "baseline_qa_valid": false,
+        "segmentation_qa_valid": false,
+        "baseline_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "motion_during_measurement_window",
+          "liquid_missing_or_ambiguous_inside_vial",
+          "vial_track_not_stable"
+        ],
+        "segmentation_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "motion_during_measurement_window",
+          "vial_track_not_stable"
+        ],
+        "baseline_lab": null,
+        "segmentation_lab": [
+          5.473322534350473,
+          -4.160022790543088,
+          1.658441076716538
+        ]
+      },
+      {
+        "detection_id": "run5-fill17",
+        "sample_frames": [
+          27456,
+          27462,
+          27468
+        ],
+        "baseline_qa_valid": false,
+        "segmentation_qa_valid": false,
+        "baseline_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "motion_during_measurement_window",
+          "vial_track_not_stable"
+        ],
+        "segmentation_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "motion_during_measurement_window",
+          "liquid_missing_or_ambiguous_inside_vial",
+          "vial_track_not_stable"
+        ],
+        "baseline_lab": [
+          12.057035832267198,
+          -4.547682475171004,
+          11.04812042653727
+        ],
+        "segmentation_lab": null
+      },
+      {
+        "detection_id": "run5-fill18",
+        "sample_frames": [
+          29154,
+          29160,
+          29166
+        ],
+        "baseline_qa_valid": true,
+        "segmentation_qa_valid": false,
+        "baseline_reasons": [],
+        "segmentation_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "liquid_missing_or_ambiguous_inside_vial"
+        ],
+        "baseline_lab": [
+          12.535130021339814,
+          -4.622567740100905,
+          11.442647773889703
+        ],
+        "segmentation_lab": null
+      },
+      {
+        "detection_id": "run5-fill19",
+        "sample_frames": [
+          30984,
+          30990,
+          30996
+        ],
+        "baseline_qa_valid": false,
+        "segmentation_qa_valid": false,
+        "baseline_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "motion_during_measurement_window",
+          "vial_track_not_stable"
+        ],
+        "segmentation_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "motion_during_measurement_window",
+          "vial_track_not_stable"
+        ],
+        "baseline_lab": [
+          12.376999772929583,
+          -11.752962229152981,
+          2.5401027608095452
+        ],
+        "segmentation_lab": [
+          11.284377334387631,
+          -10.993322680778503,
+          2.053305308473341
+        ]
+      },
+      {
+        "detection_id": "run5-fill20",
+        "sample_frames": [
+          32808,
+          32814,
+          32820
+        ],
+        "baseline_qa_valid": true,
+        "segmentation_qa_valid": true,
+        "baseline_reasons": [],
+        "segmentation_reasons": [],
+        "baseline_lab": [
+          9.016091062570652,
+          -9.174487926941616,
+          -1.278758247553402
+        ],
+        "segmentation_lab": [
+          8.608595933921222,
+          -8.405661129708628,
+          -1.8813152725078386
+        ]
+      },
+      {
+        "detection_id": "run5-fill21",
+        "sample_frames": [
+          34644,
+          34650,
+          34656
+        ],
+        "baseline_qa_valid": true,
+        "segmentation_qa_valid": true,
+        "baseline_reasons": [],
+        "segmentation_reasons": [],
+        "baseline_lab": [
+          8.553009365150054,
+          -8.678900653067242,
+          -1.9698327682182937
+        ],
+        "segmentation_lab": [
+          8.14370160652064,
+          -7.869900876574909,
+          -2.5783285347265816
+        ]
+      },
+      {
+        "detection_id": "run5-fill22",
+        "sample_frames": [
+          36684,
+          36690,
+          36696
+        ],
+        "baseline_qa_valid": false,
+        "segmentation_qa_valid": false,
+        "baseline_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "motion_during_measurement_window",
+          "liquid_missing_or_ambiguous_inside_vial",
+          "vial_track_not_stable"
+        ],
+        "segmentation_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "motion_during_measurement_window",
+          "liquid_missing_or_ambiguous_inside_vial",
+          "vial_track_not_stable"
+        ],
+        "baseline_lab": null,
+        "segmentation_lab": [
+          4.861839049876615,
+          -2.9108451366430947,
+          0.7655375633565498
+        ]
+      },
+      {
+        "detection_id": "run5-fill23",
+        "sample_frames": [
+          38754,
+          38760,
+          38766
+        ],
+        "baseline_qa_valid": false,
+        "segmentation_qa_valid": false,
+        "baseline_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "liquid_missing_or_ambiguous_inside_vial"
+        ],
+        "segmentation_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "liquid_missing_or_ambiguous_inside_vial"
+        ],
+        "baseline_lab": null,
+        "segmentation_lab": null
+      },
+      {
+        "detection_id": "run5-fill24",
+        "sample_frames": [
+          40830,
+          40836,
+          40842
+        ],
+        "baseline_qa_valid": false,
+        "segmentation_qa_valid": false,
+        "baseline_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "motion_during_measurement_window",
+          "liquid_missing_or_ambiguous_inside_vial",
+          "vial_track_not_stable"
+        ],
+        "segmentation_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "motion_during_measurement_window",
+          "liquid_missing_or_ambiguous_inside_vial",
+          "vial_track_not_stable"
+        ],
+        "baseline_lab": null,
+        "segmentation_lab": null
+      },
+      {
+        "detection_id": "run5-fill25",
+        "sample_frames": [
+          42828,
+          42834,
+          42840
+        ],
+        "baseline_qa_valid": false,
+        "segmentation_qa_valid": false,
+        "baseline_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "motion_during_measurement_window",
+          "liquid_missing_or_ambiguous_inside_vial",
+          "vial_track_not_stable"
+        ],
+        "segmentation_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "motion_during_measurement_window",
+          "liquid_missing_or_ambiguous_inside_vial",
+          "vial_track_not_stable"
+        ],
+        "baseline_lab": null,
+        "segmentation_lab": null
+      },
+      {
+        "detection_id": "run5-fill26",
+        "sample_frames": [
+          44724,
+          44730,
+          44736
+        ],
+        "baseline_qa_valid": false,
+        "segmentation_qa_valid": false,
+        "baseline_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "liquid_missing_or_ambiguous_inside_vial"
+        ],
+        "segmentation_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "liquid_missing_or_ambiguous_inside_vial"
+        ],
+        "baseline_lab": null,
+        "segmentation_lab": null
+      },
+      {
+        "detection_id": "run5-fill27",
+        "sample_frames": [
+          46686,
+          46692,
+          46698
+        ],
+        "baseline_qa_valid": false,
+        "segmentation_qa_valid": false,
+        "baseline_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "liquid_missing_or_ambiguous_inside_vial"
+        ],
+        "segmentation_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "liquid_missing_or_ambiguous_inside_vial"
+        ],
+        "baseline_lab": null,
+        "segmentation_lab": null
+      },
+      {
+        "detection_id": "run5-fill28",
+        "sample_frames": [
+          48084,
+          48090,
+          48096
+        ],
+        "baseline_qa_valid": false,
+        "segmentation_qa_valid": false,
+        "baseline_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "motion_during_measurement_window",
+          "vial_track_not_stable"
+        ],
+        "segmentation_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "motion_during_measurement_window",
+          "liquid_missing_or_ambiguous_inside_vial",
+          "vial_track_not_stable"
+        ],
+        "baseline_lab": [
+          8.948558372087703,
+          -2.5858808876317236,
+          9.027074755453995
+        ],
+        "segmentation_lab": null
+      },
+      {
+        "detection_id": "run5-fill29",
+        "sample_frames": [
+          49464,
+          49470,
+          49476
+        ],
+        "baseline_qa_valid": true,
+        "segmentation_qa_valid": false,
+        "baseline_reasons": [],
+        "segmentation_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "liquid_missing_or_ambiguous_inside_vial"
+        ],
+        "baseline_lab": [
+          17.4779555743985,
+          -8.33867312977829,
+          6.754422552808748
+        ],
+        "segmentation_lab": null
+      },
+      {
+        "detection_id": "run5-fill30",
+        "sample_frames": [
+          50856,
+          50862,
+          50868
+        ],
+        "baseline_qa_valid": true,
+        "segmentation_qa_valid": false,
+        "baseline_reasons": [],
+        "segmentation_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "liquid_missing_or_ambiguous_inside_vial"
+        ],
+        "baseline_lab": [
+          24.78071155360356,
+          -12.69088299072932,
+          2.982098050973081
+        ],
+        "segmentation_lab": null
+      }
+    ]
+  },
+  "evidence_audit": {
+    "baseline": {
+      "cases": 30,
+      "samples": 90,
+      "source_frame_triples": 120,
+      "all_source_and_file_hashes_match": true,
+      "all_final_masks_match_rle": true,
+      "all_colors_and_aggregates_match_sampled_pixels": true,
+      "all_measurement_frames_precede_departure": true,
+      "review_manifest_sha256": "2135be5e65b26ceb92c31c0574b8602112a20461e14dd4f95268c78da7378816"
+    },
+    "segmentation": {
+      "cases": 30,
+      "samples": 90,
+      "source_frame_triples": 120,
+      "all_source_and_file_hashes_match": true,
+      "all_final_masks_match_rle": true,
+      "all_colors_and_aggregates_match_sampled_pixels": true,
+      "all_measurement_frames_precede_departure": true,
+      "review_manifest_sha256": "02a21314ceb5ed42bec97c655b6248b2396fecf778cb663c5470c64cfc09e317"
+    }
+  },
+  "review_schema_v2_valid_for_both": true,
+  "software_checks": {
+    "replay_tests": 42,
+    "bootstrap_tests": 2,
+    "javascript_syntax_valid": true
+  },
+  "browser_checks": {
+    "candidate_gain_detected_fill": 8,
+    "candidate_gain_source_frame": 10866,
+    "candidate_gain_mask_pixels": 4006,
+    "candidate_loss_detected_fill": 4,
+    "candidate_loss_source_frame": 4848,
+    "candidate_loss_mask_pixels": 0,
+    "baseline_left_as_recommended": true,
+    "screenshot_capture": "Browser capture tool returned Unable to capture screenshot; source-frame paired diagnostic figure supplied instead."
+  },
+  "artifacts": {
+    "root": "C:\\Users\\Austin\\ai-club-tools\\results\\sampling-segmentation-20261019",
+    "paired_report": "comparison.json",
+    "candidate_review_manifest": "segmentation/run5/qa-review/manifest.json",
+    "baseline_review_manifest": "baseline/run5/qa-review/manifest.json",
+    "paired_figure": "paired-evidence.png"
+  },
+  "interpretation": [
+    "QA coverage declined from 13/30 to 7/30; keep the existing baseline.",
+    "Two gained windows and eight lost; all 30 event detections and vial tracks/windows are unchanged.",
+    "Tiny base/edge predictions and fragmented components failed the existing QA gates.",
+    "The inset sampling-mask target and the retained proposal-border exclusions can shrink small regions further.",
+    "Provisional-mask agreement and window coverage do not establish independent mask accuracy.",
+    "No Run 5-driven checkpoint selection, QA adjustment, mask union or fallback was performed."
+  ]
+}

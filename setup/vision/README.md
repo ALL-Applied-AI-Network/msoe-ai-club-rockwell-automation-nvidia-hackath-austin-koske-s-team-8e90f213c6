@@ -1,5 +1,10 @@
 # Bootstrap vial/liquid localization
 
+The follow-up [crop segmentation experiment](SEGMENTATION.md) completed on Rosie.
+It passed 7/30 Run 5 windows versus this model's 13/30 baseline under unchanged
+QA, so the baseline remains recommended. The existing vial detector was held
+fixed for cropping/tracking; it does not need another retrain for this comparison.
+
 Austin authorized treating the existing Jev draft boxes as provisional training
 targets on October 19. This is an application-side bootstrap experiment. It does
 not approve labels, adjudicate timing/windows, or replace Cameron/Hayden's renderer.

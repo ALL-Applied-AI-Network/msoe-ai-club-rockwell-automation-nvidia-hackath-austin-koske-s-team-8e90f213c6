@@ -79,6 +79,10 @@ class VialGeometry:
     def __init__(self,config,detector=None):
         self.config=config
         self.detector=detector or (OnnxDetector(config.vision_model_path,config.vision_model_sha256) if config.vision_model_path else None)
+        self.segmenter=None
+        if config.liquid_segmentation_model_path:
+            from .segmentation import SamplingSegmenter
+            self.segmenter=SamplingSegmenter(config.liquid_segmentation_model_path,config.liquid_segmentation_model_sha256)
         self.previous=None
         self.serial=0
         self.age=0
@@ -91,6 +95,9 @@ class VialGeometry:
         evidence=dict(model_sha256=self.config.vision_model_sha256, proposals=boxes, vial_box=None, liquid_box=None,
                       track_id=None, track_age=0, mask=None, mask_pixels=0,
                       verification_status='experimental_weak_supervision', quality_flags=[])
+        if self.segmenter:
+            evidence.update(segmentation_model_sha256=self.config.liquid_segmentation_model_sha256,
+                            liquid_proposal_method='tiny_unet_sampling_interior',mask_probability_threshold=.5)
         flags=evidence['quality_flags']
         vials=[p for p in boxes if p['class_id']==0]
         if not vials:
@@ -114,6 +121,11 @@ class VialGeometry:
         evidence.update(vial_box=vial,track_id=self.serial,track_age=self.age)
         if self.age<3:
             flags.append('vial_track_not_stable')
+        if self.segmenter:
+            boxes=vials+self.segmenter.propose(rgb,vial)
+            # Raw model masks are proposals; the exported final sampling mask
+            # still passes the same containment/interior/HSV/morphology gates.
+            evidence['proposals']=[{k:v for k,v in b.items() if k!='candidate_mask'} for b in boxes]
         liquids=[]
         for p in boxes:
             if p['class_id']!=1:
@@ -137,6 +149,8 @@ class VialGeometry:
             return evidence
         hsv=cv2.cvtColor(rgb[y0:y1,x0:x1],cv2.COLOR_RGB2HSV)
         candidate=((hsv[:,:,1]>=45)&(hsv[:,:,2]>=12)&(hsv[:,:,2]<240)).astype(np.uint8)
+        if self.segmenter:
+            candidate &= decode_mask(liquids[0]['candidate_mask'],rgb.shape[:2])[y0:y1,x0:x1]
         # Keep a coherent colored interior, never white glare, clear glass,
         # neutral background, or a disconnected edge reflection.
         candidate=cv2.morphologyEx(candidate,cv2.MORPH_OPEN,np.ones((3,3),np.uint8))

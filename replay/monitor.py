@@ -19,7 +19,7 @@ class InputInterrupted(ValueError):
 
 
 def measurement_profile_id(config):
-    code = b''.join((Path(__file__).parent / name).read_text(encoding='utf-8').encode() for name in ('measurement.py', 'observations.py', 'geometry.py'))
+    code = b''.join((Path(__file__).parent / name).read_text(encoding='utf-8').encode() for name in ('measurement.py', 'observations.py', 'geometry.py', 'segmentation.py', 'proposals.py'))
     return hashlib.sha256(code + config.fingerprint.encode()).hexdigest()[:20]
 
 
@@ -31,7 +31,12 @@ class MonitorSession:
         self.session_id = session_id or uuid.uuid4().hex
         self.recipe_plan, self.references = recipe_plan or RecipePlan(), validate_references(references or [])
         self.profile_id = measurement_profile_id(config)
-        self.extractor, self.detector = Extractor(config), FillDetector(config, fps, run_id)
+        self.proposal_provider=None
+        if config.image_proposal_cache_path:
+            from .proposals import CachedImageDetector
+            self.proposal_provider=CachedImageDetector(config.image_proposal_cache_path,config.image_proposal_cache_sha256,
+                                                       config.vision_model_sha256,source_video_sha256,run_id)
+        self.extractor, self.detector = Extractor(config,detector=self.proposal_provider), FillDetector(config, fps, run_id)
         self.features, self.observations, self.session_events = [], [], []
         self.retain_features = retain_features
         # Only a bounded stationary tail is needed for finished measurements.
@@ -92,6 +97,8 @@ class MonitorSession:
             self.first_frame = packet.frame_index
             self.session_events[0]['frame_index'] = packet.frame_index
         try:
+            if self.proposal_provider:
+                self.proposal_provider.prepare_frame(packet.frame_index)
             measurement = self.extractor.measure(packet.rgb)
         except Exception:
             self.stop('invalid_frame_geometry_or_format')

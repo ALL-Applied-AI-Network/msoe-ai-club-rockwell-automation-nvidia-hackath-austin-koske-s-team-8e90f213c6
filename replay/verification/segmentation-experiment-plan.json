@@ -1,0 +1,105 @@
+{
+  "schema_version": 1,
+  "baseline_processing_commit": "b0e3fd876c628f49d853c4f39cd1e5bdc11b3820",
+  "baseline_qa_valid": 13,
+  "total_detected_fills": 30,
+  "train_runs": [
+    1,
+    2,
+    3
+  ],
+  "development_runs": [
+    4
+  ],
+  "excluded_from_fitting_and_selection": [
+    5
+  ],
+  "checkpoint_selection": "Run 4 provisional mask IoU only; 40 epochs; fixed seed 19",
+  "segmentation_probability_threshold": 0.5,
+  "crop_input_size": [
+    128,
+    384
+  ],
+  "qa_config": {
+    "schema_version": 1,
+    "sample_stride": 6,
+    "image_size": [
+      640,
+      480
+    ],
+    "color_roi": [
+      293,
+      345,
+      325,
+      385
+    ],
+    "holder_roi": [
+      264,
+      231,
+      338,
+      253
+    ],
+    "nozzle_roi": [
+      298,
+      70,
+      314,
+      135
+    ],
+    "valid_fraction_min": 0.6,
+    "holder_dark_fraction_min": 0.35,
+    "max_motion": 3.0,
+    "max_roi_sensitivity_de2000": 8.0,
+    "max_temporal_de2000": 5.0,
+    "review_threshold_de2000": 5.0,
+    "window_start_after_end_s": 0.5,
+    "window_end_after_end_s": 1.0,
+    "minimum_window_samples": 3,
+    "stream_center_roi": [
+      302,
+      75,
+      311,
+      130
+    ],
+    "stream_left_roi": [
+      290,
+      75,
+      298,
+      130
+    ],
+    "stream_right_roi": [
+      316,
+      75,
+      324,
+      130
+    ],
+    "stream_on_contrast": 3.0,
+    "stream_off_contrast": 2.5,
+    "stream_peak_min": 6.0,
+    "stream_confirm_s": 0.4,
+    "minimum_stream_s": 0.6,
+    "departure_motion": 8.0,
+    "departure_confirm_s": 0.2,
+    "carrier_settle_s": 0.6
+  },
+  "geometry_gates": {
+    "track_iou_min": 0.65,
+    "track_age_min": 3,
+    "liquid_box_inside_vial_min": 0.9,
+    "vial_side_inset_fraction": 0.2,
+    "vial_lower_fraction": 0.58,
+    "vial_base_inset_fraction": 0.07,
+    "liquid_box_inset_px": [
+      3,
+      4,
+      3,
+      5
+    ],
+    "saturation_min": 45,
+    "value_min": 12,
+    "value_max_exclusive": 240,
+    "coherent_area_fraction_min": 0.35,
+    "final_mask_pixels_min": 60
+  },
+  "test_policy": "One frozen Run 5 comparison; no checkpoint/QA selection based on Run 5. No mask unions or fallback to baseline for failed segmentation frames.",
+  "truth_status": "Teacher masks and Run 4 IoU are provisional, not independently reviewed segmentation truth."
+}

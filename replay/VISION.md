@@ -1,5 +1,11 @@
 # Tracked-liquid replay correction
 
+The optional [sampling-interior segmentation experiment](../setup/vision/SEGMENTATION.md)
+was trained on Rosie using Runs 1–3 provisional masks, with Run 4 checkpoint
+selection. It **regressed from 13/30 to 7/30** passing Run 5 windows under unchanged
+QA. Keep `bootstrap-vision.json` as the baseline; `segmentation-vision.json` is
+an opt-in diagnostic candidate. See the [paired evidence](verification/segmentation-run5.json).
+
 The earlier fixed color patch could sample the holder/background. Its 19/30 QA
 coverage and example 9.56 ΔE comparison do **not** establish valid liquid color.
 They are historical plumbing diagnostics. Do not reuse their reference bank.

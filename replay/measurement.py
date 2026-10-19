@@ -42,11 +42,11 @@ def color(pixels, trim=True):
 
 
 class Extractor:
-    def __init__(self, config):
+    def __init__(self, config, detector=None):
         self.config = config
         self.previous_thumb = None
         self.previous_nozzle = None
-        self.geometry = VialGeometry(config)
+        self.geometry = VialGeometry(config,detector=detector)
 
     def measure(self, rgb):
         config = self.config

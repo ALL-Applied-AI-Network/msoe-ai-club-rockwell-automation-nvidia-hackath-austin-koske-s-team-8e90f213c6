@@ -10,6 +10,10 @@ class Config:
     schema_version: int = 1
     vision_model_path: str | None = None
     vision_model_sha256: str | None = None
+    liquid_segmentation_model_path: str | None = None
+    liquid_segmentation_model_sha256: str | None = None
+    image_proposal_cache_path: str | None = None
+    image_proposal_cache_sha256: str | None = None
     sample_stride: int = 6
     image_size: tuple = (640, 480)
     color_roi: tuple = (293, 345, 325, 385)
@@ -37,6 +41,12 @@ class Config:
     carrier_settle_s: float = .6
 
     def __post_init__(self):
+        for path,sha in ((self.liquid_segmentation_model_path,self.liquid_segmentation_model_sha256),
+                         (self.image_proposal_cache_path,self.image_proposal_cache_sha256)):
+            if bool(path)!=bool(sha) or (sha and not re.fullmatch(r'[0-9a-f]{64}',sha)):
+                raise ValueError('Optional model/cache needs a path and 64-character lowercase SHA256 together')
+        if (self.liquid_segmentation_model_path or self.image_proposal_cache_path) and not self.vision_model_path:
+            raise ValueError('Liquid segmentation and cached image proposals require the pinned vial detector')
         if bool(self.vision_model_path) != bool(self.vision_model_sha256):
             raise ValueError('Detector path and SHA256 must be supplied together')
         if self.vision_model_sha256 and not re.fullmatch(r'[0-9a-f]{64}',self.vision_model_sha256):

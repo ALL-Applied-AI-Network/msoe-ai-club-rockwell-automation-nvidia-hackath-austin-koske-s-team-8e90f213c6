@@ -125,7 +125,7 @@ function renderEvidence(completed) {
     } else img.removeAttribute("src");
   }
   el("evidence-note").textContent = completed
-    ? `Detected fill ${completed.vial_id} · ${completed.accepted_sample_frames.length} accepted samples. The displayed frame is one sample; reported color is the median across accepted sample colors. Geometry is unreviewed; this is experimental evidence.`
+    ? `Detected fill ${completed.vial_id} · ${completed.accepted_sample_frames.length} accepted samples. The displayed frame is one sample; reported color is the median across accepted sample colors. Liquid proposal: ${rows.some(r => r.geometry?.liquid_proposal_method) ? "learned sampling interior" : "box-guided heuristic"}. Geometry is unreviewed; this is experimental evidence.`
     : "No completed measurement yet. Live video above is separate.";
   el("evidence-detail").textContent = row
     ? `Frame ${row.frame_index} · MP4 ${time(row.video_s)} · track ${row.geometry?.track_id ?? "unknown"} · ${row.geometry?.mask_pixels || 0} sampled pixels · Lab ${lab(row.lab)} · ${row.accepted ? "heuristic checks passed" : row.quality_flags.join(", ")}` : "";

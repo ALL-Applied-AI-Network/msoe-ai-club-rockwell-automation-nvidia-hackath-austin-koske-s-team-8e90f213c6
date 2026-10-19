@@ -78,6 +78,23 @@
             <div id="volumes" class="volumes"></div>
             <p id="order" class="subtle">Dispense order unavailable</p>
             <p id="hold" class="hold">Baseline policy awaiting context</p>
+            <p id="recipe-source" class="subtle"></p>
+            <details>
+              <summary>Set intended recipe</summary>
+              <form id="recipe-form">
+                <label>Recipe ID <input id="recipe-id" required /></label>
+                <label>T100 mL <input id="tank100" type="number" min="0" step="any" value="0" required /></label>
+                <label>T200 mL <input id="tank200" type="number" min="0" step="any" value="0" required /></label>
+                <label>T400 mL <input id="tank400" type="number" min="0" step="any" value="0" required /></label>
+                <label>Dispense order <input id="recipe-order" placeholder="T200>T400>T100" required /></label>
+                <label>Your name <input id="operator-name" required /></label>
+                <label>Source / reason <input id="recipe-note" required /></label>
+                <p class="subtle">Activates at the paused playhead. Set context before the next fill starts. A change during a fill makes its comparison unavailable.</p>
+                <button type="submit">Record recipe selection</button>
+                <button id="recipe-clear" type="button">Mark recipe unknown</button>
+              </form>
+            </details>
+            <a href="/api/recipe-plan">Download intended-recipe plan</a>
           </section>
           <section id="decision-card" class="panel decision unavailable">
             <p class="eyebrow">COMPLETED-VIAL CHECK</p>
@@ -101,6 +118,8 @@
               </div>
             </div>
             <p id="qa" class="subtle">Measurement QA pending</p>
+            <p id="completed-context" class="subtle"></p>
+            <p id="reference-identity" class="subtle">No eligible reference</p>
             <button id="reference" disabled>
               Use completed vial as development reference</button
             ><small class="reference-note"
@@ -174,7 +193,7 @@
         <p>
           Image mode detects visible stream episodes and confirms each completed
           fill at carrier departure. Ingredient pauses remain in the same fill.
-          Recipe identity needs a separate context source. Supplied boundaries
+          Intended recipes come from explicit manual selections or an operator plan. Supplied boundaries
           are used only by the optional annotation baseline and offline validation.
           Stage-aware early alerts and defect ground truth are still pending.
         </p>

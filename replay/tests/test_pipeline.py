@@ -33,9 +33,10 @@ def fixture_video(path, length=90, change_after=None, with_fill=False):
             rgb[231:253, 264:338] = 20
             rgb[340:390, 288:330] = (210, 110, 60) if change_after is None or index < change_after else (40, 80, 210)
             if with_fill:
-                if 12 <= index < 42 or 60 <= index < 84:
+                phase = index % 180
+                if 12 <= phase < 42 or 60 <= phase < 84:
                     rgb[75:130, 302:311] = (30, 70, 30)
-                if 126 <= index < 156:
+                if 126 <= phase < 156:
                     rgb[200:460, 220:420] = 220 if (index // 6) % 2 else 30
             frame = av.VideoFrame.from_ndarray(rgb, format='rgb24')
             for packet in stream.encode(frame):
@@ -62,7 +63,8 @@ class PipelineChecks(unittest.TestCase):
         result = dict(reference_id='r1', recipe_id='A', lab=[40., 10., 15.],
                       scope='same_run_development', measurement_config_id=self.config.fingerprint,
                       source_run_id=5, source_video_sha256='video', source_annotation_sha256='labels',
-                      source_event_id='earlier-vial', available_frame=0)
+                      source_event_id='earlier-vial', available_frame=0, source_measurement_available_frame=0,
+                      source_description='Explicit synthetic test reference')
         result.update(updates)
         return result
 
@@ -98,7 +100,7 @@ class PipelineChecks(unittest.TestCase):
         self.assertIn('insufficient_valid_post_fill_samples', observation['quality_flags'])
 
     def test_external_reference_is_explicit_and_finite(self):
-        external = self.reference(scope='external_commissioning', source_description='Independent commissioning block')
+        external = self.reference(scope='external_commissioning', source_description='Independent commissioning block', available_frame=-1)
         self.assertEqual(assess(self.observation, [external], self.config)['status'], 'within_reference_band')
         with self.assertRaises(ValueError):
             validate_references([dict(external, lab=[float('nan'), 0, 0])])

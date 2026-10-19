@@ -24,6 +24,7 @@ let catalog,
   current,
   snapshot,
   busy = false,
+  refreshPending = false,
   generation = 0,
   prepared = false,
   fillIndex = [],
@@ -194,11 +195,11 @@ function render(state) {
       : "Wall time unavailable";
   const hasRecipe = context?.recipe_id != null;
   el("recipe").textContent = context
-    ? hasRecipe ? `Recipe ${context.recipe_id} / Vial ${context.vial_id}` : `Detected fill ${context.vial_id} · recipe unavailable`
+    ? hasRecipe ? `Recipe ${context.recipe_id}${context.vial_id == null ? " selected" : " / detected fill " + context.vial_id}` : `Detected fill ${context.vial_id ?? "—"} · recipe unavailable`
     : "Recipe context unavailable";
   el("phase").textContent = phases[state.phase] || state.phase;
   el("order").textContent = hasRecipe
-    ? `Order ${context.dispense_order} · position ${context.position_in_batch} in annotated batch`
+    ? `Order ${context.dispense_order}${context.position_in_batch == null ? "" : " · position " + context.position_in_batch + " in annotated batch"}`
     : "No recipe inferred from color";
   el("volumes").replaceChildren();
   if (context)
@@ -211,9 +212,13 @@ function render(state) {
       box.append(name, amount);
       el("volumes").append(box);
     }
-  el("hold").textContent = hasRecipe
+  el("hold").textContent = hasRecipe && context.position_in_batch != null
     ? `Baseline only: first-vial hold ${context.position_in_batch === 1 ? "YES" : "NO"} · first-two hold ${context.position_in_batch <= 2 ? "YES" : "NO"}`
-    : "Hold policies unavailable without recipe context";
+    : "Baseline hold policies need an explicit batch-start input";
+  const source = context?.recipe_context;
+  el("recipe-source").textContent = source
+    ? `${source.provenance.kind} · ${source.recorded_by} · active from frame ${source.active_from_frame} · ${source.provenance.description}`
+    : "No explicit recipe selection for this fill";
   const assessment = completed?.assessment;
   el("decision-card").className =
     `panel decision ${assessment?.status || "unavailable"}`;
@@ -239,6 +244,13 @@ function render(state) {
     ? `${completed.measurement_valid ? "QA accepted" : "QA unavailable"} · ${completed.accepted_sample_frames.length} accepted samples${completed.quality_flags.length ? " · " + completed.quality_flags.join(", ") : ""}`
     : "Post-fill sampling window has not completed";
   el("reference").disabled = !completed?.measurement_valid || completed?.recipe_id == null;
+  el("reference").disabled ||= !!completed?.context_quality_flags?.length;
+  el("reference-identity").textContent = assessment?.reference_id
+    ? `${assessment.reference_id} · established at frame ${assessment.reference_available_frame} · ${assessment.reference_source_description}`
+    : "No eligible reference · a development reference does not certify clean product";
+  el("completed-context").textContent = completed
+    ? `Completed detected fill ${completed.vial_id} · intended recipe ${completed.recipe_id ?? "unknown"} · published at MP4 ${time(completed.available_video_s)}`
+    : "A completed decision will identify its own fill and recipe here";
   el("live-lab").textContent = lab(feature?.lab);
   el("live-quality").textContent = feature
     ? feature.measurement_valid
@@ -298,16 +310,22 @@ function render(state) {
   el("observations").href =
     `/api/observations.csv?run=${current.run_id}&frame=${state.frame_index}`;
 }
-async function tick(force = false) {
-  if (!current || busy) return;
+function sourceFrame() {
+  if (!current) return 0;
   const fps = current.cameras.vial_fill.fps;
-  const frame = Math.max(
+  return Math.max(
     0,
     Math.min(
       current.cameras.vial_fill.frames - 1,
       Math.floor(video.currentTime * fps),
     ),
   );
+}
+async function tick(force = false) {
+  if (!current) return;
+  if (busy) { if (force) refreshPending = true; return; }
+  const fps = current.cameras.vial_fill.fps;
+  const frame = sourceFrame();
   if (!force && prepared && frame === lastFrame) return;
   busy = true;
   const token = generation;
@@ -340,13 +358,14 @@ async function tick(force = false) {
     render(data);
     message(
       catalog.fill_source === "image"
-        ? "Fills detected from images. Completion waits for carrier departure. Recipe comparison awaits a separate recipe context source."
+        ? "Image-based fills · explicit intended-recipe input · provisional comparisons request operator review and never authorize release."
         : "Annotation-guided baseline. Reference comparisons require a matching reference established before the evaluated fill.",
     );
   } catch (error) {
     message(error.message, true);
   } finally {
     busy = false;
+    if (refreshPending) { refreshPending = false; queueMicrotask(() => tick(true)); }
   }
 }
 el("play").onclick = () => {
@@ -385,6 +404,22 @@ el("completed-jump").onclick = () => {
 el("run").onchange = () =>
   selectRun().catch((error) => message(error.message, true));
 el("overlays").onchange = overlays;
+async function recordRecipe(unknown = false) {
+  if (!snapshot || !current || !prepared) return;
+  video.pause();
+  try {
+    const body = {run_id: current.run_id, frame_index: sourceFrame(),
+      recipe_id: unknown ? null : el("recipe-id").value,
+      volumes_ml: unknown ? {} : {T100:Number(el("tank100").value),T200:Number(el("tank200").value),T400:Number(el("tank400").value)},
+      dispense_order: unknown ? null : el("recipe-order").value,
+      recorded_by: el("operator-name").value, description: el("recipe-note").value};
+    await request("/api/recipe-plan", {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+    await tick(true);
+    message("Intended recipe selection recorded with provenance. Context is evaluated at each fill's start.");
+  } catch (error) { message(error.message, true); }
+}
+el("recipe-form").onsubmit = event => { event.preventDefault(); recordRecipe(); };
+el("recipe-clear").onclick = () => recordRecipe(true);
 video.addEventListener("play", () => {
   el("play").textContent = "Pause";
   sync(true);
@@ -420,6 +455,7 @@ for (const peer of peers)
   peer.addEventListener("loadedmetadata", () => sync(true));
 el("reference").onclick = async () => {
   if (!snapshot?.current_completed) return;
+  video.pause();
   el("reference").disabled = true;
   try {
     await request("/api/references", {
@@ -428,7 +464,7 @@ el("reference").onclick = async () => {
       body: JSON.stringify({
         run_id: current.run_id,
         vial_id: snapshot.current_completed.vial_id,
-        frame_index: snapshot.frame_index,
+        frame_index: sourceFrame(),
       }),
     });
     await tick(true);
@@ -436,7 +472,7 @@ el("reference").onclick = async () => {
   } catch (error) {
     message(error.message, true);
   } finally {
-    el("reference").disabled = !snapshot?.current_completed?.measurement_valid || snapshot?.current_completed?.recipe_id == null;
+    el("reference").disabled = !snapshot?.current_completed?.measurement_valid || snapshot?.current_completed?.recipe_id == null || !!snapshot?.current_completed?.context_quality_flags?.length;
   }
 };
 async function start() {
@@ -450,11 +486,12 @@ async function start() {
       ),
     );
   }
-  el("run").value = String(
-    catalog.runs.find((r) => r.run_id === 5)?.run_id || catalog.runs[0].run_id,
-  );
+  const params = new URLSearchParams(location.search);
+  const requestedRun = Number(params.get("run") || 5);
+  el("run").value = String(catalog.runs.find(r => r.run_id === requestedRun)?.run_id || catalog.runs[0].run_id);
   overlays();
   await selectRun();
+  if (params.has("frame") && /^\d+$/.test(params.get("frame"))) seekToFrame(Number(params.get("frame")));
 }
 setInterval(() => tick().catch((error) => message(error.message, true)), 500);
 start().catch((error) => message(error.message, true));

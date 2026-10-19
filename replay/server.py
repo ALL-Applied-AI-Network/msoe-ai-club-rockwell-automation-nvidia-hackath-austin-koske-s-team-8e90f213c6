@@ -8,8 +8,10 @@ import re
 import threading
 from urllib.parse import parse_qs, urlsplit
 import uuid
+from datetime import datetime, timezone
 
 from .pipeline import analyze, export_csv, validate_references, write_json
+from .recipes import RecipePlan
 
 STATIC = Path(__file__).parent / 'static'
 
@@ -34,7 +36,7 @@ def byte_range(header, size):
 
 
 class Manager:
-    def __init__(self, catalog, config, output, references_path=None, fill_source='image'):
+    def __init__(self, catalog, config, output, references_path=None, fill_source='image', recipe_plan_path=None):
         self.catalog, self.config = catalog, config
         self.fill_source = fill_source
         self.output = Path(output).expanduser().resolve()
@@ -47,6 +49,46 @@ class Manager:
         if references_path and not source.is_file():
             raise FileNotFoundError(f'Reference bank does not exist: {source}')
         self.references = validate_references(json.loads(source.read_text(encoding='utf-8-sig'))['references']) if source.is_file() else []
+        self.operator_state_path = self.output / 'operator-state.json'
+        supplied = RecipePlan.load(recipe_plan_path) if recipe_plan_path else None
+        if self.operator_state_path.is_file():
+            state = json.loads(self.operator_state_path.read_text(encoding='utf-8'))
+            self.base_plan, self.manual_selections = RecipePlan(state['base_plan']), state['manual_selections']
+            if supplied and supplied.fingerprint != self.base_plan.fingerprint:
+                raise ValueError('This output directory has another recipe plan; choose a fresh --out')
+        else:
+            self.base_plan, self.manual_selections = supplied or RecipePlan(), []
+        self.recipe_plan = self._combined_plan()
+        for s in self.recipe_plan.document['selections']:
+            camera = catalog.runs.get(s['run_id'], {}).get('cameras', {}).get('vial_fill')
+            if not camera or camera['sha256'] != s['source_video_sha256'] or s['active_from_frame'] >= camera['frames']:
+                raise ValueError('Recipe selection recording hash/run/activation does not match the catalog')
+
+    def _combined_plan(self):
+        document = self.base_plan.to_dict()
+        document['selections'].extend(self.manual_selections)
+        return RecipePlan(document)
+
+    def select_recipe(self, run_id, frame, recipe_id, volumes_ml, dispense_order, recorded_by, description, active_from_frame=None):
+        with self.lock:
+            camera = self.catalog.runs[run_id]['cameras']['vial_fill']
+            activation = frame if active_from_frame is None else active_from_frame
+            if type(frame) is not int or type(activation) is not int or not 0 <= frame <= activation < camera['frames']:
+                raise ValueError('Recipe selection must activate at or after the current source frame')
+            selection = dict(selection_id='manual-' + uuid.uuid4().hex[:12], run_id=run_id,
+                             source_video_sha256=camera['sha256'], available_frame=frame, active_from_frame=activation,
+                             recipe_id=recipe_id, volumes_ml=volumes_ml, dispense_order=dispense_order,
+                             recorded_by=recorded_by, recorded_at_utc=datetime.now(timezone.utc).isoformat(),
+                             provenance=dict(kind='manual_operator', description=description))
+            document = self.recipe_plan.to_dict()
+            document['selections'].append(selection)
+            updated = RecipePlan(document)
+            manual = self.manual_selections + [selection]
+            write_json(self.operator_state_path, dict(schema_version=1, base_plan=self.base_plan.to_dict(), manual_selections=manual))
+            self.manual_selections, self.recipe_plan = manual, updated
+            for data in self.data.values():
+                data.recipe_plan = updated
+            return selection
 
     def ensure(self, run_id):
         if run_id not in self.catalog.runs:
@@ -68,27 +110,35 @@ class Manager:
                 self.progress[run_id] = value
         data = analyze(self.catalog.runs[run_id], self.config, self.output / 'cache', progress, self.fill_source)
         with self.lock:
+            data.recipe_plan = self.recipe_plan
             self.data[run_id] = data
 
-    def publish(self, run_id, vial_id, frame):
+    def publish(self, run_id, vial_id, frame, description='Manually selected observed example; not certified clean product'):
         with self.lock:
             if run_id not in self.data:
                 raise ValueError('Wait for recording preparation')
             data = self.data[run_id]
             if not 0 <= frame < data.payload['manifest']['frame_count']:
                 raise ValueError('Reference availability lies outside the recording')
-            item = next((item for item in data.observations if item['vial_id'] == vial_id), None)
+            item = next((item for item in data.completed(frame, []) if item['vial_id'] == vial_id), None)
             if item is None or item['available_frame'] > frame or not item['measurement_valid']:
                 raise ValueError('Choose an already available, QA-valid completed observation')
             if item['recipe_id'] is None:
                 raise ValueError('A recipe context source is required before publishing a recipe reference')
+            if item.get('context_quality_flags') or not isinstance(description, str) or not description.strip():
+                raise ValueError('A stable recipe context and reference description are required')
             reference = dict(reference_id='dev-' + uuid.uuid4().hex[:12], recipe_id=item['recipe_id'],
                              lab=item['lab'], rgb=item['rgb'], scope='same_run_development',
                              measurement_config_id=item['measurement_config_id'], source_run_id=run_id,
+                             measurement_profile_id=item.get('measurement_profile_id'),
                              source_video_sha256=item['source_video_sha256'],
                              source_annotation_sha256=item['source_annotation_sha256'],
                              source_event_id=item['event_id'], available_frame=frame,
-                             source_description='Manually selected observed example; not certified clean product')
+                             source_measurement_available_frame=item['available_frame'],
+                             recipe_definition_id=item.get('recipe_definition_id'),
+                             source_recipe_context=item.get('recipe_context'),
+                             recorded_at_utc=datetime.now(timezone.utc).isoformat(),
+                             source_description=description, certifies_clean_product=False)
             validate_references([reference])
             self.references.append(reference)
             write_json(self.reference_path, dict(schema_version=1, references=self.references))
@@ -189,6 +239,9 @@ class Handler(BaseHTTPRequestHandler):
             if path == '/api/references':
                 with self.manager.lock:
                     return self.respond(dict(schema_version=1, references=self.manager.references), filename='references.json')
+            if path == '/api/recipe-plan':
+                with self.manager.lock:
+                    return self.respond(self.manager.recipe_plan.to_dict(), filename='recipe-plan.json')
             if path in ('/api/state', '/api/status', '/api/events.jsonl', '/api/observations.csv', '/api/manifest', '/api/fills'):
                 run_id = int(query.get('run', ['5'])[0])
                 ready = self.manager.ensure(run_id)
@@ -231,9 +284,15 @@ class Handler(BaseHTTPRequestHandler):
             if not 0 < length <= 16384:
                 return self.respond(dict(error='Expected a small JSON request'), 413)
             body = json.loads(self.rfile.read(length))
+            if self.path == '/api/recipe-plan':
+                selection = self.manager.select_recipe(int(body['run_id']), int(body['frame_index']),
+                    body.get('recipe_id'), body.get('volumes_ml', {}), body.get('dispense_order'),
+                    body.get('recorded_by'), body.get('description'), body.get('active_from_frame'))
+                return self.respond(selection, HTTPStatus.CREATED)
             if self.path != '/api/references':
                 return self.respond(dict(error='Not found'), 404)
-            reference = self.manager.publish(int(body['run_id']), int(body['vial_id']), int(body['frame_index']))
+            reference = self.manager.publish(int(body['run_id']), int(body['vial_id']), int(body['frame_index']),
+                                             body.get('description', 'Manually selected observed example; not certified clean product'))
             return self.respond(reference, HTTPStatus.CREATED)
         except (ValueError, KeyError, TypeError, json.JSONDecodeError) as exc:
             return self.respond(dict(error=str(exc)), 400)

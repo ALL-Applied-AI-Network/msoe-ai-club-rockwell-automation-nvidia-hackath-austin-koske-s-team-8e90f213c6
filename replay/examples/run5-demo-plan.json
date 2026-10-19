@@ -1,0 +1,207 @@
+{
+  "schema_version": 1,
+  "plan_id": "run5-illustrative-operator-plan-v1",
+  "source_description": "Austin-approved illustrative replay plan. Recipe definitions transcribed from dataset README section 4. Activation frames are developer-selected demonstration schedule points in image-detected idle gaps, not reviewed operator logs or evaluation label boundaries.",
+  "selections": [
+    {
+      "selection_id": "demo-recipe-5",
+      "run_id": 5,
+      "source_video_sha256": "6f87cec1aeec3b2bae6dac639a317c077a3f175f27abd5fc8430d6953d9d05b9",
+      "available_frame": 0,
+      "active_from_frame": 0,
+      "recipe_id": "5",
+      "volumes_ml": {
+        "T100": 10,
+        "T200": 10,
+        "T400": 10
+      },
+      "dispense_order": "T200>T400>T100",
+      "recorded_by": "Codex; illustrative inputs authorized by Austin",
+      "recorded_at_utc": "2026-10-19T16:16:45.155151+00:00",
+      "provenance": {
+        "kind": "illustrative_demo",
+        "description": "Assumed preloaded demo selection; activation is not a reviewed historical changeover timestamp. No supplied vial IDs are assigned."
+      }
+    },
+    {
+      "selection_id": "demo-recipe-6",
+      "run_id": 5,
+      "source_video_sha256": "6f87cec1aeec3b2bae6dac639a317c077a3f175f27abd5fc8430d6953d9d05b9",
+      "available_frame": 0,
+      "active_from_frame": 3800,
+      "recipe_id": "6",
+      "volumes_ml": {
+        "T100": 30,
+        "T200": 10,
+        "T400": 0
+      },
+      "dispense_order": "T200>T100",
+      "recorded_by": "Codex; illustrative inputs authorized by Austin",
+      "recorded_at_utc": "2026-10-19T16:16:45.155151+00:00",
+      "provenance": {
+        "kind": "illustrative_demo",
+        "description": "Assumed preloaded demo selection; activation is not a reviewed historical changeover timestamp. No supplied vial IDs are assigned."
+      }
+    },
+    {
+      "selection_id": "demo-recipe-7",
+      "run_id": 5,
+      "source_video_sha256": "6f87cec1aeec3b2bae6dac639a317c077a3f175f27abd5fc8430d6953d9d05b9",
+      "available_frame": 0,
+      "active_from_frame": 8100,
+      "recipe_id": "7",
+      "volumes_ml": {
+        "T100": 20,
+        "T200": 0,
+        "T400": 50
+      },
+      "dispense_order": "T400>T100",
+      "recorded_by": "Codex; illustrative inputs authorized by Austin",
+      "recorded_at_utc": "2026-10-19T16:16:45.155151+00:00",
+      "provenance": {
+        "kind": "illustrative_demo",
+        "description": "Assumed preloaded demo selection; activation is not a reviewed historical changeover timestamp. No supplied vial IDs are assigned."
+      }
+    },
+    {
+      "selection_id": "demo-recipe-8",
+      "run_id": 5,
+      "source_video_sha256": "6f87cec1aeec3b2bae6dac639a317c077a3f175f27abd5fc8430d6953d9d05b9",
+      "available_frame": 0,
+      "active_from_frame": 12700,
+      "recipe_id": "8",
+      "volumes_ml": {
+        "T100": 20,
+        "T200": 20,
+        "T400": 20
+      },
+      "dispense_order": "T200>T400>T100",
+      "recorded_by": "Codex; illustrative inputs authorized by Austin",
+      "recorded_at_utc": "2026-10-19T16:16:45.155151+00:00",
+      "provenance": {
+        "kind": "illustrative_demo",
+        "description": "Assumed preloaded demo selection; activation is not a reviewed historical changeover timestamp. No supplied vial IDs are assigned."
+      }
+    },
+    {
+      "selection_id": "demo-recipe-9",
+      "run_id": 5,
+      "source_video_sha256": "6f87cec1aeec3b2bae6dac639a317c077a3f175f27abd5fc8430d6953d9d05b9",
+      "available_frame": 0,
+      "active_from_frame": 17900,
+      "recipe_id": "9",
+      "volumes_ml": {
+        "T100": 10,
+        "T200": 35,
+        "T400": 35
+      },
+      "dispense_order": "T200>T400>T100",
+      "recorded_by": "Codex; illustrative inputs authorized by Austin",
+      "recorded_at_utc": "2026-10-19T16:16:45.155151+00:00",
+      "provenance": {
+        "kind": "illustrative_demo",
+        "description": "Assumed preloaded demo selection; activation is not a reviewed historical changeover timestamp. No supplied vial IDs are assigned."
+      }
+    },
+    {
+      "selection_id": "demo-recipe-10",
+      "run_id": 5,
+      "source_video_sha256": "6f87cec1aeec3b2bae6dac639a317c077a3f175f27abd5fc8430d6953d9d05b9",
+      "available_frame": 0,
+      "active_from_frame": 24200,
+      "recipe_id": "10",
+      "volumes_ml": {
+        "T100": 45,
+        "T200": 15,
+        "T400": 15
+      },
+      "dispense_order": "T200>T400>T100",
+      "recorded_by": "Codex; illustrative inputs authorized by Austin",
+      "recorded_at_utc": "2026-10-19T16:16:45.155151+00:00",
+      "provenance": {
+        "kind": "illustrative_demo",
+        "description": "Assumed preloaded demo selection; activation is not a reviewed historical changeover timestamp. No supplied vial IDs are assigned."
+      }
+    },
+    {
+      "selection_id": "demo-recipe-11",
+      "run_id": 5,
+      "source_video_sha256": "6f87cec1aeec3b2bae6dac639a317c077a3f175f27abd5fc8430d6953d9d05b9",
+      "available_frame": 0,
+      "active_from_frame": 29400,
+      "recipe_id": "11",
+      "volumes_ml": {
+        "T100": 10,
+        "T200": 10,
+        "T400": 50
+      },
+      "dispense_order": "T200>T400>T100",
+      "recorded_by": "Codex; illustrative inputs authorized by Austin",
+      "recorded_at_utc": "2026-10-19T16:16:45.155151+00:00",
+      "provenance": {
+        "kind": "illustrative_demo",
+        "description": "Assumed preloaded demo selection; activation is not a reviewed historical changeover timestamp. No supplied vial IDs are assigned."
+      }
+    },
+    {
+      "selection_id": "demo-recipe-12",
+      "run_id": 5,
+      "source_video_sha256": "6f87cec1aeec3b2bae6dac639a317c077a3f175f27abd5fc8430d6953d9d05b9",
+      "available_frame": 0,
+      "active_from_frame": 34800,
+      "recipe_id": "12",
+      "volumes_ml": {
+        "T100": 10,
+        "T200": 50,
+        "T400": 10
+      },
+      "dispense_order": "T200>T400>T100",
+      "recorded_by": "Codex; illustrative inputs authorized by Austin",
+      "recorded_at_utc": "2026-10-19T16:16:45.155151+00:00",
+      "provenance": {
+        "kind": "illustrative_demo",
+        "description": "Assumed preloaded demo selection; activation is not a reviewed historical changeover timestamp. No supplied vial IDs are assigned."
+      }
+    },
+    {
+      "selection_id": "demo-recipe-13",
+      "run_id": 5,
+      "source_video_sha256": "6f87cec1aeec3b2bae6dac639a317c077a3f175f27abd5fc8430d6953d9d05b9",
+      "available_frame": 0,
+      "active_from_frame": 41200,
+      "recipe_id": "13",
+      "volumes_ml": {
+        "T100": 0,
+        "T200": 50,
+        "T400": 20
+      },
+      "dispense_order": "T200>T400",
+      "recorded_by": "Codex; illustrative inputs authorized by Austin",
+      "recorded_at_utc": "2026-10-19T16:16:45.155151+00:00",
+      "provenance": {
+        "kind": "illustrative_demo",
+        "description": "Assumed preloaded demo selection; activation is not a reviewed historical changeover timestamp. No supplied vial IDs are assigned."
+      }
+    },
+    {
+      "selection_id": "demo-recipe-14",
+      "run_id": 5,
+      "source_video_sha256": "6f87cec1aeec3b2bae6dac639a317c077a3f175f27abd5fc8430d6953d9d05b9",
+      "available_frame": 0,
+      "active_from_frame": 46900,
+      "recipe_id": "14",
+      "volumes_ml": {
+        "T100": 60,
+        "T200": 0,
+        "T400": 10
+      },
+      "dispense_order": "T400>T100",
+      "recorded_by": "Codex; illustrative inputs authorized by Austin",
+      "recorded_at_utc": "2026-10-19T16:16:45.155151+00:00",
+      "provenance": {
+        "kind": "illustrative_demo",
+        "description": "Assumed preloaded demo selection; activation is not a reviewed historical changeover timestamp. No supplied vial IDs are assigned."
+      }
+    }
+  ]
+}

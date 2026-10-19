@@ -489,3 +489,6 @@ footer p + p {
     max-width: 210px;
   }
 }
+form label { display: block; margin: .5rem 0; }
+form input { display: block; width: 100%; box-sizing: border-box; padding: .5rem; background: #10191c; color: #e1e9e8; border: 1px solid #3d5057; border-radius: 4px; }
+details { margin: 1rem 0; }

@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Measurement QA diagnostic review handoff v1",
+  "type": "object",
+  "required": ["schema_version", "artifact_kind", "purpose", "source", "config", "config_id", "implementation_id", "counts", "cases"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "artifact_kind": {"const": "measurement_qa_review"},
+    "purpose": {"type": "string"},
+    "source": {
+      "type": "object", "required": ["run_id", "video_sha256", "camera", "fps", "frame_count", "time_convention"],
+      "properties": {"run_id": {"type": "integer"}, "video_sha256": {"type": "string"}, "camera": {"const": "vial_fill"}, "fps": {"type": "number", "exclusiveMinimum": 0}, "frame_count": {"type": "integer", "minimum": 1}, "time_convention": {"type": "string"}}
+    },
+    "config": {"type": "object"}, "config_id": {"type": "string"}, "implementation_id": {"type": "string"},
+    "counts": {"type": "object", "required": ["detected", "measurement_available", "rejected"], "additionalProperties": {"type": "integer", "minimum": 0}},
+    "cases": {"type": "array", "items": {"$ref": "#/$defs/case"}}
+  },
+  "$defs": {
+    "frame": {"type": "integer", "minimum": 0},
+    "landmark": {"type": "object", "required": ["frame_index", "mp4_s"], "properties": {"frame_index": {"$ref": "#/$defs/frame"}, "mp4_s": {"type": "number", "minimum": 0}}},
+    "case": {
+      "type": "object",
+      "required": ["detection_id", "candidate_number", "measurement_available", "rejection_reasons", "boundaries", "sample_frames", "accepted_sample_frames", "samples", "representative_frames", "review_status", "reviewed_label", "replay_url"],
+      "properties": {
+        "detection_id": {"type": "string"}, "candidate_number": {"type": "integer", "minimum": 1},
+        "measurement_available": {"type": "boolean"}, "rejection_reasons": {"type": "array", "items": {"type": "string"}},
+        "boundaries": {"type": "object", "additionalProperties": {"$ref": "#/$defs/landmark"}},
+        "sample_frames": {"type": "array", "items": {"$ref": "#/$defs/frame"}},
+        "accepted_sample_frames": {"type": "array", "items": {"$ref": "#/$defs/frame"}},
+        "samples": {"type": "array", "items": {"type": "object", "required": ["frame_index", "mp4_s", "qa_valid", "qa_flags", "replay_url"], "properties": {"frame_index": {"$ref": "#/$defs/frame"}, "mp4_s": {"type": "number"}, "qa_valid": {"type": "boolean"}, "qa_flags": {"type": "array", "items": {"type": "string"}}, "replay_url": {"type": "string"}}}},
+        "representative_frames": {"type": "array", "items": {"type": "object", "required": ["frame_index", "mp4_s", "path", "role", "sha256", "replay_url"], "properties": {"frame_index": {"$ref": "#/$defs/frame"}, "mp4_s": {"type": "number"}, "path": {"type": "string"}, "role": {"enum": ["window_sample", "departure"]}, "sha256": {"type": "string"}, "replay_url": {"type": "string"}}}},
+        "measured_lab": {"type": ["array", "null"]}, "measured_rgb": {"type": ["array", "null"]},
+        "temporal_spread_de2000": {"type": ["number", "null"]}, "review_status": {"const": "unreviewed"},
+        "reviewed_label": {"type": "null"}, "replay_url": {"type": "string"}
+      }
+    }
+  }
+}

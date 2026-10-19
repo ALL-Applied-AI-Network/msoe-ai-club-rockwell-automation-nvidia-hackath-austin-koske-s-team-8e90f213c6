@@ -13,6 +13,57 @@ from replay.tests.test_pipeline import fixture_video
 
 
 class ServerChecks(unittest.TestCase):
+    def test_manual_recipe_reference_exports_and_application_restart(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            videos = root / 'data/vial_fill/videos'
+            videos.mkdir(parents=True)
+            fixture_video(videos / 'vial_fill_video_5.mp4', length=360, with_fill=True, change_after=180)
+            catalog = Catalog(root / 'data', include_annotations=False)
+            manager = Manager(catalog, Config(), root / 'out')
+            manager.ensure(5)
+            manager.jobs[5].result(timeout=15)
+            server = ReplayServer(('127.0.0.1', 0), manager)
+            thread = threading.Thread(target=server.serve_forever, daemon=True)
+            thread.start()
+            base = f'http://127.0.0.1:{server.server_port}'
+            def post(path, body):
+                with urlopen(Request(base + path, data=json.dumps(body).encode(), headers={'Content-Type':'application/json'})) as response:
+                    return json.load(response)
+            try:
+                s = post('/api/recipe-plan', dict(run_id=5, frame_index=0, recipe_id='A', volumes_ml={'T100':30},
+                    dispense_order='T100', recorded_by='test operator', description='Explicit intended recipe'))
+                self.assertEqual(s['available_frame'], 0)
+                data = manager.data[5]
+                first, second = data.observations
+                r = post('/api/references', dict(run_id=5, vial_id=first['vial_id'], frame_index=170))
+                with urlopen(base + '/api/state?run=5&frame=359') as response:
+                    state = json.load(response)
+                self.assertEqual(state['completed'][0]['assessment']['status'], 'unavailable')
+                self.assertEqual(state['completed'][1]['assessment']['status'], 'review')
+                self.assertEqual(state['completed'][1]['assessment']['reference_id'], r['reference_id'])
+                with urlopen(base + '/api/observations.csv?run=5&frame=359') as response:
+                    text = response.read().decode()
+                self.assertIn('recipe_definition_id', text)
+                self.assertIn(r['reference_id'], text)
+                post('/api/recipe-plan', dict(run_id=5, frame_index=340, recipe_id=None,
+                    recorded_by='test operator', description='Recipe unknown after stop'))
+            finally:
+                server.shutdown()
+                server.server_close()
+                manager.close()
+                thread.join(timeout=5)
+            restarted = Manager(catalog, Config(), root / 'out')
+            try:
+                self.assertEqual(len(restarted.recipe_plan.document['selections']), 2)
+                self.assertEqual(restarted.references[0]['reference_id'], r['reference_id'])
+                restarted._prepare(5)
+                again = restarted.data[5].completed(359, restarted.references)
+                self.assertEqual(again[1]['assessment'], state['completed'][1]['assessment'])
+                self.assertEqual(restarted.data[5].completed(169,restarted.references)[0]['assessment']['status'], 'unavailable')
+            finally:
+                restarted.close()
+
     def test_image_default_has_no_label_dependency_and_exports_only_available_events(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

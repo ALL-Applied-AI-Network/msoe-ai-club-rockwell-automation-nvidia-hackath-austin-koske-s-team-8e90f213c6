@@ -53,6 +53,8 @@ data work, GB10 Isaac/Cosmos, and Rosie Singularity/Slurm. The
 Recording replay app: run `pwsh -File setup/run-replay.ps1`, then open
 <http://127.0.0.1:8765>. See [replay instructions](replay/README.md) for source
 paths, annotation handoffs, reference timing, batch exports and current limits.
+The [recipe-aware demo handoff](replay/HANDOFF.md) includes exact reproduction,
+explicit recipe/reference input, and the measurement QA review export.
 
 ```bash
 git clone <this repository's URL from the green "Code" button>

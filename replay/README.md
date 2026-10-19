@@ -4,6 +4,11 @@ One local browser app and one batch pipeline, using the existing data environmen
 The recordings and supplied labels stay read-only. No GPU, API key, model server,
 Node runtime or frontend build is required to run it.
 
+For the current **recipe-aware completed-vial demo**, exact reproduction,
+operator recipe/reference contracts, Aleyna's QA review manifest and the physical
+input boundary, use [HANDOFF.md](HANDOFF.md). Image detection still runs independently
+of evaluation annotations; the intended recipe is a separate explicit input.
+
 ## Start the app
 
 From the repository, after the team data bootstrap:
@@ -41,9 +46,11 @@ bundled with the app. The server binds to loopback. For remote use, forward port
 3. Inspect QA before the color. The ledger contains only observations available
    by the current playhead. Backward seeking hides later observations again.
 4. Image mode reports fill IDs, visible stream episodes and completed color QA.
-   Recipe identity remains unknown until a separate recipe context source is
-   connected. Recipe comparisons and reference creation stay unavailable in this
-   mode. Detection IDs are sequential candidates, not supplied vial IDs.
+   Load `--recipe-plan replay/examples/run5-demo-plan.json` or use **Set intended
+   recipe** before a fill starts. Missing/changed context remains unavailable.
+   With stable known context, deliberately select a completed QA-valid example as
+   a development reference for later fills. Detection IDs are sequential image
+   candidates, not supplied vial IDs. See the handoff for provenance and limits.
 5. Export events JSONL, observations CSV and the reference bank. Exports stop at
    the playhead. Resetting playback does not make a future reference eligible for
    earlier vials.
@@ -186,7 +193,7 @@ map is absent. Cross-camera physical offsets still need the reviewed data handof
 | Data group | Reviewed per-run annotations and clock landmarks; optional `Catalog` adapter |
 | Synthetic group | Keep generated RGB and provenance separate; future predictor can provide a recipe/stage expectation without changing transport or event logging |
 | Image detector | `FillDetector.update(feature)` returns causal state; `fill_started`, `stream_started`, `stream_stopped`, `fill_completed` events preserve availability timestamps |
-| Recipe context | Separate controller/operator recipe plan needed for image-mode recipe/stage assessment; never infer the intended recipe from observed color or evaluation matches |
+| Recipe context | `RecipePlan` and manual UI input; real operator workflow/plan still needs confirmation. Never infer the intended recipe from observed color or evaluation matches |
 | Austin: comparison | `assess(observation, references, config)`; stage expectations need a separate interface before comparing during-fill color |
 | Evaluation | Join exported observations to independent reviewed quality labels; count unavailable measurements and split by run/transition |
 | Cosmos | Consume frozen structured evidence after a decision; keep the deterministic explanation as fallback |

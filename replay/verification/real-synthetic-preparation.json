@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "status": "GB10 full batch and Rosie real-only control launched detached; connection interrupted; results not retrieved",
+  "status": "Historical preparation snapshot; superseded by real-synthetic-execution.json",
   "planned_synthetic_images": 768,
   "prepared_real_counts": {
     "train": 1442,
@@ -192,5 +192,6 @@
   "gb10_remote_output": "~/ai-club-tools/results/austin/real-synthetic-768-20261019",
   "gb10_last_observed_completed_rows": 25,
   "mixed_job_submitted": false,
-  "evaluation_matching_tests_passed": 1
+  "evaluation_matching_tests_passed": 1,
+  "superseded_by": "real-synthetic-execution.json"
 }

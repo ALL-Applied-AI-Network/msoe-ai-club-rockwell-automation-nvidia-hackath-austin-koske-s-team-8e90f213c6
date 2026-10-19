@@ -1,6 +1,6 @@
 # Camera-matched box rendering: Cameron / Hayden handoff
 
-This is a **12-image review batch**, not a released training set. It exercises
+This documents the initial **12-image review batch**, not a released training set. It exercises
 native GB10 Isaac Sim 6.0.0.1, the supplied fill-station camera, separate vial,
 liquid and stream objects, geometric visibility masks, and YOLO box export.
 All examples have `training_eligible: false` until appearance and label policy
@@ -231,6 +231,13 @@ export labels **all visible vials**. Agree on consistent real/synthetic labeling
 or an explicit station/ignore-region policy; do not train with unlabelled
 neighbor vials treated inconsistently as negatives.
 
+The subsequent October 19 experiment uses a consistent **fill-position vial**
+target in both real and synthetic training copies: synthetic object 101 maps
+to the existing vial class and object 201 to accumulated liquid. Neighbor
+vials and streams remain in the raw three-class export. The station-specific
+training scope and explicit admission of provisional proxies are documented
+in [the mixed and sim-only experiment](../vision/REAL-SYNTHETIC.md).
+
 ## Executed evidence, October 19
 
 The GB10 (`spark8`, NVIDIA GB10 driver 580.178.04) rendered the complete 12-case
@@ -306,3 +313,19 @@ both `run.json` and `verification.json`; a process launch or captured PNG alone
 is not completion. A second complete repeat was not executed after the final
 copy because connectivity dropped again; the evidence above describes one
 complete verified GB10 batch plus a preceding three-case GB10 smoke.
+
+## Subsequent 768-image experiment
+
+Austin explicitly requested scaling and provisional training after the initial
+review. The seeded 768-image batch ran on the same pinned GB10 runtime in
+2,689.24 seconds. Remote and local verification passed: 768 unique RGB frames,
+2,304 vial boxes, 576 liquid-body boxes and 497 stream boxes, with no unavailable
+required objects or synchronization retries. Source asset hashes match the
+preceding GB10 pilot. Camera and source assets remain unchanged.
+
+The scale profile uses effective 32 SPP, total SPP 32, one subframe, and compact
+exports retaining native ID planes, mappings and masks. It preserves the same
+mask/box checks. Raw `training_eligible` and optical-calibration flags remain
+false. These are geometric proxies admitted for the requested experiment.
+See [REAL-SYNTHETIC.md](../vision/REAL-SYNTHETIC.md) for both training arms,
+the additional real-only control, checkpoint policies and local comparison outputs.

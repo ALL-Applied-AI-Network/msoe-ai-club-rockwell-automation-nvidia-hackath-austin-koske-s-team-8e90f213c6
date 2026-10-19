@@ -34,31 +34,34 @@ certify that every enclosed pixel is liquid: holders/labels can occlude it.
 
 ## Current execution status
 
-The 768-case fixture, immutable real copy and matched real-only control are
-prepared locally. Four new data/split/admission tests and nine existing Isaac
-checks pass. A **24-image local Windows Isaac 6.1 RC** pilot at effective **32
-samples per pixel** passed native ID/mask/box/camera checks without missing
-masks or synchronization retries. This is preflight, not the requested GB10 run.
+The full **768-image GB10 / Isaac 6.0.0.1** render completed in **2,689.24
+seconds** at effective 32 SPP / one subframe. Remote and local verification
+passed with no unavailable required objects or synchronization retries:
+2,304 vial, 576 liquid-body and 497 stream boxes. Source asset hashes match the
+24-image GB10 preflight. Raw proxy eligibility flags remain unchanged.
 
-The matching **24-image GB10 / Isaac 6.0.0.1** preflight also passed all
-mask/box/camera checks with no missing masks or retries, in **96.51 seconds**.
-Its local review sheet is in the experiment's `gb10-pilot/contact-boxes.png`.
+* Control job **285766**: completed, exit `0:0`, downloaded and scored. Its
+  supplementary `control-preview/` videos are playable local files.
+* Mixed job **285785**: all 12 epochs and successful model export observed.
+  Final accounting and model download still need verification.
+* Sim-only job **285786**: last observed at epoch 10/12. Its declared selection
+  is the fixed final checkpoint, with no real CSI data used in fitting or
+  checkpoint selection. Final state and download still need verification.
 
-The **768-image GB10 run is launched detached** (PID `2173124`), output
-`~/ai-club-tools/results/austin/real-synthetic-768-20261019`, log
-`~/ai-club-tools/logs/real-synthetic-768-20261019.log`. The last observed count
-was 25 completed rows. **Rosie control job `285766`** was running its first
-epoch in `~/ai-club-tools/results/real-synthetic-detector-20261019`.
+**Campus connectivity dropped again before retrieving the two candidates.**
+No mixed or sim-only Run 5 score/video is claimed yet. Reconnect, inspect these
+existing jobs, and download their models before evaluating. Do not duplicate
+jobs or rerender the completed batch. Execution evidence is in
+[`real-synthetic-execution.json`](../../replay/verification/real-synthetic-execution.json).
 
-Campus connectivity dropped again after launch. Both jobs are independent of
-the SSH session; their current completion still needs verification. The mixed
-job has **not** been submitted. No new trained candidate, Run 5 score or result
-video is claimed yet. On reconnection, inspect these existing jobs/outputs
-before starting another job. Retrieve and verify the completed batch, prepare
-the mixed copy, submit mixed training, then retrieve both models and evaluate.
-
-Prepared experiment folder:
+Local experiment:
 `C:/Users/Austin/ai-club-tools/results/real-synthetic-detector-20261019`
+
+Rosie experiment: `~/ai-club-tools/results/real-synthetic-detector-20261019`.
+GB10 batch: `~/ai-club-tools/results/austin/real-synthetic-768-20261019`.
+Local native review: `renders/contact-boxes.png`. Training inventories are
+prepared. `reproduce-run5.ps1` in the local experiment supplies the exact
+comparison command once the two candidate models have been retrieved.
 
 ## Prepare on Windows
 
@@ -213,3 +216,10 @@ command above. Additional local outputs are
 records. Current detector is left and sim-only is right. All paired scoring
 uses the same fixed Run 5 sources/settings. Run 4 parity images are consumed
 only after the checkpoint is frozen to verify its export, without selection.
+
+The fixed render scene always contains vials. Empty-vial cases are liquid
+negatives, not absent-vial negatives, so inspect real vial changes in the full
+videos. The repeated training inventories contain 1,100 liquid boxes in the
+real-only control, 1,284 in mixed and 1,659 in sim-only. Matching optimizer steps
+controls the training budget; class-positive proportions and checkpoint
+selection protocols still differ. Report transfer results with these limits.

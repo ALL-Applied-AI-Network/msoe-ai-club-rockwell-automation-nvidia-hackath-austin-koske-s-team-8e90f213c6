@@ -170,3 +170,46 @@ saw all five recordings; Run 5 has been inspected repeatedly. Unknown/empty
 teacher records stay excluded from AP. Report AP/precision/recall separately
 from detection presence, completed-fill measurement coverage, color accuracy
 and defect decisions. Nothing here authorizes release or promotes a detector.
+
+## Supplemental sim-only transfer arm
+
+Austin requested this additional arm after the real-only control diagnostic.
+It has a separate `sim-only-plan.json` referencing the unchanged base plan.
+**Only generated CSI images/labels enter fine-tuning.** All 768 unique renders
+are used, with seeded repeats to reach the same 2,210-image training budget,
+same COCO YOLO11n initialization, seed 19, 12 epochs and augmentation.
+The generic COCO initialization itself includes real-image pretraining; this
+is a test of synthetic-only **domain fine-tuning**, not training from scratch.
+
+**The fixed final epoch is selected in advance. No real Run 4 checkpoint
+selection is used for this arm.** Ultralytics still performs a final validation;
+its source is the synthetic training set. Those resubstitution scores are not
+transfer or held-out accuracy, and its `best.pt` is ignored. The exported
+`models/sim-only/checkpoint.pt` comes from `train/weights/last.pt`.
+
+Freeze the supplemental plan before fitting, then prepare metadata after the
+verified mixed copy is available:
+
+```powershell
+& $dataPython setup/vision/train_sim_only.py plan --out $trialRoot
+& $dataPython setup/vision/train_sim_only.py prepare --out $trialRoot
+```
+
+Preparation reads the mixed inventory's metadata and selects synthetic rows
+only. It does not read/copy real pixels or labels. Upload `sim-only-plan.json`,
+`data/sim-only/provenance.json`, `train_sim_only.py` and
+`train-sim-only-rosie.sbatch` to the existing Rosie experiment. The job copies
+only the verified synthetic sources from `data/mixed`, rejects unlisted files
+or real rows, and runs with Singularity:
+
+```bash
+sbatch --output=sim-only-%j.log train-sim-only-rosie.sbatch "$PWD"
+```
+
+Download `models/sim-only`, then add `--include-sim-only` to the evaluation
+command above. Additional local outputs are
+`evaluation/sim-only/run5-full-comparison.mp4`,
+`evaluation/sim-only/run5-early-pours.mp4`, scores, export parity and prediction
+records. Current detector is left and sim-only is right. All paired scoring
+uses the same fixed Run 5 sources/settings. Run 4 parity images are consumed
+only after the checkpoint is frozen to verify its export, without selection.

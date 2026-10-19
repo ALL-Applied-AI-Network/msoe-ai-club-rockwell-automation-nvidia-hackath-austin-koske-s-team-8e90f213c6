@@ -8,6 +8,12 @@ raw detections and source hashes are preserved. This does not establish reviewed
 box or physical-identity accuracy. Segmentation/color QA remains downstream;
 the coverage numbers below are historical experiments, not localization scores.
 
+The [cropped + CLAHE training comparison](crop-contrast-detector-run5.json) is
+complete: Rosie job 285702, Runs 1-3 fit / Run 4 selects / Run 5 diagnostic only.
+Overall provisional-box mAP50-95 fell from 0.6528 to 0.6214. Keep the original
+detector. Local full-recording and native-rate early-pour videos, reproduction
+and limitations are documented in [CROP-CONTRAST.md](../../setup/vision/CROP-CONTRAST.md).
+
 # Segmentation adapter debug - October 19
 
 The post-hoc [debug audit](segmentation-pipeline-debug-run5.json) fixes semantic

@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "kind": "frozen_crop_contrast_trial",
+  "fit_runs": [
+    1,
+    2,
+    3
+  ],
+  "development_runs": [
+    4
+  ],
+  "excluded_from_fit_and_selection": [
+    5
+  ],
+  "epochs": 12,
+  "seed": 19,
+  "architecture": "yolo11n_detect",
+  "pretrained": "COCO yolo11n, same starting model as original detector",
+  "checkpoint_selection": "Run 4 box mAP50-95 fitness only",
+  "confidence_for_videos": 0.35,
+  "nms_iou": 0.45,
+  "ap_scoring_confidence": 0.001,
+  "preprocessing": {
+    "schema_version": 1,
+    "source_shape": [
+      480,
+      640
+    ],
+    "roi": [
+      227,
+      22,
+      414,
+      454
+    ],
+    "roi_derivation": "All fitting-box bounds plus 24px horizontal/16px vertical context; no development/test data",
+    "crop_before_clahe": true,
+    "clahe": {
+      "color_space": "OpenCV LAB",
+      "channel": "L",
+      "clip_limit": 2.0,
+      "tile_grid": [
+        8,
+        8
+      ]
+    },
+    "opencv": "5.0.0",
+    "crop_coordinates": "source xyxy with exclusive upper bounds"
+  },
+  "data_provenance_sha256": "d3e2fd717ca1759fd706eaae85ec6b3929545c691f2f517844d0e0a31530060c",
+  "baseline_onnx_sha256": "89ed11f7046171e5340dc45a9d528010de1cefbba21e163b23b7098151e0880e",
+  "limits": [
+    "Provisional teacher targets; not independent human truth.",
+    "Run 5 previously inspected; diagnostic comparison, not new blind test.",
+    "Original historical run used AMP; new reproducible trainer disables AMP checks/implicit downloads.",
+    "No measured color, measurement-QA change, threshold tuning or baseline replacement."
+  ]
+}

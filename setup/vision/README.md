@@ -4,6 +4,9 @@
 vial/liquid localization on reviewed targets before further segmentation or
 color decisions. The existing two-class detector is the starting baseline;
 the color-QA coverage counts below do not score localization accuracy.
+The [crop + CLAHE retraining trial](CROP-CONTRAST.md) is complete, with local
+Run 5 comparison videos. Keep the original detector: the candidate has slightly
+higher provisional liquid recall but worse box precision/overlap overall.
 
 The follow-up [crop segmentation experiment](SEGMENTATION.md) completed on Rosie.
 It initially passed 7/30 Run 5 windows; the [post-hoc adapter correction](SEGMENTATION-DEBUG.md)

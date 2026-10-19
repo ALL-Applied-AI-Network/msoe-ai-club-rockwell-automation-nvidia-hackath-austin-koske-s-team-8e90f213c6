@@ -28,8 +28,10 @@ QA are not replaced or modified.
 
 The raw synthetic export keeps all neighbor-vial and stream labels. The
 **training copy** uses only object **101 (fill-position vial)** as class 0 and
-object **201 (accumulated liquid body)** as class 1, matching the existing real
-label scope. Neighbor vials and streams are excluded as training targets in
+object **201 (accumulated liquid body)** as class 1, matching the intended real
+label scope. The subsequent [RGB/target audit](SYNTHETIC-TRANSFER-AUDIT.md)
+found that some actual teacher proposals combine stream and body; consistent
+scope cannot be assumed from the class name. Neighbor vials and streams are excluded as training targets in
 this two-class trial; their source labels are never erased. A bbox does not
 certify that every enclosed pixel is liquid: holders/labels can occlude it.
 

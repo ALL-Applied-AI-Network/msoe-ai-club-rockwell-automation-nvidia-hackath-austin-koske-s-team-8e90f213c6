@@ -1,3 +1,17 @@
+# Sampling segmentation experiment - October 19
+
+The frozen candidate regressed to **7/30** QA-valid Run 5 windows versus the
+**13/30 baseline**, with identical vial detections, tracks, fill events, windows
+and QA settings. Keep the baseline. Runs 1-3 trained the model; Run 4 selected
+the checkpoint; Run 5 was excluded from fitting/selection.
+
+See [paired report](segmentation-run5.json) and
+[reproduction](../../setup/vision/SEGMENTATION.md). The published source archive
+passes 42 replay tests and two bootstrap tests. Ordinary runtime loads both
+ONNX models without PyTorch.
+
+![One gain and one regression under unchanged QA](segmentation-paired-evidence.png)
+
 # Current tracked-liquid correction â€” October 19
 
 Start with [VISION.md](../VISION.md),

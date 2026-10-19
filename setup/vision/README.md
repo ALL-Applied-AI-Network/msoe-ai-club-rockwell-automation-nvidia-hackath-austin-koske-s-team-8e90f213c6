@@ -1,5 +1,10 @@
 # Bootstrap vial/liquid localization
 
+**Current next milestone: [box detection and tracking](BOXES.md).** Establish
+vial/liquid localization on reviewed targets before further segmentation or
+color decisions. The existing two-class detector is the starting baseline;
+the color-QA coverage counts below do not score localization accuracy.
+
 The follow-up [crop segmentation experiment](SEGMENTATION.md) completed on Rosie.
 It initially passed 7/30 Run 5 windows; the [post-hoc adapter correction](SEGMENTATION-DEBUG.md)
 recovers fill 30 for 8/30 versus this model's 13/30 baseline under unchanged
@@ -79,10 +84,10 @@ These are synthetic image augmentations, not new physical fluid simulations or
 reviewed masks. They remain outside evaluation and are not automatically fed
 back into training. Review/correct them before another training round.
 
-The useful next learned model is an instance segmentation model trained on
-reviewed vial/liquid outlines. Split by recording, keep source and descendants
-together, and evaluate leakage into holder/glass/background separately from
-box agreement and color deviations. Clear/neutral liquid needs its own evidence;
+The next supervised milestone is corrected vial/liquid boxes and video tracking
+as described in [BOXES.md](BOXES.md). Learned segmentation is deferred. Split by
+recording, keep source and descendants together, and evaluate localization
+separately from mask/color decisions. Clear/neutral liquid needs its own evidence;
 the current `colored_liquid` class cannot establish its presence.
 
 For a separate frozen-model agreement check against the existing Run 5 teacher

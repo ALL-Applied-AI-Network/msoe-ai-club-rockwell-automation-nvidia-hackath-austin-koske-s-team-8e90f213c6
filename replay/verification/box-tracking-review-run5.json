@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "kind": "box_only_tracking_review",
+  "run_id": 5,
+  "video_sha256": "6f87cec1aeec3b2bae6dac639a317c077a3f175f27abd5fc8430d6953d9d05b9",
+  "source_video": "C:\\git\\FDS-Dark\\ALL-Applied-AI-Network\\msoe-ai-club-rockwell-automation-nvidia-hackath-austin-koske-s-team-8e90f213c6\\datasets\\dataset2\\csi-vial-fill-dataset\\vial_fill\\videos\\vial_fill_video_5.mp4",
+  "model_sha256": "89ed11f7046171e5340dc45a9d528010de1cefbba21e163b23b7098151e0880e",
+  "detector_cache_sha256": "aff504002184d856ac06451f1730677eace2e840b89110c2cb6c0af39a8850d8",
+  "decoded_source_frames": 50942,
+  "samples": 8491,
+  "source_fps": 30.0,
+  "sample_stride": 6,
+  "output_fps": 5.0,
+  "tracker": "ByteTrack vial-only; liquids associated to current vial detections",
+  "tracker_settings": {
+    "track_high_thresh": 0.25,
+    "track_low_thresh": 0.1,
+    "new_track_thresh": 0.25,
+    "track_buffer": 5,
+    "match_thresh": 0.8,
+    "fuse_score": true
+  },
+  "ultralytics": "8.4.182",
+  "cached_detector_confidence_floor": 0.35,
+  "source_rgb_hashes_verified": true,
+  "unique_candidate_track_ids": 4,
+  "counts": {
+    "samples_with_vial": 8282,
+    "samples_with_liquid": 4207,
+    "samples_with_both": 4187,
+    "samples_with_multiple_vials": 10,
+    "liquid_unique_vial": 3408,
+    "liquid_no_vial": 805
+  },
+  "reviewed_detection_metrics": null,
+  "reviewed_tracking_metrics": null,
+  "limitations": [
+    "Presence counts are not precision or recall.",
+    "Candidate track IDs are not verified physical identities.",
+    "Raw boxes are unreviewed; no mask or color claim follows.",
+    "Cached detections omit confidence below 0.35; ByteTrack low-confidence matching is not evaluated.",
+    "Sampled 5 fps review is not native-frame-rate tracking validation.",
+    "Run 5 has already been inspected; it is not a new blind test."
+  ],
+  "output_root": "C:/Users/Austin/ai-club-tools/results/box-tracking-review-20261019",
+  "review_url": "http://127.0.0.1:8768/",
+  "checks": {
+    "raw_box_coordinates_and_confidences_unchanged_on_all_8491_samples": true,
+    "exact_source_stills_verified": 60,
+    "exported_video_frames": 8491,
+    "video_start_middle_end_decoded": true,
+    "unit_tests": 4,
+    "review_http_passed": true
+  },
+  "output_sha256": {
+    "boxes.mp4": "5617d6d4086243fe56aa6374de51272d654547f2cbd68af733a2c5e49da7971b",
+    "boxes.jsonl": "e19049077814f077a8cb460fa7b1eb6a4f1f481a23744ad319b71462ceb3477c",
+    "review.json": "76e0f72a93dfb61efee0b45ebfe69b14a25a0c0e1edc9253b0cdb086d1a665a5",
+    "manifest.json": "44ffcece8de621064770789cd7c954eafc4174b9a3dae85922d8093bfcaf6564"
+  }
+}

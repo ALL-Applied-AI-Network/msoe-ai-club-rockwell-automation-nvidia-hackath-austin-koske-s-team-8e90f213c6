@@ -1,3 +1,13 @@
+# Current milestone: box localization and tracking - October 19
+
+See the [box-first plan](../../setup/vision/BOXES.md) and
+[Run 5 review export checks](box-tracking-review-run5.json). The full recording
+now has a separate source/box review video with frozen two-class detections and
+candidate ByteTrack vial IDs, plus a 60-frame correction interface. All 8,491
+raw detections and source hashes are preserved. This does not establish reviewed
+box or physical-identity accuracy. Segmentation/color QA remains downstream;
+the coverage numbers below are historical experiments, not localization scores.
+
 # Segmentation adapter debug - October 19
 
 The post-hoc [debug audit](segmentation-pipeline-debug-run5.json) fixes semantic

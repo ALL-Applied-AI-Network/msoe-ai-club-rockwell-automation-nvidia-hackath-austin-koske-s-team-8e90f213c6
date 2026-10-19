@@ -1,5 +1,10 @@
 # Tracked-liquid replay correction
 
+The current priority is [box detection and tracking](../setup/vision/BOXES.md):
+establish vial/liquid localization and continuity before further segmentation
+or color decisions. A separate box-only video review uses the frozen detector
+and standard ByteTrack; it does not alter this replay's QA or trusted results.
+
 The optional [sampling-interior segmentation experiment](../setup/vision/SEGMENTATION.md)
 was trained on Rosie using Runs 1–3 provisional masks, with Run 4 checkpoint
 selection. The original adapter passed **7/30** Run 5 windows; a post-hoc

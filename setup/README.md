@@ -83,6 +83,11 @@ a clear busy message rather than starting another job.
 
 ## Render with Isaac Sim
 
+For the small **vial / liquid / stream box review batch**, use
+[the camera-matched rendering handoff](isaac/BOX-RENDERING.md). It includes
+local PNG sheets, geometric label passes, a machine-readable manifest, and
+YOLO exports. The batch requires visual review before training or scaling.
+
 Isaac Sim is pinned to **6.0.0.1** with a separate Python 3.12 environment. New
 machines can install it using `bash setup/bootstrap.sh isaac`. The GB10 has
 already been provisioned. The ARM install uses managed Python because its

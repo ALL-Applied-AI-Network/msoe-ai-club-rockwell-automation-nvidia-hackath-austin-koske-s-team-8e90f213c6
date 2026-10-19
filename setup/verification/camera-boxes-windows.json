@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "requested_target": "GB10",
+  "gb10_execution": "pending; campus VPN/DNS disconnected before upload",
+  "local_debug_run": {
+    "schema_version": 1,
+    "complete": true,
+    "captured": 12,
+    "requested": 12,
+    "seconds": 45.43799999996554,
+    "host": "AUSTIN-DESKTOP",
+    "isaac_version": "6.1.0.rc.26",
+    "renderer": "PathTracing",
+    "gpu": "NVIDIA GeForce RTX 4080 SUPER, 610.88",
+    "resolution": [
+      640,
+      480
+    ],
+    "fixture_sha256": "479b26a7bb98cf320f918f0cc73ddbd63cf5fde04f9aeb40382a8554f92e7601",
+    "source_assets": {
+      "cameras\\FillCam.json": "11966571ffa71a979297a0c6c730c739f33d86a0578fe0b4b890dd4a7ce1c936",
+      "ORIGINAL_README.md": "6a4114d4978a3266fc1e09eea75790ea2a18552d943a8cf4f0df57001bff9b06",
+      "stations\\fill_station\\fill_station.usda": "5f58540c187ac16c4426bffb3ebbe559e62d6d63ff359afdb08867fc24b60af9",
+      "stations\\fill_station\\geometry\\fill_station.usdc": "57f578fd047d3a5f2ee25712d841f836272fc745a89c5dfbcc301f0c199191db",
+      "stations\\fill_station\\geometry\\textures\\color_B7C6CE.exr": "7b3ff7cc6c709d4b5ae34c40b60277db472b1c7d483a744cf0990ab7023d61cc"
+    },
+    "script_sha256": "828683de493afc84e76d233e693ae62ad9f699b2b15c52b0eefcbe95360336c8",
+    "annotation_helper_sha256": "49f619eda223042c1751b6391cdf183f66ac0214b5da07c2e9c0c8b42d2af0a7",
+    "source_assets_unchanged": true,
+    "camera_parameters_unchanged": true,
+    "station_frame": 686,
+    "frozen_attributes": 221,
+    "training_eligible": false,
+    "run5_used": false
+  },
+  "local_verification": {
+    "passed": true,
+    "samples": 12,
+    "unique_rgb_images": 12,
+    "visible_boxes": {
+      "vial": 36,
+      "liquid": 10,
+      "stream": 8
+    },
+    "present_but_unavailable": [],
+    "mask_source": "Replicator instance_segmentation_fast from documented label passes",
+    "appearance_checks": [
+      {
+        "cases": [
+          "07-mid-blue",
+          "08-mid-pale"
+        ],
+        "shared_liquid_pixels": 3897,
+        "mean_absolute_rgb_difference": 56.19681806517834,
+        "minimum_required": 3,
+        "scope": "stale/material-change capture check, not optical calibration"
+      }
+    ],
+    "checks": [
+      "RGB/mask SHA256",
+      "native image dimensions",
+      "binary mask equals saved renderer IDs",
+      "box equals mask bounds",
+      "box within independent camera projection +/- 2px",
+      "YOLO rows equal manifest",
+      "absent object has no mask",
+      "RGB captures unique",
+      "source/camera preservation",
+      "empty case",
+      "stream-only case",
+      "liquid height progression"
+    ],
+    "optical_accuracy_validated": false,
+    "real_detection_accuracy_measured": false,
+    "training_eligible": false
+  },
+  "alignment_reference": {
+    "source_video": "C:\\git\\FDS-Dark\\ALL-Applied-AI-Network\\msoe-ai-club-rockwell-automation-nvidia-hackath-austin-koske-s-team-8e90f213c6\\datasets\\dataset2\\csi-vial-fill-dataset\\vial_fill\\videos\\vial_fill_video_1.mp4",
+    "source_video_sha256": "1678ea5e8fa01a532c5114bbfeb9672413fd25b4d883d8ac881786f414804ddf",
+    "source_run": 1,
+    "frame_index_zero_based": 2100,
+    "mp4_timestamp_seconds": 70.0,
+    "fps": 30.0,
+    "image_sha256": "57f5bf1eccd768ca22fef2d2d49584306d7475f2a12bc6df0c29e84354ef44fe",
+    "usage": "visual alignment review only; no evaluation labels or camera fitting"
+  },
+  "local_tests_passed": 7,
+  "visual_review": "approximate supplied-camera alignment; neighbor/holder/background and optical differences remain",
+  "training_performed": false,
+  "review_output": "C:\\Users\\Austin\\ai-club-tools\\results\\isaac-camera-boxes-20261019\\windows-review"
+}

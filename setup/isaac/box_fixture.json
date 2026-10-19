@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "purpose": "Small review batch only; no automatic training eligibility",
+  "camera": "FillCam; supplied intrinsics and pose unchanged",
+  "station_frame": 686,
+  "cases": [
+    {"id":"00-empty", "level":0, "stream":"off", "rgb":[0.01,0.20,0.30], "opacity":0.60},
+    {"id":"01-first-stream", "level":0, "stream":"short", "rgb":[0.01,0.20,0.30], "opacity":0.60},
+    {"id":"02-tiny-blue", "level":0.02, "stream":"continuous", "rgb":[0.01,0.20,0.30], "opacity":0.60},
+    {"id":"03-tiny-pale", "level":0.02, "stream":"continuous", "rgb":[0.65,0.84,0.88], "opacity":0.35},
+    {"id":"04-tiny-clear-proxy", "level":0.02, "stream":"continuous", "rgb":[0.90,0.94,0.95], "opacity":0.12},
+    {"id":"05-low-blue", "level":0.10, "stream":"continuous", "rgb":[0.01,0.20,0.30], "opacity":0.60},
+    {"id":"06-low-pale", "level":0.10, "stream":"continuous", "rgb":[0.65,0.84,0.88], "opacity":0.35},
+    {"id":"07-mid-blue", "level":0.40, "stream":"continuous", "rgb":[0.01,0.20,0.30], "opacity":0.60},
+    {"id":"08-mid-pale", "level":0.40, "stream":"continuous", "rgb":[0.65,0.84,0.88], "opacity":0.35},
+    {"id":"09-high-blue-stopped", "level":0.90, "stream":"off", "rgb":[0.01,0.20,0.30], "opacity":0.60},
+    {"id":"10-high-pale-stopped", "level":0.90, "stream":"off", "rgb":[0.65,0.84,0.88], "opacity":0.35},
+    {"id":"11-high-clear-proxy-stopped", "level":0.90, "stream":"off", "rgb":[0.90,0.94,0.95], "opacity":0.12}
+  ]
+}

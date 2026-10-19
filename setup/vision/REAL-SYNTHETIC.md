@@ -40,9 +40,22 @@ checks pass. A **24-image local Windows Isaac 6.1 RC** pilot at effective **32
 samples per pixel** passed native ID/mask/box/camera checks without missing
 masks or synchronization retries. This is preflight, not the requested GB10 run.
 
-**Remote execution is pending campus VPN connectivity.** Both GB10 and Rosie
-hostnames stopped resolving. No new Rosie job, trained candidate, Run 5 score
-or result video is claimed yet. The prior 12-image GB10 review is separate.
+The matching **24-image GB10 / Isaac 6.0.0.1** preflight also passed all
+mask/box/camera checks with no missing masks or retries, in **96.51 seconds**.
+Its local review sheet is in the experiment's `gb10-pilot/contact-boxes.png`.
+
+The **768-image GB10 run is launched detached** (PID `2173124`), output
+`~/ai-club-tools/results/austin/real-synthetic-768-20261019`, log
+`~/ai-club-tools/logs/real-synthetic-768-20261019.log`. The last observed count
+was 25 completed rows. **Rosie control job `285766`** was running its first
+epoch in `~/ai-club-tools/results/real-synthetic-detector-20261019`.
+
+Campus connectivity dropped again after launch. Both jobs are independent of
+the SSH session; their current completion still needs verification. The mixed
+job has **not** been submitted. No new trained candidate, Run 5 score or result
+video is claimed yet. On reconnection, inspect these existing jobs/outputs
+before starting another job. Retrieve and verify the completed batch, prepare
+the mixed copy, submit mixed training, then retrieve both models and evaluate.
 
 Prepared experiment folder:
 `C:/Users/Austin/ai-club-tools/results/real-synthetic-detector-20261019`

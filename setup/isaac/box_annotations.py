@@ -80,6 +80,12 @@ def write_json(path, value):
 def validate_fixture(fixture):
     if fixture["schema_version"] != 1 or fixture["station_frame"] != 686:
         raise ValueError("This reviewed camera/geometry boundary requires fixture v1, frozen frame 686")
+    if fixture.get('renderer_profile','legacy-cylinder-opacity-v1') not in ('legacy-cylinder-opacity-v1','meniscus-transmission-v2'):
+        raise ValueError('Unknown renderer profile')
+    if fixture.get('renderer_profile')=='meniscus-transmission-v2':
+        refs=fixture.get('appearance_references',[])
+        if not refs or any(r.get('source_run') not in (1,2,3) or not r.get('image_sha256') for r in refs):
+            raise ValueError('Revised appearance references must be hashed Runs 1-3 RGB only')
     seen = set()
     for row in fixture["cases"]:
         name = row["id"]
@@ -94,8 +100,17 @@ def validate_fixture(fixture):
             raise ValueError("Invalid linear diffuse RGB")
         if not 0 <= row["level"] <= 1 or not 0 < row["opacity"] <= 1:
             raise ValueError("Invalid level/opacity")
-        if row["stream"] not in ("off", "short", "continuous"):
+        revised = fixture.get('renderer_profile') == 'meniscus-transmission-v2'
+        if row["stream"] not in (("off", "short", "continuous", "drop") if revised else ("off", "short", "continuous")):
             raise ValueError("Unknown stream mode")
+        if revised:
+            color = row.get('transmission_color')
+            if not isinstance(color,list) or len(color)!=3 or not all(isinstance(x,(int,float)) and math.isfinite(x) and 0<x<=1 for x in color):
+                raise ValueError('Invalid transmission color')
+            for key, low, high in [('absorption_depth_m',.001,1.),('pool_radius_fraction',.1,1.),
+                    ('meniscus_m',0.,.003),('ripple_m',0.,.002),('jet_length_fraction',.001,1.),('jet_wobble_m',0.,.002)]:
+                if key not in row or not isinstance(row[key],(int,float)) or not math.isfinite(row[key]) or not low<=row[key]<=high:
+                    raise ValueError('Invalid revised liquid parameter: '+key)
         for key, low, high in [("light_scale", 0.5, 1.5), ("roughness", 0.03, 0.5), ("stream_radius_m", 0.0005, 0.003)]:
             if key in row and (not isinstance(row[key], (int, float)) or not math.isfinite(row[key]) or not low <= row[key] <= high):
                 raise ValueError(f"Invalid nuisance parameter: {key}")

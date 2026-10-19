@@ -40,6 +40,7 @@ def main():
     args = parser.parse_args()
     fixture = json.loads(args.fixture.read_text(encoding="utf-8"))
     validate_fixture(fixture)
+    revised = fixture.get('renderer_profile') == 'meniscus-transmission-v2'
     if args.limit < 1 or args.subframes < 1:
         parser.error("positive limit and subframes required")
     if args.pt_spp is not None and not 1 <= args.pt_spp <= 32:
@@ -146,16 +147,26 @@ def main():
             return mat, shader
 
         beauty_mat, beauty_shader = material("LiquidAppearance", (0.01, 0.2, 0.3), 0.6)
+        if revised:
+            from liquid_geometry import body_mesh, stream_mesh, set_mesh, transmission_material, set_transmission
+            beauty_mat, beauty_shader = transmission_material(stage, 'BodyTransmission')
+            stream_mat, stream_shader = transmission_material(stage, 'StreamTransmission')
+            carb.settings.get_settings().set('/rtx/pathtracing/maxBounces', 12)
+            carb.settings.get_settings().set('/rtx/pathtracing/maxSpecularAndTransmissionBounces', 12)
+        else:
+            stream_mat = beauty_mat
         label_mat, _ = material("OpaqueLabelPass", (0.8, 0.8, 0.8), 1)
         UsdGeom.Xform.Define(stage, "/SyntheticReview/Liquid")
-        liquid = UsdGeom.Cylinder.Define(stage, "/SyntheticReview/Liquid/Geometry")
-        liquid.GetAxisAttr().Set("Z")
-        liquid.GetRadiusAttr().Set(radius)
+        liquid = (UsdGeom.Mesh if revised else UsdGeom.Cylinder).Define(stage, "/SyntheticReview/Liquid/Geometry")
+        if not revised:
+            liquid.GetAxisAttr().Set("Z")
+            liquid.GetRadiusAttr().Set(radius)
         liquid_translate = liquid.AddTranslateOp()
         UsdGeom.Xform.Define(stage, "/SyntheticReview/Stream")
-        stream = UsdGeom.Cylinder.Define(stage, "/SyntheticReview/Stream/Geometry")
-        stream.GetAxisAttr().Set("Z")
-        stream.GetRadiusAttr().Set(0.0015)
+        stream = (UsdGeom.Mesh if revised else UsdGeom.Cylinder).Define(stage, "/SyntheticReview/Stream/Geometry")
+        if not revised:
+            stream.GetAxisAttr().Set("Z")
+            stream.GetRadiusAttr().Set(0.0015)
         stream_translate = stream.AddTranslateOp()
         objects = []
         for prim in stage.Traverse():
@@ -198,7 +209,7 @@ def main():
                     prim.GetRelationship("material:binding").SetTargets(vial_bindings[obj["prim_path"]])
             for proxy, present in ((liquid, row["level"] > 0), (stream, row["stream"] != "off")):
                 visible(proxy.GetPrim(), present and mode != "vial-labels")
-                bind(proxy.GetPrim(), beauty_mat if mode == "rgb" else label_mat)
+                bind(proxy.GetPrim(), (beauty_mat if proxy is liquid else stream_mat) if mode == "rgb" else label_mat)
 
         rp = rep.create.render_product(CAMERA, (640, 480))
         rgb_ann = rep.AnnotatorRegistry.get_annotator("rgb")
@@ -255,15 +266,27 @@ def main():
             height = max(row["level"] * max_height, 1e-6)
             for attr, original_intensity in light_attributes:
                 attr.Set(original_intensity * row.get("light_scale", 1.0))
-            stream.GetRadiusAttr().Set(row.get("stream_radius_m", 0.0015))
-            beauty_shader.GetInput("roughness").Set(row.get("roughness", 0.12))
-            liquid.GetHeightAttr().Set(height)
-            liquid_translate.Set(Gf.Vec3d(float(center[0]), float(center[1]), base + height/2))
-            bottom = nozzle_z - 0.012 if row["stream"] == "short" else base + row["level"] * max_height
-            stream.GetHeightAttr().Set(nozzle_z - bottom)
-            stream_translate.Set(Gf.Vec3d(float(nozzle_xy[0]), float(nozzle_xy[1]), (nozzle_z + bottom)/2))
-            beauty_shader.GetInput("diffuseColor").Set(Gf.Vec3f(*row["rgb"]))
-            beauty_shader.GetInput("opacity").Set(row["opacity"])
+            revised_geometry = None
+            if revised:
+                points, faces, body_detail = body_mesh(row, radius, max_height)
+                set_mesh(liquid, points, faces, body_detail['normal_group_faces'])
+                liquid_translate.Set(Gf.Vec3d(float(center[0]), float(center[1]), base))
+                points, faces, stream_detail = stream_mesh(row, nozzle_z, base+height)
+                set_mesh(stream, points, faces)
+                stream_translate.Set(Gf.Vec3d(float(nozzle_xy[0]), float(nozzle_xy[1]), 0.))
+                for shader in (beauty_shader, stream_shader):
+                    set_transmission(shader, row, UsdGeom.GetStageMetersPerUnit(stage))
+                revised_geometry = dict(body=body_detail, stream=stream_detail)
+            else:
+                stream.GetRadiusAttr().Set(row.get("stream_radius_m", 0.0015))
+                beauty_shader.GetInput("roughness").Set(row.get("roughness", 0.12))
+                liquid.GetHeightAttr().Set(height)
+                liquid_translate.Set(Gf.Vec3d(float(center[0]), float(center[1]), base + height/2))
+                bottom = nozzle_z - 0.012 if row["stream"] == "short" else base + row["level"] * max_height
+                stream.GetHeightAttr().Set(nozzle_z - bottom)
+                stream_translate.Set(Gf.Vec3d(float(nozzle_xy[0]), float(nozzle_xy[1]), (nozzle_z + bottom)/2))
+                beauty_shader.GetInput("diffuseColor").Set(Gf.Vec3f(*row["rgb"]))
+                beauty_shader.GetInput("opacity").Set(row["opacity"])
             configure_pass("rgb", row)
             step()
             rgb = rgb_capture()
@@ -339,7 +362,9 @@ def main():
                 label_policy="separate opaque vial and contents passes; transparent shells/guard excluded from contents occlusion; opaque label/holder/nozzle retained",
                 geometry=dict(radius_m=radius, base_z_m=base, liquid_height_m=height if row["level"] else 0,
                               envelope_height_m=max_height, stream_radius_m=row.get("stream_radius_m", 0.0015), nozzle_bottom_z_m=nozzle_z),
-                physical_optical_calibration=False)
+                physical_optical_calibration=False,
+                renderer_profile=fixture.get('renderer_profile','legacy-cylinder-opacity-v1'),
+                revised_geometry=revised_geometry)
             records.append(record)
             with (out / "manifest.jsonl").open("a", encoding="utf-8") as stream_file:
                 stream_file.write(json.dumps(record) + "\n")
@@ -357,6 +382,17 @@ def main():
             subframes=args.subframes, label_pass_rgb_saved=not args.compact,
             annotation_encoding=("unique-object-semantic-tags-v1" if args.label_annotator == "semantic_segmentation" else "instance-prim-paths-v1"),
             fixture_sha256=sha256(args.fixture), source_assets=before,
+            renderer_profile=fixture.get('renderer_profile','legacy-cylinder-opacity-v1'),
+            geometry_helper_sha256=sha256(Path(__file__).with_name('liquid_geometry.py')) if revised else None,
+            appearance_references=fixture.get('appearance_references', []),
+            liquid_material=(dict(model='OmniSurfaceBase MDL',
+                mdl_source=str(beauty_shader.GetSourceAsset('mdl')),
+                mdl_sha256=sha256(beauty_shader.GetSourceAsset('mdl').path),
+                diffuse_weight=0, transmission_weight=1, ior=1.333, geometry_opacity=1,
+                thin_walled=False, depth_units='meters converted by metersPerUnit',
+                max_bounces=carb.settings.get_settings().get('/rtx/pathtracing/maxBounces'),
+                max_specular_transmission_bounces=carb.settings.get_settings().get('/rtx/pathtracing/maxSpecularAndTransmissionBounces'))
+                if revised else dict(model='UsdPreviewSurface diffuse/opacity proxy')),
             script_sha256=sha256(__file__), annotation_helper_sha256=sha256(Path(__file__).with_name("box_annotations.py")),
             source_assets_unchanged=True, camera_parameters_unchanged=True, station_frame=fixture["station_frame"],
             frozen_attributes=len(frozen), training_eligible=False, run5_used=False))

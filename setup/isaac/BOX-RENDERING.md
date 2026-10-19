@@ -1,5 +1,10 @@
 # Camera-matched box rendering: Cameron / Hayden handoff
 
+The later [pale/early-pour revision](PALE-EARLY-REVIEW.md) replaces opacity
+proxies with an opt-in transmission/meniscus profile for a separate 18-case
+review. Its labels remain geometric, body and stream stay separate, and no
+training follows automatically. The original profile below is retained.
+
 This documents the initial **12-image review batch**, not a released training set. It exercises
 native GB10 Isaac Sim 6.0.0.1, the supplied fill-station camera, separate vial,
 liquid and stream objects, geometric visibility masks, and YOLO box export.

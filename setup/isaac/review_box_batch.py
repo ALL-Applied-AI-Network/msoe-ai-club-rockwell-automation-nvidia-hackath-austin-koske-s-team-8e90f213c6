@@ -106,6 +106,25 @@ def review(out, real_frame=None):
             raise ValueError("Liquid-height mask progression failed")
         case_checks.append("liquid height progression")
     appearance_checks = []
+    if run.get('renderer_profile')=='meniscus-transmission-v2':
+        if not run.get('appearance_references') or any(r['source_run'] not in (1,2,3) for r in run['appearance_references']):
+            raise ValueError('Revised renderer references must remain Runs 1-3 only')
+        for name in ['v2-00-empty','v2-01-pendant-drop','v2-02-falling-jet','v2-03-impact-no-pool']:
+            if name in names and masks_by_name[(name,201)].any():
+                raise ValueError('Pre-pool stage has a body mask')
+        if {'v2-04-first-wet-patch','v2-07-low-pale'}.issubset(names):
+            if masks_by_name[('v2-04-first-wet-patch',201)].sum()>=masks_by_name[('v2-07-low-pale',201)].sum():
+                raise ValueError('First patch must be smaller than the low body')
+        case_checks.append('revised pre-pool/body boundary and pool footprint progression')
+        if {'v2-07-low-pale','v2-12-low-blue'}.issubset(names):
+            region=masks_by_name[('v2-07-low-pale',201)] & masks_by_name[('v2-12-low-blue',201)]
+            pale=np.asarray(Image.open(out/'rgb/v2-07-low-pale.png')).astype(float)
+            blue=np.asarray(Image.open(out/'rgb/v2-12-low-blue.png')).astype(float)
+            difference=float(np.abs(pale[region]-blue[region]).mean()) if region.any() else 0.
+            if difference<3: raise ValueError('Revised liquid appearance did not respond to color change')
+            appearance_checks.append(dict(cases=['v2-07-low-pale','v2-12-low-blue'],
+                shared_liquid_pixels=int(region.sum()),mean_absolute_rgb_difference=difference,
+                minimum_required=3,scope='stale/material-response check; not optical calibration'))
     # File hashes alone cannot distinguish scene changes from Monte Carlo noise.
     # Check a deliberate large material change inside the shared liquid mask.
     if {"07-mid-blue", "08-mid-pale"}.issubset(names):

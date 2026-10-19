@@ -2,6 +2,8 @@
 
 The immediate task is object localization and temporal continuity. Segmentation,
 color QA coverage, recipe comparison and defect decisions are downstream tasks.
+The [pale-liquid visibility pilot](VISIBILITY.md) compares local image cues
+without changing that milestone or the replay's measurement pipeline.
 The existing YOLO11n already predicts two box classes; use it as the first
 detection baseline. Start with one detector, rather than two independently
 trained networks. ByteTrack supplies candidate vial tracklets; associate each

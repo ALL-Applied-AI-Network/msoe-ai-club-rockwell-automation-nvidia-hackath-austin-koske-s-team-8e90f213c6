@@ -20,6 +20,8 @@ def main():
     p.add_argument('--data',type=Path,default=DEFAULT_DATA)
     p.add_argument('--out',type=Path,required=True)
     p.add_argument('--recipe-plan',type=Path)
+    p.add_argument('--baseline-base-url',default='http://127.0.0.1:8765')
+    p.add_argument('--segmentation-base-url',default='http://127.0.0.1:8766')
     a=p.parse_args();a.out.mkdir(parents=True,exist_ok=True)
     original=json.loads(a.baseline_cache.read_text());cache_sha=hashlib.sha256(a.baseline_cache.read_bytes()).hexdigest()
     settings={name:json.loads(Path(f'replay/examples/{file}').read_text()) for name,file in
@@ -40,7 +42,7 @@ def main():
         output=a.out/name/'run5';output.mkdir(parents=True,exist_ok=True)
         write_json(output/'manifest.json',data.payload['manifest'])
         write_json(output/'recipe-plan.json',recipes.to_dict())
-        export_review(data,run,output/'qa-review',base_url='http://127.0.0.1:8765' if name=='baseline' else 'http://127.0.0.1:8766')
+        export_review(data,run,output/'qa-review',base_url=a.baseline_base_url if name=='baseline' else a.segmentation_base_url)
         completed=data.completed(data.payload['manifest']['frame_count']-1,[])
         write_json(output/'decisions.json',dict(observations=completed))
         (output/'observations.csv').write_text(export_csv(completed),encoding='utf-8',newline='')

@@ -9,6 +9,9 @@ coordinates. All 90 measurement samples and 360 review PNGs pass the pixel/mask/
 color audit. No foreground is added by postprocessing; trusted recipe results
 remain unavailable. This is pipeline debugging after inspection of Run 5,
 not another blind benchmark. See [reproduction and per-case findings](../../setup/vision/SEGMENTATION-DEBUG.md).
+The [published-source checks](segmentation-pipeline-debug-source-checks.json)
+record 45 passing replay tests, two setup tests, a working documented launcher,
+and an exact source/mask/color match over HTTP for recovered fill 30.
 
 ![Raw model foreground at the eight original regressions](segmentation-regressions-raw.png)
 

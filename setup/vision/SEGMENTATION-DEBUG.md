@@ -79,7 +79,7 @@ $python = "$HOME/ai-club-tools/envs/data-windows/Scripts/python.exe"
 $before = "$HOME/ai-club-tools/results/sampling-segmentation-20261019"
 $debug = "$HOME/ai-club-tools/results/segmentation-pipeline-debug-20261019"
 $sourceCache = "$HOME/ai-club-tools/results/tracked-liquid-20261019/cache/run5-8bdd8cad2977ee74e6a3.json"
-& $python setup/vision/compare_sampling_segmentation.py --baseline-cache $sourceCache --recipe-plan replay/examples/run5-demo-plan.json --out $debug
+& $python setup/vision/compare_sampling_segmentation.py --baseline-cache $sourceCache --recipe-plan replay/examples/run5-demo-plan.json --segmentation-base-url http://127.0.0.1:8767 --out $debug
 & $python setup/vision/audit_segmentation_regressions.py --previous-study $before --current-study $debug
 pwsh -File setup/run-replay.ps1 -Config "$debug/segmentation-reuse.json" -RecipePlan replay/examples/run5-demo-plan.json -Out "$debug/segmentation" -Port 8767
 ```
@@ -118,8 +118,9 @@ hash, zero-based frame and MP4 seconds, crop, components, sampling bounds,
 per-stage counts, final QA status/reasons, and artifact paths/SHA256 hashes.
 `coherent_area_fraction` uses the eroded mask before final luminance trimming
 and the unchanged safety rectangle denominator; its required floor stays 0.35.
-Artifact paths are relative to that manifest directory. Original source PNGs
-are identified by `source_root` plus `source_image`. `*-probability.png` is a
+Artifact paths are relative to that manifest directory. Exact source PNGs
+are included locally: `source_root` is `.` and `source_image` identifies each
+image, with its hash under `artifacts.source`. `*-probability.png` is a
 16-bit source-sized image with probability multiplied by 65535, zero outside
 the crop; it is a visualization, not a replacement inference input. The RGB
 input crop and binary stage PNGs make crop/mask transforms directly reviewable.
@@ -127,6 +128,8 @@ input crop and binary stage PNGs make crop/mask transforms directly reviewable.
 three samples per case. The audit additionally checks every one of the 90
 measurement samples and all 360 review PNG hashes, exact masks/colors and
 window aggregates, and that postprocessing never adds foreground.
+The portable `regression-audit.zip` beside that directory includes its manifest
+and all source/crop/probability/stage images.
 
 Higher QA coverage does not establish mask precision or correct liquid color.
 All geometry remains provisional, all trusted recipe assessments remain

@@ -62,8 +62,8 @@
           ],
           "projection_exact": true,
           "original_raw_component_boxes_identical": true,
-          "source_image": "frames/run5-fill4-f004848.png",
-          "source_root": "C:\\Users\\Austin\\ai-club-tools\\results\\sampling-segmentation-20261019\\segmentation\\run5\\qa-review",
+          "source_image": "run5-fill4-f004848-source.png",
+          "source_root": ".",
           "model_components": [
             {
               "box": [
@@ -97,6 +97,10 @@
             "insufficient_unclipped_pixels"
           ],
           "artifacts": {
+            "source": {
+              "path": "run5-fill4-f004848-source.png",
+              "sha256": "470a34f3144ea5df5e3ba49f7df6051ee7e52fd4fb2bc4251a3951dd8d2724fe"
+            },
             "input_crop": {
               "path": "run5-fill4-f004848-input.png",
               "sha256": "683acc18ebd8777ab74c0ac547ed61597b65beaa8a1e222279181ace12188a58"
@@ -143,8 +147,8 @@
           ],
           "projection_exact": true,
           "original_raw_component_boxes_identical": true,
-          "source_image": "frames/run5-fill4-f004854.png",
-          "source_root": "C:\\Users\\Austin\\ai-club-tools\\results\\sampling-segmentation-20261019\\segmentation\\run5\\qa-review",
+          "source_image": "run5-fill4-f004854-source.png",
+          "source_root": ".",
           "model_components": [
             {
               "box": [
@@ -178,6 +182,10 @@
             "insufficient_unclipped_pixels"
           ],
           "artifacts": {
+            "source": {
+              "path": "run5-fill4-f004854-source.png",
+              "sha256": "0362e93d05c8d5a52f7a3a09232b0d5b874fbf50330a4d82f3e6e582ef0bf93b"
+            },
             "input_crop": {
               "path": "run5-fill4-f004854-input.png",
               "sha256": "c96d58c8150af7673a03e6989f5f3a63b8fd95bc18aa305770c867e165abad4d"
@@ -224,8 +232,8 @@
           ],
           "projection_exact": true,
           "original_raw_component_boxes_identical": true,
-          "source_image": "frames/run5-fill4-f004860.png",
-          "source_root": "C:\\Users\\Austin\\ai-club-tools\\results\\sampling-segmentation-20261019\\segmentation\\run5\\qa-review",
+          "source_image": "run5-fill4-f004860-source.png",
+          "source_root": ".",
           "model_components": [
             {
               "box": [
@@ -259,6 +267,10 @@
             "insufficient_unclipped_pixels"
           ],
           "artifacts": {
+            "source": {
+              "path": "run5-fill4-f004860-source.png",
+              "sha256": "71a70c55000f5e1bdcfdd4e9f8031b3c2c45004f1906ac82b2bb9bd461a25347"
+            },
             "input_crop": {
               "path": "run5-fill4-f004860-input.png",
               "sha256": "3c048468d3c6d28b3375656023c4b39a9e50a3c6e442b1c6121dd4ff812f2181"
@@ -316,8 +328,8 @@
           ],
           "projection_exact": true,
           "original_raw_component_boxes_identical": true,
-          "source_image": "frames/run5-fill5-f006108.png",
-          "source_root": "C:\\Users\\Austin\\ai-club-tools\\results\\sampling-segmentation-20261019\\segmentation\\run5\\qa-review",
+          "source_image": "run5-fill5-f006108-source.png",
+          "source_root": ".",
           "model_components": [
             {
               "box": [
@@ -351,6 +363,10 @@
             "insufficient_unclipped_pixels"
           ],
           "artifacts": {
+            "source": {
+              "path": "run5-fill5-f006108-source.png",
+              "sha256": "f75607b086acd9d88b81e1f56c2716866fdd577791b989ae91a29b109cecf5f6"
+            },
             "input_crop": {
               "path": "run5-fill5-f006108-input.png",
               "sha256": "c295384779c83aa86b843c9a0b79af5cda752f673610c6f516019017c63e0b09"
@@ -397,8 +413,8 @@
           ],
           "projection_exact": true,
           "original_raw_component_boxes_identical": true,
-          "source_image": "frames/run5-fill5-f006114.png",
-          "source_root": "C:\\Users\\Austin\\ai-club-tools\\results\\sampling-segmentation-20261019\\segmentation\\run5\\qa-review",
+          "source_image": "run5-fill5-f006114-source.png",
+          "source_root": ".",
           "model_components": [
             {
               "box": [
@@ -432,6 +448,10 @@
             "insufficient_unclipped_pixels"
           ],
           "artifacts": {
+            "source": {
+              "path": "run5-fill5-f006114-source.png",
+              "sha256": "c07b6b112b5718afc0c6d90263843a958c33a8a7ae413507c52894770c003676"
+            },
             "input_crop": {
               "path": "run5-fill5-f006114-input.png",
               "sha256": "dc05fe0a6b323f83d7fd25a13b8f1d57c75cc0de9286225e41a5be056a1c34ad"
@@ -478,8 +498,8 @@
           ],
           "projection_exact": true,
           "original_raw_component_boxes_identical": true,
-          "source_image": "frames/run5-fill5-f006120.png",
-          "source_root": "C:\\Users\\Austin\\ai-club-tools\\results\\sampling-segmentation-20261019\\segmentation\\run5\\qa-review",
+          "source_image": "run5-fill5-f006120-source.png",
+          "source_root": ".",
           "model_components": [
             {
               "box": [
@@ -513,6 +533,10 @@
             "insufficient_unclipped_pixels"
           ],
           "artifacts": {
+            "source": {
+              "path": "run5-fill5-f006120-source.png",
+              "sha256": "24c3bd2aa23cf1275bb00f6019d7ce9847825171e942b6bb26cba5224959a3b9"
+            },
             "input_crop": {
               "path": "run5-fill5-f006120-input.png",
               "sha256": "0f58468d0abfe29758194f6f002c59480e102fc034560daec09236a5fc084cde"
@@ -570,8 +594,8 @@
           ],
           "projection_exact": true,
           "original_raw_component_boxes_identical": true,
-          "source_image": "frames/run5-fill6-f007392.png",
-          "source_root": "C:\\Users\\Austin\\ai-club-tools\\results\\sampling-segmentation-20261019\\segmentation\\run5\\qa-review",
+          "source_image": "run5-fill6-f007392-source.png",
+          "source_root": ".",
           "model_components": [
             {
               "box": [
@@ -605,6 +629,10 @@
             "insufficient_unclipped_pixels"
           ],
           "artifacts": {
+            "source": {
+              "path": "run5-fill6-f007392-source.png",
+              "sha256": "badf2f00286085aac9458b2cc737e5a3e331176a17ea48a96bba5cd97a104a77"
+            },
             "input_crop": {
               "path": "run5-fill6-f007392-input.png",
               "sha256": "f91ec1d05d91989af5dcdab1d640a0675edb0984c564431ec82c09dfbd0c82ed"
@@ -651,8 +679,8 @@
           ],
           "projection_exact": true,
           "original_raw_component_boxes_identical": true,
-          "source_image": "frames/run5-fill6-f007398.png",
-          "source_root": "C:\\Users\\Austin\\ai-club-tools\\results\\sampling-segmentation-20261019\\segmentation\\run5\\qa-review",
+          "source_image": "run5-fill6-f007398-source.png",
+          "source_root": ".",
           "model_components": [
             {
               "box": [
@@ -686,6 +714,10 @@
             "insufficient_unclipped_pixels"
           ],
           "artifacts": {
+            "source": {
+              "path": "run5-fill6-f007398-source.png",
+              "sha256": "c672a052f2561e0a313166591d0338fe6c99ab0ab154f3762878f3a6492668b7"
+            },
             "input_crop": {
               "path": "run5-fill6-f007398-input.png",
               "sha256": "3c12b5b0138354ab3b00ec2d97c1e038274ec2fd5180b597968ce2256647fbc6"
@@ -732,8 +764,8 @@
           ],
           "projection_exact": true,
           "original_raw_component_boxes_identical": true,
-          "source_image": "frames/run5-fill6-f007404.png",
-          "source_root": "C:\\Users\\Austin\\ai-club-tools\\results\\sampling-segmentation-20261019\\segmentation\\run5\\qa-review",
+          "source_image": "run5-fill6-f007404-source.png",
+          "source_root": ".",
           "model_components": [
             {
               "box": [
@@ -767,6 +799,10 @@
             "insufficient_unclipped_pixels"
           ],
           "artifacts": {
+            "source": {
+              "path": "run5-fill6-f007404-source.png",
+              "sha256": "7e17e1a9c97348d069df364b020d73b8a72c760d0eb4ae9d568b7dacff0b676a"
+            },
             "input_crop": {
               "path": "run5-fill6-f007404-input.png",
               "sha256": "8883775ea5def54807762e041d331f67dd037b9b179c899d5bd6f17f445d85d8"
@@ -824,8 +860,8 @@
           ],
           "projection_exact": true,
           "original_raw_component_boxes_identical": true,
-          "source_image": "frames/run5-fill12-f017646.png",
-          "source_root": "C:\\Users\\Austin\\ai-club-tools\\results\\sampling-segmentation-20261019\\segmentation\\run5\\qa-review",
+          "source_image": "run5-fill12-f017646-source.png",
+          "source_root": ".",
           "model_components": [
             {
               "box": [
@@ -889,6 +925,10 @@
             "insufficient_coherent_colored_liquid"
           ],
           "artifacts": {
+            "source": {
+              "path": "run5-fill12-f017646-source.png",
+              "sha256": "6e6a9b09da3a5beed5de2c71e3de0cb76b4d970565c0c0ca562c28b62fbad41c"
+            },
             "input_crop": {
               "path": "run5-fill12-f017646-input.png",
               "sha256": "81877c5fd6b98da99a363863bdf534edcdf56254a470db9ec9816be72ac3f157"
@@ -955,8 +995,8 @@
           ],
           "projection_exact": true,
           "original_raw_component_boxes_identical": true,
-          "source_image": "frames/run5-fill12-f017652.png",
-          "source_root": "C:\\Users\\Austin\\ai-club-tools\\results\\sampling-segmentation-20261019\\segmentation\\run5\\qa-review",
+          "source_image": "run5-fill12-f017652-source.png",
+          "source_root": ".",
           "model_components": [
             {
               "box": [
@@ -1011,6 +1051,10 @@
             "insufficient_coherent_colored_liquid"
           ],
           "artifacts": {
+            "source": {
+              "path": "run5-fill12-f017652-source.png",
+              "sha256": "8353f583eb5289bf01e4b9db6b75c7f8de5313196a5f3a81a7c89083a4ed3a54"
+            },
             "input_crop": {
               "path": "run5-fill12-f017652-input.png",
               "sha256": "d321163e1c5dbf7a9e437376974fc2483ec826ca2cb1af9e31e53ab935ecba28"
@@ -1077,8 +1121,8 @@
           ],
           "projection_exact": true,
           "original_raw_component_boxes_identical": true,
-          "source_image": "frames/run5-fill12-f017658.png",
-          "source_root": "C:\\Users\\Austin\\ai-club-tools\\results\\sampling-segmentation-20261019\\segmentation\\run5\\qa-review",
+          "source_image": "run5-fill12-f017658-source.png",
+          "source_root": ".",
           "model_components": [
             {
               "box": [
@@ -1133,6 +1177,10 @@
             "insufficient_coherent_colored_liquid"
           ],
           "artifacts": {
+            "source": {
+              "path": "run5-fill12-f017658-source.png",
+              "sha256": "2ab7b9ca0835c641a9ec18bd2e895b60eb3201882562ddb26f05e7ba0590686e"
+            },
             "input_crop": {
               "path": "run5-fill12-f017658-input.png",
               "sha256": "d03070a11239341852729217539831be08a4a37a06bb0c6276b3519763a44b32"
@@ -1210,8 +1258,8 @@
           ],
           "projection_exact": true,
           "original_raw_component_boxes_identical": true,
-          "source_image": "frames/run5-fill13-f019752.png",
-          "source_root": "C:\\Users\\Austin\\ai-club-tools\\results\\sampling-segmentation-20261019\\segmentation\\run5\\qa-review",
+          "source_image": "run5-fill13-f019752-source.png",
+          "source_root": ".",
           "model_components": [
             {
               "box": [
@@ -1257,6 +1305,10 @@
             "insufficient_coherent_colored_liquid"
           ],
           "artifacts": {
+            "source": {
+              "path": "run5-fill13-f019752-source.png",
+              "sha256": "ac73546ed3e3e8fa6c614b3440c7c619b98c09e7741af00f808de9b6afa14c36"
+            },
             "input_crop": {
               "path": "run5-fill13-f019752-input.png",
               "sha256": "3011efbc9b4d97f2f38e075e85b8173e399ee2bb82161660535c563c7b207e02"
@@ -1323,8 +1375,8 @@
           ],
           "projection_exact": true,
           "original_raw_component_boxes_identical": true,
-          "source_image": "frames/run5-fill13-f019758.png",
-          "source_root": "C:\\Users\\Austin\\ai-club-tools\\results\\sampling-segmentation-20261019\\segmentation\\run5\\qa-review",
+          "source_image": "run5-fill13-f019758-source.png",
+          "source_root": ".",
           "model_components": [
             {
               "box": [
@@ -1370,6 +1422,10 @@
             "insufficient_coherent_colored_liquid"
           ],
           "artifacts": {
+            "source": {
+              "path": "run5-fill13-f019758-source.png",
+              "sha256": "931f7b11a6798bc1c75e5d38900f95168e7ee43da53c98b3f405d22c0a78f44f"
+            },
             "input_crop": {
               "path": "run5-fill13-f019758-input.png",
               "sha256": "64dd55173de0583b9e499a98859e4e38e7fa34d7ec5af0c6945dafb6de7c1d6a"
@@ -1436,8 +1492,8 @@
           ],
           "projection_exact": true,
           "original_raw_component_boxes_identical": true,
-          "source_image": "frames/run5-fill13-f019764.png",
-          "source_root": "C:\\Users\\Austin\\ai-club-tools\\results\\sampling-segmentation-20261019\\segmentation\\run5\\qa-review",
+          "source_image": "run5-fill13-f019764-source.png",
+          "source_root": ".",
           "model_components": [
             {
               "box": [
@@ -1483,6 +1539,10 @@
             "insufficient_coherent_colored_liquid"
           ],
           "artifacts": {
+            "source": {
+              "path": "run5-fill13-f019764-source.png",
+              "sha256": "fef1f3c3c991a55f045bfa0a8658a1eade90fd93f46f5356db59bd105cd37665"
+            },
             "input_crop": {
               "path": "run5-fill13-f019764-input.png",
               "sha256": "5cea8e8e2a28673ed9b3e203227edb27a0d5897166c392791317fca1af746e7d"
@@ -1560,8 +1620,8 @@
           ],
           "projection_exact": true,
           "original_raw_component_boxes_identical": true,
-          "source_image": "frames/run5-fill18-f029154.png",
-          "source_root": "C:\\Users\\Austin\\ai-club-tools\\results\\sampling-segmentation-20261019\\segmentation\\run5\\qa-review",
+          "source_image": "run5-fill18-f029154-source.png",
+          "source_root": ".",
           "model_components": [
             {
               "box": [
@@ -1607,6 +1667,10 @@
             "insufficient_coherent_colored_liquid"
           ],
           "artifacts": {
+            "source": {
+              "path": "run5-fill18-f029154-source.png",
+              "sha256": "e439c4a89816ed7a4b1fdda2fea59a92f80a24f5b7f691a84166d574b52fb69b"
+            },
             "input_crop": {
               "path": "run5-fill18-f029154-input.png",
               "sha256": "f77afb2ee26ff7acddf8346d3af4cb2fbd07e19c194d8745235c53e382bf4838"
@@ -1673,8 +1737,8 @@
           ],
           "projection_exact": true,
           "original_raw_component_boxes_identical": true,
-          "source_image": "frames/run5-fill18-f029160.png",
-          "source_root": "C:\\Users\\Austin\\ai-club-tools\\results\\sampling-segmentation-20261019\\segmentation\\run5\\qa-review",
+          "source_image": "run5-fill18-f029160-source.png",
+          "source_root": ".",
           "model_components": [
             {
               "box": [
@@ -1720,6 +1784,10 @@
             "insufficient_coherent_colored_liquid"
           ],
           "artifacts": {
+            "source": {
+              "path": "run5-fill18-f029160-source.png",
+              "sha256": "82737d0f72bdc0b4360d45200778fe789e1b89cf7b74b918decb61b160ac3bf5"
+            },
             "input_crop": {
               "path": "run5-fill18-f029160-input.png",
               "sha256": "68af432129204d080464cc33251751a269a0474593ac3d3220b5be280ce76ba5"
@@ -1786,8 +1854,8 @@
           ],
           "projection_exact": true,
           "original_raw_component_boxes_identical": true,
-          "source_image": "frames/run5-fill18-f029166.png",
-          "source_root": "C:\\Users\\Austin\\ai-club-tools\\results\\sampling-segmentation-20261019\\segmentation\\run5\\qa-review",
+          "source_image": "run5-fill18-f029166-source.png",
+          "source_root": ".",
           "model_components": [
             {
               "box": [
@@ -1833,6 +1901,10 @@
             "insufficient_coherent_colored_liquid"
           ],
           "artifacts": {
+            "source": {
+              "path": "run5-fill18-f029166-source.png",
+              "sha256": "ffeb46a785b4a4a5fec61dcea0996886ceb46232e11654a860e099a87e1268bc"
+            },
             "input_crop": {
               "path": "run5-fill18-f029166-input.png",
               "sha256": "97d40dbe0bb82f156960c636819cc2fca43f128cccd48d68c4926faefb0d1a96"
@@ -1910,8 +1982,8 @@
           ],
           "projection_exact": true,
           "original_raw_component_boxes_identical": true,
-          "source_image": "frames/run5-fill29-f049464.png",
-          "source_root": "C:\\Users\\Austin\\ai-club-tools\\results\\sampling-segmentation-20261019\\segmentation\\run5\\qa-review",
+          "source_image": "run5-fill29-f049464-source.png",
+          "source_root": ".",
           "model_components": [
             {
               "box": [
@@ -1966,6 +2038,10 @@
             "insufficient_coherent_colored_liquid"
           ],
           "artifacts": {
+            "source": {
+              "path": "run5-fill29-f049464-source.png",
+              "sha256": "e6b0bbb2bc34670cacf40a9a6a4dea0ac909ae9ba5c812f6ee325b9422a3ac5c"
+            },
             "input_crop": {
               "path": "run5-fill29-f049464-input.png",
               "sha256": "3b5dc6325de341a6241bc08db7ce10dc593c08b4184b68ae9a769c9eb0b90097"
@@ -2032,8 +2108,8 @@
           ],
           "projection_exact": true,
           "original_raw_component_boxes_identical": true,
-          "source_image": "frames/run5-fill29-f049470.png",
-          "source_root": "C:\\Users\\Austin\\ai-club-tools\\results\\sampling-segmentation-20261019\\segmentation\\run5\\qa-review",
+          "source_image": "run5-fill29-f049470-source.png",
+          "source_root": ".",
           "model_components": [
             {
               "box": [
@@ -2088,6 +2164,10 @@
             "insufficient_coherent_colored_liquid"
           ],
           "artifacts": {
+            "source": {
+              "path": "run5-fill29-f049470-source.png",
+              "sha256": "0017787e27dc9e8b84a0b51fe5d1ecb9192274aadb7ea657b20b80dc439e8215"
+            },
             "input_crop": {
               "path": "run5-fill29-f049470-input.png",
               "sha256": "2d9b118eecd1f4df6ec8789f10372910190bdf3443753b7b92fabdad52cc1a85"
@@ -2154,8 +2234,8 @@
           ],
           "projection_exact": true,
           "original_raw_component_boxes_identical": true,
-          "source_image": "frames/run5-fill29-f049476.png",
-          "source_root": "C:\\Users\\Austin\\ai-club-tools\\results\\sampling-segmentation-20261019\\segmentation\\run5\\qa-review",
+          "source_image": "run5-fill29-f049476-source.png",
+          "source_root": ".",
           "model_components": [
             {
               "box": [
@@ -2210,6 +2290,10 @@
             "insufficient_coherent_colored_liquid"
           ],
           "artifacts": {
+            "source": {
+              "path": "run5-fill29-f049476-source.png",
+              "sha256": "2b73a4f0cbabf1b9e761cdb077ed30f971591b045451f6b0ab2399db91405e00"
+            },
             "input_crop": {
               "path": "run5-fill29-f049476-input.png",
               "sha256": "062d8bf3b357dfbee7d2a3c9a1a6e1bad8cf9007e41f61f00cd4b1d895cdd232"
@@ -2284,8 +2368,8 @@
           ],
           "projection_exact": true,
           "original_raw_component_boxes_identical": true,
-          "source_image": "frames/run5-fill30-f050856.png",
-          "source_root": "C:\\Users\\Austin\\ai-club-tools\\results\\sampling-segmentation-20261019\\segmentation\\run5\\qa-review",
+          "source_image": "run5-fill30-f050856-source.png",
+          "source_root": ".",
           "model_components": [
             {
               "box": [
@@ -2329,6 +2413,10 @@
           "qa_valid": true,
           "qa_flags": [],
           "artifacts": {
+            "source": {
+              "path": "run5-fill30-f050856-source.png",
+              "sha256": "a5750abb8d28c23473b7c988bde14f56876a55466fb75da84dad4f4d83a1e1b4"
+            },
             "input_crop": {
               "path": "run5-fill30-f050856-input.png",
               "sha256": "23b9e472c8a67b475341e3583ef2a00faa0e77173abdb199d956a21690102cf7"
@@ -2395,8 +2483,8 @@
           ],
           "projection_exact": true,
           "original_raw_component_boxes_identical": true,
-          "source_image": "frames/run5-fill30-f050862.png",
-          "source_root": "C:\\Users\\Austin\\ai-club-tools\\results\\sampling-segmentation-20261019\\segmentation\\run5\\qa-review",
+          "source_image": "run5-fill30-f050862-source.png",
+          "source_root": ".",
           "model_components": [
             {
               "box": [
@@ -2440,6 +2528,10 @@
           "qa_valid": true,
           "qa_flags": [],
           "artifacts": {
+            "source": {
+              "path": "run5-fill30-f050862-source.png",
+              "sha256": "7c779df47a2f257cafb8d4957f146f167db1a55dc2ca77cefa506a8c39a43d3f"
+            },
             "input_crop": {
               "path": "run5-fill30-f050862-input.png",
               "sha256": "c8c3d05e73712d3fab1f5de993a7c521628ddf08492e9a79402498ee90c8dac6"
@@ -2506,8 +2598,8 @@
           ],
           "projection_exact": true,
           "original_raw_component_boxes_identical": true,
-          "source_image": "frames/run5-fill30-f050868.png",
-          "source_root": "C:\\Users\\Austin\\ai-club-tools\\results\\sampling-segmentation-20261019\\segmentation\\run5\\qa-review",
+          "source_image": "run5-fill30-f050868-source.png",
+          "source_root": ".",
           "model_components": [
             {
               "box": [
@@ -2551,6 +2643,10 @@
           "qa_valid": true,
           "qa_flags": [],
           "artifacts": {
+            "source": {
+              "path": "run5-fill30-f050868-source.png",
+              "sha256": "ca1c2ddd343dfe4b909f2fa43ec6cb8a5ceaf70a132808b12d0dbee76bcc8dbb"
+            },
             "input_crop": {
               "path": "run5-fill30-f050868-input.png",
               "sha256": "257081ee610d3f569c19c40e67c16dd0de63a538278e7e1ab38310da436b4281"
@@ -3339,5 +3435,7 @@
         3.0067741090912925
       ]
     }
-  ]
+  ],
+  "review_manifest_sha256": "0aaaedb8e6fb1aeefd2816fda3a61a84f97eb84cd8dff114b799df87bb54d44c",
+  "replay_links_verified": "http://127.0.0.1:8767/"
 }

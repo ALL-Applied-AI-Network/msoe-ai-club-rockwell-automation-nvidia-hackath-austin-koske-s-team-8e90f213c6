@@ -1,0 +1,27 @@
+{
+  "source_commit": "58c2e5a",
+  "source_archive_sha256": "b3743e18633730a4488715f3c1133fc481091e4151f890117349c7aa8aeed7a5",
+  "source_directory": "C:/Users/Austin/ai-club-tools/results/segmentation-pipeline-debug-20261019/published-source",
+  "replay_tests": 45,
+  "vision_setup_tests": 2,
+  "documented_launcher_passed": true,
+  "base_url": "http://127.0.0.1:8767",
+  "coverage": {
+    "available": 30,
+    "valid": 8,
+    "assessed": 0
+  },
+  "fill_source": "image",
+  "demonstrated_fill": "run5-fill30",
+  "available_frame": 50880,
+  "measurement_frame": 50862,
+  "sampling_pixels": 2848,
+  "exact_http_source_mask_color_match": true,
+  "future_evidence_rejected": true,
+  "recipe_id": "14",
+  "trusted_statuses": [
+    "unavailable"
+  ],
+  "torch_loaded_in_runtime": false,
+  "torch_installed_in_data_runtime": false
+}

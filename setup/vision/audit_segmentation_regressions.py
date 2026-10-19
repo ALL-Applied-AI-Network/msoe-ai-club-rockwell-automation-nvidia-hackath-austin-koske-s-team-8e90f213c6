@@ -124,6 +124,7 @@ def main():
             stage_masks.update({key:decode_mask(value) for key,value in geometry.get('mask_stages',{}).items()})
             stage_masks['final_sample']=decode_mask(geometry['mask'])
             stem=f'{detection}-f{index:06d}';artifacts={}
+            artifacts['source']=save_image(output/(stem+'-source.png'),cv2.cvtColor(rgb,cv2.COLOR_RGB2BGR))
             artifacts['input_crop']=save_image(output/(stem+'-input.png'),cv2.cvtColor(crop,cv2.COLOR_RGB2BGR))
             artifacts['probability']=save_image(output/(stem+'-probability.png'),np.round(probability*65535).astype(np.uint16))
             for name,mask in stage_masks.items():
@@ -133,7 +134,7 @@ def main():
             row=dict(frame_index=index,mp4_s=sample['mp4_s'],source_rgb_sha256=source_sha,
                      crop_box=box,input_size=list(INPUT_SIZE),projection_exact=True,
                      original_raw_component_boxes_identical=True,
-                     source_image=representative['path'],source_root=str(args.previous_study/'segmentation/run5/qa-review'),
+                     source_image=artifacts['source']['path'],source_root='.',
                      model_components=components,
                      sampling_bounds=bounds,sampling_rectangle_area=area,
                      coherent_area_fraction=float(stage_masks['eroded'].sum()/area) if area and 'eroded' in stage_masks else None,

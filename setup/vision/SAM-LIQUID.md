@@ -85,6 +85,50 @@ binary PNGs under `masks/`. Thirty four-panel overlays and five contact sheets
 show source RGB, liquid-box, full-vial and lower-vial outputs. Their geometry
 statistics describe raw masks; they do not adjudicate fluid pixels or pass QA.
 
+## Offline pipeline video — October 20
+
+`render_liquid_pipeline.py` applies the completed Faster R-CNN ResNet50 liquid
+pilot, fixed baseline vial detector and SAM2.1 Tiny to the **first 60 seconds of
+Run 4**, independently on every sixth decoded frame. Native PTS and exact input
+RGB hashes are retained. Playback is 5 fps, preserving source elapsed time.
+This is a development demonstration with no source labels supplied to inference.
+
+Root: `C:/Users/Austin/ai-club-tools/results/liquid-pipeline-demo-20261020/render-v1`.
+Open `liquid-pipeline.mp4`; `pipeline-frame-0600.png` shows a later filled region,
+`pipeline-frame-0420.png` shows an oversized prompt failure, and
+`decoded-storyboard.png` contains six frames decoded from the actual MP4.
+
+Four synchronized panels show source pixels, detector proposals, current-frame
+SAM masks, and existing per-frame sampling QA. An offline adapter supplies the
+SAM proposals to the unchanged geometry/measurement gates. Geometry evidence is
+explicitly identified as SAM rather than the generic adapter's TinyUNet default.
+There is no temporal SAM propagation, future-frame prompting, reference-bank
+reuse, full-window QA, recipe decision or physical vial identification.
+Multiple contained masks remain ambiguous; mask-quality scores do not decide
+fluid presence. A pixel hash guard rejects stale-frame proposals.
+
+All **300 output frames** fully decode; all 300 source pixel hashes/native PTS
+were independently rechecked. There are 103 frames with liquid detections,
+89 with eligible prompts, 109 raw masks, 68 with nonempty final sampling masks,
+and 49 passing existing per-frame gates. These are execution counts, **not
+accuracy, mask IoU, onset recall or product-quality outcomes**. The first
+detector proposal at source PTS 10.8 s is not a reviewed physical-onset time.
+At 14 s an oversized prompt includes glass/upper structure; at 20 s a tighter
+prompt follows the filled region. Approved outlines/timing remain human work.
+
+`frames.jsonl` retains original floating-point detections, prompt boxes, raw mask
+RLE, per-frame quality flags and final sample masks. `manifest.json` pins source,
+models, executed script, QA code/configuration and output hashes. The
+[verification record](../verification/liquid-pipeline-video-20261020.json)
+captures checks and limits. Three focused tests cover stale-frame rejection,
+mask clearing/copying and ambiguity rejection through existing geometry.
+
+Reproduce with the vision-alternatives-windows Python, using a fresh output:
+
+```powershell
+python setup/vision/render_liquid_pipeline.py --source datasets/dataset2/csi-vial-fill-dataset/vial_fill/videos/vial_fill_video_4.mp4 --experiment C:/Users/Austin/ai-club-tools/results/early-liquid-20261020 --baseline C:/Users/Austin/ai-club-tools/results/crop-clahe-detector-20261019/baseline-best.pt --sam C:/Users/Austin/ai-club-tools/results/prompted-liquid-assets-20261020/sam2.1_t.pt --out C:/Users/Austin/ai-club-tools/results/liquid-pipeline-demo-20261020/NEW-RENDER
+```
+
 ## Next controlled comparison
 
 1. Compare detector-to-SAM refinement with the existing box/heuristic-mask path
@@ -97,8 +141,9 @@ statistics describe raw masks; they do not adjudicate fluid pixels or pass QA.
    first-visible-pool delay, absent-liquid alarms, temporal flicker and runtime.
    Retain hard pale/clear cases and label uncertainty. Existing unreviewed boxes
    and mask-quality scores cannot supply those ground-truth outcomes.
-5. Only a separate downstream trial may assess whether an exact inset mask
-   passes unchanged measurement QA. No detector or segmenter is promoted here.
+5. Compare exact inset masks under unchanged window-level measurement QA. The
+   demonstration above exercises only the per-frame gates. No detector or
+   segmenter is promoted here.
 
 Reproduction, using the existing vision-alternatives-windows Python and a fresh
 output path:

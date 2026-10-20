@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "kind": "sam2_run4_raw_mask_probe_verification",
+  "comparison_sha256": "9579c7d14f6710131b1c9c8cd89d308b86eef621690477df4914fe73e5ab0fe1",
+  "checkpoint_sha256": "7402e0d864fa82708a20fbd15bc84245c2f26dff0eb43a4b5b93452deb34be69",
+  "script_sha256": "b90bad23207951edd9db78000d9a398b07e298995023e1045ea53fe26c318a83",
+  "runtime": {
+    "torch": "2.11.0+cu128",
+    "ultralytics": "8.4.182",
+    "gpu": "NVIDIA GeForce RTX 4080 SUPER"
+  },
+  "cases": 30,
+  "arms": {
+    "liquid_box": {
+      "supplied_positive_cases": 18,
+      "positive_cases_with_mask": 15,
+      "provisional_negative_cases": 12,
+      "negative_cases_with_mask": 0,
+      "positive_mask_pixels_median": 2936.0,
+      "negative_mask_pixels_median": 0.0
+    },
+    "vial_box": {
+      "supplied_positive_cases": 18,
+      "positive_cases_with_mask": 18,
+      "provisional_negative_cases": 12,
+      "negative_cases_with_mask": 12,
+      "positive_mask_pixels_median": 14629.5,
+      "negative_mask_pixels_median": 16872.5
+    },
+    "lower_vial_box": {
+      "supplied_positive_cases": 18,
+      "positive_cases_with_mask": 18,
+      "provisional_negative_cases": 12,
+      "negative_cases_with_mask": 12,
+      "positive_mask_pixels_median": 7783.0,
+      "negative_mask_pixels_median": 7617.5
+    }
+  },
+  "masks_and_overlays_hash_verified": true,
+  "source_run": 4,
+  "run5_used": false,
+  "labels_changed": false,
+  "measurement_qa_changed": false,
+  "observed": "Liquid-box prompting follows lower colored regions in inspected examples; vial/search boxes predominantly outline glass.",
+  "limits": [
+    "Raw prompt-conditioned masks, not semantic fluid-presence decisions or approved measurement masks.",
+    "A box prompt can produce foreground on glass without visible fluid.",
+    "No reviewed mask truth: pixel counts/geometry are diagnostics, not segmentation accuracy.",
+    "No reviewed first-visible-liquid timing: no onset/delay measurement.",
+    "Label-absence cases are provisional negatives, not confirmed-empty vials.",
+    "Still images only; no video propagation, future prompts, training or pseudo-label export."
+  ],
+  "inspected_case_ids": [
+    "vial_fill_20260923_191017_576908",
+    "vial_fill_20260923_191029_656060",
+    "vial_fill_20260923_191127_969880",
+    "vial_fill_20260923_191443_030302"
+  ]
+}

@@ -4,8 +4,11 @@ The [consolidated handoff](../../HANDOFF.md) records the current
 [liquid-specialist / non-YOLO comparison](LIQUID-SPECIALISTS.md): all four fits,
 evaluations and assembly are complete, with 12 decoded local videos. DINO improves
 provisional recall but produces more unmatched boxes. The next
-[early-liquid architecture pilots](EARLY-LIQUID.md) target liquid visible at the
-vial bottom using Runs 1–4. No candidate has replaced the app detector.
+[early-liquid architecture pilots](EARLY-LIQUID.md) have also completed: overall
+Run 4 AP improved, while early/small-pool evidence remains limited. A separate
+[SAM2/SAM3 mask-pipeline probe](SAM-LIQUID.md) tests prompt-conditioned fluid
+outlines and exposes the need for a separate presence decision. No candidate has
+replaced the app detector.
 
 The [controlled epoch and augmentation trial](EPOCH-AUGMENTATION.md) compares a
 fresh 12-epoch control with longer training and training-only contrast/blur/noise.

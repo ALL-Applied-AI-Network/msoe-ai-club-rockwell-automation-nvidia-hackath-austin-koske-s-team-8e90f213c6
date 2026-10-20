@@ -13,7 +13,8 @@ Austin requested no push to `main`; local `main` remains at `5658d58`, matching
 | Replay, tracking and measurement QA | `replay/`; [current vision guidance](replay/VISION.md) | Existing detector/defaults preserved |
 | Annotation tooling | `annotation_review/`; [reviewer handoff](annotation_review/HANDOFF.md) and [contracts](annotation_review/CONTRACTS.md) | Published 179-case package; human reviews outstanding |
 | Completed comparison | `setup/vision/`; [results and protocol](setup/vision/LIQUID-SPECIALISTS.md) | Four fits/evaluations complete; 12 MP4s verified |
-| Current model iteration | [First-visible-liquid pilots](setup/vision/EARLY-LIQUID.md) | Three architecture/resolution fits submitted as Slurm array 286291 |
+| Latest detector iteration | [First-visible-liquid pilots](setup/vision/EARLY-LIQUID.md) | All three fits and Run 4 evaluations complete; eight-detector scorecard assembled |
+| Mask pipeline | [SAM liquid probe](setup/vision/SAM-LIQUID.md) | SAM2.1 tested on 30 Run 4 images; raw masks only |
 
 Local assets are under `C:/Users/Austin/ai-club-tools/` (`/mnt/c/Users/Austin/ai-club-tools/`
 in WSL). Results, environments and source labels stay outside Git. The ChatGPT
@@ -59,19 +60,35 @@ continued architecture iteration. New root:
 `C:/Users/Austin/ai-club-tools/results/early-liquid-20261020`.
 Rosie array **286291**: `yolo11n-960`, `yolo11s-640`, `fasterrcnn-resnet50`.
 Local ResNet GPU smoke passed empty targets, two steps and exact checkpoint reload.
-Inspect the scheduler and `collection.log` before continuing; do not duplicate fits.
-The remote collector packages three successful exits and never resubmits.
-All three fits were observed running and the remote ResNet smoke passed. Rosie
-hostname resolution subsequently failed from this session; restore campus VPN
-access to check completion/retrieve artifacts. The jobs continue independently.
+All three fits completed, exit 0:0. Selected epochs are 29, 27 and 7 respectively.
+VPN access was restored. A stale/NUL-filled management-node read of a training
+CSV blocked packaging. CPU-only Slurm job **286305** read the originals on the
+training node, verified complete curves/checkpoints and produced
+`completed-artifacts-node.tar.gz`, SHA256
+`31b86fe156e70d839daa90389030c0f836046682a2ae8d56dfed5dd7ca489a94`.
+The incomplete local retrieval is preserved under `retrieval-first-attempt/`;
+no remote source file was corrected or sanitized. The polling collector was stopped.
 
-Next: retrieve/hash-verify the completed bundle and run `evaluate_early_liquid.py`
-with the documented [pilot command](setup/vision/EARLY-LIQUID.md). Use
-`envs/vision-alternatives-windows/Scripts/python.exe` locally. Existing Run 4 audit
-is `liquid-specialists-20261020/development-run4`; all model development uses
-Runs 1–4. Small-target metrics are a proxy: Run 4 has 18 targets <=64px tall,
-**none <=32px**. Training has only four <=32px targets. Human body/stream review
-remains a separate input; no reviewed first-visible-liquid timing is available.
+Local `development-run4/` contains the combined eight-detector comparison,
+`model-scorecard.png` and short-target PNGs. Common-adapter Run 4 liquid AP50–95:
+53.81% (nano 960), 53.66% (small 640), 53.50% (ResNet). The 18 short supplied
+targets matched at .35 are 15, 15 and 17 respectively, versus baseline 15/18.
+Run 4 has **no <=32px target**; these results cannot measure first-visible pools.
+See the [completed verification](setup/verification/early-liquid-results-20261020.json).
+
+SAM2.1 Tiny was tested with liquid-box, vial-box and lower-vial prompts on 30
+Run 4 stills. Liquid prompts follow lower colored regions in inspected examples;
+vial-only prompts outline glass even on label-absence cases. All 75 raw masks
+and 30 overlays are under `prompted-liquid-20261020/run4-probe`. The
+[SAM pipeline plan](setup/vision/SAM-LIQUID.md) separates presence/localization,
+mask refinement and measurement QA. SAM3 remains an untested concept-prompt arm
+requiring authorized checkpoint access. No human masks or onset labels were made.
+
+Next: compare current-frame liquid prompts from the stronger detectors, then
+forward-only mask propagation with resets per vial. Human body/stream review and
+reviewed first-visible-liquid timing remain separate required evaluation inputs.
+Use `envs/vision-alternatives-windows/Scripts/python.exe` locally. Do not rerun
+completed fits/evaluations or use Run 5 to select settings.
 
 ## Annotation review: next work
 

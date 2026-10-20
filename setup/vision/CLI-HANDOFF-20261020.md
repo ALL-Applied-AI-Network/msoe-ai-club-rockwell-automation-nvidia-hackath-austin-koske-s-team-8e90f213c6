@@ -1,60 +1,54 @@
 # Model continuation — October 20, 2026
 
 Use the primary checkout on **austin-work**. Do not push or merge into main.
-The [consolidated handoff](../../HANDOFF.md) is the current entry point.
+Read [the consolidated handoff](../../HANDOFF.md) first.
 
-## Completed work
+## Completed comparisons
 
-[Four-arm liquid-specialist comparison](LIQUID-SPECIALISTS.md) is complete.
-Slurm array 286264 finished successfully. DINO completed 25 epochs and selected
-15. Evaluation, assembly, local PNG review and full decoding of all 12 delivered
-MP4s are done. Do not resubmit or rerun completed evaluations.
+- [Liquid specialists](LIQUID-SPECIALISTS.md): Slurm 286264, four successful fits,
+  four evaluations, 12 fully decoded MP4s and final verification complete.
+- [Architecture/resolution pilots](EARLY-LIQUID.md): Slurm 286291, three successful
+  fits, all Run 4 subset evaluations and the eight-detector assembly complete.
+- [SAM liquid masks](SAM-LIQUID.md): SAM2.1 Tiny probe complete on 30 Run 4 stills,
+  with 75 raw masks, 30 overlays and five contact sheets. SAM3 is untested and
+  needs authorized checkpoint access.
 
-Local root: C:/Users/Austin/ai-club-tools/results/liquid-specialists-20261020.
-See evaluation/comparison.json and evaluation/verification.json. The exact
-executed evaluation/collection/verification scripts are retained there.
-Repository evidence: setup/verification/liquid-specialists-20261020.json.
+Do not rerun completed fits or evaluations. Local results live under
+C:/Users/Austin/ai-club-tools/results/ in liquid-specialists-20261020,
+early-liquid-20261020 and prompted-liquid-20261020/run4-probe.
 
-DINO liquid AP50–95 is 51.34%, precision 80.19%, recall 93.53% at unchanged .35,
-against unreviewed Run 5 teacher boxes. The deployed baseline remains in place;
-measurement QA is unchanged. The inspected Run 5 is not a blind final test.
+The completed detector pilots' final development-run4 directory includes
+comparison.json, model-scorecard.png and short-target PNGs. Native selected
+epochs for nano-960 / small-640 / ResNet are 29 / 27 / 7. Their common-adapter
+Run 4 AP50–95 is 53.81 / 53.66 / 53.50 percent. Short supplied-target matches
+at .35 are 15/18 / 15/18 / 17/18; there is no <=32px development target.
 
-## Active iteration
+## Verified artifact retrieval
 
-Austin's target is liquid visible at the bottom as soon as it exists. The
-[early-liquid protocol](EARLY-LIQUID.md) defines the next three fits and exact
-local evaluation command. Slurm array **286291** has arms:
+VPN is restored. Initial management-node reads returned missing/stale metadata
+and a NUL-filled completed CSV; original logs and the incomplete local retrieval
+were preserved. CPU-only Slurm job 286305 read the originals on dh-dgxh100-2,
+verified all three complete training curves/checkpoints and produced
+completed-artifacts-node.tar.gz, SHA256
+31b86fe156e70d839daa90389030c0f836046682a2ae8d56dfed5dd7ca489a94.
 
-- 0: yolo11n-960
-- 1: yolo11s-640
-- 2: fasterrcnn-resnet50
+That bundle is local, verified and extracted. collection-read.json binds original
+file hashes and source node. retrieval-verification.json records the preserved
+incomplete local CSV under retrieval-first-attempt/. No source file was sanitized
+or fitted model replaced. The polling collector was stopped after node packaging.
 
-Remote root: $HOME/ai-club-tools/results/early-liquid-20261020.
-Local root: C:/Users/Austin/ai-club-tools/results/early-liquid-20261020.
-Inspect jobs/logs first using the existing Windows SSH configuration:
+## Next model work
 
-```powershell
-ssh -o BatchMode=yes -o GSSAPIAuthentication=no -o ConnectTimeout=12 msoe-bastion 'sacct -X -j 286291 -n -P -o JobID,State,ExitCode,Elapsed,NodeList'
-```
+The SAM2 probe supports liquid-box-to-mask refinement in inspected examples,
+but vial-only prompts mostly outline glass, including label-absence cases.
+A mask-quality score is not fluid-presence probability. Compare prompts from
+stronger detectors and a separate presence/localization arm, then forward-only
+video masks with resets per vial. Never prompt on later frames to score early
+presence. Human pool/stream outlines and first-visible-liquid timing remain
+separate evaluation inputs; all current masks and targets are provisional.
 
-The detached collector writes collection.log, scheduler-status.txt and, after
-three successful exits, completed-artifacts.tar.gz plus its checksum. Wait for
-the checksum, complete each transfer, and verify the archive before extraction.
-Never overwrite different local artifacts. Do not replace training jobs after
-a VPN disconnect; they survive it. Partial outputs require inspection and fresh
-output directories for any necessary rerun.
-
-After retrieval, use vision-alternatives-windows for evaluate_early_liquid.py.
-It compares the new fits with the completed Run 4 development audit, preserving
-per-family input resolution and reporting short-target recall separately.
-There are no development targets <=32 pixels tall; first-visible-pool accuracy
-is currently unmeasured. Human label/timing work remains with the data team.
-
-## Boundaries
-
-Runs 1–3 train; Run 4 develops; Run 5 never chooses training/threshold/sampling
-settings. Source labels, frozen helper snapshots, app defaults and QA remain
-intact. Rosie GPU work uses Slurm/Singularity 3.10. No industrial connection,
-automatic adjudication, synthetic rendering or automatic model promotion.
-Provide local MP4/PNG paths; do not launch browser previews. No subagents unless
-Austin explicitly authorizes them. See AGENTS.md for repository-wide context.
+Use vision-alternatives-windows locally. Keep Runs 1–3 for fitting, Run 4 for
+model development, and Run 5 out of settings/sampling/checkpoint selection.
+App defaults, measurement QA, source labels and frozen fitting snapshots remain
+unchanged. No industrial connection, automatic adjudication, synthetic rendering,
+model promotion, browser preview or subagents without an explicit request.

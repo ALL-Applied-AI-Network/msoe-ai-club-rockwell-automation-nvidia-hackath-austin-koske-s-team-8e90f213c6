@@ -16,6 +16,7 @@ Austin requested no push to `main`; local `main` remains at `5658d58`, matching
 | Latest detector iteration | [First-visible-liquid pilots](setup/vision/EARLY-LIQUID.md) | All three fits and Run 4 evaluations complete; eight-detector scorecard assembled |
 | Mask pipeline | [SAM liquid probe](setup/vision/SAM-LIQUID.md) | SAM2.1 tested on 30 Run 4 images; raw masks only |
 | Pipeline video | [Offline application](setup/vision/SAM-LIQUID.md#offline-pipeline-video--october-20) | 60 s Run 4 video; detector → SAM → existing per-frame sampling gates; 300 frames verified |
+| Early pool prompts | [Paired trial](setup/vision/SAM-LIQUID.md#pool-prompt-comparison-and-causal-bridge--october-20) | Localized box/points plus causal bridge; before/after videos complete; QA unchanged |
 
 Local assets are under `C:/Users/Austin/ai-club-tools/` (`/mnt/c/Users/Austin/ai-club-tools/`
 in WSL). Results, environments and source labels stay outside Git. The ChatGPT
@@ -93,8 +94,18 @@ storyboard, source-aligned raw masks and provenance). All 300 video frames and
 passes; this is not full-window QA or an accuracy score. Oversized prompts can
 include glass/upper structures. See the SAM protocol for exact counts and limits.
 
-Next: compare current-frame liquid prompts from the other stronger detectors, then
-forward-only mask propagation with resets per vial. Human body/stream review and
+The paired prompt experiment now fixes the inspected early full-vial masks using
+localized pool seeds/points plus a causal prompt-box bridge. Final local media:
+`results/liquid-pipeline-demo-20261020/causal-box-comparison-v1/`.
+`early-fill-before-after.mp4` covers source PTS 10–22 s; `before-after.mp4` covers
+60 s. All three new experiment directories and their six MP4s are preserved.
+Association-only did not fix oversized prompts; point-only still included lower
+glass despite better coarse geometry counts. The final bridge used boxes only
+0.2 s old at 13.4/13.8 s, with current seeds and no SAM mask propagation. This is
+an inspected Run 4 pilot with a colored-pool prior, not onset/mask validation.
+
+Next: additional development fills and pale/clear cases, other detector prompts,
+then forward-only SAM mask propagation with resets per vial. Human body/stream review and
 reviewed first-visible-liquid timing remain separate required evaluation inputs.
 Use `envs/vision-alternatives-windows/Scripts/python.exe` locally. Do not rerun
 completed fits/evaluations or use Run 5 to select settings.

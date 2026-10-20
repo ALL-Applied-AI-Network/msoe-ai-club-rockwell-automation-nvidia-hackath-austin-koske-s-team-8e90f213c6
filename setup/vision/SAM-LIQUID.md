@@ -129,10 +129,91 @@ Reproduce with the vision-alternatives-windows Python, using a fresh output:
 python setup/vision/render_liquid_pipeline.py --source datasets/dataset2/csi-vial-fill-dataset/vial_fill/videos/vial_fill_video_4.mp4 --experiment C:/Users/Austin/ai-club-tools/results/early-liquid-20261020 --baseline C:/Users/Austin/ai-club-tools/results/crop-clahe-detector-20261019/baseline-best.pt --sam C:/Users/Austin/ai-club-tools/results/prompted-liquid-assets-20261020/sam2.1_t.pt --out C:/Users/Austin/ai-club-tools/results/liquid-pipeline-demo-20261020/NEW-RENDER
 ```
 
+## Pool prompt comparison and causal bridge — October 20
+
+The original clip exposed an association failure: at 15 s the bottom-pool
+detection has confidence .987 but only .868 containment in the baseline vial
+box, so the .90 prompt gate drops it. A tall upper/vial detection with confidence
+.399 remains eligible. These are detector disagreements, not reviewed boxes.
+
+All new arms use the **identical 300 source frames and cached detector outputs**.
+Every frame is redecoded and matched by native PTS and RGB hash. Existing models,
+QA code/configuration, source labels and app defaults are unchanged. No new fits
+or Run 5 reads occurred. Results are in three fresh directories under
+`C:/Users/Austin/ai-club-tools/results/liquid-pipeline-demo-20261020/`:
+
+| Directory | Added experiment | Videos |
+| --- | --- | --- |
+| `prompt-comparison-v1` | Original vs association vs localized box + points | `prompt-comparison.mp4`, `early-fill-comparison.mp4` |
+| `seed-only-comparison-v1` | Same guided points, omit SAM box | `before-after.mp4`, `early-fill-before-after.mp4` |
+| `causal-box-comparison-v1` | Guided box/points plus short causal box bridge | `before-after.mp4`, `early-fill-before-after.mp4` |
+
+Use **`causal-box-comparison-v1/early-fill-before-after.mp4`** for the final
+before/after view: native source PTS 10–22 s, played at real elapsed speed.
+The full version covers the same first 60 s as the original. Source-aligned raw
+masks, points, decisions and QA flags remain in each directory's `frames.jsonl`.
+
+The association arm uses a search margin of 20% vial width and 3% height, requires
+the proposal center inside the original vial and .90 containment in that expanded
+search box, then clips the prompt to the original vial's one-pixel inset. This
+does **not** loosen measurement QA's containment gate or clip raw SAM outputs.
+
+The guided arm finds tentative basal color using the existing S>=45, 12<=V<240
+thresholds, a lower-half search with 10% horizontal inset, and 3x3 opening. It
+uses the largest detector-supported component reaching the basal 20%, its deepest
+interior point, and the smallest associated box containing that point. Near-equal
+box sizes remain ambiguous. Neutral patches on surrounding glass/label supply
+tentative negative points. The seed is prompt evidence, never a returned SAM mask
+or an approved fluid-presence label. There is no blanket maximum liquid height;
+this colored-pool prior remains unvalidated for pale/clear liquid.
+
+| Arm | Frames with prompts | Raw masks >70% vial height | Per-frame QA passes |
+| --- | ---: | ---: | ---: |
+| Original | 89 | 26 | 49 |
+| Association only | 100 | 26 | 50 |
+| Localized box + points | 99 | 2 | 73 |
+| Points only | 99 | 0 | 81 |
+| Localized box + points + causal bridge | 98 | 0 | 73 |
+
+**These are operational/geometric counts, not mask accuracy.** In particular,
+points-only still outlines lower glass at 13.4/13.8 s despite its zero tall-mask
+count. It is not established as the better arm by either count. Current-frame
+box/point guidance visibly follows the pool in inspected examples, but the two
+remaining tall masks occur when only an oversized detector box exists.
+
+The final arm retains the last localized box as a short-lived prompt prior. If a
+fresh box expands beyond twice the mapped prior area, it may use that prior only
+when the current frame still has associated detection/seed evidence and the seed
+lies inside it. Maximum age is .6 s; reuse never refreshes the age. Motion >3 or
+station-box IoU <.65 clears history. Unresolved jumps produce no prompt. This is
+causal **box geometry**, not SAM mask propagation, physical-vial identification
+or backward initialization from a filled frame. Rapid legitimate expansion and
+missed station transitions remain evaluation concerns.
+
+Exactly two bridges occurred: frame 402 (13.4 s) used frame 396 (13.2 s), and
+frame 414 (13.8 s) used frame 408 (13.6 s). Inspected outputs now follow the bottom
+pool in those cases. Early masks can still fail unchanged sample QA because of
+small usable interiors or disagreement with the vial detector's boundary.
+
+All six MP4s fully decode (1,080 total output frames). The current policy/bridge
+implementation was replayed on CPU and matches the frozen executed outputs for
+all 300 frames. All artifact hashes were checked; every bridge was independently
+checked for past-only source time and current seed evidence. Ten new tests plus
+three existing frame-adapter tests passed. See the
+[verification](../verification/pool-prompts-20261020.json). Executed helper
+snapshots in each result directory remain authoritative; subsequent source
+cleanup changed documentation/constant references without changing those outputs.
+
+Reproduction uses `compare_pool_prompts.py` for the initial three-arm experiment,
+then `compare_seed_only_prompts.py --mode points_only` or `--mode causal_box`
+with `--previous` pointing to that completed comparison and `--original` to
+`render-v1`. Both additional arms reuse all completed detector/preceding results.
+Use the existing vision-alternatives-windows Python and a fresh `--out` directory.
+
 ## Next controlled comparison
 
-1. Compare detector-to-SAM refinement with the existing box/heuristic-mask path
-   on identical development frames, using the completed detector pilots.
+1. Extend the paired prompt trial to additional development fills and pale/clear
+   cases, including first-frame oversized boxes without a usable causal prior.
 2. Keep a separate presence arm so missing/ambiguous liquid boxes remain visible
    failures. A SAM3 concept arm is an option once authorized weights are present.
 3. Compare forward-only video propagation against independent-frame masks. Reset

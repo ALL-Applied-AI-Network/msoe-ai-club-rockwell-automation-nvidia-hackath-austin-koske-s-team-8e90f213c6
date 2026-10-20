@@ -1,0 +1,110 @@
+{
+  "schema_version": 1,
+  "kind": "run4_pool_prompt_comparison_verification",
+  "artifact_root": "C:/Users/Austin/ai-club-tools/results/liquid-pipeline-demo-20261020",
+  "recommended_video": "causal-box-comparison-v1/early-fill-before-after.mp4",
+  "source_run": 4,
+  "run5_used": false,
+  "labels_changed": false,
+  "qa_rules_changed": false,
+  "app_defaults_changed": false,
+  "models_retrained": false,
+  "detector_promoted": false,
+  "focused_tests_passed": 13,
+  "arms": {
+    "original": {
+      "prompted": 89,
+      "raw_masks": 109,
+      "masks_taller_than_70pct_vial": 26,
+      "nonempty_sample": 68,
+      "per_frame_pass": 49
+    },
+    "association": {
+      "prompted": 100,
+      "raw_masks": 125,
+      "masks_taller_than_70pct_vial": 26,
+      "nonempty_sample": 68,
+      "per_frame_pass": 50
+    },
+    "guided": {
+      "prompted": 99,
+      "raw_masks": 99,
+      "masks_taller_than_70pct_vial": 2,
+      "nonempty_sample": 76,
+      "per_frame_pass": 73
+    },
+    "seed_only": {
+      "prompted": 99,
+      "raw_masks": 99,
+      "masks_taller_than_70pct_vial": 0,
+      "nonempty_sample": 88,
+      "per_frame_pass": 81
+    },
+    "causal_box": {
+      "prompted": 98,
+      "raw_masks": 98,
+      "masks_taller_than_70pct_vial": 0,
+      "nonempty_sample": 73,
+      "per_frame_pass": 73
+    }
+  },
+  "current_policy_matches_frozen_outputs_frames": 300,
+  "current_bridge_matches_frozen_outputs_frames": 300,
+  "source_pixels_and_pts_verified": 300,
+  "artifact_hashes_verified": 48,
+  "fully_decoded_videos": 6,
+  "fully_decoded_frames": 1080,
+  "bridge_events": [
+    {
+      "frame": 402,
+      "seconds": 13.4,
+      "prompt_source_frame": 396,
+      "age_s": 0.20000000000000107
+    },
+    {
+      "frame": 414,
+      "seconds": 13.8,
+      "prompt_source_frame": 408,
+      "age_s": 0.20000000000000107
+    }
+  ],
+  "qa_code_and_config_unchanged": true,
+  "report_sha256": {
+    "prompt-comparison-v1": "c1221798badeabe06d98902ee57fb4a324aa68b8856691a26971266fb00d29b0",
+    "seed-only-comparison-v1": "7a9790bc977fa104e7eb87729c44b0bc8f673787e79ab223ef806081ace154e4",
+    "causal-box-comparison-v1": "ede91c72fc793096f5f5056b46cfcca7fa78231f3d955e6c3bf206fa7490576a"
+  },
+  "current_script_sha256": {
+    "pool_prompt_policy.py": "dd411fff36b0c7ad1f0c2d094d1da2786a03d641ae7a67184111739a229d94a3",
+    "compare_pool_prompts.py": "0ff21b0de7d6aaa655deb6d828c66604a4a1c4fed0cde4babdebcf5aa196ef6a",
+    "compare_seed_only_prompts.py": "8514d9f5b67be12c1481840f94e174b21ce9e2b713a7c5e855af41ea8af1f1fd"
+  },
+  "decoded_failure_frames_sha256": "4496e8acae66756072570c3835783c694851d0cea1042838241ec75b6d28459a",
+  "observations": [
+    "Guided current-frame boxes resolve inspected early pool cases except 13.4 and 13.8 s, where only an oversized box exists.",
+    "Point-only SAM reduces mask extent but still outlines lower glass in those cases; zero >70%-height masks does not mean correct masks.",
+    "Causal prior boxes from 0.2 s earlier give bottom-pool masks in the inspected residual cases; future evidence is never used."
+  ],
+  "limits": [
+    "Same inspected Run 4 development clip; camera-specific prompt hypotheses, not a blind test.",
+    "Raw detector proposals and original masks reused after file/pixel/PTS verification.",
+    "Guided arm uses largest basal colored component and smallest associated box containing its deepest point.",
+    "Color seed absence is unresolved, not proof of an empty vial; pale/clear liquid not validated.",
+    "Prompt search changes only; original raw SAM masks retained and existing QA rules unchanged.",
+    "Tall-mask geometry counts are not segmentation errors or approved mask accuracy.",
+    "No reviewed physical onset or mask truth, annotation decisions, new fits or detector promotion.",
+    "Additional arms added after inspecting preceding prompt experiments on this same clip.",
+    "Causal arm reuses only recent box geometry with fresh current seed/detection; no SAM mask propagation.",
+    "This is iterative development, not independent evidence of generalization."
+  ],
+  "inspected_frames": [
+    330,
+    402,
+    414,
+    420,
+    450,
+    480,
+    540,
+    600
+  ]
+}

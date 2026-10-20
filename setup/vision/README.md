@@ -1,5 +1,10 @@
 # Bootstrap vial/liquid localization
 
+The [CLI/Cursor handoff](CLI-HANDOFF-20261020.md) records the active
+[liquid-specialist / non-YOLO pilots](LIQUID-SPECIALISTS.md), running jobs,
+local exports, commands and remaining validation. That four-arm comparison is
+in progress; no candidate has replaced the app detector.
+
 The [controlled epoch and augmentation trial](EPOCH-AUGMENTATION.md) compares a
 fresh 12-epoch control with longer training and training-only contrast/blur/noise.
 It preserves provisional labels, excludes Run 5 from fitting/selection, and does

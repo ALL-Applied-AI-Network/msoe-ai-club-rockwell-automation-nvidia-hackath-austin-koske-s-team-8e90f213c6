@@ -6,6 +6,19 @@ This is your team's repository for the four-week physical AI hackathon run by Ro
 **Your team workspace** (team, repository access, submissions): <https://dashboard.all-ai-network.org/j/L36HEH>
 **Questions:** [join the hackathon Slack](https://join.slack.com/t/rockwellnvidi-wq82211/shared_invite/zt-4bp05nsn9-UW3afFtM9wjzWtZiQoJBHg) and ask in the channel that matches your question. The event guide's "Getting help" section says who to ping for what.
 
+## Team data and architecture — start here
+
+**[Team handoff: architecture, roles, data formats and downloads](team_handoff/README.md)**
+
+- [Architecture implementation brief (PDF)](team_handoff/Team-Architecture-Implementation-Brief.pdf)
+- [Data guide (PDF)](team_handoff/Team-Data-Guide.pdf)
+- [Core dataset — all three teams, 281.3 MB](https://github.com/ALL-Applied-AI-Network/msoe-ai-club-rockwell-automation-nvidia-hackath-austin-koske-s-team-8e90f213c6/releases/download/team-data-v1.0.0/Team-Core-Data.zip)
+- [Complete versioned release — all component and optional data archives](https://github.com/ALL-Applied-AI-Network/msoe-ai-club-rockwell-automation-nvidia-hackath-austin-koske-s-team-8e90f213c6/releases/tag/team-data-v1.0.0)
+
+The release includes original imagery/video, provisional annotations, YOLO/COCO
+starters and development frames. Train on Runs 1–3, develop on Run 4; Run 5 is a
+separate diagnostic-only download. Follow the handoff for file formats and checksums.
+
 ## Key dates
 
 | When | What |

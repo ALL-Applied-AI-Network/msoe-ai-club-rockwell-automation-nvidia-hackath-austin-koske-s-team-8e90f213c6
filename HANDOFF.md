@@ -17,10 +17,19 @@ Austin requested no push to `main`; local `main` remains at `5658d58`, matching
 | Mask pipeline | [SAM liquid probe](setup/vision/SAM-LIQUID.md) | SAM2.1 tested on 30 Run 4 images; raw masks only |
 | Pipeline video | [Offline application](setup/vision/SAM-LIQUID.md#offline-pipeline-video--october-20) | 60 s Run 4 video; detector → SAM → existing per-frame sampling gates; 300 frames verified |
 | Early pool prompts | [Paired trial](setup/vision/SAM-LIQUID.md#pool-prompt-comparison-and-causal-bridge--october-20) | Localized box/points plus causal bridge; before/after videos complete; QA unchanged |
+| Innovation lab handoff | `results/innovation-lab-brief-20261020/` under the local tools root | Six-page architecture PDF, editable Word brief, single-panel final MP4s and code-free sharing ZIP |
 
 Local assets are under `C:/Users/Austin/ai-club-tools/` (`/mnt/c/Users/Austin/ai-club-tools/`
 in WSL). Results, environments and source labels stay outside Git. The ChatGPT
 project mirror is reference data, not a checkout.
+
+The innovation lab package is
+`C:/Users/Austin/ai-club-tools/results/innovation-lab-brief-20261020/Innovation-Lab-Liquid-Pipeline-Handoff.zip`.
+Its `share/` source directory contains only PDF/DOCX, two final-solution H.264
+videos (60 s and a 12 s early-fill highlight), two PNGs and a readme. No source
+code, weights or labels are included. The videos reuse the verified causal-box
+experiment, with source-pixel/PTS checks and full decoding of all 360 output
+frames. Builder/provenance files stay separately in `work/`, outside the ZIP.
 
 Existing untracked `analysis/`, `datasets/`, `docs/`, `experiments/`, `handoffs/`
 and `team_plan.md` are preserved in place and excluded **locally** using

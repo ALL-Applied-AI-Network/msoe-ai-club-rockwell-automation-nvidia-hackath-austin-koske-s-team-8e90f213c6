@@ -53,6 +53,10 @@ SAM PNG pixel/PTS checks passed. See `setup/verification/team-data-20261020.json
 The repository entry point is now [team_handoff/README.md](team_handoff/README.md),
 with PDFs, data and checksum links in the versioned
 [team-data-v1.0.0 release](https://github.com/ALL-Applied-AI-Network/msoe-ai-club-rockwell-automation-nvidia-hackath-austin-koske-s-team-8e90f213c6/releases/tag/team-data-v1.0.0).
+All 11 release assets are published; GitHub sizes and SHA256 digests match the
+local files. Both standalone PDFs were downloaded again and their hashes and
+three-page counts checked. See the
+[publication verification](setup/verification/team-release-publication-20261020.json).
 Release attachments keep the large data out of Git. No source labels/data were
 modified; `main` remains untouched.
 

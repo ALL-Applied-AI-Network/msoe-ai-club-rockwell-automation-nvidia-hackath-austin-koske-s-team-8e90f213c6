@@ -70,7 +70,7 @@ Checksums cover all seven ZIPs and both standalone PDFs.
 
 Original data and labels remain intact. Aleyna, Zoe and Reagan own approved
 spatial labels and timing decisions; keep reviewer exports separate and preserve
-provenance. Source files, weights and reviewer workspaces stay out of Git.
+provenance. Source imagery, model weights and reviewer workspaces stay out of Git.
 
 ## Working in the repository
 

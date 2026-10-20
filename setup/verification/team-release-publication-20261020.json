@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "kind": "team_release_publication_verification",
+  "dataset_version": "liquid-team-data-v1-20261020",
+  "release_tag": "team-data-v1.0.0",
+  "release_url": "https://github.com/ALL-Applied-AI-Network/msoe-ai-club-rockwell-automation-nvidia-hackath-austin-koske-s-team-8e90f213c6/releases/tag/team-data-v1.0.0",
+  "published_at": "2026-10-20T23:33:43Z",
+  "release_commit": "9270dcfd3eed0f91ef4e8f82d5f7a2ee933fc805",
+  "asset_count": 11,
+  "all_asset_sizes_and_github_sha256_match": true,
+  "assets": [
+    {
+      "file": "00-team-guide.zip",
+      "bytes": 1690912,
+      "sha256": "5f026ba09301476937edcddb3cb9e9240c4d61f9aea839201beaf7fc237d0084",
+      "github_asset_id": "RA_kwDOVBSju84nYq9X",
+      "download_url": "https://github.com/ALL-Applied-AI-Network/msoe-ai-club-rockwell-automation-nvidia-hackath-austin-koske-s-team-8e90f213c6/releases/download/team-data-v1.0.0/00-team-guide.zip"
+    },
+    {
+      "file": "01-detector-starter.zip",
+      "bytes": 121033824,
+      "sha256": "30f56bb6a46d575e6751253d58b7fdb2a33681223ef6ab868fe0c0a93ace5325",
+      "github_asset_id": "RA_kwDOVBSju84nYq9a",
+      "download_url": "https://github.com/ALL-Applied-AI-Network/msoe-ai-club-rockwell-automation-nvidia-hackath-austin-koske-s-team-8e90f213c6/releases/download/team-data-v1.0.0/01-detector-starter.zip"
+    },
+    {
+      "file": "02-vial-source-runs1-4.zip",
+      "bytes": 92558691,
+      "sha256": "0d7fa4c3653d9e3bd7c09274700a7be81a9922519debfa5454fdfebb616bdb97",
+      "github_asset_id": "RA_kwDOVBSju84nYq-G",
+      "download_url": "https://github.com/ALL-Applied-AI-Network/msoe-ai-club-rockwell-automation-nvidia-hackath-austin-koske-s-team-8e90f213c6/releases/download/team-data-v1.0.0/02-vial-source-runs1-4.zip"
+    },
+    {
+      "file": "03-sam-frames-run4-development.zip",
+      "bytes": 65981365,
+      "sha256": "e697c85f8294b01eacfb93b1434887df83e634aaa5fc8833b8a3956aec26efc0",
+      "github_asset_id": "RA_kwDOVBSju84nYq_F",
+      "download_url": "https://github.com/ALL-Applied-AI-Network/msoe-ai-club-rockwell-automation-nvidia-hackath-austin-koske-s-team-8e90f213c6/releases/download/team-data-v1.0.0/03-sam-frames-run4-development.zip"
+    },
+    {
+      "file": "04-other-cameras-runs1-4.zip",
+      "bytes": 245518787,
+      "sha256": "5de98de2c2ee047b9b9156e3582165f827bb3f08cb881714ac000f837d7243fa",
+      "github_asset_id": "RA_kwDOVBSju84nYrWB",
+      "download_url": "https://github.com/ALL-Applied-AI-Network/msoe-ai-club-rockwell-automation-nvidia-hackath-austin-koske-s-team-8e90f213c6/releases/download/team-data-v1.0.0/04-other-cameras-runs1-4.zip"
+    },
+    {
+      "file": "05-run5-diagnostic-only.zip",
+      "bytes": 391153816,
+      "sha256": "4c6c01304cb62e399af436dabb408834d1110cfb5bbced17348b88f34fe1031f",
+      "github_asset_id": "RA_kwDOVBSju84nYrZI",
+      "download_url": "https://github.com/ALL-Applied-AI-Network/msoe-ai-club-rockwell-automation-nvidia-hackath-austin-koske-s-team-8e90f213c6/releases/download/team-data-v1.0.0/05-run5-diagnostic-only.zip"
+    },
+    {
+      "file": "SHA256SUMS.txt",
+      "bytes": 837,
+      "sha256": "4ce0b6de8fe843a2e777995f8477d6fe1ea638845389bb024446efc76801c624",
+      "github_asset_id": "RA_kwDOVBSju84nYq85",
+      "download_url": "https://github.com/ALL-Applied-AI-Network/msoe-ai-club-rockwell-automation-nvidia-hackath-austin-koske-s-team-8e90f213c6/releases/download/team-data-v1.0.0/SHA256SUMS.txt"
+    },
+    {
+      "file": "Team-Architecture-Implementation-Brief.pdf",
+      "bytes": 153660,
+      "sha256": "7e268f376837eb174856c2af63a80c76c828aaf697b61ff2be9ce6aa3974b98c",
+      "github_asset_id": "RA_kwDOVBSju84nYq86",
+      "download_url": "https://github.com/ALL-Applied-AI-Network/msoe-ai-club-rockwell-automation-nvidia-hackath-austin-koske-s-team-8e90f213c6/releases/download/team-data-v1.0.0/Team-Architecture-Implementation-Brief.pdf"
+    },
+    {
+      "file": "Team-Core-Data.zip",
+      "bytes": 281264726,
+      "sha256": "3499e99ec971f38100abc36bb4db76812f64d2c8b69deeb0393b42339c7c4284",
+      "github_asset_id": "RA_kwDOVBSju84nYrg3",
+      "download_url": "https://github.com/ALL-Applied-AI-Network/msoe-ai-club-rockwell-automation-nvidia-hackath-austin-koske-s-team-8e90f213c6/releases/download/team-data-v1.0.0/Team-Core-Data.zip"
+    },
+    {
+      "file": "Team-Data-Guide.pdf",
+      "bytes": 43830,
+      "sha256": "f24991c12e509fef6f3822b42976b2ff093c99b22193e11df7c10e06ad058986",
+      "github_asset_id": "RA_kwDOVBSju84nYq81",
+      "download_url": "https://github.com/ALL-Applied-AI-Network/msoe-ai-club-rockwell-automation-nvidia-hackath-austin-koske-s-team-8e90f213c6/releases/download/team-data-v1.0.0/Team-Data-Guide.pdf"
+    },
+    {
+      "file": "archives.json",
+      "bytes": 1669,
+      "sha256": "1b8b96982523d53e41c2462b924b008997c6312254329309f9edccb18cfa8ff8",
+      "github_asset_id": "RA_kwDOVBSju84nYq9M",
+      "download_url": "https://github.com/ALL-Applied-AI-Network/msoe-ai-club-rockwell-automation-nvidia-hackath-austin-koske-s-team-8e90f213c6/releases/download/team-data-v1.0.0/archives.json"
+    }
+  ],
+  "remote_main_unchanged": "5658d58901feaaa07a2e07e8462504014bd1ed8a",
+  "branch": "austin-work",
+  "repository_private": true,
+  "source_verification": "setup/verification/team-data-20261020.json",
+  "download_smoke_check": {
+    "pdfs": [
+      "Team-Architecture-Implementation-Brief.pdf",
+      "Team-Data-Guide.pdf"
+    ],
+    "pdf_pages_each": 3,
+    "pdf_hashes_match": true,
+    "checksum_manifest_matches_committed_copy": true
+  }
+}

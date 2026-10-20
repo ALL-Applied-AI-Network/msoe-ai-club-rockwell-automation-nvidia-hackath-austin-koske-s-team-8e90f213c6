@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Human visible-box review v1; not training approval",
+  "type": "object",
+  "required": ["schema_version", "annotation_contract", "pack_id", "manifest_sha256", "training_eligible", "reviewer", "saved_at", "records"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "annotation_contract": {"const": "active-station-visible-v1"},
+    "pack_id": {"type": "string"},
+    "manifest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "training_eligible": {"const": false},
+    "reviewer": {"type": "string"},
+    "saved_at": {"type": ["string", "null"], "format": "date-time"},
+    "records": {"type": "array", "minItems": 210, "maxItems": 210, "items": {"$ref": "#/$defs/record"}}
+  },
+  "$defs": {
+    "box": {
+      "type": "object", "required": ["xyxy", "flags"],
+      "properties": {
+        "xyxy": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"type": "number"}},
+        "flags": {"type": "object", "required": ["occluded", "truncated", "low_contrast"], "additionalProperties": false,
+          "properties": {"occluded": {"type": "boolean"}, "truncated": {"type": "boolean"}, "low_contrast": {"type": "boolean"}}}
+      }
+    },
+    "decision": {
+      "type": "object", "required": ["status", "boxes", "notes"],
+      "properties": {
+        "status": {"enum": ["unreviewed", "present", "absent", "uncertain"]},
+        "boxes": {"type": "array", "items": {"$ref": "#/$defs/box"}}, "notes": {"type": "string"}
+      },
+      "allOf": [{"if": {"properties": {"status": {"const": "present"}}},
+        "then": {"properties": {"boxes": {"minItems": 1}}}, "else": {"properties": {"boxes": {"maxItems": 0}}}}]
+    },
+    "record": {
+      "type": "object", "required": ["sample_id", "image_sha256", "source_run", "split_role", "review_status", "reviewed_by", "reviewed_at", "decisions", "notes"],
+      "properties": {
+        "sample_id": {"type": "string"}, "image_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "source_run": {"enum": [1, 2, 3, 4]}, "split_role": {"enum": ["training_candidate", "development_only"]},
+        "review_status": {"enum": ["unreviewed", "draft", "submitted_for_adjudication"]},
+        "reviewed_by": {"type": ["string", "null"]}, "reviewed_at": {"type": ["string", "null"], "format": "date-time"},
+        "notes": {"type": "string"},
+        "decisions": {"type": "object", "required": ["vial", "liquid_body", "stream"], "additionalProperties": false,
+          "properties": {"vial": {"allOf": [{"$ref": "#/$defs/decision"}, {"properties": {"boxes": {"maxItems": 1}}}]},
+            "liquid_body": {"allOf": [{"$ref": "#/$defs/decision"}, {"properties": {"boxes": {"maxItems": 1}}}]}, "stream": {"$ref": "#/$defs/decision"}}}
+      }
+    }
+  }
+}

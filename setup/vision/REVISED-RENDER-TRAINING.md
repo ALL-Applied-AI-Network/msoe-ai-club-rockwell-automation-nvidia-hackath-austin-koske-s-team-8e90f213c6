@@ -1,5 +1,8 @@
 # Revised 18-render transfer probe
 
+Next: [the 210-frame human review pack](REVIEW-PACK.md) standardizes visible vial,
+accumulated body and stream without automatically repairing these teacher labels.
+
 Austin authorized provisional fitting after reviewing the small GB10 batch:
 “we should train it and try.” Raw `training_eligible` and appearance-approval
 flags remain false. This is explicit research admission into a **new** experiment,

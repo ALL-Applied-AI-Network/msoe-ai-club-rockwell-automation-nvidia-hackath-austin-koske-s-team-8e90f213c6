@@ -49,6 +49,31 @@ stream class or recover missed pale liquid through tracking alone.
 
 ## Local deliverables
 
+For a compact walkthrough **through an entire fill**, use
+`C:/Users/Austin/ai-club-tools/results/filling-walkthrough-20261020`:
+`run5-blue-fill-tracking.mp4` (36.2 s) and
+`run5-pale-fill-tracking.mp4` (36.6 s), plus chronological source-crop storyboards.
+Each shows original RGB, a display-only 2x vial crop, station ID, unmodified
+detector boxes/confidences and a categorical history of confirmed tracking and
+liquid proposals/links. Gray gaps mean missing proposals, not empty liquid.
+The independent image fill cue supplies a caption, not a trained stream class.
+The pale sequence visibly exposes delayed liquid detection despite a continuing
+station track. No inferred fill height/volume, new masks, labels, detector or QA.
+
+`visualize_fill_tracking.py` reproduces these from the pinned video/cache and
+`tracking.jsonl` below. It selects image-estimated fills 2 and 3 for display,
+three seconds before their estimated start through four seconds after carrier
+confirmation. These are sequential image candidate numbers, not supplied vial
+IDs or reviewed timing labels. Both videos retain the five-fps sampling cadence
+and original source-frame/time labels. All 364 exported frames were source/hash
+checked and both MP4s fully decoded; start/middle/end images and the storyboards
+were inspected. `manifest.json` records source/output identities and counts.
+
+```powershell
+$python = "$HOME/ai-club-tools/envs/data-windows/Scripts/python.exe"
+& $python setup/vision/visualize_fill_tracking.py --video datasets/dataset2/csi-vial-fill-dataset/vial_fill/videos/vial_fill_video_5.mp4 --cache "$HOME/ai-club-tools/results/tracked-liquid-20261019/cache/run5-8bdd8cad2977ee74e6a3.json" --tracking "$HOME/ai-club-tools/results/station-tracking-review-20261020/tracking.jsonl" --out "$HOME/ai-club-tools/results/filling-walkthrough-reproduced"
+```
+
 Directory: `C:/Users/Austin/ai-club-tools/results/station-tracking-review-20261020`
 
 | File | Review purpose |

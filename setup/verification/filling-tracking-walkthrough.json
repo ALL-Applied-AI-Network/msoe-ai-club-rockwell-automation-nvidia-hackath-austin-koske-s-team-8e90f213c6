@@ -1,0 +1,135 @@
+{
+  "video_sha256": "6f87cec1aeec3b2bae6dac639a317c077a3f175f27abd5fc8430d6953d9d05b9",
+  "detector_sha256": "89ed11f7046171e5340dc45a9d528010de1cefbba21e163b23b7098151e0880e",
+  "cache_sha256": "aff504002184d856ac06451f1730677eace2e840b89110c2cb6c0af39a8850d8",
+  "tracking_sha256": "eeda8d10126751166ef88cde8123960dca3af5c266067a7ca21db8c6d503916c",
+  "annotation_files_read": false,
+  "detector_changed": false,
+  "measurement_qa_changed": false,
+  "source_images_changed": false,
+  "rendering_only": true,
+  "fill_height_or_volume_inferred": false,
+  "cases": [
+    {
+      "case_id": "run5-sequence-2",
+      "title": "Blue fill",
+      "start": 1284,
+      "end": 2364,
+      "navigation_source": "Existing independent image-fill estimates; not reviewed timing labels",
+      "source_event": {
+        "detection_id": "run5-fill2",
+        "vial_id": 2,
+        "start_frame": 1374,
+        "start_available_frame": 1386,
+        "partial_start_possible": false,
+        "stream_samples": 32,
+        "peak_stream_contrast": 39.77777777777778,
+        "episodes": [
+          {
+            "start_frame": 1374,
+            "start_available_frame": 1386,
+            "end_frame": 1494,
+            "end_available_frame": 1506
+          },
+          {
+            "start_frame": 1812,
+            "start_available_frame": 1824,
+            "end_frame": 1884,
+            "end_available_frame": 1896
+          },
+          {
+            "start_frame": 2100,
+            "start_available_frame": 2112,
+            "end_frame": 2142,
+            "end_available_frame": 2154
+          }
+        ],
+        "quality_flags": [],
+        "last_stream_frame": 2136,
+        "last_stream_off_frame": 2142,
+        "departure_frame": 2238,
+        "confirmed_frame": 2244,
+        "end_frame": 2142
+      },
+      "filename": "run5-blue-fill-tracking.mp4",
+      "exported_frames": 181,
+      "duration_s": 36.2,
+      "video_sha256": "f4c72e9ddf13214fcbe069ff3eba2e10d15047038cd80aa19f8acf7bfef023b5",
+      "sample_states": {
+        "no_proposal": 106,
+        "linked": 73,
+        "withheld": 2
+      },
+      "storyboard_frames": [
+        1284,
+        1410,
+        1536,
+        1860,
+        2226,
+        2244
+      ]
+    },
+    {
+      "case_id": "run5-sequence-3",
+      "title": "Pale fill",
+      "start": 2670,
+      "end": 3762,
+      "navigation_source": "Existing independent image-fill estimates; not reviewed timing labels",
+      "source_event": {
+        "detection_id": "run5-fill3",
+        "vial_id": 3,
+        "start_frame": 2760,
+        "start_available_frame": 2772,
+        "partial_start_possible": false,
+        "stream_samples": 63,
+        "peak_stream_contrast": 35.51851851851852,
+        "episodes": [
+          {
+            "start_frame": 2760,
+            "start_available_frame": 2772,
+            "end_frame": 2874,
+            "end_available_frame": 2886
+          },
+          {
+            "start_frame": 3234,
+            "start_available_frame": 3246,
+            "end_frame": 3504,
+            "end_available_frame": 3516
+          },
+          {
+            "start_frame": 3522,
+            "start_available_frame": 3534,
+            "end_frame": 3564,
+            "end_available_frame": 3576
+          }
+        ],
+        "quality_flags": [],
+        "last_stream_frame": 3558,
+        "last_stream_off_frame": 3564,
+        "departure_frame": 3636,
+        "confirmed_frame": 3642,
+        "end_frame": 3564
+      },
+      "filename": "run5-pale-fill-tracking.mp4",
+      "exported_frames": 183,
+      "duration_s": 36.6,
+      "video_sha256": "68ccdfecfc96c6b2164f2c2dd289db23d4b4757b964c0d56a76ddea87c28e917",
+      "sample_states": {
+        "no_proposal": 134,
+        "linked": 48,
+        "withheld": 1
+      },
+      "storyboard_frames": [
+        2670,
+        2796,
+        2916,
+        3282,
+        3624,
+        3642
+      ]
+    }
+  ],
+  "all_mp4s_fully_decoded": true,
+  "exported_frames": 364,
+  "review_note": "Original frames, representative video frames and chronological storyboards visually inspected; no accuracy claim."
+}

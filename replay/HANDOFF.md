@@ -14,8 +14,9 @@ synthetic experiments and rendering assets remain unchanged.
 
 ## Launch from the published branch
 
-From PowerShell 7, clone the repository or switch an existing clean checkout to
-`austin/recipe-aware-replay`. Use your normal data download; videos are not in Git.
+From PowerShell 7, clone the repository and use the integrated `austin-work` branch.
+See the [consolidated handoff](../HANDOFF.md) for current work. Use your normal
+data download; videos are not in Git.
 
 ```powershell
 pwsh -File setup/bootstrap.ps1

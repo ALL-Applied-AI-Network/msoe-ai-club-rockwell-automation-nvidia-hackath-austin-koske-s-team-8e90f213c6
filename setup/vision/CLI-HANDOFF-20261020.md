@@ -1,5 +1,12 @@
 # CLI / Cursor handoff — October 20, 2026
 
+**Status update after consolidation:** use the primary checkout on `austin-work` and
+read [the consolidated handoff](../../HANDOFF.md) first. All four fits completed
+successfully; the bundle was downloaded and hash-verified, and the final DINO
+model restored. DINO completed 25 epochs and selected epoch 15. Continue at
+**local DINO evaluation**, then four-arm assembly. The job/process descriptions
+below are historical snapshots; do not resubmit or repeat completed exports.
+
 Continue the liquid-specialist and non-YOLO experiments already in progress.
 Do not start replacement training jobs before inspecting the existing jobs and
 artifacts. This is an in-progress handoff, not a completed four-model report.
@@ -12,10 +19,10 @@ Repository / Cursor folder / CLI working directory:
 C:/git/FDS-Dark/ALL-Applied-AI-Network/msoe-ai-club-rockwell-automation-nvidia-hackath-austin-koske-s-team-8e90f213c6
 ```
 
-Branch: `austin/recipe-aware-replay`.
+Original branch: `austin/recipe-aware-replay`, now integrated into `austin-work`.
 Last completed experiment commit before this handoff: `f822c90`, already pushed.
-The handoff commit adds the new experiment scripts and these notes; inspect
-`git log -1` for its hash. Commit/push scoped follow-up work on this same branch.
+The original handoff commit is `487fa6f`. Commit/push scoped follow-up work on
+`austin-work` unless Austin requests a different branch. Do not push `main`.
 
 Do not sweep unrelated untracked directories into commits: `analysis/`,
 `datasets/`, `docs/`, `experiments/`, `handoffs/`, or `team_plan.md`.

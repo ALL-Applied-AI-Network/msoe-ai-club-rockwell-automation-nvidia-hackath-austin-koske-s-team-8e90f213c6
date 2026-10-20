@@ -1,9 +1,10 @@
 # Bootstrap vial/liquid localization
 
-The [CLI/Cursor handoff](CLI-HANDOFF-20261020.md) records the active
-[liquid-specialist / non-YOLO pilots](LIQUID-SPECIALISTS.md), running jobs,
-local exports, commands and remaining validation. That four-arm comparison is
-in progress; no candidate has replaced the app detector.
+The [consolidated handoff](../../HANDOFF.md) records the current
+[liquid-specialist / non-YOLO pilots](LIQUID-SPECIALISTS.md): all four fits are
+complete and the verified bundle is local. DINO evaluation and four-arm assembly
+remain outstanding. The [CLI/Cursor handoff](CLI-HANDOFF-20261020.md) retains
+the detailed commands. No candidate has replaced the app detector.
 
 The [controlled epoch and augmentation trial](EPOCH-AUGMENTATION.md) compares a
 fresh 12-epoch control with longer training and training-only contrast/blur/noise.

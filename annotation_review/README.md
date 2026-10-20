@@ -13,7 +13,7 @@ correction/export/reopen round trip and covered source-integrity checks.
 
 ## Portable launch
 
-Fetch and check out the `annotation-review` branch. Extract `labels-only.zip` from
+Use the integrated `austin-work` branch. Extract `labels-only.zip` from
 the existing October 18 handoff into a directory of your choice. It must contain
 `manifest.json` and camera folders with `classes.txt` and `annotations.json`.
 The original bulk output directory is accepted too.

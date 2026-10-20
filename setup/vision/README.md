@@ -1,5 +1,13 @@
 # Bootstrap vial/liquid localization
 
+The [controlled epoch and augmentation trial](EPOCH-AUGMENTATION.md) compares a
+fresh 12-epoch control with longer training and training-only contrast/blur/noise.
+It preserves provisional labels, excludes Run 5 from fitting/selection, and does
+not promote a detector or change measurement QA. All three Rosie jobs completed.
+Longer plain training improves provisional liquid recall; added contrast/blur/noise
+worsens agreement and adds whole-vial liquid proposals. Local videos and limits
+are documented there.
+
 The [real + synthetic bbox pilot](REAL-SYNTHETIC.md) includes a verified
 768-image GB10 batch, completed real-only/mixed/sim-only Rosie runs, Run 5
 results and local comparison videos. Run 5 stays outside fitting and checkpoint

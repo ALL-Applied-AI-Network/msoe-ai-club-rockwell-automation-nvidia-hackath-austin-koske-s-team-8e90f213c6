@@ -1,6 +1,11 @@
 # Causal vial tracking and liquid association: local Run 5 review
 
-This is an **opt-in box-only diagnostic**, implemented in
+The replay app now offers **Show station tracking** as an optional, default-off
+display. Its independent source-frame view and seek-safe live overlay consume
+these same tracking rules without changing measurement QA. See the
+[app instructions](../../replay/README.md#optional-station-tracking-overlay).
+
+This is an **opt-in box-only diagnostic and display**, implemented in
 `replay/box_tracking.py`. It operates on the current detector's unchanged raw
 proposals and original RGB. It does not replace production `VialGeometry`,
 change masks/measurement QA, assign supplied vial IDs, consume timing/recipe

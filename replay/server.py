@@ -44,6 +44,8 @@ class Manager:
         self.lock = threading.RLock()
         self.pool = ThreadPoolExecutor(max_workers=1, thread_name_prefix='recording-analysis')
         self.jobs, self.data, self.progress = {}, {}, {}
+        self.tracking_pool = ThreadPoolExecutor(max_workers=1, thread_name_prefix='tracking-overlay')
+        self.tracking_jobs, self.tracking_data, self.tracking_progress = {}, {}, {}
         self.reference_path = self.output / 'development-references.json'
         source = Path(references_path) if references_path else self.reference_path
         if references_path and not source.is_file():
@@ -113,6 +115,32 @@ class Manager:
             data.recipe_plan = self.recipe_plan
             self.data[run_id] = data
 
+    def ensure_tracking(self, run_id):
+        ready = self.ensure(run_id)
+        if ready['status'] != 'ready':
+            return dict(ready, stage='recording_analysis')
+        with self.lock:
+            if run_id not in self.tracking_jobs:
+                self.tracking_jobs[run_id] = self.tracking_pool.submit(self._prepare_tracking, run_id)
+            job = self.tracking_jobs[run_id]
+            if not job.done():
+                return dict(status='preparing', stage='tracking_overlay', progress=self.tracking_progress.get(run_id,0.))
+            error = job.exception()
+            if error:
+                from .tracking_overlay import TrackingUnavailable
+                return dict(status='unavailable' if isinstance(error,TrackingUnavailable) else 'error', error=str(error))
+            return dict(status='ready', progress=1.)
+
+    def _prepare_tracking(self, run_id):
+        from .tracking_overlay import prepare_overlay
+        def progress(value):
+            with self.lock: self.tracking_progress[run_id] = value
+        with self.lock:
+            data = self.data[run_id]
+        overlay = prepare_overlay(self.catalog.runs[run_id]['cameras']['vial_fill'], data,
+                                  self.config, self.output/'cache'/'tracking', progress)
+        with self.lock: self.tracking_data[run_id] = overlay
+
     def publish(self, run_id, vial_id, frame, description='Manually selected observed example; not certified clean product'):
         with self.lock:
             if run_id not in self.data:
@@ -146,6 +174,7 @@ class Manager:
 
     def close(self):
         self.pool.shutdown(wait=True)
+        self.tracking_pool.shutdown(wait=True)
 
 
 class ReplayServer(ThreadingHTTPServer):
@@ -242,6 +271,18 @@ class Handler(BaseHTTPRequestHandler):
             if path == '/api/recipe-plan':
                 with self.manager.lock:
                     return self.respond(self.manager.recipe_plan.to_dict(), filename='recipe-plan.json')
+            if path == '/api/tracking':
+                run_id = int(query.get('run',['5'])[0])
+                frame = int(query.get('frame',['0'])[0])
+                camera = self.manager.catalog.runs[run_id]['cameras']['vial_fill']
+                if not 0 <= frame < camera['frames']:
+                    raise ValueError('Frame lies outside the recording')
+                ready = self.manager.ensure_tracking(run_id)
+                if ready['status'] != 'ready':
+                    return self.respond(ready, 202 if ready['status']=='preparing' else 500 if ready['status']=='error' else 200)
+                with self.manager.lock:
+                    snapshot = self.manager.tracking_data[run_id].snapshot(frame)
+                return self.respond(snapshot)
             if path in ('/api/state', '/api/status', '/api/events.jsonl', '/api/observations.csv', '/api/manifest', '/api/fills', '/api/evidence'):
                 run_id = int(query.get('run', ['5'])[0])
                 ready = self.manager.ensure(run_id)

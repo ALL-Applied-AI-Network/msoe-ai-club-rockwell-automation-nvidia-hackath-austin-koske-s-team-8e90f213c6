@@ -85,7 +85,12 @@ function overlays() {
   const canvas = el("overlay"),
     ctx = canvas.getContext("2d");
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  if (!catalog || !el("overlays").checked) return;
+  if (!catalog) return;
+  if (el("tracking-toggle").checked) {
+    if (trackingSnapshot?.row?.frame_index === sourceFrame()) drawTracking(ctx, trackingSnapshot.row);
+    return;
+  }
+  if (!el("overlays").checked) return;
   // Never paint an old feature box onto a later video frame. Between sampled
   // frames the frozen evidence panel is the authoritative geometry display.
   if (snapshot?.feature?.frame_index !== sourceFrame()) return;
@@ -102,6 +107,104 @@ function overlays() {
     ctx.fillStyle = color;
     ctx.font = "9px system-ui";
     ctx.fillText(label, x0, y0 - 5);
+  }
+}
+// Optional display evidence lives outside the measurement snapshot and ledger.
+let trackingSnapshot = null, trackingBusy = false, trackingPending = false,
+  trackingEpoch = 0, trackingLastFrame = -1, trackingReady = false,
+  trackingFailed = false, trackingImageKey = "";
+const trackingReasons = {
+  candidate_link: "candidate link", carrier_transition: "carrier moving / settling",
+  no_fresh_station_vial: "no current station vial", ambiguous_active_vial: "ambiguous station vial",
+  track_not_confirmed: "track not yet confirmed", outside_vial: "outside vial containment",
+  multiple_liquid_candidates: "competing liquid proposals",
+};
+const trackingId = id => id ? id.split(":").pop() : "?";
+function drawTracking(ctx, row) {
+  const box = (b, color, label) => {
+    ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = 1.5;
+    ctx.strokeRect(b[0], b[1], b[2] - b[0], b[3] - b[1]);
+    ctx.font = "10px system-ui";
+    const width = ctx.measureText(label).width;
+    ctx.fillText(label, Math.max(2, Math.min(b[0], 638 - width)), Math.max(12, b[1] - 4));
+  };
+  for (const v of row.vials) box(v.box, "#9bc7e5", `${trackingId(v.track_id)} · ${v.track_status.replaceAll("_", " ")}`);
+  for (const l of row.liquids) box(l.box, l.association === "candidate_link" ? "#a6e3c3" : "#f5c27b",
+    l.vial_track_id ? `Liquid → ${trackingId(l.vial_track_id)}` : trackingReasons[l.association] || l.association);
+}
+function resetTracking() {
+  trackingEpoch++; trackingSnapshot = null; trackingLastFrame = -1;
+  trackingReady = false; trackingFailed = false; trackingImageKey = "";
+  el("tracking-source").hidden = true; el("tracking-source").removeAttribute("src");
+  el("tracking-canvas").getContext("2d").clearRect(0, 0, 640, 480);
+  el("tracking-status").textContent = el("tracking-toggle").checked ? "Preparing optional tracking…" : "Tracking is off.";
+  el("tracking-detail").textContent = "";
+  el("tracking-prev").disabled = el("tracking-next").disabled = true;
+  el("tracking-panel").hidden = !el("tracking-toggle").checked;
+  el("overlays").disabled = el("tracking-toggle").checked;
+  overlays();
+}
+function showTracking(data, token) {
+  trackingSnapshot = data;
+  const row = data.row, img = el("tracking-source"), ctx = el("tracking-canvas").getContext("2d");
+  if (!row) {
+    trackingImageKey = ""; img.hidden = true; img.removeAttribute("src"); ctx.clearRect(0, 0, 640, 480);
+    el("tracking-status").textContent = "No tracking sample is available at this playhead.";
+    el("tracking-detail").textContent = "";
+    el("tracking-prev").disabled = el("tracking-next").disabled = true;
+    return;
+  }
+  const status = `Sample frame ${row.frame_index} · MP4 ${time(row.mp4_s)} · ${row.state.replaceAll("_", " ")}`;
+  const detail = row.liquids.length
+    ? row.liquids.map(l => l.vial_track_id ? `Liquid → ${trackingId(l.vial_track_id)} (candidate only)` : trackingReasons[l.association] || l.association).join(" · ")
+    : "No liquid proposal in this sample. No liquid box or mask is inferred.";
+  const key = `${current.run_id}/${row.frame_index}`;
+  const paint = () => {
+    if (token !== `${generation}/${trackingEpoch}` || !el("tracking-toggle").checked || row.frame_index > sourceFrame() || trackingImageKey !== key) return;
+    img.hidden = false; ctx.clearRect(0, 0, 640, 480); drawTracking(ctx, row);
+    el("tracking-status").textContent = status; el("tracking-detail").textContent = detail;
+  };
+  if (trackingImageKey !== key) {
+    trackingImageKey = key; img.hidden = true; ctx.clearRect(0, 0, 640, 480);
+    el("tracking-status").textContent = `Loading original source frame ${row.frame_index}…`;
+    img.onload = paint;
+    img.onerror = () => { if (token === `${generation}/${trackingEpoch}` && trackingImageKey === key) el("tracking-status").textContent = "The original tracking frame could not be loaded."; };
+    img.src = `/api/evidence?run=${current.run_id}&frame=${row.frame_index}&at=${data.frame_index}&kind=source`;
+  } else if (img.complete && img.naturalWidth) paint();
+  el("tracking-prev").disabled = el("tracking-next").disabled = false;
+  overlays();
+}
+async function refreshTracking(force = false) {
+  if (!current || !el("tracking-toggle").checked || trackingFailed) return;
+  if (trackingBusy) { if (force) trackingPending = true; return; }
+  const frame = sourceFrame(), token = `${generation}/${trackingEpoch}`, run = current.run_id;
+  if (!force && trackingReady && frame === trackingLastFrame) return;
+  trackingBusy = true;
+  try {
+    const data = await request(`/api/tracking?run=${run}&frame=${frame}`);
+    if (token !== `${generation}/${trackingEpoch}` || !el("tracking-toggle").checked) return;
+    if (data.status === "preparing") {
+      el("tracking-status").textContent = data.stage === "recording_analysis"
+        ? "Tracking will prepare after recording analysis. Playback and measurements remain available."
+        : `Preparing optional tracking… ${Math.floor(data.progress * 100)}%`;
+      return;
+    }
+    if (data.status !== "ready") throw new Error(data.error || "Tracking unavailable");
+    if (data.sample_frame_index != null && data.sample_frame_index > sourceFrame()) { trackingPending = true; return; }
+    trackingLastFrame = frame; trackingReady = true; showTracking(data, token);
+  } catch (error) {
+    if (token === `${generation}/${trackingEpoch}`) {
+      trackingFailed = true; trackingSnapshot = null;
+      trackingImageKey = ""; el("tracking-source").hidden = true; el("tracking-source").removeAttribute("src");
+      el("tracking-canvas").getContext("2d").clearRect(0, 0, 640, 480);
+      el("tracking-detail").textContent = "";
+      el("tracking-prev").disabled = el("tracking-next").disabled = true;
+      el("tracking-status").textContent = `Tracking unavailable: ${error.message}. Measurement QA is unchanged.`;
+      overlays();
+    }
+  } finally {
+    trackingBusy = false;
+    if (trackingPending) { trackingPending = false; queueMicrotask(() => refreshTracking(true)); }
   }
 }
 let evidenceKey = "";
@@ -149,6 +252,7 @@ async function selectRun() {
   pendingSeekFrame = null;
   video.pause();
   snapshot = null;
+  resetTracking();
   lastFrame = -1;
   prepared = false;
   fillIndex = [];
@@ -437,6 +541,15 @@ el("completed-jump").onclick = () => {
 el("run").onchange = () =>
   selectRun().catch((error) => message(error.message, true));
 el("overlays").onchange = overlays;
+el("tracking-toggle").onchange = () => { resetTracking(); refreshTracking(true); };
+for (const [id, direction] of [["tracking-prev", -1], ["tracking-next", 1]]) {
+  el(id).onclick = () => {
+    video.pause();
+    const frame = sourceFrame(), stride = catalog.config.sample_stride;
+    const base = Math.floor(frame / stride) * stride;
+    seekToFrame(direction < 0 && frame > base ? base : base + direction * stride);
+  };
+}
 async function recordRecipe(unknown = false) {
   if (!snapshot || !current || !prepared) return;
   video.pause();
@@ -469,7 +582,9 @@ video.addEventListener("pause", () => {
 video.addEventListener("seeked", () => {
   sync(true);
   tick(true);
+  refreshTracking(true);
 });
+video.addEventListener("seeking", () => { resetTracking(); });
 video.addEventListener("timeupdate", () => {
   sync();
   tick();
@@ -527,6 +642,7 @@ async function start() {
   if (params.has("frame") && /^\d+$/.test(params.get("frame"))) seekToFrame(Number(params.get("frame")));
 }
 setInterval(() => tick().catch((error) => message(error.message, true)), 500);
+setInterval(() => refreshTracking(), 250);
 function videoOverlayFrame() {
   overlays();
   if (video.requestVideoFrameCallback) video.requestVideoFrameCallback(videoOverlayFrame);

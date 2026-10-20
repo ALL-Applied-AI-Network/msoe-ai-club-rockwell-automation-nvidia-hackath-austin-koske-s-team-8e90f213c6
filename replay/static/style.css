@@ -9,6 +9,13 @@
   --amber: #f5c27b;
   --red: #f0968b;
 }
+[hidden] { display: none !important; }
+.tracking-review { padding: 16px; border-top: 1px solid var(--line); }
+.tracking-review p { margin-bottom: 10px; }
+.tracking-image-wrap { position: relative; }
+.tracking-image-wrap img { display: block; width: 100%; height: auto; }
+.tracking-image-wrap canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.tracking-controls { display: flex; gap: 8px; margin: 10px 0; }
 a[aria-disabled="true"] {
   pointer-events: none;
   opacity: 0.4;

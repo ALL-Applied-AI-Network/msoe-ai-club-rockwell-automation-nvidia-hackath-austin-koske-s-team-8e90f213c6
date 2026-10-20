@@ -43,6 +43,7 @@
           ><input id="overlays" type="checkbox" checked /> Show measurement
           vial proposals</label
         >
+        <label class="toggle"><input id="tracking-toggle" type="checkbox" /> Show station tracking</label>
       </div>
       <p id="message" role="status" class="message">Loading recordings…</p>
       <div class="workspace">
@@ -69,6 +70,18 @@
             <span id="clock">MP4 00:00.00</span
             ><span id="wall">Wall time unavailable</span>
           </div>
+          <section id="tracking-panel" class="tracking-review" hidden aria-label="Optional station tracking evidence">
+            <p class="eyebrow">STATION TRACKING / SOURCE-FRAME REVIEW</p>
+            <p id="tracking-status" role="status">Tracking is off.</p>
+            <p class="subtle">Cyan: vial · green: candidate liquid link · amber: withheld. IDs are provisional station segments. This view does not change measurement QA.</p>
+            <div class="tracking-image-wrap">
+              <img id="tracking-source" alt="Original source frame for the optional station tracking overlay" hidden />
+              <canvas id="tracking-canvas" width="640" height="480" aria-label="Station segment IDs and liquid association on the matching source frame"></canvas>
+            </div>
+            <p id="tracking-detail" class="subtle"></p>
+            <div class="tracking-controls"><button id="tracking-prev" disabled>Previous sample</button><button id="tracking-next" disabled>Next sample</button></div>
+            <p class="subtle">The source-frame view stays visible between samples. Live-video boxes appear only on an exact matching frame. Missing liquid remains missing.</p>
+          </section>
         </section>
         <aside>
           <section class="panel recipe">

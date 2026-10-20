@@ -65,6 +65,64 @@ bundled with the app. The server binds to loopback. For remote use, forward port
 The two secondary videos follow the primary MP4 time. This is container-time
 alignment, not verified physical synchronization. The UI labels this distinction.
 
+## Optional station tracking overlay
+
+Launch with the existing box-only configuration:
+
+```powershell
+pwsh -File setup/run-replay.ps1 -Config replay/examples/bootstrap-vision.json
+```
+
+Enable **Show station tracking** in the toolbar. It starts off and does no
+tracking preparation until requested. After normal recording analysis, a separate
+background task reads original RGB and the existing detector proposals once,
+then caches display evidence under the output directory's `cache/tracking/`.
+It does not run another detector or change measurement features, QA, recipe
+context, references or exports. Switching it off hides the overlay and stops
+its polling; preparation already in progress may finish and cache its result.
+
+The source-frame review below the video shows the exact original sampled frame,
+provisional station segment ID, and liquid-association reasons. Cyan is vial,
+green a candidate liquid link, amber a withheld association. Green does not mean
+a QA pass or a verified body mask. **Previous sample / Next sample** pause and
+move by the existing six-frame stride. Missing liquid stays missing.
+
+Live-video tracking boxes are drawn only on an exact matching sampled frame.
+Between samples, the frozen source-frame view remains available with its own
+frame/time label; old boxes are never painted onto a later video frame. The
+measurement-proposal toggle is temporarily disabled while the tracking view is
+on so the two sets of IDs are not superimposed. Measurement evidence remains
+available in its existing panel. Turning tracking off restores the original view.
+
+Backward seeks, restart, recording changes and disabling tracking clear display
+evidence and invalidate outstanding responses. A replay restart shows the
+recording's initial tentative segment rather than inheriting its last identity.
+An unavailable/incompatible overlay has its own message and does not affect the
+measurement decision. This overlay currently requires the box-only 640x480,
+30 fps / stride-six profile; learned-mask or no-detector configurations remain
+usable for their existing functions but report tracking unavailable.
+
+`GET /api/tracking?run=5&frame=14112` returns only the latest sample at or before
+the requested playhead, with `sample_frame_index`, `sample_age_frames`,
+`sample_matches_playhead`, `row`, and input/settings provenance. It returns 202
+while preparing, 200 for ready or unsupported-profile status, and 500 for overlay
+failure. The browser verifies playhead/generation before displaying a response.
+Neither `/api/state` nor measurement/event/CSV exports acquire tracking fields.
+
+See [tracking behavior and local comparison videos](../setup/vision/STATION-TRACKING.md)
+for the motion, settling, short-loss and ambiguity rules. IDs remain provisional;
+reviewed temporal identities are needed for tracking accuracy. The overlay is
+not a replacement for the label team's vial/body/stream review.
+
+Validation covered 38 related tests, offline headless browser controls, source-
+frame alignment, delayed-response/seek races, unsupported-overlay isolation and
+the full 8,491-sample Run 5 overlay. The full-recording HTTP harness loaded the
+existing frozen measurement analysis and decoded original Run 5 for overlay
+preparation; it did not re-fit or recompute the detector. Every normalized
+tracking row matched the previously published comparison video tracker. Original
+analysis payload, measurement-state responses, events/CSV, recipe plan and
+reference exports stayed byte-identical before/after overlay preparation.
+
 ## What this version establishes
 
 - All five recordings and all three camera views are accessible in one app.

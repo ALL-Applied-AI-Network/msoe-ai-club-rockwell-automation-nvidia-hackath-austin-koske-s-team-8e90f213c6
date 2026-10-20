@@ -18,6 +18,7 @@ Austin requested no push to `main`; local `main` remains at `5658d58`, matching
 | Pipeline video | [Offline application](setup/vision/SAM-LIQUID.md#offline-pipeline-video--october-20) | 60 s Run 4 video; detector → SAM → existing per-frame sampling gates; 300 frames verified |
 | Early pool prompts | [Paired trial](setup/vision/SAM-LIQUID.md#pool-prompt-comparison-and-causal-bridge--october-20) | Localized box/points plus causal bridge; before/after videos complete; QA unchanged |
 | Innovation lab handoff | `results/innovation-lab-brief-20261020/` under the local tools root | Six-page architecture PDF, editable Word brief, single-panel final MP4s and code-free sharing ZIP |
+| Team data + student brief | `results/team-data-20261020-v1/` under the local tools root | Verified data archives, source manifests, YOLO/COCO starters and three-page architecture assignment PDF |
 
 Local assets are under `C:/Users/Austin/ai-club-tools/` (`/mnt/c/Users/Austin/ai-club-tools/`
 in WSL). Results, environments and source labels stay outside Git. The ChatGPT
@@ -30,6 +31,26 @@ videos (60 s and a 12 s early-fill highlight), two PNGs and a readme. No source
 code, weights or labels are included. The videos reuse the verified causal-box
 experiment, with source-pixel/PTS checks and full decoding of all 360 output
 frames. Builder/provenance files stay separately in `work/`, outside the ZIP.
+
+For the **student-facing team release**, use the newer
+`results/team-data-20261020-v1/Team-Architecture-Implementation-Brief.pdf`.
+It outlines roles, interfaces and evaluation questions without the final prompt,
+threshold or temporal-handling recipe. The earlier six-page innovation brief is
+the more detailed reference and is not included in this student data release.
+`Team-Data-Guide.pdf` separately explains inventory, formats, splits and gaps.
+
+`archives/Team-Core-Data.zip` (281,264,726 bytes) combines components 00–03:
+metadata/handouts, detector starter, raw vial Runs 1–4 and 300 source-aligned
+Run 4 PNGs with unreviewed detector inputs. The 721-original/157-development
+profile and optional 1,442-sample translated training profile both loaded through
+Ultralytics; nine COCO detection exports also passed format/identity checks.
+Other-camera context (04) and Run 5 diagnostics (05) remain separate archives.
+Full catalog: 4,647 indexed JPEGs, 15 videos, 16,814 exported provisional boxes;
+21 vial stills require manual review. No approved masks/onsets, final SAM masks,
+prompt/state recipe, executable code, weights or reviewer workspaces are included.
+Six focused packaging tests passed; archive CRC/SHA read-back checks and all 300
+SAM PNG pixel/PTS checks passed. See `setup/verification/team-data-20261020.json`.
+Nothing was uploaded automatically and no source labels/data were modified.
 
 Existing untracked `analysis/`, `datasets/`, `docs/`, `experiments/`, `handoffs/`
 and `team_plan.md` are preserved in place and excluded **locally** using

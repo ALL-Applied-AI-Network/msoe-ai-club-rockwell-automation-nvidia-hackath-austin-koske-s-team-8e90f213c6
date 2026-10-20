@@ -46,6 +46,11 @@ This is your team's repository for the four-week physical AI hackathon run by Ro
 
 ## Working in this repository
 
+**Liquid vision teams: [start with the architecture brief and data downloads](team_handoff/README.md).**
+The [versioned team release](https://github.com/ALL-Applied-AI-Network/msoe-ai-club-rockwell-automation-nvidia-hackath-austin-koske-s-team-8e90f213c6/releases/tag/team-data-v1.0.0)
+contains the student PDFs, a combined core dataset and optional component archives.
+Large data stays in release attachments; development continues on `austin-work`.
+
 **Current development context: [consolidated handoff](HANDOFF.md).** Replay,
 annotation review and vision experiments are integrated on `austin-work`; start here
 for artifact locations, ownership and unfinished work.

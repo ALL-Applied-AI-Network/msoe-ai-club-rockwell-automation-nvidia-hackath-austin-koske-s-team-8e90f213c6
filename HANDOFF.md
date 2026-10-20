@@ -50,7 +50,11 @@ Full catalog: 4,647 indexed JPEGs, 15 videos, 16,814 exported provisional boxes;
 prompt/state recipe, executable code, weights or reviewer workspaces are included.
 Six focused packaging tests passed; archive CRC/SHA read-back checks and all 300
 SAM PNG pixel/PTS checks passed. See `setup/verification/team-data-20261020.json`.
-Nothing was uploaded automatically and no source labels/data were modified.
+The repository entry point is now [team_handoff/README.md](team_handoff/README.md),
+with PDFs, data and checksum links in the versioned
+[team-data-v1.0.0 release](https://github.com/ALL-Applied-AI-Network/msoe-ai-club-rockwell-automation-nvidia-hackath-austin-koske-s-team-8e90f213c6/releases/tag/team-data-v1.0.0).
+Release attachments keep the large data out of Git. No source labels/data were
+modified; `main` remains untouched.
 
 Existing untracked `analysis/`, `datasets/`, `docs/`, `experiments/`, `handoffs/`
 and `team_plan.md` are preserved in place and excluded **locally** using

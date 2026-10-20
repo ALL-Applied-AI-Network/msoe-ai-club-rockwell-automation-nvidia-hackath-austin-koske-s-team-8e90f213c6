@@ -1,5 +1,10 @@
 # Next milestone: vial and liquid bounding boxes over video
 
+The [motion-aware station tracking comparison](STATION-TRACKING.md) now exports
+local old/new MP4s using identical detector proposals and unchanged measurement
+QA. The [human label contract and 210-frame pack](REVIEW-PACK.md) supply separate
+vial/body/stream review while that diagnostic remains provisional.
+
 The immediate task is object localization and temporal continuity. Segmentation,
 color QA coverage, recipe comparison and defect decisions are downstream tasks.
 The [pale-liquid visibility pilot](VISIBILITY.md) compares local image cues

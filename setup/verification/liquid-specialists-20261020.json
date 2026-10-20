@@ -1,0 +1,366 @@
+{
+  "schema_version": 1,
+  "artifact_kind": "verified_liquid_specialist_comparison",
+  "experiment_plan_sha256": "3726211b4695a5c2a4cecbfc1f0e34d1851b5fe67d32cf0c0221d53d5d9477bf",
+  "comparison_sha256": "9fb02676e9d7a2449cdac73863b8cd5da31692d933d91b4b6a2a135d58340d3f",
+  "source_inventory_sha256": "adc47893f192aeeb978a5615a18246b97bfa004017b671c621a3cb3921889e2d",
+  "arms": {
+    "yolo-all": {
+      "model": {
+        "schema_version": 1,
+        "arm": "yolo-all",
+        "family": "yolo11n",
+        "dataset": "all",
+        "checkpoint_sha256": "73c12a351983574d089ee25bdaf333517d271f784f7f4f9475ff3d82b8ae6790",
+        "experiment_plan_sha256": "3726211b4695a5c2a4cecbfc1f0e34d1851b5fe67d32cf0c0221d53d5d9477bf",
+        "data_provenance_sha256": "e1771944fd0f0d26ebb80954a9b04f4f5a7dddfa24bb2483c7f8467175e2bf1a",
+        "preparation_sha256": "37eba304b55a2a6b89010d1dd568b53d47b5a7994879db7665648b0f656e92b7",
+        "train_runs": [
+          1,
+          2,
+          3
+        ],
+        "development_runs": [
+          4
+        ],
+        "excluded_runs": [
+          5
+        ],
+        "epochs_completed": 29,
+        "best_run4_epoch": 19,
+        "best_run4_liquid_ap50_95": 0.52772,
+        "seed": 19,
+        "torch": "2.8.0a0+5228986c39.nv25.05",
+        "ultralytics": "8.4.182",
+        "python": "3.12.3",
+        "cuda": "12.9",
+        "gpu": "NVIDIA H100 80GB HBM3",
+        "checkpoint_file": "best.pt",
+        "provisional_negatives": true,
+        "measurement_qa_changed": false,
+        "automatic_promotion": false
+      },
+      "liquid_metrics": {
+        "class_id": 1,
+        "targets": 541,
+        "ap50": 0.8788952642186727,
+        "ap50_95": 0.4928067321807365,
+        "precision_at_035": 0.8609154929577465,
+        "recall_at_035": 0.9038817005545287,
+        "tp_at_035": 489,
+        "fp_at_035": 79,
+        "fn_at_035": 52
+      },
+      "unmatched": {
+        "frames_multiple_liquid_boxes": 54,
+        "unmatched_boxes": 79,
+        "unmatched_frames": 78
+      },
+      "provisional_negatives": {
+        "provisional_negative_frames": 275,
+        "confirmed_empty": false,
+        "reason": "Vial teacher target exists but liquid target absent; could include missing liquid annotations",
+        "counts": {
+          "baseline": 0,
+          "candidate": 0
+        }
+      },
+      "source_video_sha256": "6f87cec1aeec3b2bae6dac639a317c077a3f175f27abd5fc8430d6953d9d05b9",
+      "decoded_source_frames": 50942,
+      "decoded_videos": [
+        {
+          "file": "C:\\Users\\Austin\\ai-club-tools\\results\\liquid-specialists-20261020\\evaluation\\yolo-all\\run5-full-comparison.mp4",
+          "frames": 8491,
+          "sha256": "e36d8f0a57809289df84d971649812f801abca33f317e986dcf88515dd6442ea"
+        },
+        {
+          "file": "C:\\Users\\Austin\\ai-club-tools\\results\\liquid-specialists-20261020\\evaluation\\yolo-all\\run5-early-pours.mp4",
+          "frames": 968,
+          "sha256": "08c27f75dc02b420c0d00c9f0b3c63edeeffe4db33c246c4866e396888851deb"
+        },
+        {
+          "file": "C:\\Users\\Austin\\ai-club-tools\\results\\liquid-specialists-20261020\\evaluation\\yolo-all\\run5-two-fills.mp4",
+          "frames": 364,
+          "sha256": "850b473b9eaede911b6e71837632aa10f15ea09cef63b4bea924af7ccf33b78b"
+        }
+      ],
+      "paired_timing": {
+        "frames": 10115,
+        "paired_inference_s": 44.63107270025648,
+        "scope": "Includes baseline plus candidate, conversion/NMS, mixed batch sizes; not standalone real-time latency"
+      }
+    },
+    "yolo-focused": {
+      "model": {
+        "schema_version": 1,
+        "arm": "yolo-focused",
+        "family": "yolo11n",
+        "dataset": "focused",
+        "checkpoint_sha256": "9697cd60285c0b8771f8190ab870c886d17cdad75f6a9f969fc26da3c941efe7",
+        "experiment_plan_sha256": "3726211b4695a5c2a4cecbfc1f0e34d1851b5fe67d32cf0c0221d53d5d9477bf",
+        "data_provenance_sha256": "de60c5595082db72e5cef4c29064f9d3de683db3cb8d2a45418d827200c2238f",
+        "preparation_sha256": "37eba304b55a2a6b89010d1dd568b53d47b5a7994879db7665648b0f656e92b7",
+        "train_runs": [
+          1,
+          2,
+          3
+        ],
+        "development_runs": [
+          4
+        ],
+        "excluded_runs": [
+          5
+        ],
+        "epochs_completed": 28,
+        "best_run4_epoch": 18,
+        "best_run4_liquid_ap50_95": 0.50533,
+        "seed": 19,
+        "torch": "2.8.0a0+5228986c39.nv25.05",
+        "ultralytics": "8.4.182",
+        "python": "3.12.3",
+        "cuda": "12.9",
+        "gpu": "NVIDIA H100 80GB HBM3",
+        "checkpoint_file": "best.pt",
+        "provisional_negatives": true,
+        "measurement_qa_changed": false,
+        "automatic_promotion": false
+      },
+      "liquid_metrics": {
+        "class_id": 1,
+        "targets": 541,
+        "ap50": 0.9027985905246232,
+        "ap50_95": 0.47463917556177204,
+        "precision_at_035": 0.9692671394799054,
+        "recall_at_035": 0.7578558225508318,
+        "tp_at_035": 410,
+        "fp_at_035": 13,
+        "fn_at_035": 131
+      },
+      "unmatched": {
+        "frames_multiple_liquid_boxes": 3,
+        "unmatched_boxes": 13,
+        "unmatched_frames": 13
+      },
+      "provisional_negatives": {
+        "provisional_negative_frames": 275,
+        "confirmed_empty": false,
+        "reason": "Vial teacher target exists but liquid target absent; could include missing liquid annotations",
+        "counts": {
+          "baseline": 0,
+          "candidate": 0
+        }
+      },
+      "source_video_sha256": "6f87cec1aeec3b2bae6dac639a317c077a3f175f27abd5fc8430d6953d9d05b9",
+      "decoded_source_frames": 50942,
+      "decoded_videos": [
+        {
+          "file": "C:\\Users\\Austin\\ai-club-tools\\results\\liquid-specialists-20261020\\evaluation\\yolo-focused\\run5-full-comparison.mp4",
+          "frames": 8491,
+          "sha256": "2bd8ffc78eb5a0e67a73c413510a4fcee4fdccc5d29ee121e0b070b88a71aaeb"
+        },
+        {
+          "file": "C:\\Users\\Austin\\ai-club-tools\\results\\liquid-specialists-20261020\\evaluation\\yolo-focused\\run5-early-pours.mp4",
+          "frames": 968,
+          "sha256": "c05a85e3498b65d1cba27597e9b417548eec76863fe894ae10524aa9f8a09a10"
+        },
+        {
+          "file": "C:\\Users\\Austin\\ai-club-tools\\results\\liquid-specialists-20261020\\evaluation\\yolo-focused\\run5-two-fills.mp4",
+          "frames": 364,
+          "sha256": "b75fab31d63601b3c601181e27552189ec58853229ac1f262a455a7f35de41a5"
+        }
+      ],
+      "paired_timing": {
+        "frames": 10115,
+        "paired_inference_s": 44.21550570009276,
+        "scope": "Includes baseline plus candidate, conversion/NMS, mixed batch sizes; not standalone real-time latency"
+      }
+    },
+    "rtdetr-all": {
+      "model": {
+        "schema_version": 1,
+        "arm": "rtdetr-all",
+        "family": "rtdetr-l",
+        "dataset": "all",
+        "checkpoint_sha256": "9989860720ee29cea2b3c976cbcb2edf50e2edc750d9bb8b25f479a4772131b1",
+        "experiment_plan_sha256": "3726211b4695a5c2a4cecbfc1f0e34d1851b5fe67d32cf0c0221d53d5d9477bf",
+        "data_provenance_sha256": "e1771944fd0f0d26ebb80954a9b04f4f5a7dddfa24bb2483c7f8467175e2bf1a",
+        "preparation_sha256": "37eba304b55a2a6b89010d1dd568b53d47b5a7994879db7665648b0f656e92b7",
+        "train_runs": [
+          1,
+          2,
+          3
+        ],
+        "development_runs": [
+          4
+        ],
+        "excluded_runs": [
+          5
+        ],
+        "epochs_completed": 28,
+        "best_run4_epoch": 18,
+        "best_run4_liquid_ap50_95": 0.49387,
+        "seed": 19,
+        "torch": "2.8.0a0+5228986c39.nv25.05",
+        "ultralytics": "8.4.182",
+        "python": "3.12.3",
+        "cuda": "12.9",
+        "gpu": "NVIDIA H100 80GB HBM3",
+        "checkpoint_file": "best.pt",
+        "provisional_negatives": true,
+        "measurement_qa_changed": false,
+        "automatic_promotion": false
+      },
+      "liquid_metrics": {
+        "class_id": 1,
+        "targets": 541,
+        "ap50": 0.9348418639037948,
+        "ap50_95": 0.5020710686760893,
+        "precision_at_035": 0.9044943820224719,
+        "recall_at_035": 0.8927911275415896,
+        "tp_at_035": 483,
+        "fp_at_035": 51,
+        "fn_at_035": 58
+      },
+      "unmatched": {
+        "frames_multiple_liquid_boxes": 0,
+        "unmatched_boxes": 51,
+        "unmatched_frames": 51
+      },
+      "provisional_negatives": {
+        "provisional_negative_frames": 275,
+        "confirmed_empty": false,
+        "reason": "Vial teacher target exists but liquid target absent; could include missing liquid annotations",
+        "counts": {
+          "baseline": 0,
+          "candidate": 10
+        }
+      },
+      "source_video_sha256": "6f87cec1aeec3b2bae6dac639a317c077a3f175f27abd5fc8430d6953d9d05b9",
+      "decoded_source_frames": 50942,
+      "decoded_videos": [
+        {
+          "file": "C:\\Users\\Austin\\ai-club-tools\\results\\liquid-specialists-20261020\\evaluation\\rtdetr-all\\run5-full-comparison.mp4",
+          "frames": 8491,
+          "sha256": "e23c1356d8771f5c0a83f73486ccd270e9457ba88aa4904b510a7e13a3e4d23e"
+        },
+        {
+          "file": "C:\\Users\\Austin\\ai-club-tools\\results\\liquid-specialists-20261020\\evaluation\\rtdetr-all\\run5-early-pours.mp4",
+          "frames": 968,
+          "sha256": "e4b3af559c987849f20fe4d0f89cd36de0ea5f0ee6c16867a384e8d08617f365"
+        },
+        {
+          "file": "C:\\Users\\Austin\\ai-club-tools\\results\\liquid-specialists-20261020\\evaluation\\rtdetr-all\\run5-two-fills.mp4",
+          "frames": 364,
+          "sha256": "858c32e24811fa791c052268120167d4320e2dfc4e6854a4803c6081ffef0dc9"
+        }
+      ],
+      "paired_timing": {
+        "frames": 10115,
+        "paired_inference_s": 110.46929630066734,
+        "scope": "Includes baseline plus candidate, conversion/NMS, mixed batch sizes; not standalone real-time latency"
+      }
+    },
+    "dinov3-all": {
+      "model": {
+        "schema_version": 1,
+        "arm": "dinov3-all",
+        "family": "dinov3-convnext-small-fasterrcnn",
+        "dataset": "all",
+        "checkpoint_sha256": "5b11569825eb11bfe1cd652889b027f9cf6c857cef6d92e7c1d437a2391e7e62",
+        "experiment_plan_sha256": "3726211b4695a5c2a4cecbfc1f0e34d1851b5fe67d32cf0c0221d53d5d9477bf",
+        "data_provenance_sha256": "e1771944fd0f0d26ebb80954a9b04f4f5a7dddfa24bb2483c7f8467175e2bf1a",
+        "preparation_sha256": "37eba304b55a2a6b89010d1dd568b53d47b5a7994879db7665648b0f656e92b7",
+        "train_runs": [
+          1,
+          2,
+          3
+        ],
+        "development_runs": [
+          4
+        ],
+        "excluded_runs": [
+          5
+        ],
+        "epochs_completed": 25,
+        "best_run4_epoch": 15,
+        "best_run4_liquid_ap50_95": 0.5132344684848114,
+        "seed": 19,
+        "torch": "2.8.0a0+5228986c39.nv25.05",
+        "ultralytics": "8.4.182",
+        "python": "3.12.3",
+        "cuda": "12.9",
+        "gpu": "NVIDIA H100 80GB HBM3",
+        "checkpoint_file": "best.pt",
+        "provisional_negatives": true,
+        "measurement_qa_changed": false,
+        "automatic_promotion": false
+      },
+      "liquid_metrics": {
+        "class_id": 1,
+        "targets": 541,
+        "ap50": 0.9388889040355679,
+        "ap50_95": 0.5133512022952221,
+        "precision_at_035": 0.8019017432646592,
+        "recall_at_035": 0.9353049907578558,
+        "tp_at_035": 506,
+        "fp_at_035": 125,
+        "fn_at_035": 35
+      },
+      "unmatched": {
+        "frames_multiple_liquid_boxes": 104,
+        "unmatched_boxes": 125,
+        "unmatched_frames": 113
+      },
+      "provisional_negatives": {
+        "provisional_negative_frames": 275,
+        "confirmed_empty": false,
+        "reason": "Vial teacher target exists but liquid target absent; could include missing liquid annotations",
+        "counts": {
+          "baseline": 0,
+          "candidate": 1
+        }
+      },
+      "source_video_sha256": "6f87cec1aeec3b2bae6dac639a317c077a3f175f27abd5fc8430d6953d9d05b9",
+      "decoded_source_frames": 50942,
+      "decoded_videos": [
+        {
+          "file": "C:\\Users\\Austin\\ai-club-tools\\results\\liquid-specialists-20261020\\evaluation\\dinov3-all\\run5-full-comparison.mp4",
+          "frames": 8491,
+          "sha256": "8c69456fdcb3b22890e18d928da4cc4a2ebf8b0064a1296bad711e1bf8a3d484"
+        },
+        {
+          "file": "C:\\Users\\Austin\\ai-club-tools\\results\\liquid-specialists-20261020\\evaluation\\dinov3-all\\run5-early-pours.mp4",
+          "frames": 968,
+          "sha256": "abdc6e9ba8916f2c105d37969d01658790777d0490747a58bd01cca43e025a36"
+        },
+        {
+          "file": "C:\\Users\\Austin\\ai-club-tools\\results\\liquid-specialists-20261020\\evaluation\\dinov3-all\\run5-two-fills.mp4",
+          "frames": 364,
+          "sha256": "afd5829e87fb95fb8768cf1d5025c1eb82ecf93e9208dbbea7fd140c8b7c370e"
+        }
+      ],
+      "paired_timing": {
+        "frames": 10115,
+        "paired_inference_s": 162.69706169958226,
+        "scope": "Includes baseline plus candidate, conversion/NMS, mixed batch sizes; not standalone real-time latency"
+      }
+    }
+  },
+  "total_videos": 12,
+  "total_decoded_output_frames": 39292,
+  "detector_promoted": false,
+  "measurement_qa_changed": false,
+  "run5_fit_or_selection": false,
+  "verified_script_sha256": "8619adab1a793f83b7424afe1b23d01d9da824a63a1bb9055a81ca2f262afc4f",
+  "image_sha256": {
+    "liquid-precision-recall.png": "523762865166264fe736889b8311be1d20cdaa564777d4c0ec876bf812babdfe",
+    "problem-frame-comparison.png": "e128e108045dc46b97f9b009033ba5561086f1b3cbd0f49607cc8bc2078986ee"
+  },
+  "limits": [
+    "Agreement with unreviewed teacher labels, not human accuracy or measurement QA.",
+    "Run 5 repeatedly inspected; not a blind final test.",
+    "Early clips use image-detector starts, not reviewed first-visible-liquid/flow-onset timestamps.",
+    "Blue vial proposals are identical across models; no improved tracking claim.",
+    "Family scores are not calibrated. No automatic detector promotion."
+  ]
+}

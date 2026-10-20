@@ -1,10 +1,11 @@
 # Bootstrap vial/liquid localization
 
 The [consolidated handoff](../../HANDOFF.md) records the current
-[liquid-specialist / non-YOLO pilots](LIQUID-SPECIALISTS.md): all four fits are
-complete and the verified bundle is local. DINO evaluation and four-arm assembly
-remain outstanding. The [CLI/Cursor handoff](CLI-HANDOFF-20261020.md) retains
-the detailed commands. No candidate has replaced the app detector.
+[liquid-specialist / non-YOLO comparison](LIQUID-SPECIALISTS.md): all four fits,
+evaluations and assembly are complete, with 12 decoded local videos. DINO improves
+provisional recall but produces more unmatched boxes. The next
+[early-liquid architecture pilots](EARLY-LIQUID.md) target liquid visible at the
+vial bottom using Runs 1–4. No candidate has replaced the app detector.
 
 The [controlled epoch and augmentation trial](EPOCH-AUGMENTATION.md) compares a
 fresh 12-epoch control with longer training and training-only contrast/blur/noise.

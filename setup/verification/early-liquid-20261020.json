@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "kind": "early_liquid_architecture_pilot_launch",
+  "experiment_root": "C:/Users/Austin/ai-club-tools/results/early-liquid-20261020",
+  "slurm_array": 286291,
+  "arms": {
+    "yolo11n-960": {
+      "family": "yolo11n",
+      "initialization": "yolo11n.pt",
+      "imgsz": 960,
+      "batch": 16
+    },
+    "yolo11s-640": {
+      "family": "yolo11s",
+      "initialization": "yolo11s.pt",
+      "imgsz": 640,
+      "batch": 16
+    },
+    "fasterrcnn-resnet50": {
+      "family": "fasterrcnn-resnet50-fpn",
+      "initialization": "fasterrcnn-coco.pth",
+      "min_size": 480,
+      "max_size": 640,
+      "batch": 8
+    }
+  },
+  "last_observed_scheduler_states": {
+    "yolo11n-960": "RUNNING",
+    "yolo11s-640": "RUNNING",
+    "fasterrcnn-resnet50": "RUNNING"
+  },
+  "experiment_plan_sha256": "f59ee966a489e038a49ff08afc2b3052f0523040d106f728ea101302da4feff8",
+  "preparation_sha256": "31e0efe943218a6be35881f42715c45240b31e62c8ded805a6333e5cb694b5df",
+  "input_archive_sha256": "11b9a663ac2782a31d304a88cca5496a1b52a266fdbd96c70360c5ca6ca3908f",
+  "remote_archive_gzip_and_hash_verified": true,
+  "remote_frozen_inputs_verified": true,
+  "train_runs": [
+    1,
+    2,
+    3
+  ],
+  "development_runs": [
+    4
+  ],
+  "excluded_runs": [
+    5
+  ],
+  "height_inventory": {
+    "train": {
+      "targets": 708,
+      "height_le_32": 4,
+      "height_le_64": 102
+    },
+    "val": {
+      "targets": 89,
+      "height_le_32": 0,
+      "height_le_64": 18
+    }
+  },
+  "local_resnet_smoke": {
+    "frozen_stem_unchanged": true,
+    "checkpoint_reloaded": true,
+    "exact_prediction_roundtrip_checked": true,
+    "smoke": true
+  },
+  "local_adapter_smoke": {
+    "checks": {
+      "yolo11n-960": {
+        "fixed_vial_branch": true,
+        "candidate_predictions": 1,
+        "smoke_only": true,
+        "actual_predictor_imgsz": [
+          960,
+          960
+        ]
+      },
+      "fasterrcnn-resnet50": {
+        "fixed_vial_branch": true,
+        "candidate_predictions": 1,
+        "smoke_only": true
+      }
+    },
+    "scope": "Adapter runtime checks with prior YOLO weights and ResNet two-step smoke weights; not fitted pilot evaluation."
+  },
+  "remote_resnet_smoke_passed": true,
+  "collector": "collect-early-liquid-rosie.sh; collection.log in remote root",
+  "completion_claimed": false,
+  "detector_promoted": false,
+  "measurement_qa_changed": false
+}

@@ -12,7 +12,8 @@ Austin requested no push to `main`; local `main` remains at `5658d58`, matching
 | --- | --- | --- |
 | Replay, tracking and measurement QA | `replay/`; [current vision guidance](replay/VISION.md) | Existing detector/defaults preserved |
 | Annotation tooling | `annotation_review/`; [reviewer handoff](annotation_review/HANDOFF.md) and [contracts](annotation_review/CONTRACTS.md) | Published 179-case package; human reviews outstanding |
-| Detector experiments | `setup/vision/`; [frozen protocol](setup/vision/LIQUID-SPECIALISTS.md) and [detailed commands](setup/vision/CLI-HANDOFF-20261020.md) | Four fits complete; final DINO evaluation and assembly outstanding |
+| Completed comparison | `setup/vision/`; [results and protocol](setup/vision/LIQUID-SPECIALISTS.md) | Four fits/evaluations complete; 12 MP4s verified |
+| Current model iteration | [First-visible-liquid pilots](setup/vision/EARLY-LIQUID.md) | Three architecture/resolution fits submitted as Slurm array 286291 |
 
 Local assets are under `C:/Users/Austin/ai-club-tools/` (`/mnt/c/Users/Austin/ai-club-tools/`
 in WSL). Results, environments and source labels stay outside Git. The ChatGPT
@@ -25,7 +26,7 @@ and `team_plan.md` are preserved in place and excluded **locally** using
 worktree's ignored build files, are in
 `C:/Users/Austin/ai-club-tools/recovery/repo-consolidation-20261020T203829Z/`.
 
-## Detector experiment: next work
+## Completed detector comparison
 
 Root: `C:/Users/Austin/ai-club-tools/results/liquid-specialists-20261020`.
 Live scheduler verification during consolidation confirmed array **286264**, all
@@ -35,22 +36,42 @@ four jobs **COMPLETED, exit 0:0**. Collector log says the bundle is ready.
 `521608a3d63b6de0458914bcc91c421899acc9addfbacb3312f892d22271cc2f`.
 The bundle's existing model files matched local bytes; missing DINO model files
 were restored. Local smoke artifacts were preserved separately from remote smoke
-artifacts in the bundle. No replacement jobs or evaluations were launched.
+artifacts in the bundle. No replacement fits were launched for that experiment.
 
 | Arm | Completed epochs | Selected Run 4 epoch | Local evaluation |
 | --- | ---: | ---: | --- |
 | `yolo-all` | 29 | 19 | `evaluation-yolo/yolo-all` complete |
 | `yolo-focused` | 28 | 18 | `evaluation-yolo/yolo-focused` complete |
 | `rtdetr-all` | 28 | 18 | `evaluation-rtdetr/rtdetr-all` complete |
-| `dinov3-all` | 25 | 15 | Pending; final model now in `models/dinov3-all` |
+| `dinov3-all` | 25 | 15 | `evaluation-dino/dinov3-all` complete |
 
-Use `envs/vision-alternatives-windows/Scripts/python.exe` for final evaluation.
-Follow the **DINO evaluation and collect commands** in the detailed handoff;
-bundle retrieval/extraction and training are already done. Use a fresh output
-directory if a partial evaluation exists. Then inspect local MP4/PNG outputs,
-assemble all four arms, and record hashes, decoded frame counts and limitations.
-Do not promote a model automatically. Teacher agreement is not reviewed accuracy
-or measurement QA; Run 5 has already been inspected and is not a blind test.
+The final assembly is `evaluation/`: `comparison.json`, PR/problem-frame PNGs,
+12 MP4s and `verification.json`. All videos passed full decode/hash verification
+(39,292 output frames). DINO achieves 51.34% liquid AP50–95 / 93.53% recall /
+80.19% precision at .35 on provisional Run 5 targets, versus baseline 49.18% /
+72.64% / 96.80%. More unmatched boxes accompany the recall gain. See the protocol
+for all arms and limits. No detector is promoted; measurement QA is unchanged.
+
+## Current model work: first-visible liquid
+
+Austin wants detection as soon as a visible pool appears at the vial bottom and
+continued architecture iteration. New root:
+`C:/Users/Austin/ai-club-tools/results/early-liquid-20261020`.
+Rosie array **286291**: `yolo11n-960`, `yolo11s-640`, `fasterrcnn-resnet50`.
+Local ResNet GPU smoke passed empty targets, two steps and exact checkpoint reload.
+Inspect the scheduler and `collection.log` before continuing; do not duplicate fits.
+The remote collector packages three successful exits and never resubmits.
+All three fits were observed running and the remote ResNet smoke passed. Rosie
+hostname resolution subsequently failed from this session; restore campus VPN
+access to check completion/retrieve artifacts. The jobs continue independently.
+
+Next: retrieve/hash-verify the completed bundle and run `evaluate_early_liquid.py`
+with the documented [pilot command](setup/vision/EARLY-LIQUID.md). Use
+`envs/vision-alternatives-windows/Scripts/python.exe` locally. Existing Run 4 audit
+is `liquid-specialists-20261020/development-run4`; all model development uses
+Runs 1–4. Small-target metrics are a proxy: Run 4 has 18 targets <=64px tall,
+**none <=32px**. Training has only four <=32px targets. Human body/stream review
+remains a separate input; no reviewed first-visible-liquid timing is available.
 
 ## Annotation review: next work
 
@@ -71,6 +92,7 @@ The original labels at `results/typesafe-box-all-20261018` remain read-only.
 
 Passed: 12 annotation-review tests; 56 replay tests using `data-windows`; two
 specialist-data tests using `vision-alternatives-windows`; annotation JavaScript
-syntax check. WSL's bare Python lacks video dependencies, so use the existing
-Windows environments for replay/vision. No new scientific validation, approved
-labels, detector promotion or four-arm evaluation is claimed by this cleanup.
+syntax check. Follow-up: seven liquid-focused tests, compilation/shell syntax,
+full four-arm media verification and ResNet GPU smoke passed. WSL's bare Python
+lacks video dependencies; use the existing Windows environments for replay/vision.
+No approved labels, physical-onset accuracy or detector promotion is claimed.

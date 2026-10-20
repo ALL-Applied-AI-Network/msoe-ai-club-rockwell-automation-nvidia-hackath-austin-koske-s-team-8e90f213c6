@@ -142,3 +142,60 @@ establish the false-alarm rate on genuinely empty vials. Full reviewed empty
 periods, pale-liquid boxes and early-flow timing remain inputs from Aleyna's group.
 No measurement masks, color comparisons, thresholds, release decisions, renderer
 or operator-workflow assignments are changed by these experiments.
+
+## Completed comparison — October 20
+
+All four array `286264` fits completed successfully. The assembled comparison is
+under `evaluation/` in the local root above. [Verification evidence](../verification/liquid-specialists-20261020.json)
+binds model hashes, selected epochs, the identical scoring inventory and videos.
+All **12 delivered MP4s** were fully decoded again after collection: **39,292
+output frames** total (8,491 full-run + 968 early + 364 two-fill frames per arm).
+The source recording has 50,942 decoded frames. The frozen vial branch matches
+across all arms. Original labels, deployed detector and measurement QA are intact.
+
+Run 5 agreement against 541 provisional liquid targets in 816 scored images:
+
+| Model | Liquid AP50–95 | Precision at .35 | Recall at .35 | Unmatched boxes |
+| --- | ---: | ---: | ---: | ---: |
+| Deployed | 49.18% | 96.80% | 72.64% | 13 |
+| Earlier longer two-class reference | 48.85% | 96.40% | 79.11% | 16 |
+| `yolo-all` | 49.28% | 86.09% | 90.39% | 79 |
+| `yolo-focused` | 47.46% | 96.93% | 75.79% | 13 |
+| `rtdetr-all` | 50.21% | 90.45% | 89.28% | 51 |
+| `dinov3-all` | 51.34% | 80.19% | 93.53% | 125 |
+
+DINO completed 25 epochs and selected epoch 15. Its liquid AP50–95 is 2.16
+percentage points above the deployed baseline, with more unmatched proposals at
+the fixed display cutoff. On 275 scored images without a supplied liquid target,
+DINO predicts liquid in one image and RT-DETR in ten; both YOLO specialists have
+zero. These are label-absence diagnostics, not confirmed-empty false-alarm rates.
+
+`problem-frame-comparison.png` and the reviewed decoded-video crops show all four
+specialists detecting the lower colored region at source frames 3162 and 3306,
+where the baseline has no liquid box. None detects liquid at the existing inspected
+frames 1320/2706 at .35. DINO also emits small lower-vial boxes alongside tall
+proposals in several early cases. The [visual-review record](../verification/liquid-specialists-review-20261020.json)
+binds inspected images. It does not adjudicate their boxes or establish first-liquid
+timing. Existing teacher labels can encompass both stream and body; the
+[human label contract](LABEL-CONTRACT.md) addresses that separate review task.
+
+## Development evidence for the next iteration
+
+`audit_liquid_specialists.py` evaluates the same 157 Run 4 originals through the
+common diagnostic adapter. It verifies hashes/splits, exports a fixed confidence
+grid and development disagreement PNGs, and changes no thresholds. It rematches
+predictions after each threshold filter; the historical Run 5 reports retain their
+original AP-floor matching. Native training-validator AP and this common-adapter
+AP can differ because preprocessing/postprocessing differ.
+
+Of 89 development liquid targets, **18 are 32–64 pixels tall, none are <=32**.
+At confidence .35, the baseline matches 15/18, `yolo-all` 16/18,
+`yolo-focused` 15/18, RT-DETR 17/18 and DINO 17/18. This is a small geometric
+proxy group, not reviewed early-pool accuracy. The training inventory contains
+only four <=32-pixel targets among 708 liquid targets (including translations).
+We cannot establish first-visible shallow-pool performance from these labels.
+
+Austin's next target is detection as soon as liquid becomes visible at the vial
+bottom. [Architecture/resolution pilots](EARLY-LIQUID.md) now explore that target
+on Runs 1–4, alongside the separate body/stream annotation work. No threshold or
+hyperparameter is chosen using Run 5.

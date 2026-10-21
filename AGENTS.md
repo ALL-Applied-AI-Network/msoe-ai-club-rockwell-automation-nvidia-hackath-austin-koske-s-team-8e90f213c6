@@ -4,8 +4,9 @@ Read [HANDOFF.md](HANDOFF.md) for current status, artifact locations and next wo
 Use this repository's primary checkout on `austin-work`; both former agent branches are
 integrated here. Use it for follow-up work unless Austin requests another branch
 or worktree. Do not spawn subagents unless explicitly authorized.
-Austin explicitly requested that `main` not be pushed. Keep integration and
-follow-up commits on `austin-work`; do not push or merge them into `main`.
+Austin authorized only the team/data handoff on `main` (published as `1cb6a63`).
+Keep experiments, application changes and follow-up development on `austin-work`;
+do not push or merge those into `main`.
 
 - Inspect existing processes, scheduler jobs and completion markers before
   continuing an experiment. Do not duplicate training or completed evaluations.

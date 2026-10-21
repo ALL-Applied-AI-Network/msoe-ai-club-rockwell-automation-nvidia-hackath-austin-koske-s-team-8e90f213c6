@@ -3,8 +3,9 @@
 Continue from **this checkout on `austin-work`**. Replay/vision (`487fa6f`) and annotation
 review (`17490c5`) are integrated, with history preserved. The former annotation
 worktree is retired. This page supersedes the separate branch/worktree directions.
-Austin requested no push to `main`; local `main` remains at `5658d58`, matching
-`origin/main`. The two original remote branches remain as recovery copies.
+Austin authorized only the team/data handoff on `main`, published as `1cb6a63`
+directly above `5658d58`, without merging experimental history. All development
+continues on `austin-work`. The original remote branches remain recovery copies.
 
 ## Where things live
 
@@ -19,6 +20,7 @@ Austin requested no push to `main`; local `main` remains at `5658d58`, matching
 | Early pool prompts | [Paired trial](setup/vision/SAM-LIQUID.md#pool-prompt-comparison-and-causal-bridge--october-20) | Localized box/points plus causal bridge; before/after videos complete; QA unchanged |
 | Innovation lab handoff | `results/innovation-lab-brief-20261020/` under the local tools root | Six-page architecture PDF, editable Word brief, single-panel final MP4s and code-free sharing ZIP |
 | Team data + student brief | `results/team-data-20261020-v1/` under the local tools root | Verified data archives, source manifests, YOLO/COCO starters and three-page architecture assignment PDF |
+| Stage 2 action experiments | [Design and metrics](setup/vision/STAGE2.md) | Full Run 4 audit, causal phase checkpoints, policy/reference stress tests and advisory action simulation |
 
 Local assets are under `C:/Users/Austin/ai-club-tools/` (`/mnt/c/Users/Austin/ai-club-tools/`
 in WSL). Results, environments and source labels stay outside Git. The ChatGPT
@@ -58,7 +60,35 @@ local files. Both standalone PDFs were downloaded again and their hashes and
 three-page counts checked. See the
 [publication verification](setup/verification/team-release-publication-20261020.json).
 Release attachments keep the large data out of Git. No source labels/data were
-modified; `main` remains untouched.
+modified. The student handoff, PDFs, diagram and download links are also available
+on `main`; no application or experiment code was merged there.
+
+## Stage 2: recipe-aware actions
+
+Austin authorized offline experiments toward an action pipeline. See
+[STAGE2.md](setup/vision/STAGE2.md) and
+[verification](setup/verification/stage2-20261020.json). Local outputs:
+`results/stage2-20261020/` under the tools root.
+
+Full Run 4: 9,482 frames decoded, 1,581 samples, six image fill candidates;
+849/931 within-fill samples pass unchanged per-frame QA. Existing departure-window
+QA passes 4/6. Nine causal phase checkpoints include earlier evidence for all six
+final episodes, 3.6–4.0 s before departure. Final-episode matching is retrospective;
+an ingredient pause does not establish final dispensing completion. Real recipe
+assessments remain unavailable.
+
+The analytic policy fixture contains 624 simulated episodes / 3,744 evaluations.
+With transplanted Run 4 QA availability, the phase-aware three-sample arm warns on
+254/288 injected cases and 0/24 null cases. These are toy injection rates, not real
+defect accuracy. One-second progression error and unreported 10% green gain each
+cause 24/24 null warnings in a separate stress test: trusted process progression
+and commissioned photometric health checks are necessary before operational use.
+
+The proposed advisory loop is review/hold, repeated-mismatch flush recommendation,
+recorded completed-flush receipt, then two qualified completed normal vials before
+resume recommendation. Local real/simulation MP4s are fully decoded. Ten contract
+tests pass. No recipe bank, geometry approval, plant connection or real flush
+effectiveness is claimed; deployed replay defaults and sampling QA are unchanged.
 
 Existing untracked `analysis/`, `datasets/`, `docs/`, `experiments/`, `handoffs/`
 and `team_plan.md` are preserved in place and excluded **locally** using

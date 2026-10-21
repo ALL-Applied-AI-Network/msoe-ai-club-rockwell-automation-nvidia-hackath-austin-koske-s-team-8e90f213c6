@@ -65,6 +65,26 @@ on `main`; no application or experiment code was merged there.
 
 ## Stage 2: recipe-aware actions
 
+Latest: [Stage 2 refinement](setup/vision/STAGE2-REFINEMENT.md), outputs under
+`results/stage2-refinement-20261020/`. The next-pilot choice is background-referenced
+sRGB color, recipe/ingredient/metered-volume reference lookup, source/camera guards,
+and the existing three-sample advisory policy. Deployed replay is unchanged.
+
+Runs 1–3 select background anchors from 1,478 frames. On 849 frozen Run 4 sampling
+masks, 28,017 paired pixel tests give green-gain nuisance p95 dE 5.22 raw versus
+0.68 sRGB-normalized. These are invariance tests, not absolute color accuracy.
+1,800 additional analytic episodes / 7,920 policy evaluations test components,
+progression and the combined candidate. Fresh joint seeds give 0/24 null warnings,
+72/72 two-mL injection warnings and 45/72 half-mL warnings; all episodes retain
+assessable samples. These are simulator results, not real defect accuracy.
+
+Truthfully stale process inputs and inconsistent anchors block decisions; wrong
+progression falsely marked current remains a failure. The scoped source audit
+finds no recorded acceptable standard preparation or completed physical trial.
+Twenty Stage 2 contract tests pass. The 23-second camera-normalization MP4 is an
+explicit controlled-pixel demonstration. See the
+[refinement verification](setup/verification/stage2-refinement-20261020.json).
+
 Austin authorized offline experiments toward an action pipeline. See
 [STAGE2.md](setup/vision/STAGE2.md) and
 [verification](setup/verification/stage2-20261020.json). Local outputs:

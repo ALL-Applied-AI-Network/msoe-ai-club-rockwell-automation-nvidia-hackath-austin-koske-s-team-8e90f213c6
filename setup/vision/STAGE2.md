@@ -3,6 +3,10 @@
 October 20, 2026. **Offline experimental design, not a commissioned product-quality
 system.** Work is on `austin-work`; no Stage 2 changes belong on `main`.
 
+The [follow-up refinement](STAGE2-REFINEMENT.md) tests camera normalization, adds
+explicit metered-reference lookup and input-health gates, and records a combined
+fresh-seed experiment. The results below remain the original frozen experiment.
+
 Stage 1 provides vial/liquid proposals, an experimental pool mask and sampling QA.
 Stage 2 combines those observations with the station's intended recipe and actual
 process progression, requests operator review when evidence persists, and tracks

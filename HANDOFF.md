@@ -21,6 +21,7 @@ continues on `austin-work`. The original remote branches remain recovery copies.
 | Innovation lab handoff | `results/innovation-lab-brief-20261020/` under the local tools root | Six-page architecture PDF, editable Word brief, single-panel final MP4s and code-free sharing ZIP |
 | Team data + student brief | `results/team-data-20261020-v1/` under the local tools root | Verified data archives, source manifests, YOLO/COCO starters and three-page architecture assignment PDF |
 | Stage 2 action experiments | [Design and metrics](setup/vision/STAGE2.md) | Full Run 4 audit, causal phase checkpoints, policy/reference stress tests and advisory action simulation |
+| NVIDIA integration experiments | [Pilot and actual results](setup/vision/NVIDIA-PILOT.md) | TensorRT vial branch 3.13× host speedup; Cosmos3-Edge structured explanations fail 9/12 contracts; optional draft-caption video |
 
 Local assets are under `C:/Users/Austin/ai-club-tools/` (`/mnt/c/Users/Austin/ai-club-tools/`
 in WSL). Results, environments and source labels stay outside Git. The ChatGPT
@@ -64,6 +65,23 @@ modified. The student handoff, PDFs, diagram and download links are also availab
 on `main`; no application or experiment code was merged there.
 
 ## Stage 2: recipe-aware actions
+
+NVIDIA follow-up: [pilot results](setup/vision/NVIDIA-PILOT.md), local outputs under
+`results/nvidia-pilot-20261020/`. TensorRT FP16 YOLO11n vial-only host processing
+p50 is 3.08 ms versus PyTorch 9.64 ms (96 source-verified Run 4 frames, three passes).
+All 285 predicted boxes match with zero unmatched boxes; median IoU 0.99955.
+This is backend agreement and component timing, not full-pipeline accuracy/speed.
+
+Reason2 access returned HTTP 403; Rosie DNS failed. The existing accessible pinned
+Cosmos3-Edge reasoner ran locally in a separate environment. Structured event
+explanations pass only 3/12 display contracts and invent unsupported details.
+A narrower 12-request caption trial takes p50 0.994 s full-frame / 0.606 s cropped,
+but still guesses details and is not selected for operational decisions. Recorded
+status messages remain deterministic, quality unavailable and hardware commands none.
+The 48-second `cosmos-demo-v1/cosmos-event-review.mp4` labels all six full-frame
+captions as unverified drafts, separately from recorded QA counts. All 240 demo
+frames fully decode. Transfer/Predict/DeepStream were not added. See the
+[verification](setup/verification/nvidia-pilot-20261020.json) for source/metric checks.
 
 Latest: [Stage 2 refinement](setup/vision/STAGE2-REFINEMENT.md), outputs under
 `results/stage2-refinement-20261020/`. The next-pilot choice is background-referenced

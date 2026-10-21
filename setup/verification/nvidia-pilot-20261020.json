@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "kind": "nvidia_offline_pilot",
+  "artifacts_hash_verified": 68,
+  "source_run": 4,
+  "run5_used": false,
+  "hardware_actions": 0,
+  "event_clips": 6,
+  "clip_decoded_frames": 1440,
+  "source_samples_compared_with_frozen_evidence": 240,
+  "tensorrt": {
+    "pytorch": {
+      "samples": 288,
+      "host_ms_p50": 9.639600000809878,
+      "host_ms_p95": 12.547304970212279,
+      "reported_inference_ms_p50": 7.790000061504543
+    },
+    "tensorrt": {
+      "samples": 288,
+      "host_ms_p50": 3.0830000177957118,
+      "host_ms_p95": 3.65205006673932,
+      "reported_inference_ms_p50": 1.0591500322334468
+    }
+  },
+  "box_parity": {
+    "frame_pairs": 288,
+    "matched_boxes_iou50": 285,
+    "unmatched_torch": 0,
+    "unmatched_tensorrt": 0,
+    "iou_min": 0.9825918178502242,
+    "iou_median": 0.9995547005519945,
+    "max_confidence_abs_difference": 0.0007114410400390625
+  },
+  "original_summary_field_collision": true,
+  "baseline_pt_sha256": "10856c18a8a5c485e832adcc6b841b739e726a969dc043fe8db64c49163bb361",
+  "tensorrt_engine_sha256": "59f8c056f2bb43e731b5b23baac62d20533a16240475eaeb08841d3093e12376",
+  "environment_sha256": "b2de1e9950d3c2c8e8606cebf729f131dc70f0fb9e53b148f5bd1cf70d6b15f8",
+  "verification_helper_sha256": "2df23b26901140580bbff8dd62698589a84d3e200b11141cbdab2eeacc2b1f6e",
+  "vial_host_latency_ratio": 3.1266947600285824,
+  "vial_reported_inference_latency_ratio": 7.354954278835873,
+  "cosmos_model": "nvidia/Cosmos3-Edge",
+  "cosmos_revision": "344d602b128d1bbdacb43b08d0a3626f46343e29",
+  "cosmos": {
+    "video_only": {
+      "responses": 6,
+      "contract_passes": 3,
+      "seconds_p50": 2.0609997999854386,
+      "seconds_p95": 2.561094775010133,
+      "peak_allocated_gib": 6.007655620574951,
+      "token_limit_hits": 0
+    },
+    "with_telemetry": {
+      "responses": 6,
+      "contract_passes": 0,
+      "seconds_p50": 8.69380079995608,
+      "seconds_p95": 15.652933399949688,
+      "peak_allocated_gib": 6.163949966430664,
+      "token_limit_hits": 3
+    }
+  },
+  "caption_probe": {
+    "full_frame": {
+      "responses": 6,
+      "seconds_p50": 0.9939910999964923,
+      "seconds_p95": 1.2293526749999728,
+      "peak_allocated_gib": 5.913957595825195,
+      "nonempty_captions": 6,
+      "token_limit_hits": 0,
+      "semantic_accuracy": null
+    },
+    "station_crop": {
+      "responses": 6,
+      "seconds_p50": 0.6060044999467209,
+      "seconds_p95": 0.7107595749839675,
+      "peak_allocated_gib": 5.016448497772217,
+      "nonempty_captions": 6,
+      "token_limit_hits": 0,
+      "semantic_accuracy": null
+    }
+  },
+  "demo_decoded_frames": 240,
+  "real_quality_accuracy": null,
+  "explanation_semantic_accuracy": null,
+  "promoted": false,
+  "main_changed": false,
+  "limits": [
+    "Run 4 inspected development footage; no independent defect truth.",
+    "Contract compliance does not establish factual explanation accuracy.",
+    "VLM explanations are retrospective and never drive the action coordinator.",
+    "TensorRT timings cover only the vial branch, not the complete liquid pipeline.",
+    "Event clips are lossy MP4 exports; numerical telemetry is from original frozen source pixels."
+  ],
+  "input_markers": {
+    "tensorrt-fp16-v1": "ae33124d2a08350dda6848d5a6e9d109c6c8a6478d8421927466333fd0701d28",
+    "cosmos-review-v1": "959c045396290adbf782da63a4b88e4541704108066bfc1abd07b4e5067ef429",
+    "cosmos-caption-v1": "468197652096b7738503ebaae2d94031243583f09fcf855c5982e817155ecd54",
+    "cosmos-demo-v1": "5a2fcd3354f275bd9b57ff63d3aed5dac468c22a6acbf84397fc237ae4879a94"
+  }
+}

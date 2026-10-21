@@ -16,7 +16,8 @@ continues on `austin-work`. The original remote branches remain recovery copies.
 | Completed comparison | `setup/vision/`; [results and protocol](setup/vision/LIQUID-SPECIALISTS.md) | Four fits/evaluations complete; 12 MP4s verified |
 | Latest detector iteration | [First-visible-liquid pilots](setup/vision/EARLY-LIQUID.md) | All three fits and Run 4 evaluations complete; eight-detector scorecard assembled |
 | Mask pipeline | [SAM liquid probe](setup/vision/SAM-LIQUID.md) | SAM2.1 tested on 30 Run 4 images; raw masks only |
-| Pipeline video | [Offline application](setup/vision/SAM-LIQUID.md#offline-pipeline-video--october-20) | 60 s Run 4 video; detector → SAM → existing per-frame sampling gates; 300 frames verified |
+| Initial pipeline video | [Offline application](setup/vision/SAM-LIQUID.md#offline-pipeline-video--october-20) | Original 60 s Run 4 detector/SAM/sampling demonstration |
+| Current full-pipeline experiment/video | [Acceleration and early-fill review](setup/vision/PIPELINE-ACCELERATION.md) | 89.48 → 83.22 ms median sampled processing; clean single-view H.264 demos; one reproducible sample-QA difference |
 | Early pool prompts | [Paired trial](setup/vision/SAM-LIQUID.md#pool-prompt-comparison-and-causal-bridge--october-20) | Localized box/points plus causal bridge; before/after videos complete; QA unchanged |
 | Innovation lab handoff | `results/innovation-lab-brief-20261020/` under the local tools root | Six-page architecture PDF, editable Word brief, single-panel final MP4s and code-free sharing ZIP |
 | Team data + student brief | `results/team-data-20261020-v1/` under the local tools root | Verified data archives, source manifests, YOLO/COCO starters and three-page architecture assignment PDF |
@@ -65,6 +66,38 @@ modified. The student handoff, PDFs, diagram and download links are also availab
 on `main`; no application or experiment code was merged there.
 
 ## Stage 2: recipe-aware actions
+
+Latest complete pipeline: [full TensorRT comparison](setup/vision/PIPELINE-ACCELERATION.md),
+local root `results/pipeline-acceleration-20261020/`. A new 640×640 FP16 engine
+preserves the existing pipeline input shape; the earlier component-only engine
+was 480×640. Four full passes rerun the live YOLO/Faster R-CNN/conditional-SAM
+graph on 1,581 source-verified Run 4 samples each: 6,324 measured samples total.
+The original PyTorch control reproduces all prior measurements and masks exactly.
+
+Decode + sampled processing p50/p95: PyTorch 89.48/101.20 ms versus TensorRT
+83.22/94.39 ms, a 6.99% median latency reduction. Visual tracking and fill state
+match on every sample, with 4/6 completed QA windows and nine causal phase
+checkpoints in both arms. Sample QA matches 1,580/1,581 frames; at 143.6 s TensorRT
+rejects a sample PyTorch accepts. Final masks are identical on 1,531 frames, but
+the worst paired nonempty-mask IoU is 0.70455 on an 88→62-pixel small pool. No
+backend is promoted, no QA threshold is changed, and no human mask accuracy is
+claimed. Both repeats reproduce their respective masks/QA exactly.
+
+Use `published-media-v1/accelerated-pipeline-run4-60s.mp4` for the current clean
+single-view application video, or `accelerated-pipeline-six-early-fills.mp4` for
+all six early neighborhoods. These are actual measured-pipeline outputs, without
+Cosmos captions. Both H.264 videos fully decode, 540 output frames total. The
+comparison and the changed-QA PNG remain available for review.
+
+`early-fill-review-v1.zip` (about 26.3 MB) contains six raw clips, 72 exact PNGs,
+native frame/PTS identities, blank onset/mask return forms and the portable box
+editor. All cases are unreviewed/unassigned; the existing Run 3 milestone and all
+reviewer workspaces are intact. The optional box editor does not draw pixel masks
+or adjudicate onset. `CSI-VALIDATION-PLAN.md` is an unsent supervised-session draft;
+dates, recipes, process-log/clock mapping, approved references and workflow need
+CSI confirmation. Twenty focused tests pass; 177 artifacts and all native source
+samples are independently verified. See the
+[verification](setup/verification/pipeline-acceleration-20261020.json).
 
 NVIDIA follow-up: [pilot results](setup/vision/NVIDIA-PILOT.md), local outputs under
 `results/nvidia-pilot-20261020/`. TensorRT FP16 YOLO11n vial-only host processing

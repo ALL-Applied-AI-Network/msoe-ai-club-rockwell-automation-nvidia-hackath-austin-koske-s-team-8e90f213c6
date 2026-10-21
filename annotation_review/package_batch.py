@@ -7,7 +7,7 @@ import json
 from .core import sha
 
 
-def package(root):
+def package(root,readme=None):
     root=Path(root).resolve();source=Path(__file__).parent
     target=root/'annotation_review';target.mkdir(exist_ok=True)
     for path in source.iterdir():
@@ -20,7 +20,7 @@ def package(root):
             if path.is_file() and path.suffix in ('.py','.js','.css','.html','.json','.md'):
                 shutil.copyfile(path,target/directory/path.name)
     shutil.copyfile(source/'launch_review.py',root/'launch_review.py')
-    shutil.copyfile(source/'HANDOFF.md',root/'README.md')
+    shutil.copyfile(Path(readme) if readme else source/'HANDOFF.md',root/'README.md')
     hashes={str(p.relative_to(root)).replace('\\','/'):sha(p) for p in root.rglob('*') if p.is_file() and '__pycache__' not in p.parts and p.name!='package-hashes.json'}
     (root/'package-hashes.json').write_text(json.dumps(hashes,indent=2)+'\n')
     archive=root.parent/(root.name+'.zip')
@@ -32,7 +32,8 @@ def package(root):
 
 def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--batch',type=Path,required=True)
-    args=p.parse_args();print(package(args.batch))
+    p.add_argument('--readme',type=Path,help='Use this task-specific handoff at the package root')
+    args=p.parse_args();print(package(args.batch,args.readme))
 
 
 if __name__=='__main__':main()

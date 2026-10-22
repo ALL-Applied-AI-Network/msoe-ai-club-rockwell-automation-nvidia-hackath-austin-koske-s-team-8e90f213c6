@@ -1,0 +1,2 @@
+# PDFs are binary review artifacts, not line-oriented source files
+*.pdf binary

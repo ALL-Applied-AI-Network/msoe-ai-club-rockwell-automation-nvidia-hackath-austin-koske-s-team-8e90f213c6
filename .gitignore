@@ -1,0 +1,10 @@
+# Local datasets, pilot outputs, and model checkpoints
+/Team-Core-Data/
+/Team-Core-Data.zip
+/Team3-Pilot-Preview/
+/tmp/
+/checkpoints/
+*.pt
+*.pth
+*.ckpt
+*.safetensors

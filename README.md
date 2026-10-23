@@ -19,9 +19,14 @@ The release includes original imagery/video, provisional annotations, YOLO/COCO
 starters and development frames. Train on Runs 1–3, develop on Run 4; Run 5 is a
 separate diagnostic-only download. Follow the handoff for file formats and checksums.
 
-## Key dates
+## App starter
 
-App team: [frontend + API starter and local launch instructions](team_app/README.md).
+Josiah and Hayden: start with [API setup and full run instructions](api/README.md)
+and the [React frontend](client/README.md). Run the API from `api/` and the
+frontend from `client/`. The disposable example needs no database or credentials;
+its data resets when the API restarts.
+
+## Key dates
 
 | When | What |
 |---|---|

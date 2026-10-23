@@ -4,7 +4,7 @@ Josiah and Hayden: this is Austin's `full-stack-app` template adapted into a
 standalone local starter. Use it as a reference or copy it into your app branch;
 it does not replace anyone's dashboard/backend work.
 
-- `client/`: React, TypeScript, Vite, React Router, TanStack Query and Axios.
+- [`../client/`](../client/README.md): React, TypeScript, Vite, React Router, TanStack Query and Axios.
 - `api/`: FastAPI with router → service → in-memory data adapter boundaries.
 - The disposable widgets example demonstrates a working UI/API round trip.
   Its state lives only in the API process and resets on restart. Use one worker.
@@ -21,7 +21,7 @@ Use Python3.11+ and Node22.12+ (or a supported newer LTS). Open two terminals.
 API, from the repository root:
 
 ```text
-cd team_app/api
+cd api
 uv sync --frozen
 uv run uvicorn main:app --reload --host 127.0.0.1 --port 8443
 ```
@@ -29,7 +29,7 @@ uv run uvicorn main:app --reload --host 127.0.0.1 --port 8443
 Frontend:
 
 ```text
-cd team_app/client
+cd client
 npm ci
 npm run dev
 ```
@@ -54,12 +54,12 @@ decision. The dataset/training work remains elsewhere in the repository.
 ## Checks
 
 ```text
-cd team_app/api
+cd api
 uv run pytest
 ```
 
 ```text
-cd team_app/client
+cd client
 npm run typecheck
 npm run lint
 npm run build

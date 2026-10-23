@@ -21,6 +21,8 @@ separate diagnostic-only download. Follow the handoff for file formats and check
 
 ## Key dates
 
+App team: [frontend + API starter and local launch instructions](team_app/README.md).
+
 | When | What |
 |---|---|
 | Thu Oct 8, 4:00–6:00 PM | Kickoff at Rockwell Automation HQ, 1201 S 2nd St, Milwaukee |

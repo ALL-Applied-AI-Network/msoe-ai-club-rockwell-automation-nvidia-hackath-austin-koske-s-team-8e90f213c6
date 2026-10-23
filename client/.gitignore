@@ -1,0 +1,17 @@
+node_modules/
+dist/
+.env
+.env.local
+.env.prod
+*.local
+
+# Local build and environment artifacts
+**/node_modules/
+**/dist/
+**/.venv*/
+**/__pycache__/
+**/.pytest_cache/
+**/*.pyc
+**/*.tsbuildinfo
+**/.env
+**/.env.local

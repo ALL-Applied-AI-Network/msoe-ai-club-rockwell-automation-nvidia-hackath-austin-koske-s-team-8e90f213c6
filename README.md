@@ -1,5 +1,7 @@
 # Rockwell Automation + NVIDIA Innovation Lab · Fall 2026
 
+**October 26 temporal CNN release:** [current architecture, exact model downloads and runnable examples](team_handoff/temporal_cnn/README.md). The selected liquid path is direct paired U-Net; Faster R-CNN and SAM are optional comparators. Austin authorized this scoped handoff on `main`; unrelated development remains on `austin-work`.
+
 This is your team's repository for the four-week physical AI hackathon run by Rockwell Automation, NVIDIA, the MSOE AI Club and UWM's Connected Systems Institute. Build everything here. Sponsors can follow your work as it progresses, and your final submission links straight to this repository.
 
 **Full event guide** (datasets, compute, rules, judging, prizes): <https://msoe-maic.com/library/?article=Rockwell-NVIDIA-Fall-2026>

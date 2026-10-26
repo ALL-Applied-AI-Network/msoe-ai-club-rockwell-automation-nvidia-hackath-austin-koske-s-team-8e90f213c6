@@ -1,0 +1,61 @@
+{
+  "schema": "ai-onboarding-starter-verification/v1",
+  "date": "2026-10-24",
+  "branch": "austin-work",
+  "helper_tests_passed": 4,
+  "skill_format_valid": true,
+  "python_compilation_passed": true,
+  "local_links_checked": 95,
+  "source_assets_verified": 4,
+  "unsupplied_roles": [
+    "live_rehearsal_report",
+    "real_evaluation_report",
+    "temporal_reference"
+  ],
+  "status": "asset_checks_incomplete",
+  "qualification_checks_executed": false,
+  "deployment_authorized": false,
+  "autonomous_agent_end_to_end_test": false,
+  "training_started": false,
+  "GPU_used": false,
+  "hardware_connections": 0,
+  "main_changed": false,
+  "pushed": false,
+  "evidence_root": "/mnt/c/Users/Austin/ai-club-tools/results/ai-onboarding-20261024-v1",
+  "actual_invocation": {
+    "command": [
+      "python",
+      "setup/vision/onboarding_readiness.py",
+      "--request",
+      "/mnt/c/Users/Austin/ai-club-tools/results/ai-onboarding-20261024-v1/request-v2/request.json",
+      "--out",
+      "/mnt/c/Users/Austin/ai-club-tools/results/ai-onboarding-20261024-v1/readiness-v2"
+    ],
+    "exit": 2,
+    "expected_exit": 2,
+    "assets_verified": 4,
+    "missing_requested_assets": 3,
+    "source_files_unchanged": true,
+    "synthetic_family_manifest_inspected": {
+      "images": 192,
+      "train_families": 36,
+      "development_families": 12,
+      "disjoint": true
+    },
+    "camera_profile": "AI-derived draft from frozen model metadata; not physically qualified",
+    "qualification_executed": false,
+    "GPU_used": false,
+    "deployment_authorized": false,
+    "skill_behavior": "Direct helper invocation; no autonomous agent end-to-end test"
+  },
+  "file_sha256": {
+    ".agents/skills/commission-vision-station/SKILL.md": "8065753f49994c0ef8e4a7e578d319fb36c3d690464094d4095ddcbfe97b98f4",
+    "setup/vision/onboarding_readiness.py": "be3427f0b57884d9efb2bf5a0ab135ed86a5a6b8c1fd5177df4ab374f6bfba3b",
+    "setup/vision/test_onboarding_readiness.py": "d3660a49dd345439940dddb45bf88fac949ef9afea4a512165b2cb10384a9746",
+    "team_handoff/presentation/LESSONS-AND-CLAIMS-20261024.md": "bf8df08b197efa5662e576a9c79801bdffc90a5f9f40dc284be0cc48f3497863",
+    "team_handoff/integration/AI-NATIVE-ONBOARDING.md": "0e236374c24fd10ccefe64e8770ae5a71584f2eabb6e2939f8510040b11983ee",
+    "team_handoff/presentation/README.md": "91c840d7c342cb269fb37b039d7cd98cb7203b76a1b072b2e55f23c2f050b56e",
+    "setup/START_HERE.md": "e0996f5515a1a8d0c6818a4ddff17857011718c7ffaaea34eff0f140f758fc54",
+    "HANDOFF.md": "38735baaea740154e559770464d830bce55a08d503fdf3ae9c54171493cc833c"
+  }
+}

@@ -1,0 +1,10 @@
+# Install the torch wheel for the host separately: CPU, Windows CUDA or GB10 CUDA.
+# Existing CPU package smoke: torch 2.11.0+cu128; original GB10: 2.11.0+cu130.
+torch==2.11.0
+numpy==2.5.2
+pillow==12.3.0
+opencv-python==5.0.0.93
+# Existing measurement QA (not needed for model-only inference):
+scikit-image==0.26.0
+# Optional vial inference; generic COCO initialization is disclosed in its metadata.
+ultralytics==8.4.182

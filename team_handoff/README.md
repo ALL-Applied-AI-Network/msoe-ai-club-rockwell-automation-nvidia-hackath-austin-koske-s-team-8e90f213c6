@@ -1,5 +1,7 @@
 # Liquid vision team handoff
 
+**October 26 temporal CNN release:** [current architecture, exact model downloads and runnable examples](temporal_cnn/README.md). The selected liquid path is direct paired U-Net; Faster R-CNN and SAM are optional comparators. Austin authorized this scoped handoff on `main`; unrelated development remains on `austin-work`.
+
 Dataset **`liquid-team-data-v1-20261020`** · [Download release v1.0.0](https://github.com/ALL-Applied-AI-Network/msoe-ai-club-rockwell-automation-nvidia-hackath-austin-koske-s-team-8e90f213c6/releases/tag/team-data-v1.0.0)
 
 Build a pipeline that detects accumulated liquid as soon as it is visibly identifiable

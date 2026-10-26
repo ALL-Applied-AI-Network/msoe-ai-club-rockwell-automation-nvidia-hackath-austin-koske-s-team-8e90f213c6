@@ -1,0 +1,276 @@
+{
+  "schema_version": 1,
+  "checked_utc": "2026-10-23T03:44:43.214945+00:00",
+  "branch": "austin-work",
+  "gpu": "NVIDIA GB10",
+  "completed": true,
+  "local_gpu_used": false,
+  "app_changed": false,
+  "main_changed": false,
+  "pushed": false,
+  "training": false,
+  "run5_used": false,
+  "approved_labels_created": false,
+  "source_frames": 264,
+  "arms": 3,
+  "full_warmup_per_arm": 264,
+  "measured_samples_per_arm": 528,
+  "comparison": {
+    "arms": {
+      "legacy_sam": {
+        "source_frames": 264,
+        "measured_samples": 528,
+        "proposal_frames": 195,
+        "qa_pass": 185,
+        "tall_mask_frames": 6,
+        "sam_invoked_frames": 195,
+        "latency_ms": {
+          "vial": {
+            "median": 4.36841300688684,
+            "p95": 4.830970411421731
+          },
+          "liquid_detector": {
+            "median": 22.75434951297939,
+            "p95": 23.667734960326925
+          },
+          "mask_and_prompt": {
+            "median": 57.4937550118193,
+            "p95": 58.50744726485573
+          },
+          "qa": {
+            "median": 14.604242984205484,
+            "p95": 15.314591268543154
+          },
+          "total": {
+            "median": 99.24461448099464,
+            "p95": 101.094976690365
+          }
+        },
+        "invoked_latency_ms": {
+          "samples": 390,
+          "median": 99.77881150553003
+        }
+      },
+      "synthetic_sam": {
+        "source_frames": 264,
+        "measured_samples": 528,
+        "proposal_frames": 257,
+        "qa_pass": 210,
+        "tall_mask_frames": 0,
+        "sam_invoked_frames": 257,
+        "latency_ms": {
+          "vial": {
+            "median": 4.2881229892373085,
+            "p95": 4.953928425675258
+          },
+          "liquid_detector": {
+            "median": 22.677168541122228,
+            "p95": 23.48791333497502
+          },
+          "mask_and_prompt": {
+            "median": 57.77145753381774,
+            "p95": 58.700576797127724
+          },
+          "qa": {
+            "median": 14.834770932793617,
+            "p95": 15.693653631024063
+          },
+          "total": {
+            "median": 99.83534802449867,
+            "p95": 101.38268650625832
+          }
+        },
+        "invoked_latency_ms": {
+          "samples": 514,
+          "median": 99.86396646127105
+        }
+      },
+      "temporal": {
+        "source_frames": 264,
+        "measured_samples": 528,
+        "proposal_frames": 189,
+        "qa_pass": 105,
+        "tall_mask_frames": 0,
+        "sam_invoked_frames": 0,
+        "latency_ms": {
+          "vial": {
+            "median": 4.58005751715973,
+            "p95": 4.988697957014665
+          },
+          "liquid_detector": {
+            "median": 0.0,
+            "p95": 0.0
+          },
+          "mask_and_prompt": {
+            "median": 4.855723062064499,
+            "p95": 5.889441032195463
+          },
+          "qa": {
+            "median": 6.689616944640875,
+            "p95": 14.965084317373112
+          },
+          "total": {
+            "median": 16.611501981969923,
+            "p95": 25.079206825466827
+          }
+        },
+        "invoked_latency_ms": null
+      }
+    },
+    "repeat_differences": {
+      "legacy_sam": {
+        "measurement_valid": 0,
+        "lab": 0,
+        "final_masks": 0
+      },
+      "synthetic_sam": {
+        "measurement_valid": 0,
+        "lab": 0,
+        "final_masks": 0
+      },
+      "temporal": {
+        "measurement_valid": 0,
+        "lab": 0,
+        "final_masks": 0
+      }
+    },
+    "identical_vial_frame_checks": 792,
+    "video_frames": 240,
+    "video_fps": 5,
+    "accuracy": null,
+    "onset_accuracy": null,
+    "approved_labels": false,
+    "training": false,
+    "run5_used": false,
+    "app_changed": false,
+    "temporal_reproduced_qa": true,
+    "limits": [
+      "Practical system comparison; training corpora, initialization and checkpoint selection differ.",
+      "Legacy comparator selected on inspected Run4; all clips are development evidence, not blind tests.",
+      "QA availability, model agreement and tall-mask counts are not accuracy.",
+      "Cached-input timing excludes decode, rendering, transport, browser and serialization."
+    ]
+  },
+  "original_policy_replay": {
+    "status": "passed",
+    "frames": 264,
+    "sam_policy_checks": 528,
+    "original_executed_policy_sha256": "f1d533490623611dbb3a51fbb3240ab4fefad3073927b4d75a175f03c47d1dce",
+    "refactored_policy_sha256": "dd411fff36b0c7ad1f0c2d094d1da2786a03d641ae7a67184111739a229d94a3",
+    "all_policies_and_bridges_exact": true,
+    "past_only_prompt_sources": true,
+    "maximum_prompt_age_s": 0.6000000000000227,
+    "gpu_used": false,
+    "run5_used": false
+  },
+  "refinement": {
+    "source_frames": 264,
+    "measured_samples": 528,
+    "temporal_proposal_frames": 189,
+    "sam_invoked_frames": 188,
+    "refined_proposal_frames": 188,
+    "qa_pass": 185,
+    "original_temporal_qa": 105,
+    "qa_gains": 80,
+    "qa_losses": 0,
+    "repeat_differences": {
+      "raw_masks": 0,
+      "qa": 0,
+      "final_masks": 0,
+      "colors": 0
+    },
+    "incremental_latency_ms": {
+      "prompt_sam": {
+        "median": 57.71512899082154,
+        "p95": 58.5526515787933
+      },
+      "qa": {
+        "median": 14.805074490141124,
+        "p95": 15.196618705522269
+      },
+      "incremental_total": {
+        "median": 72.62353802798316,
+        "p95": 73.55420499225147
+      }
+    },
+    "accuracy": null,
+    "onset_accuracy": null,
+    "run5_used": false,
+    "app_changed": false,
+    "limits": [
+      "Exploratory arm added after inspecting matched comparison; no new training/threshold selection.",
+      "Cached detector/temporal outputs; timing is incremental refinement, not full pipeline.",
+      "Availability gains do not establish mask or recipe accuracy; reviewed outlines/onset remain pending."
+    ]
+  },
+  "archive_hashes": {
+    "sam-comparison-artifacts.tar.gz": "5c0f77a27c5e90fed0263292644d55dac5bd843c115d033da2926f37b2e96a29",
+    "sam-refinement-artifacts.tar.gz": "0279b5acdf1d998eae27aa45a63443005023aafca544a5d21facd2004b4885ed"
+  },
+  "verified_artifact_counts": {
+    "sam-comparison-verified-v2": 239,
+    "temporal-sam-refinement-v1": 7
+  },
+  "summary_manifest": {
+    "artifacts": {
+      "comparison.json": "ec9e82f1b9d44dc55aa74839c8514ac723fc9afc4377a363dcd270e28f806d92",
+      "early-later-mask-review.png": "996a7d6ea6e38b666fd9b263592bcf87e0312398f1698cb7f70c33be39949026",
+      "matched-comparison.png": "de3d760b49beb9a7b9e71b38c30a99ef706e594a66017a42fb6ed8fb18b87c6d",
+      "README.md": "f8c6cf10d3e02643d78dd378fb68a608ee851208e0a2caa677f2fa1c42b90fb0",
+      "temporal-sam-refinement-review.png": "fdf325b7f4672e394faf4d74d625db3f5214689a0f467f7f0719601c2b3a2aed"
+    }
+  },
+  "comparison_plan_sha256": "d63bbcad6082ba994fb26cd04b1bcee798efac8b181098d80528fa1458e82a6d",
+  "refinement_plan_sha256": "7437a7167736fbd543300035423e32695442bc72901026daa4a3769490f51646",
+  "executed_comparison_helper_sha256": "3da889a60de8658239e2dc4af5f5710284f1cf989f6a21e1fc5ad82434b115df",
+  "refinement_executed_source_matches_local": true,
+  "manifest_recovery": {
+    "original": "/home/hackathon8/ai-club-tools/experiments/synthetic-iterations-20261022-v1/sam-comparison-v1",
+    "reason": "Manifest-only IsADirectoryError on helpers/__pycache__ after all inference/video outputs finished.",
+    "inference_repeated": false,
+    "original_preserved": true,
+    "source_frames_redecoded": 264,
+    "video_frames_redecoded": 240,
+    "raw_and_final_masks_colors_QA_match_between_passes": true,
+    "timing_statistics_recomputed": true,
+    "finalizer_sha256": "dc9a22a924182929b92b1e75a5278f07ffb6989f5bd18ed7db523a184edd2ad8"
+  },
+  "tests": {
+    "annotation_scoring_passed": 24,
+    "failed": 0,
+    "fixtures": "CPU-only toy geometry, ineligible as team annotations.",
+    "compile_passed": true,
+    "git_whitespace_passed": true
+  },
+  "checks": {
+    "source_clocks_RGB_verified": true,
+    "vial_geometry_equal_792_source_groups": true,
+    "repeated_masks_colors_QA_exact": true,
+    "hybrid_proposals_subset_of_temporal": true,
+    "paired_QA_gains80_losses0": true,
+    "all_summary_hashes": true,
+    "remote_shared_gpu_lock_free": true
+  },
+  "source_sha256": {
+    "setup/vision/compare_sam_temporal.py": "76a64c96e34fa68cddee4cdc892c1ff1cfa67988be9080ebbad286e7d5160c4f",
+    "setup/vision/finalize_sam_comparison.py": "dc9a22a924182929b92b1e75a5278f07ffb6989f5bd18ed7db523a184edd2ad8",
+    "setup/vision/verify_sam_prompt_equivalence.py": "3c0850aac2354bcc81b8d6a710b5afdc7cc2f84bfbe00a1cf10439a64437184a",
+    "setup/vision/refine_temporal_with_sam.py": "ebb2e418d682e4ee123a44b197494b07e1b6bdc6872ee2c18fc6d3c6adaf91bd",
+    "setup/vision/summarize_sam_temporal.py": "a230c9114af2f539f0499e91c8d5da0f68ae239a1d9aa3150c19a0feb20484aa",
+    "annotation_review/score_sam_temporal_review.py": "e4b65ada802d349e932413de12dcc773362a0d8467c30528534c027165042d8c",
+    "annotation_review/tests/test_sam_temporal_scoring.py": "e36f8e9eb2e4d8cbb283d59e16a0c05585bdd28fa7086f53988aea946d654014",
+    "setup/vision/SAM-TEMPORAL-COMPARISON.md": "0b65004873dc1b5071cd77577d834e32fd3aa723572ff15013af9bb33653f5f3",
+    "setup/vision/TEMPORAL-POOL-CANDIDATE.md": "c28ca468762cd6eefe12f4c41c6b8cb94a2f6ec4db03216e91ee9c93f1ceac89",
+    "annotation_review/VISIBLE-POOL-REVIEW.md": "ae8c3d1de61e1815749b6648d938d451eb9306247434bb88499d89a3dc044541",
+    "HANDOFF.md": "48cdc5fb87a50a72a5150a35b4f904db5345063408d3d9df71a4851bc90fd5cc"
+  },
+  "limits": [
+    "No real human mask/presence/onset accuracy; common72-frame review export not yet supplied.",
+    "Legacy R-CNN uses realCSI fitting/Run4 selection; synthetic arms have different fitting data and initialization. System comparison, not isolated architecture ablation.",
+    "QA availability and tall-mask counts are not segmentation accuracy; inspected early SAM masks can cover glass.",
+    "Cached full CV timings exclude decode, rendering, serialization, transport and browser.",
+    "Hybrid refinement reuses cached vial/temporal predictions;72.62ms is incremental prompt/SAM/QA, not full hybrid latency.",
+    "Hybrid added after inspecting matched comparison. Wrong-reference temporal failure remains unresolved.",
+    "Original job failed only while hashing __pycache__ after inference/video; fresh verification copy preserves original logs/helpers without repeated GPU inference."
+  ]
+}

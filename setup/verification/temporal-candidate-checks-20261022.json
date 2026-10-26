@@ -1,0 +1,911 @@
+{
+  "schema_version": 1,
+  "checked_utc": "2026-10-23T03:18:59.471960+00:00",
+  "branch": "austin-work",
+  "gpu": "NVIDIA GB10",
+  "completed": true,
+  "local_gpu_used": false,
+  "app_changed": false,
+  "main_changed": false,
+  "pushed": false,
+  "run5_used": false,
+  "collector": {
+    "archive_sha256": "10d28cc6aa9abedc46dd090d914d992875b493c844dc340ec6b0f51c715b661c",
+    "archive_bytes": 2231967,
+    "files": 119,
+    "finished_unix": 1792725267.3303819,
+    "source_roots": {
+      "long-original": "/home/hackathon8/ai-club-tools/experiments/synthetic-iterations-20261022-v2/long-original-v1",
+      "long-paired": "/home/hackathon8/ai-club-tools/experiments/synthetic-iterations-20261022-v2/long-paired-v1",
+      "duration-controls": "/home/hackathon8/ai-club-tools/experiments/synthetic-iterations-20261022-v2/duration-controls-v1",
+      "synthetic-stability": "/home/hackathon8/ai-club-tools/experiments/synthetic-iterations-20261022-v1/mask-stability-v1",
+      "real-stability": "/home/hackathon8/ai-club-tools/experiments/synthetic-iterations-20261022-v1/real-mask-stability-v1",
+      "pipeline-benchmark": "/home/hackathon8/ai-club-tools/experiments/synthetic-iterations-20261022-v1/temporal-pipeline-benchmark-v1"
+    }
+  },
+  "collected_artifacts_verified": 118,
+  "collection_manifest_sha256": "d73545acf0797a263169b6e784165fffe1dc58107a266149f14bfb91ac10fef4",
+  "summary_completed": {
+    "artifacts": {
+      "comparison.json": "3bbe9e0af9bd7a32a9e0e85f7a824fd12af4fe85e081a768b3d50d0e4cc9f662",
+      "pipeline-latency.png": "a36a62b8a9eb66bd53d155473f8c72bdf587b09185f14bdcaa5f920640346b9d",
+      "README.md": "af30138215930db87e3458d6263eb6195bfcbc2dc67d10c26b004c226270aee0",
+      "real-prediction-stability.png": "3a53febc6043bbaf98f2741b12ab71379568077977bf62d417579306fdf9a663",
+      "synthetic-stability.png": "8bef207cb0b5aeda19dc4cb7b474c1959d9e0e5b79e04ec572402c2eae6607da"
+    }
+  },
+  "pipeline": {
+    "passes": [
+      {
+        "pass_id": 1,
+        "frames": 264,
+        "qa_pass": 105,
+        "qa_decision_differences": 0,
+        "final_mask_differences": 0,
+        "color_differences": 0
+      },
+      {
+        "pass_id": 2,
+        "frames": 264,
+        "qa_pass": 105,
+        "qa_decision_differences": 0,
+        "final_mask_differences": 0,
+        "color_differences": 0
+      }
+    ],
+    "timings_ms": {
+      "vial_detector": {
+        "samples": 528,
+        "median": 4.381042963359505,
+        "p95": 4.745268984697759
+      },
+      "temporal_mask": {
+        "samples": 528,
+        "median": 3.928627062123269,
+        "p95": 5.000359640689567
+      },
+      "unchanged_QA": {
+        "samples": 528,
+        "median": 6.682821025606245,
+        "p95": 15.102900617057458
+      },
+      "total": {
+        "samples": 528,
+        "median": 15.471643069759011,
+        "p95": 24.52596297953278
+      }
+    },
+    "device": "NVIDIA GB10",
+    "torch": "2.11.0+cu130",
+    "liquid_model_sha256": "6714fe32191d8eba230aa87246f38a25c2906c619d60d7ba30c9e60205352eef",
+    "vial_model_sha256": "0bfac07a256eaf190416b632ad1f094a6b534309df1bb11a8c175e9d811b56bc",
+    "qa_config_unchanged": true,
+    "source_rgb_and_pts_verified": true,
+    "source_frames": 264,
+    "measured_samples": 528,
+    "sam_used": false,
+    "accuracy": null,
+    "onset_accuracy": null,
+    "app_changed": false,
+    "local_gpu_used": false
+  },
+  "real_stress": {
+    "models": {
+      "paired_diff": {
+        "raw": {
+          "frames": 264,
+          "clean_positive_frames": 191,
+          "clean_negative_frames": 73,
+          "accepted": 191,
+          "presence_decision_flips": 0,
+          "clean_negative_to_positive": 0,
+          "clean_positive_to_negative": 0,
+          "clean_positive_mean_prediction_iou": 1.0,
+          "self_reference_accepted": 0,
+          "self_reference_frames": 6
+        },
+        "current_exposure085": {
+          "frames": 264,
+          "clean_positive_frames": 191,
+          "clean_negative_frames": 73,
+          "accepted": 206,
+          "presence_decision_flips": 17,
+          "clean_negative_to_positive": 16,
+          "clean_positive_to_negative": 1,
+          "clean_positive_mean_prediction_iou": 0.790988804594363,
+          "self_reference_accepted": 1,
+          "self_reference_frames": 6
+        },
+        "current_exposure070": {
+          "frames": 264,
+          "clean_positive_frames": 191,
+          "clean_negative_frames": 73,
+          "accepted": 114,
+          "presence_decision_flips": 99,
+          "clean_negative_to_positive": 11,
+          "clean_positive_to_negative": 88,
+          "clean_positive_mean_prediction_iou": 0.28342573047648834,
+          "self_reference_accepted": 1,
+          "self_reference_frames": 6
+        },
+        "current_exposure130": {
+          "frames": 264,
+          "clean_positive_frames": 191,
+          "clean_negative_frames": 73,
+          "accepted": 109,
+          "presence_decision_flips": 82,
+          "clean_negative_to_positive": 0,
+          "clean_positive_to_negative": 82,
+          "clean_positive_mean_prediction_iou": 0.3039552746468322,
+          "self_reference_accepted": 0,
+          "self_reference_frames": 6
+        },
+        "current_green085": {
+          "frames": 264,
+          "clean_positive_frames": 191,
+          "clean_negative_frames": 73,
+          "accepted": 189,
+          "presence_decision_flips": 2,
+          "clean_negative_to_positive": 0,
+          "clean_positive_to_negative": 2,
+          "clean_positive_mean_prediction_iou": 0.9154770862915803,
+          "self_reference_accepted": 0,
+          "self_reference_frames": 6
+        },
+        "reference_shift2": {
+          "frames": 264,
+          "clean_positive_frames": 191,
+          "clean_negative_frames": 73,
+          "accepted": 187,
+          "presence_decision_flips": 4,
+          "clean_negative_to_positive": 0,
+          "clean_positive_to_negative": 4,
+          "clean_positive_mean_prediction_iou": 0.9114373432181445,
+          "self_reference_accepted": 0,
+          "self_reference_frames": 6
+        },
+        "reference_shift5": {
+          "frames": 264,
+          "clean_positive_frames": 191,
+          "clean_negative_frames": 73,
+          "accepted": 143,
+          "presence_decision_flips": 48,
+          "clean_negative_to_positive": 0,
+          "clean_positive_to_negative": 48,
+          "clean_positive_mean_prediction_iou": 0.6158837907768796,
+          "self_reference_accepted": 0,
+          "self_reference_frames": 6
+        },
+        "late_reference": {
+          "frames": 264,
+          "clean_positive_frames": 191,
+          "clean_negative_frames": 73,
+          "accepted": 194,
+          "presence_decision_flips": 143,
+          "clean_negative_to_positive": 73,
+          "clean_positive_to_negative": 70,
+          "clean_positive_mean_prediction_iou": 0.20108406140760307,
+          "self_reference_accepted": 6,
+          "self_reference_frames": 6
+        },
+        "branch_latency_ms": {
+          "samples": 200,
+          "warmup": 20,
+          "median": 2.825698524247855,
+          "p95": 3.6540331901051104,
+          "includes": "RGB preprocessing, transfer, features, forward, component mask",
+          "excludes": "decode, vial detection, QA, transport, browser"
+        }
+      },
+      "paired_diff_gain": {
+        "raw": {
+          "frames": 264,
+          "clean_positive_frames": 189,
+          "clean_negative_frames": 75,
+          "accepted": 189,
+          "presence_decision_flips": 0,
+          "clean_negative_to_positive": 0,
+          "clean_positive_to_negative": 0,
+          "clean_positive_mean_prediction_iou": 1.0,
+          "self_reference_accepted": 0,
+          "self_reference_frames": 6
+        },
+        "current_exposure085": {
+          "frames": 264,
+          "clean_positive_frames": 189,
+          "clean_negative_frames": 75,
+          "accepted": 190,
+          "presence_decision_flips": 1,
+          "clean_negative_to_positive": 1,
+          "clean_positive_to_negative": 0,
+          "clean_positive_mean_prediction_iou": 0.9965719356927669,
+          "self_reference_accepted": 0,
+          "self_reference_frames": 6
+        },
+        "current_exposure070": {
+          "frames": 264,
+          "clean_positive_frames": 189,
+          "clean_negative_frames": 75,
+          "accepted": 191,
+          "presence_decision_flips": 2,
+          "clean_negative_to_positive": 2,
+          "clean_positive_to_negative": 0,
+          "clean_positive_mean_prediction_iou": 0.9933723453027129,
+          "self_reference_accepted": 0,
+          "self_reference_frames": 6
+        },
+        "current_exposure130": {
+          "frames": 264,
+          "clean_positive_frames": 189,
+          "clean_negative_frames": 75,
+          "accepted": 200,
+          "presence_decision_flips": 13,
+          "clean_negative_to_positive": 12,
+          "clean_positive_to_negative": 1,
+          "clean_positive_mean_prediction_iou": 0.9170315046771325,
+          "self_reference_accepted": 1,
+          "self_reference_frames": 6
+        },
+        "current_green085": {
+          "frames": 264,
+          "clean_positive_frames": 189,
+          "clean_negative_frames": 75,
+          "accepted": 190,
+          "presence_decision_flips": 1,
+          "clean_negative_to_positive": 1,
+          "clean_positive_to_negative": 0,
+          "clean_positive_mean_prediction_iou": 0.9967610521135857,
+          "self_reference_accepted": 0,
+          "self_reference_frames": 6
+        },
+        "reference_shift2": {
+          "frames": 264,
+          "clean_positive_frames": 189,
+          "clean_negative_frames": 75,
+          "accepted": 190,
+          "presence_decision_flips": 1,
+          "clean_negative_to_positive": 1,
+          "clean_positive_to_negative": 0,
+          "clean_positive_mean_prediction_iou": 0.9396677773685254,
+          "self_reference_accepted": 0,
+          "self_reference_frames": 6
+        },
+        "reference_shift5": {
+          "frames": 264,
+          "clean_positive_frames": 189,
+          "clean_negative_frames": 75,
+          "accepted": 201,
+          "presence_decision_flips": 12,
+          "clean_negative_to_positive": 12,
+          "clean_positive_to_negative": 0,
+          "clean_positive_mean_prediction_iou": 0.8051836203266057,
+          "self_reference_accepted": 1,
+          "self_reference_frames": 6
+        },
+        "late_reference": {
+          "frames": 264,
+          "clean_positive_frames": 189,
+          "clean_negative_frames": 75,
+          "accepted": 213,
+          "presence_decision_flips": 126,
+          "clean_negative_to_positive": 75,
+          "clean_positive_to_negative": 51,
+          "clean_positive_mean_prediction_iou": 0.25449567159582265,
+          "self_reference_accepted": 6,
+          "self_reference_frames": 6
+        },
+        "branch_latency_ms": {
+          "samples": 200,
+          "warmup": 20,
+          "median": 1.923224946949631,
+          "p95": 2.064953907392919,
+          "includes": "RGB preprocessing, transfer, features, forward, component mask",
+          "excludes": "decode, vial detection, QA, transport, browser"
+        }
+      }
+    },
+    "accuracy": null,
+    "onset_accuracy": null,
+    "run5_used": false,
+    "training": false,
+    "limits": [
+      "Agreement with clean output is not accuracy. No reviewed presence/mask/onset labels.",
+      "Digital nuisance changes are not physical lighting/camera validation.",
+      "Six inspected development clips with unreviewed references. No threshold or checkpoint changes."
+    ]
+  },
+  "synthetic_stress": {
+    "single_rgb": {
+      "metadata": {
+        "mode": "single_rgb",
+        "epoch": 45,
+        "fit_epochs": 60,
+        "checkpoint_sha256": "80dd310e3f6729924377256d2168b14c93b998fe84e79bd62729a556b9b8ae50",
+        "roi": [
+          256,
+          240,
+          368,
+          432
+        ],
+        "anchor": [
+          32,
+          160,
+          80,
+          208
+        ],
+        "architecture": "Small GroupNorm U-Net16/32/64/128 + presence head",
+        "initialization": "Random",
+        "training_images": 144,
+        "development_images": 48,
+        "training_real_runs": [],
+        "selection_real_runs": [],
+        "run5_used": false,
+        "helper_sha256": "a1bd2e6c2dc80d35743049ace3e37f30fe4c0c8f1cd9aa8614867c90081fd31c"
+      },
+      "conditions": {
+        "raw": {
+          "images": 48,
+          "positive_images": 24,
+          "negative_images": 24,
+          "positive_presence_detected": 23,
+          "negative_presence_alarms": 0,
+          "negative_nonempty_masks": 0,
+          "positive_mean_geometric_iou": 0.8762673464778006
+        },
+        "current_exposure085": {
+          "images": 48,
+          "positive_images": 24,
+          "negative_images": 24,
+          "positive_presence_detected": 23,
+          "negative_presence_alarms": 0,
+          "negative_nonempty_masks": 1,
+          "positive_mean_geometric_iou": 0.8799668933474019
+        },
+        "current_exposure070": {
+          "images": 48,
+          "positive_images": 24,
+          "negative_images": 24,
+          "positive_presence_detected": 23,
+          "negative_presence_alarms": 0,
+          "negative_nonempty_masks": 1,
+          "positive_mean_geometric_iou": 0.8772932860846883
+        },
+        "current_exposure130": {
+          "images": 48,
+          "positive_images": 24,
+          "negative_images": 24,
+          "positive_presence_detected": 23,
+          "negative_presence_alarms": 0,
+          "negative_nonempty_masks": 0,
+          "positive_mean_geometric_iou": 0.8591158354360965
+        },
+        "current_green085": {
+          "images": 48,
+          "positive_images": 24,
+          "negative_images": 24,
+          "positive_presence_detected": 23,
+          "negative_presence_alarms": 0,
+          "negative_nonempty_masks": 0,
+          "positive_mean_geometric_iou": 0.8722920537056774
+        },
+        "reference_shift2": {
+          "images": 48,
+          "positive_images": 24,
+          "negative_images": 24,
+          "positive_presence_detected": 23,
+          "negative_presence_alarms": 0,
+          "negative_nonempty_masks": 0,
+          "positive_mean_geometric_iou": 0.8762673464778006
+        },
+        "reference_shift5": {
+          "images": 48,
+          "positive_images": 24,
+          "negative_images": 24,
+          "positive_presence_detected": 23,
+          "negative_presence_alarms": 0,
+          "negative_nonempty_masks": 0,
+          "positive_mean_geometric_iou": 0.8762673464778006
+        },
+        "other_empty_reference": {
+          "images": 48,
+          "positive_images": 24,
+          "negative_images": 24,
+          "positive_presence_detected": 23,
+          "negative_presence_alarms": 0,
+          "negative_nonempty_masks": 0,
+          "positive_mean_geometric_iou": 0.8762673464778006
+        }
+      }
+    },
+    "paired_diff": {
+      "metadata": {
+        "mode": "paired_diff",
+        "epoch": 50,
+        "fit_epochs": 60,
+        "checkpoint_sha256": "d26820ca9f56ae9f51234949c396ea5c3aad385c383e0dfe88eb17f432045754",
+        "roi": [
+          256,
+          240,
+          368,
+          432
+        ],
+        "anchor": [
+          32,
+          160,
+          80,
+          208
+        ],
+        "architecture": "Small GroupNorm U-Net16/32/64/128 + presence head",
+        "initialization": "Random",
+        "training_images": 144,
+        "development_images": 48,
+        "training_real_runs": [],
+        "selection_real_runs": [],
+        "run5_used": false,
+        "helper_sha256": "a1bd2e6c2dc80d35743049ace3e37f30fe4c0c8f1cd9aa8614867c90081fd31c"
+      },
+      "conditions": {
+        "raw": {
+          "images": 48,
+          "positive_images": 24,
+          "negative_images": 24,
+          "positive_presence_detected": 24,
+          "negative_presence_alarms": 0,
+          "negative_nonempty_masks": 0,
+          "positive_mean_geometric_iou": 0.892851300907756
+        },
+        "current_exposure085": {
+          "images": 48,
+          "positive_images": 24,
+          "negative_images": 24,
+          "positive_presence_detected": 23,
+          "negative_presence_alarms": 0,
+          "negative_nonempty_masks": 2,
+          "positive_mean_geometric_iou": 0.8509060861087773
+        },
+        "current_exposure070": {
+          "images": 48,
+          "positive_images": 24,
+          "negative_images": 24,
+          "positive_presence_detected": 20,
+          "negative_presence_alarms": 0,
+          "negative_nonempty_masks": 24,
+          "positive_mean_geometric_iou": 0.3021018555670028
+        },
+        "current_exposure130": {
+          "images": 48,
+          "positive_images": 24,
+          "negative_images": 24,
+          "positive_presence_detected": 22,
+          "negative_presence_alarms": 0,
+          "negative_nonempty_masks": 24,
+          "positive_mean_geometric_iou": 0.23347238957953528
+        },
+        "current_green085": {
+          "images": 48,
+          "positive_images": 24,
+          "negative_images": 24,
+          "positive_presence_detected": 23,
+          "negative_presence_alarms": 0,
+          "negative_nonempty_masks": 16,
+          "positive_mean_geometric_iou": 0.835410007634171
+        },
+        "reference_shift2": {
+          "images": 48,
+          "positive_images": 24,
+          "negative_images": 24,
+          "positive_presence_detected": 24,
+          "negative_presence_alarms": 0,
+          "negative_nonempty_masks": 0,
+          "positive_mean_geometric_iou": 0.8802708911660017
+        },
+        "reference_shift5": {
+          "images": 48,
+          "positive_images": 24,
+          "negative_images": 24,
+          "positive_presence_detected": 23,
+          "negative_presence_alarms": 0,
+          "negative_nonempty_masks": 16,
+          "positive_mean_geometric_iou": 0.7998903215119282
+        },
+        "other_empty_reference": {
+          "images": 48,
+          "positive_images": 24,
+          "negative_images": 24,
+          "positive_presence_detected": 10,
+          "negative_presence_alarms": 4,
+          "negative_nonempty_masks": 19,
+          "positive_mean_geometric_iou": 0.38935267244631416
+        }
+      }
+    },
+    "paired_diff_gain": {
+      "metadata": {
+        "mode": "paired_diff_gain",
+        "epoch": 40,
+        "fit_epochs": 60,
+        "checkpoint_sha256": "6714fe32191d8eba230aa87246f38a25c2906c619d60d7ba30c9e60205352eef",
+        "roi": [
+          256,
+          240,
+          368,
+          432
+        ],
+        "anchor": [
+          32,
+          160,
+          80,
+          208
+        ],
+        "architecture": "Small GroupNorm U-Net16/32/64/128 + presence head",
+        "initialization": "Random",
+        "training_images": 144,
+        "development_images": 48,
+        "training_real_runs": [],
+        "selection_real_runs": [],
+        "run5_used": false,
+        "helper_sha256": "a1bd2e6c2dc80d35743049ace3e37f30fe4c0c8f1cd9aa8614867c90081fd31c"
+      },
+      "conditions": {
+        "raw": {
+          "images": 48,
+          "positive_images": 24,
+          "negative_images": 24,
+          "positive_presence_detected": 24,
+          "negative_presence_alarms": 0,
+          "negative_nonempty_masks": 1,
+          "positive_mean_geometric_iou": 0.8932684624775499
+        },
+        "current_exposure085": {
+          "images": 48,
+          "positive_images": 24,
+          "negative_images": 24,
+          "positive_presence_detected": 24,
+          "negative_presence_alarms": 0,
+          "negative_nonempty_masks": 1,
+          "positive_mean_geometric_iou": 0.8927931671937815
+        },
+        "current_exposure070": {
+          "images": 48,
+          "positive_images": 24,
+          "negative_images": 24,
+          "positive_presence_detected": 24,
+          "negative_presence_alarms": 0,
+          "negative_nonempty_masks": 1,
+          "positive_mean_geometric_iou": 0.8924713830325929
+        },
+        "current_exposure130": {
+          "images": 48,
+          "positive_images": 24,
+          "negative_images": 24,
+          "positive_presence_detected": 22,
+          "negative_presence_alarms": 0,
+          "negative_nonempty_masks": 14,
+          "positive_mean_geometric_iou": 0.612601221414865
+        },
+        "current_green085": {
+          "images": 48,
+          "positive_images": 24,
+          "negative_images": 24,
+          "positive_presence_detected": 24,
+          "negative_presence_alarms": 0,
+          "negative_nonempty_masks": 1,
+          "positive_mean_geometric_iou": 0.8931773576587135
+        },
+        "reference_shift2": {
+          "images": 48,
+          "positive_images": 24,
+          "negative_images": 24,
+          "positive_presence_detected": 24,
+          "negative_presence_alarms": 0,
+          "negative_nonempty_masks": 0,
+          "positive_mean_geometric_iou": 0.8574344247857718
+        },
+        "reference_shift5": {
+          "images": 48,
+          "positive_images": 24,
+          "negative_images": 24,
+          "positive_presence_detected": 23,
+          "negative_presence_alarms": 2,
+          "negative_nonempty_masks": 24,
+          "positive_mean_geometric_iou": 0.49882815869438507
+        },
+        "other_empty_reference": {
+          "images": 48,
+          "positive_images": 24,
+          "negative_images": 24,
+          "positive_presence_detected": 11,
+          "negative_presence_alarms": 8,
+          "negative_nonempty_masks": 24,
+          "positive_mean_geometric_iou": 0.3564334420110993
+        }
+      }
+    }
+  },
+  "duration_controls": [
+    {
+      "arm": "original",
+      "checkpoint": "epoch3",
+      "epoch": 3,
+      "synthetic_ap": 0.9539864512767066,
+      "real_provisional_ap": 0.23403156294230257,
+      "matched": 64,
+      "unmatched": 361,
+      "missed": 25
+    },
+    {
+      "arm": "original",
+      "checkpoint": "synthetic_selected",
+      "epoch": 15,
+      "synthetic_ap": 1.0,
+      "real_provisional_ap": 0.14536941593886357,
+      "matched": 57,
+      "unmatched": 320,
+      "missed": 32
+    },
+    {
+      "arm": "original",
+      "checkpoint": "last15",
+      "epoch": 15,
+      "synthetic_ap": 1.0,
+      "real_provisional_ap": 0.14501362493143355,
+      "matched": 57,
+      "unmatched": 320,
+      "missed": 32
+    },
+    {
+      "arm": "paired",
+      "checkpoint": "epoch3",
+      "epoch": 3,
+      "synthetic_ap": 0.8888781341673206,
+      "real_provisional_ap": 0.2358480850790837,
+      "matched": 52,
+      "unmatched": 214,
+      "missed": 37
+    },
+    {
+      "arm": "paired",
+      "checkpoint": "synthetic_selected",
+      "epoch": 15,
+      "synthetic_ap": 0.9549593612702998,
+      "real_provisional_ap": 0.18352436823778542,
+      "matched": 42,
+      "unmatched": 424,
+      "missed": 47
+    },
+    {
+      "arm": "paired",
+      "checkpoint": "last15",
+      "epoch": 15,
+      "synthetic_ap": 0.9549593612702998,
+      "real_provisional_ap": 0.18387030417776218,
+      "matched": 42,
+      "unmatched": 425,
+      "missed": 47
+    }
+  ],
+  "duration_state_audit": {
+    "original": {
+      "primary_epoch": 15,
+      "last_epoch": 15,
+      "model_tensors_equal": true
+    },
+    "paired": {
+      "primary_epoch": 15,
+      "last_epoch": 15,
+      "model_tensors_equal": true
+    },
+    "default_control_backend": {
+      "cudnn_deterministic": false,
+      "cudnn_allow_tf32": true,
+      "matmul_allow_tf32": false
+    },
+    "fitter_backend": {
+      "cudnn_deterministic": true,
+      "cudnn_allow_tf32": false,
+      "matmul_allow_tf32": false
+    },
+    "interpretation": "Primary and last checkpoint tensors verified equal. Control evaluator used default backend flags, unlike strict fitter scoring. Both controls share the same evaluator; small primary/control AP differences are retained."
+  },
+  "duration_state_audit_sha256": "eac02e772ec9bf713e2ae289b1ec12312adf9d479716d31b8ff8aeaec807c717",
+  "executed_helper_hashes": {
+    "executed-helpers/suite-plan.json": "7d8ab92d0d4fdeba7354f0d5e569fd7b55e77ebb8aef2561a2a6058a8f619568",
+    "executed-helpers/completed-long.json": "2c3cccc34ee33758ecaf6d271d5f62dc6e6e5667904372eb4fef0b5b0586b612",
+    "executed-helpers/probe_pair_mask_stability.py": "09b50dfbfb4f7066da40062b2eb9b9f2d5ea0cf8170b1eac7a6b98f24db42519",
+    "executed-helpers/probe_real_temporal_stability.py": "235c50ac5002e284f883e137a90201f85a82b892190d20308a75eb8321c56952",
+    "executed-helpers/benchmark_temporal_pipeline.py": "d29e6ae99b10042edab809a27b544605090cf822be9e1f5f86f429835415bf83",
+    "executed-helpers/evaluate_synthetic_duration_controls.py": "2c50a8dcec119fd5f93943245dd8fed23eb34749a24122f7a7eb6d239665d38c"
+  },
+  "source_hashes": {
+    "setup/vision/probe_real_temporal_stability.py": "235c50ac5002e284f883e137a90201f85a82b892190d20308a75eb8321c56952",
+    "setup/vision/benchmark_temporal_pipeline.py": "d29e6ae99b10042edab809a27b544605090cf822be9e1f5f86f429835415bf83",
+    "setup/vision/collect_temporal_candidate_checks.py": "987e6d08789609de0aba5e5ab970e5784f6392697d58b5ae0b411246d9c4d6be",
+    "setup/vision/summarize_temporal_checks.py": "e5329cae64927e982cc254802f6fac67d1bf1815cb3cf636bc420bda8c54487c",
+    "setup/vision/TEMPORAL-POOL-CANDIDATE.md": "b3b2d3b49c0bfcb1d67734de995527b875f24677463dde59b9a6c410010fe7b4",
+    "setup/vision/SYNTHETIC-ITERATIONS.md": "ce6ca5b5ebfd6f960e6dd26a79283fd8f21c740381ebb8501088556a8cbdbe1c",
+    "HANDOFF.md": "bf8f627865aabef4e6b50ab60ec082e53e9c2381632befd10d8d14dedc78e6cc",
+    "setup/verification/README.md": "a35c5e1c84d11f96618f0ed112e27549eef16ec35b9ed397eaf0ae0a5a3cbead"
+  },
+  "checks": {
+    "all_archived_report_hashes": true,
+    "all_summary_hashes": true,
+    "native_source_RGB_and_PTS": true,
+    "masks_colors_QA_exactly_reproduced_528_samples": true,
+    "raw_temporal_presence_reproduced": true,
+    "source_compile": true,
+    "git_diff_whitespace": true,
+    "all_required_remote_completion_markers": true,
+    "shared_gpu_lock_free": true
+  },
+  "human_review": {
+    "approved_labels_created": false,
+    "available": false,
+    "packet": "/mnt/c/Users/Austin/ai-club-tools/results/synthetic-iterations-20261022/visible-pool-review-v2/review.html",
+    "searched": "Known synthetic-iterations round/review packet and annotation_review/verification folders; only machine drafts and demonstration exports found."
+  },
+  "existing_QA_diagnostics": {
+    "models": {
+      "paired_diff": {
+        "run4-fill1": {
+          "frames": 44,
+          "accepted": 32,
+          "qa_pass": 12,
+          "accepted_but_qa_unavailable": 20,
+          "unavailable_flags": {
+            "liquid_missing_or_ambiguous_inside_vial": 20,
+            "insufficient_final_liquid_pixels": 20,
+            "insufficient_unclipped_pixels": 20
+          },
+          "first_sampled_activation": 336
+        },
+        "run4-fill2": {
+          "frames": 44,
+          "accepted": 32,
+          "qa_pass": 17,
+          "accepted_but_qa_unavailable": 15,
+          "unavailable_flags": {
+            "liquid_missing_or_ambiguous_inside_vial": 15,
+            "insufficient_final_liquid_pixels": 15,
+            "insufficient_unclipped_pixels": 15
+          },
+          "first_sampled_activation": 1704
+        },
+        "run4-fill3": {
+          "frames": 44,
+          "accepted": 32,
+          "qa_pass": 30,
+          "accepted_but_qa_unavailable": 2,
+          "unavailable_flags": {
+            "vial_track_not_stable": 2,
+            "carrier_motion": 1
+          },
+          "first_sampled_activation": 3084
+        },
+        "run4-fill4": {
+          "frames": 44,
+          "accepted": 32,
+          "qa_pass": 31,
+          "accepted_but_qa_unavailable": 1,
+          "unavailable_flags": {
+            "liquid_interior_too_small": 1,
+            "insufficient_final_liquid_pixels": 1,
+            "insufficient_unclipped_pixels": 1
+          },
+          "first_sampled_activation": 4212
+        },
+        "run4-fill5": {
+          "frames": 44,
+          "accepted": 34,
+          "qa_pass": 2,
+          "accepted_but_qa_unavailable": 32,
+          "unavailable_flags": {
+            "insufficient_final_liquid_pixels": 32,
+            "insufficient_unclipped_pixels": 31,
+            "liquid_missing_or_ambiguous_inside_vial": 30,
+            "liquid_interior_too_small": 1,
+            "insufficient_coherent_colored_liquid": 1
+          },
+          "first_sampled_activation": 6144
+        },
+        "run4-fill6": {
+          "frames": 44,
+          "accepted": 29,
+          "qa_pass": 9,
+          "accepted_but_qa_unavailable": 20,
+          "unavailable_flags": {
+            "insufficient_final_liquid_pixels": 20,
+            "liquid_missing_or_ambiguous_inside_vial": 19,
+            "insufficient_unclipped_pixels": 19,
+            "insufficient_coherent_colored_liquid": 1
+          },
+          "first_sampled_activation": 8112
+        }
+      },
+      "paired_diff_gain": {
+        "run4-fill1": {
+          "frames": 44,
+          "accepted": 32,
+          "qa_pass": 15,
+          "accepted_but_qa_unavailable": 17,
+          "unavailable_flags": {
+            "liquid_missing_or_ambiguous_inside_vial": 17,
+            "insufficient_final_liquid_pixels": 17,
+            "insufficient_unclipped_pixels": 17
+          },
+          "first_sampled_activation": 336
+        },
+        "run4-fill2": {
+          "frames": 44,
+          "accepted": 32,
+          "qa_pass": 21,
+          "accepted_but_qa_unavailable": 11,
+          "unavailable_flags": {
+            "liquid_missing_or_ambiguous_inside_vial": 11,
+            "insufficient_final_liquid_pixels": 11,
+            "insufficient_unclipped_pixels": 11
+          },
+          "first_sampled_activation": 1704
+        },
+        "run4-fill3": {
+          "frames": 44,
+          "accepted": 31,
+          "qa_pass": 29,
+          "accepted_but_qa_unavailable": 2,
+          "unavailable_flags": {
+            "vial_track_not_stable": 2,
+            "carrier_motion": 1
+          },
+          "first_sampled_activation": 3087
+        },
+        "run4-fill4": {
+          "frames": 44,
+          "accepted": 32,
+          "qa_pass": 27,
+          "accepted_but_qa_unavailable": 5,
+          "unavailable_flags": {
+            "insufficient_final_liquid_pixels": 5,
+            "insufficient_unclipped_pixels": 5,
+            "liquid_missing_or_ambiguous_inside_vial": 4,
+            "liquid_interior_too_small": 1
+          },
+          "first_sampled_activation": 4212
+        },
+        "run4-fill5": {
+          "frames": 44,
+          "accepted": 33,
+          "qa_pass": 4,
+          "accepted_but_qa_unavailable": 29,
+          "unavailable_flags": {
+            "insufficient_final_liquid_pixels": 29,
+            "insufficient_unclipped_pixels": 29,
+            "liquid_missing_or_ambiguous_inside_vial": 28,
+            "liquid_interior_too_small": 1
+          },
+          "first_sampled_activation": 6150
+        },
+        "run4-fill6": {
+          "frames": 44,
+          "accepted": 29,
+          "qa_pass": 9,
+          "accepted_but_qa_unavailable": 20,
+          "unavailable_flags": {
+            "liquid_missing_or_ambiguous_inside_vial": 20,
+            "insufficient_final_liquid_pixels": 20,
+            "insufficient_unclipped_pixels": 20
+          },
+          "first_sampled_activation": 8112
+        }
+      }
+    },
+    "source": "Completed frozen probe; no new inference or thresholds.",
+    "human_accuracy": null
+  },
+  "limits": [
+    "Digital perturbation agreement is not reviewed presence, mask or onset accuracy.",
+    "Six correlated inspected development clips; physical camera/light robustness remains unvalidated.",
+    "Cached-input CV timing excludes decode, rendering, transport and browser; not a deployed30fps claim.",
+    "A wrong/later reference causes substantial failures; reference capture/reset/alignment requires integration validation.",
+    "Detector control scoring uses default deterministic/TF32 settings, whereas primary fit scoring explicitly disables TF32 and requests deterministic cuDNN; small AP differences are retained. Primary/last state tensors independently verified equal.",
+    "Existing QA rules unchanged; association failures require reviewed geometry before policy changes."
+  ]
+}

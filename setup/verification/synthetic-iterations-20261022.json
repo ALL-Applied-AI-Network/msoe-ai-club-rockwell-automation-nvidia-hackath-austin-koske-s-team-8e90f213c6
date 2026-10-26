@@ -1,0 +1,192 @@
+{
+  "schema_version": 1,
+  "checked_utc": "2026-10-23T03:00:03.211566+00:00",
+  "device": "GB10; new GPU work remote only",
+  "branch": "austin-work",
+  "promoted": false,
+  "main_changed": false,
+  "pushed": false,
+  "synthetic_only_new_training": true,
+  "run5_used": false,
+  "approved_labels_created": false,
+  "completed_mask_probe": {
+    "summary": {
+      "single_rgb": {
+        "frames": 264,
+        "presence_positive": 264,
+        "qa_pass": 0
+      },
+      "paired_diff": {
+        "frames": 264,
+        "presence_positive": 191,
+        "qa_pass": 101
+      },
+      "paired_diff_gain": {
+        "frames": 264,
+        "presence_positive": 189,
+        "qa_pass": 105
+      }
+    },
+    "single_rgb_real_still_provisional_agreement": {
+      "targets": 89,
+      "ap50_101point": 0.16258370591298854,
+      "ap50_95_101point": 0.01917854625859002,
+      "confidence": 0.35,
+      "iou": 0.5,
+      "tp": 31,
+      "unmatched_boxes": 126,
+      "missed_targets": 58,
+      "precision": 0.19745222929936307,
+      "recall": 0.34831460674157305,
+      "provisional_negative_frames_with_predictions": 68,
+      "target_height_strata": {
+        "height_le32": {
+          "targets": 0,
+          "detected": 0
+        },
+        "height_32_to64": {
+          "targets": 18,
+          "detected": 0
+        },
+        "height_gt64": {
+          "targets": 71,
+          "detected": 31
+        }
+      }
+    },
+    "video_frames": 240,
+    "video_fps": 5,
+    "decoded_video_frames": 240,
+    "draft_frames": 72,
+    "wall_s": 21.340131610049866,
+    "real_mask_accuracy": null,
+    "real_presence_accuracy": null,
+    "onset_accuracy": null,
+    "approved_labels": false,
+    "run5_used": false,
+    "app_changed": false
+  },
+  "completed_preview": {
+    "frames": 240,
+    "fps": 5,
+    "duration_s": 48,
+    "source_rgb_and_pts_verified": true,
+    "source_video_sha256": "e2de9cdf613817556f3de1edaaf8e5aa4c998cdfdbb7c4c2cee2e76d672db1b9",
+    "checkpoint_sha256": "6714fe32191d8eba230aa87246f38a25c2906c619d60d7ba30c9e60205352eef",
+    "helper_sha256": "2e20e2c21add744a5fb6e0d4ba52f9121c0e679309ee58e24658245bb838e3d6",
+    "inference_rerun": false,
+    "gpu_used": false,
+    "approved_labels": false,
+    "artifacts": {
+      "candidate-contact-sheet.png": "868597927ab7144b97d102425d817b6465ef06e0bd0cb20123f3d053a3dddf2c",
+      "temporal-pool-candidate.mp4": "49eae4d72d08a0c67e56247a3110f547cd4bc3cd466ddc126de6e5930af1bb83"
+    }
+  },
+  "completed_optics": {
+    "images": 36,
+    "source_assets_unchanged": true,
+    "source_assets_sha256": {
+      "ORIGINAL_README.md": "6a4114d4978a3266fc1e09eea75790ea2a18552d943a8cf4f0df57001bff9b06",
+      "cameras/FillCam.json": "11966571ffa71a979297a0c6c730c739f33d86a0578fe0b4b890dd4a7ce1c936",
+      "stations/fill_station/fill_station.usda": "5f58540c187ac16c4426bffb3ebbe559e62d6d63ff359afdb08867fc24b60af9",
+      "stations/fill_station/geometry/fill_station.usdc": "57f578fd047d3a5f2ee25712d841f836272fc745a89c5dfbcc301f0c199191db",
+      "stations/fill_station/geometry/textures/color_B7C6CE.exr": "7b3ff7cc6c709d4b5ae34c40b60277db472b1c7d483a744cf0990ab7023d61cc"
+    },
+    "plan_sha256": "594de3b40dd12bff0319ee90da28be3c31409bddf10d3aa4153f08772e982d41",
+    "manifest_sha256": "501cc9b29f9da8f68555e41fecb5f5fd3403ce42cda68b1bb2cbcacb0b07728c",
+    "small_body_boxes_le32": 12,
+    "training_real_runs": [],
+    "run5_used": false,
+    "wall_s": 65.21314388304017
+  },
+  "review_packet": {
+    "packet_id": "90cb678b5bacd35db7552018836a9ec3bb34cb545cb12c4bddd54ec15a1720bf",
+    "frames": 72,
+    "cases": 6,
+    "source_run": 4,
+    "training_eligible": false,
+    "approved_labels": false,
+    "source_video_sha256": "e2de9cdf613817556f3de1edaaf8e5aa4c998cdfdbb7c4c2cee2e76d672db1b9",
+    "primary_draft_mode": "paired_diff_gain",
+    "clips": {
+      "clips/run4-fill1.mp4": "1d5111619434d13f99f8e187e0cb5cdb23fea8b44fd8564fffc590c02d95535c",
+      "clips/run4-fill2.mp4": "bcc37cd9b5f1cc65dc12508e595db4d3c01795cf132013d5e188f3d2de4a7f76",
+      "clips/run4-fill3.mp4": "7fe136aefb4d6c1bd070d48891e2313c2d9672db353d891bf32738dea22697b9",
+      "clips/run4-fill4.mp4": "95b4069d784060e46a76f659da612581eb6546417fe29187a8aea34af6ea85de",
+      "clips/run4-fill5.mp4": "a75e8a307549b28b7e410afbb33e4f720695f9af8e6299e30576a387248725f0",
+      "clips/run4-fill6.mp4": "f3ba419b455aa7c9d02c51580d6d3a83a93d1839d8d005072727cfadac6ee3e9"
+    },
+    "builder_sha256": "8e20105403c0e43adc1b3fa8ae0fef60d66815f93966b08ecbaf207e6da7a5b4"
+  },
+  "review_zip_sha256": "84a17b302939d389138d75e4854052539671ea7aa368c2e819eb21c6119bc6f5",
+  "browser_verification": {
+    "status": "passed",
+    "checks": {
+      "raw_first_all_drafts_unreviewed": true,
+      "explicit_empty_saves_zero_mask": true,
+      "pool_without_mask_rejected": true,
+      "zoom_polygon_full_image_mask_saved": true,
+      "sparse_endpoint_interval_not_exact_onset": true,
+      "loading_draft_does_not_approve": true,
+      "brush_edit_and_undo": true,
+      "demonstration_ineligible_for_team_labels": true,
+      "download_import_round_trip_preserves_geometry_and_history": true,
+      "source_packet_mask_history_and_demo_guards": {
+        "source": true,
+        "packet": true,
+        "history": true,
+        "mask": true,
+        "demonstration": true
+      },
+      "mobile_without_page_overflow": true,
+      "offline_no_network_requests": true
+    },
+    "browser_errors": [],
+    "approved_labels_created": false,
+    "local_gpu_used": false,
+    "artifacts": {
+      "01-raw-first.png": "94f92d93ee9ec3f749dd78bc1c868016c1504cc81de66b924c980305d9fc86b2",
+      "02-reviewed-demonstration.png": "12c4cdd2caf4986079f3f9c553b25b171c2b05af4fdfb9de1d29406ddd8ce541",
+      "03-mobile.png": "46342a07e61315e8f759c1e0db7a96c26cf359be0a0538daa2b728a624d08a9f",
+      "demonstration-review.json": "5e0544d6635f2e0f62cfb7771d951d8ae07046cdbe247282051229866133a037"
+    }
+  },
+  "annotation_unit_tests": {
+    "passed": 21,
+    "failed": 0,
+    "environment": "data-windows CPU"
+  },
+  "duration_status": {
+    "original_completed": true,
+    "paired_completed": false,
+    "controls_completed": false,
+    "stability_completed": false,
+    "snapshot_sha256": "2429caabb03b2b43824db789e938e7dbea9fb498f7c2ea2cc6a920edcd1ac579"
+  },
+  "failures_preserved": [
+    "Remote v1 long fit failed after epoch3 at missing ONNX Runtime scorer import; v2 frozen NumPy-only repair uses unchanged scoring logic.",
+    "Local CPU export rejected source RGB hash mismatch; partial retained. Successful GB10 CPU export matched all240 native RGB/PTS records."
+  ],
+  "source_sha256": {
+    "annotation_review/mask_review.py": "8e20105403c0e43adc1b3fa8ae0fef60d66815f93966b08ecbaf207e6da7a5b4",
+    "annotation_review/static/mask_review.html": "adb4aea74ef85a75ac0eab59758f3aa1065b574e2221182769cefa8bcafc72d6",
+    "annotation_review/static/mask_review.js": "50acc3f1db1d551c195e672dca38585e95e01eb7fbbb8433255b4796a912fadb",
+    "annotation_review/verify_mask_review.py": "861ad9fdf6e7c58ed9c3230893c4ce9e545ec835f057350f3b7e0319db12ea8f",
+    "annotation_review/score_mask_review.py": "2f4bf93abe046b12830e5367170a978b84088d6169d9ab426cec5d34c9e9c7cd",
+    "annotation_review/tests/test_mask_scoring.py": "0a5310a94ace69f8c901f242a14963c37527e03b02dd626d9094d775d71d1ddc",
+    "annotation_review/VISIBLE-POOL-REVIEW.md": "b858211303356c3083dc535b28538938ed27fe8cc4551734b7097009d25b16fa",
+    "setup/vision/SYNTHETIC-ITERATIONS.md": "240df78dfd0437d81d3fdc3b3b9d59bc3b414874565fcb80a68449f2252136d8",
+    "setup/vision/train_pair_masks.py": "a1bd2e6c2dc80d35743049ace3e37f30fe4c0c8f1cd9aa8614867c90081fd31c",
+    "setup/vision/evaluate_pair_masks.py": "c9093e6f1a18ea7b7311e1347972bb62cbd63fb15eec3c8f21425fd2556d1ffb",
+    "setup/vision/prepare_optics_grid.py": "e4479f72b7cbffa7728731ac6ce7cb9ae7ddabf770f9bc436f138e4dfd91f676",
+    "setup/vision/evaluate_synthetic_duration_controls.py": "2c50a8dcec119fd5f93943245dd8fed23eb34749a24122f7a7eb6d239665d38c",
+    "setup/vision/probe_pair_mask_stability.py": "09b50dfbfb4f7066da40062b2eb9b9f2d5ea0cf8170b1eac7a6b98f24db42519",
+    "setup/vision/export_pair_mask_preview.py": "2e20e2c21add744a5fb6e0d4ba52f9121c0e679309ee58e24658245bb838e3d6"
+  },
+  "limits": [
+    "Temporal masks are visually promising across six inspected development clips; real mask/onset/presence accuracy needs explicit human review.",
+    "Initial temporal references are unreviewed; self-reference zero output is not proof of empty-vial rejection.",
+    "QA105/264 is availability, not accuracy; do not compare directly with earlier111-input counts.",
+    "Original long fit completed with synthetic-selected epoch15; paired fit and fixed post-freeze/stress controls are still running/queued."
+  ]
+}

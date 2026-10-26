@@ -1,0 +1,100 @@
+{
+  "schema": "temporal-cnn-publication-verification/v1",
+  "date": "2026-10-26",
+  "authorized_main_scope": "Temporal CNN/model assets and updated architecture/integration documentation only",
+  "release_tag": "temporal-cnn-v1.0.0",
+  "new_training": false,
+  "GPU_used": false,
+  "actual_model_inference_device": "cpu",
+  "asset_manifest_hashes_verified": 26,
+  "expected_machine_example_replay": [
+    {
+      "frame": 264,
+      "presence": 7.648757309652865e-05,
+      "presence_abs_difference": 2.699380274862051e-09,
+      "mask_agreement": {
+        "raw_mask": {
+          "different_pixels": 0,
+          "iou": 1.0
+        },
+        "component_mask": {
+          "different_pixels": 0,
+          "iou": 1.0
+        }
+      }
+    },
+    {
+      "frame": 339,
+      "presence": 0.9995706677436829,
+      "presence_abs_difference": 0.0,
+      "mask_agreement": {
+        "raw_mask": {
+          "different_pixels": 0,
+          "iou": 1.0
+        },
+        "component_mask": {
+          "different_pixels": 0,
+          "iou": 1.0
+        }
+      }
+    }
+  ],
+  "invalid_shape_and_dtype_rejected": true,
+  "unpinned_checkpoint_rejected": true,
+  "focused_unit_tests": {
+    "passed": 16,
+    "failed": 0,
+    "groups": {
+      "measurement_geometry_QA": 4,
+      "human_review_integrity": 8,
+      "onboarding_asset_checks": 4
+    }
+  },
+  "main_tree_checks": {
+    "local_markdown_links_resolve": true,
+    "python_syntax_parses": true,
+    "JSON_and_SVG_parse": true,
+    "API_and_client_unchanged": true
+  },
+  "CLI_actual_inference": {
+    "status": "model_proposal_only",
+    "presence": 0.9995706677436829,
+    "QA_executed": false,
+    "reference_status": "unreviewed_not_certified_empty"
+  },
+  "archive_hashes": [
+    {
+      "name": "temporal-cnn-assets-v1.zip",
+      "bytes": 11087468,
+      "sha256": "71d29bf439c7c8bd0e3290e3e8629c69098e3be7fd3e08a1ae63e37637cd3f62"
+    },
+    {
+      "name": "temporal-cnn-training-v1.zip",
+      "bytes": 40458878,
+      "sha256": "44205afaa0aded8e3c2201a41097bec63d9eddd22a1f8b6a77be12e2634f9d64"
+    },
+    {
+      "name": "Temporal-CNN-Architecture.pdf",
+      "bytes": 28240,
+      "sha256": "6ed3f75286800250496ea5975bf90294ae0666826a786e018e32e42f146032be"
+    },
+    {
+      "name": "CSI-Tuesday-Visit-Guide.pdf",
+      "bytes": 56564,
+      "sha256": "65725beaf002ff570ec3a32fcaebbbc7112a8c1d9ca4737426f30a8567ea4204"
+    },
+    {
+      "name": "guide-v3.zip",
+      "bytes": 60403,
+      "sha256": "17451e4c3324f12314505093c0adc03fa4bce998fa63790fe413462e353e55bb"
+    }
+  ],
+  "deployment": false,
+  "real_accuracy": null,
+  "limits": [
+    "Two frozen machine examples verify implementation consistency, not reviewed real accuracy.",
+    "No live worker/dashboard integration or camera-to-display latency was verified.",
+    "Unrelated app, Dataset1 and Cosmos implementation is outside the main publication."
+  ],
+  "architecture_diagram_rendered_and_visually_inspected": true
+}

@@ -1,0 +1,239 @@
+{
+  "schema": "dinov3-direct-mask-verification/v1",
+  "date": "2026-10-24",
+  "branch": "austin-work",
+  "local_root": "/mnt/c/Users/Austin/ai-club-tools/results/dinov3-direct-mask-20261024",
+  "remote_root": "~/ai-club-tools/experiments/dinov3-direct-mask-20261024-v1",
+  "bundle": {
+    "sha256": "c4acce029fcc93c84af3a7d714c788f960033f33a1c357075d847d145c5f8543",
+    "bytes": 70222895
+  },
+  "summary": {
+    "metrics": {
+      "unet": {
+        "qa_pass": 105,
+        "proposal_frames": 189,
+        "latency_ms": {
+          "median": 16.366295516490936,
+          "p95": 24.858502380084246
+        }
+      },
+      "dino_rgb": {
+        "qa_pass": 172,
+        "proposal_frames": 264,
+        "latency_ms": {
+          "median": 29.727965535130352,
+          "p95": 31.64583213510923
+        }
+      },
+      "dino_paired": {
+        "qa_pass": 180,
+        "proposal_frames": 206,
+        "latency_ms": {
+          "median": 29.427635483443737,
+          "p95": 31.634024198865518
+        }
+      }
+    },
+    "synthetic": {
+      "rgb": {
+        "selected_epoch": 50,
+        "checkpoint_sha256": "93e7f82b23f46c5893dafd2872f0aaa2fd52c60bf04276e7db61935fe0fd6829",
+        "development": {
+          "images": 48,
+          "presence_accuracy": 0.9791666666666666,
+          "positive_mean_geometric_iou": 0.7620591536933338,
+          "negative_presence_alarms": 0,
+          "negative_frames": 24,
+          "selection_score": 1.7412258203600004,
+          "per_state": {
+            "early": {
+              "images": 12,
+              "presence_correct": 11
+            },
+            "empty": {
+              "images": 12,
+              "presence_correct": 12
+            },
+            "established": {
+              "images": 12,
+              "presence_correct": 12
+            },
+            "stream-only": {
+              "images": 12,
+              "presence_correct": 12
+            }
+          }
+        }
+      },
+      "paired": {
+        "selected_epoch": 50,
+        "checkpoint_sha256": "0e1e110de22393a744cf28d419650b6d4801a10f0dc147740f87658761f60221",
+        "development": {
+          "images": 48,
+          "presence_accuracy": 0.9791666666666666,
+          "positive_mean_geometric_iou": 0.8268801730462529,
+          "negative_presence_alarms": 0,
+          "negative_frames": 24,
+          "selection_score": 1.8060468397129195,
+          "per_state": {
+            "early": {
+              "images": 12,
+              "presence_correct": 11
+            },
+            "empty": {
+              "images": 12,
+              "presence_correct": 12
+            },
+            "established": {
+              "images": 12,
+              "presence_correct": 12
+            },
+            "stream-only": {
+              "images": 12,
+              "presence_correct": 12
+            }
+          }
+        }
+      }
+    },
+    "verified_remote_artifacts": 280,
+    "source_RGB_hash_checks": 264,
+    "reference_checks": 792,
+    "primary_mode": "paired",
+    "primary_selected_only_on_synthetic": true,
+    "videos": {
+      "sam-free-comparison.mp4": {
+        "frames": 240,
+        "fps": 5,
+        "width": 1920,
+        "height": 784,
+        "sha256": "53ef947cb87ae7cfb463f7d782f3b71b8a3ece21c3a1175c305d658edce5628b"
+      },
+      "dino-synthetic-selected.mp4": {
+        "frames": 240,
+        "fps": 5,
+        "width": 640,
+        "height": 784,
+        "sha256": "dea953f59a2932e118c3ff49afe618f8525145519303651ea8b56b0df3404a3a"
+      }
+    },
+    "repeat_differences": {
+      "unet": {
+        "gated_mask": 0,
+        "component_mask": 0,
+        "presence_score": 0,
+        "measurement_valid": 0
+      },
+      "dino_rgb": {
+        "gated_mask": 0,
+        "component_mask": 0,
+        "presence_score": 0,
+        "measurement_valid": 0
+      },
+      "dino_paired": {
+        "gated_mask": 0,
+        "component_mask": 0,
+        "presence_score": 0,
+        "measurement_valid": 0
+      }
+    },
+    "versus_unet": {
+      "dino_rgb": {
+        "qa_gains": 84,
+        "qa_losses": 17
+      },
+      "dino_paired": {
+        "qa_gains": 77,
+        "qa_losses": 2
+      }
+    },
+    "real_accuracy": null,
+    "run5_used": false,
+    "local_GPU_used": false,
+    "app_defaults_changed": false,
+    "SAM_used": false
+  },
+  "visual_audit": {
+    "source_predictions_sha256": "8d95027648e0a0a6fb34f8f53964a5265d04e65643d97935f4f96c4087b11084",
+    "paired_qa_gains": 77,
+    "gains_with_unet_proposal": 76,
+    "gains_with_unet_containment_rejection": 77,
+    "examples": [
+      {
+        "arm": "unet",
+        "source_frame": 414,
+        "vial_box": [
+          270,
+          64,
+          343,
+          420
+        ],
+        "liquid_box": [
+          283,
+          363,
+          344,
+          426
+        ],
+        "containment_fraction": 0.8899297423887588,
+        "qa_pass": false,
+        "quality_flags": [
+          "liquid_missing_or_ambiguous_inside_vial",
+          "insufficient_final_liquid_pixels",
+          "insufficient_unclipped_pixels"
+        ],
+        "sampling_bounds": null
+      },
+      {
+        "arm": "dino_paired",
+        "source_frame": 414,
+        "vial_box": [
+          270,
+          64,
+          343,
+          420
+        ],
+        "liquid_box": [
+          287,
+          306,
+          340,
+          422
+        ],
+        "containment_fraction": 0.9827586206896551,
+        "qa_pass": true,
+        "quality_flags": [],
+        "sampling_bounds": [
+          290,
+          310,
+          328,
+          395
+        ]
+      }
+    ],
+    "visual_observations": [
+      "RGB-only masks appear in upper glass before obvious colored pool in several inspected anchor frames.",
+      "Paired masks extend vertically beyond the visible bottom pool in inspected fill1 and fill5 frames.",
+      "U-Net appears tighter around bottom pools in several inspected examples; this is not adjudicated accuracy."
+    ],
+    "interpretation": "All77 availability gains coincide with U-Net containment/ambiguity rejection.76 already had U-Net proposals; the gain is not77 newly detected liquid frames. Taller DINO boxes can pass containment while visually including glass/stream.",
+    "human_labels": false,
+    "real_accuracy": null,
+    "thresholds_changed": false
+  },
+  "checks": {
+    "CPU_checkpoint_reload_and_encoder_freeze": true,
+    "compiled_helpers": 8,
+    "remote_GPU_jobs_exited": true,
+    "remote_GPU_utilization_percent": 0,
+    "local_GPU_used": false,
+    "app_defaults_changed": false,
+    "measurement_QA_changed": false,
+    "main_changed": false
+  },
+  "files": {
+    "cpu-smoke-v1/completed.json": "20304f1b524ec1a06c041262cc34dcfe454d5884a4aecf22ec9e805cc4043379",
+    "summary-v1/completed.json": "19174425ca1e4602e817ff1469d64367207cb9a1a2f88ec210f91547cef81fbe",
+    "visual-audit-v1/audit.json": "fcbd8db97f18cd357ff836b178d14f31fc7171b9f9ac026e49979890882be8b6",
+    "comparison-poster.png": "9852e750d23da8503f76b53134b61a3b80d07af2f8bcdebabef49a96b1c21b98"
+  }
+}

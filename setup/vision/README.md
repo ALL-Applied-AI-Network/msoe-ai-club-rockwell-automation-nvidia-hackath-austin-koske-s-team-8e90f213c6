@@ -1,12 +1,13 @@
-# Temporal liquid vision
+# Vision models
 
-Start with [the temporal CNN team handoff](../../team_handoff/temporal_cnn/README.md)
-for exact checkpoint downloads, synthetic training images, diagrams and examples.
-[CURRENT-ARCHITECTURE.md](CURRENT-ARCHITECTURE.md) records the selected direct
-paired U-Net path and remaining validation. SAM2.1/Faster R-CNN are optional
-comparison paths. The included inference example is model-only; the actual
-worker/measurement-QA/operator loop is still integration work.
+The selected liquid model is the paired-difference U-Net in `train_pair_masks.py`.
+`temporal_pool.py` loads the frozen checkpoint and runs current/reference RGB
+inference; `verify_temporal_handoff.py` replays the released example predictions.
+Other scripts support the completed evaluation and stress experiments.
 
-Historical experiment documents refer to external frozen experiment bundles
-and local media. Unrelated application/experiment implementation stays on
-austin-work. No real CSI imagery is used for new fitting or selection.
+[Architecture](../../docs/architecture.md#liquid-model) ·
+[Run instructions](../../docs/development.md#run-liquid-inference) ·
+[Data and checkpoints](../../docs/data.md) · [Results](../../docs/evaluation.md)
+
+Experiment scripts may require the original external bundles, exact source
+clocks and configurations. They are not interchangeable with the model-only CLI.

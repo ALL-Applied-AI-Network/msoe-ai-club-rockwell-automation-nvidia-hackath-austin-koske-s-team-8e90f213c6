@@ -8,9 +8,9 @@ description: Onboard a manufacturing vision station in this repository from supp
 Produce a resumable station package: source inventory, camera/reference profile,
 frozen model provenance, evaluation status, deployment configuration and operator
 runbook. Start at the earliest incomplete stage; reuse verified existing work.
-Read `AGENTS.md`, `HANDOFF.md` and `setup/vision/CURRENT-ARCHITECTURE.md` from the
-repository root. For stage artifacts and supported helpers, read
-`team_handoff/integration/AI-NATIVE-ONBOARDING.md`.
+Read `AGENTS.md`, `docs/architecture.md` and `docs/data.md` from the repository
+root. For compute, reference setup and onboarding checks, read
+`docs/operations.md` and `docs/compute.md`.
 
 ## Establish the task and evidence
 
@@ -27,7 +27,7 @@ Asset presence is not evidence that a reference, evaluation or deployment is val
 ## Follow the unfinished stages
 
 1. **Inventory:** inspect files/hashes, dimensions, orientation and native clocks.
-   Use `setup/vision/inspect_csi_capture.py` for recordings in an existing AV-capable
+   Use a decoder that retains native PTS/time base in the existing data
    environment. Do not invent frame timestamps from an assumed frame rate or join
    cameras without explicit mapping evidence. Retain real/synthetic roles.
 2. **Profile and reference:** use the native fixed-ROI contract for the current

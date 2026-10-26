@@ -1,161 +1,297 @@
 
 from pathlib import Path
 import argparse
-import contextlib
+import json
+import sys
 
 import numpy as np
 import torch
 from PIL import Image, ImageDraw
 from ultralytics import YOLO
-from torchvision.models.detection import fasterrcnn_resnet50_fpn
-from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
-from torchvision.transforms.functional import to_tensor
-from sam2.build_sam import build_sam2
-from sam2.sam2_image_predictor import SAM2ImagePredictor
 
 
 ROOT = Path.home() / "fluid-mixing-cnn"
+VISION_DIR = ROOT / "setup/vision"
+
+sys.path.insert(0, str(VISION_DIR))
+from temporal_pool import TemporalPool
+
+
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+
+YOLO_CHECKPOINT = ROOT / "integration/models/yolo_best.pt"
+
+TEMPORAL_CHECKPOINT = (
+    Path.home()
+    / "temporal-cnn-assets/temporal-cnn-assets-v1"
+    / "models/liquid-best.pt"
+)
+
+OUTPUT_DIR = ROOT / "integration"
 
 
 def load_models():
-    yolo = YOLO(str(ROOT / "integration/models/yolo_best.pt"))
+    print("Loading YOLO...")
+    yolo = YOLO(str(YOLO_CHECKPOINT))
 
-    rcnn = fasterrcnn_resnet50_fpn(
-        weights=None, weights_backbone=None
-    )
-    features = rcnn.roi_heads.box_predictor.cls_score.in_features
-    rcnn.roi_heads.box_predictor = FastRCNNPredictor(features, 2)
-
-    weights = torch.load(
-        ROOT / "liquid_pool_model_v5_10epochs.pth",
-        map_location=DEVICE,
-        weights_only=True,
-    )
-    rcnn.load_state_dict(weights)
-    rcnn.to(DEVICE).eval()
-
-    sam = build_sam2(
-        "configs/sam2.1/sam2.1_hiera_t.yaml",
-        str(
-            Path.home()
-            / "fluid-mixing-pipeline/checkpoints/sam2.1_hiera_tiny.pt"
-        ),
-        device=DEVICE,
-    )
-    sam_predictor = SAM2ImagePredictor(sam)
-
-    return yolo, rcnn, sam_predictor
-
-
-def valid_box(box, width, height):
-    x0, y0, x1, y1 = box
-    return (
-        0 <= x0 < x1 <= width
-        and 0 <= y0 < y1 <= height
+    print("Loading Temporal CNN...")
+    temporal = TemporalPool(
+        checkpoint=TEMPORAL_CHECKPOINT,
+        device=DEVICE
     )
 
+    return yolo, temporal
+
+
+def mask_containment(liquid_mask, vial_box):
+    height, width = liquid_mask.shape
+
+    x0, y0, x1, y1 = map(float, vial_box)
+
+    x0 = max(0, int(np.floor(x0)))
+    y0 = max(0, int(np.floor(y0)))
+    x1 = min(width, int(np.ceil(x1)))
+    y1 = min(height, int(np.ceil(y1)))
+
+    total_pixels = int(np.count_nonzero(liquid_mask))
+
+    if total_pixels == 0 or x1 <= x0 or y1 <= y0:
+        return 0.0
+
+    inside_pixels = int(
+        np.count_nonzero(liquid_mask[y0:y1, x0:x1])
+    )
+
+    return inside_pixels / total_pixels
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("image")
-    parser.add_argument("--threshold", type=float, default=0.3)
+
+    parser.add_argument(
+        "--current",
+        type=Path,
+        required=True
+    )
+
+    parser.add_argument(
+        "--reference",
+        type=Path,
+        required=True
+    )
+
     args = parser.parse_args()
 
-    image_path = Path(args.image)
-    image = Image.open(image_path).convert("RGB")
-    rgb = np.asarray(image)
-    width, height = image.size
+    current = np.array(
+        Image.open(args.current).convert("RGB"),
+        copy=True
+    )
+
+    reference = np.array(
+        Image.open(args.reference).convert("RGB"),
+        copy=True
+    )
+
+    if current.shape != (480, 640, 3):
+        raise ValueError(
+            "Current image must be 640x480 RGB"
+        )
+
+    if reference.shape != (480, 640, 3):
+        raise ValueError(
+            "Reference image must be 640x480 RGB"
+        )
 
     print("Device:", DEVICE)
-    print("Loading models...")
-    yolo, rcnn, sam_predictor = load_models()
 
-    # Team 1: detect vial
-    yolo_results = yolo.predict(
-        source=rgb,
+    yolo, temporal = load_models()
+
+    # Team 1: YOLO vial detection
+    # PIL input preserves correct RGB handling
+    yolo_result = yolo.predict(
+        source=Image.fromarray(current),
         conf=0.25,
-        verbose=False,
+        verbose=False
     )[0]
 
-    vial_boxes = yolo_results.boxes.xyxy.cpu().numpy()
-    vial_scores = yolo_results.boxes.conf.cpu().numpy()
-    print("YOLO detections:", len(vial_boxes))
+    vial_boxes = (
+        yolo_result.boxes.xyxy.cpu().numpy()
+    )
 
-    # Team 2: detect accumulated liquid
-    with torch.inference_mode():
-        prediction = rcnn([to_tensor(image).to(DEVICE)])[0]
+    vial_scores = (
+        yolo_result.boxes.conf.cpu().numpy()
+    )
 
-    liquid_boxes = prediction["boxes"].cpu().numpy()
-    liquid_scores = prediction["scores"].cpu().numpy()
+    print("YOLO vial detections:", len(vial_boxes))
 
-    selected = np.flatnonzero(liquid_scores >= args.threshold)
-    print("Liquid detections:", len(selected))
+    # Team 2: Temporal CNN liquid prediction
+    result = temporal.predict(
+        current=current,
+        reference=reference
+    )
 
-    output = image.copy()
-    draw = ImageDraw.Draw(output)
+    presence = float(result["presence"])
+    presence_passed = bool(
+        result["presence_gate_passed"]
+    )
 
-    # Draw YOLO boxes in green
-    for box, score in zip(vial_boxes, vial_scores):
-        draw.rectangle(tuple(box), outline="green", width=2)
+    proposal_box = result["proposal_box"]
+    proposal_mask = np.asarray(
+        result["proposal_mask"],
+        dtype=bool
+    )
 
-    if len(selected) == 0:
-        print("No liquid detection above threshold")
-    else:
-        # Highest-confidence liquid prediction
-        index = int(selected[0])
-        liquid_box = liquid_boxes[index].tolist()
-        print("Liquid confidence:", float(liquid_scores[index]))
+    print("Liquid presence:", presence)
+    print("Presence gate passed:", presence_passed)
 
-        if valid_box(liquid_box, width, height):
-            # Check liquid center lies inside a detected vial
-            cx = (liquid_box[0] + liquid_box[2]) / 2
-            cy = (liquid_box[1] + liquid_box[3]) / 2
+    # Associate liquid proposal with a detected vial
+    matched_vial = None
+    containment = 0.0
+    
+    if presence_passed and proposal_box is not None:
+        for index, vial_box in enumerate(vial_boxes):
+            padding = 5
 
-            matched = any(
-                x0 <= cx <= x1 and y0 <= cy <= y1
-                for x0, y0, x1, y1 in vial_boxes
+            expanded_vial_box = [
+                vial_box[0] - padding,
+                vial_box[1] - padding,
+                vial_box[2] + padding,
+                vial_box[3] + padding
+            ]
+
+            overlap = mask_containment(
+                proposal_mask,
+                expanded_vial_box
             )
 
-            if matched:
-                print("Liquid matched to a vial")
+            if overlap > containment:
+                containment = overlap
+                matched_vial = index
 
-                with torch.inference_mode():
-                    context = (
-                        torch.autocast("cuda", dtype=torch.bfloat16)
-                        if DEVICE == "cuda"
-                        else contextlib.nullcontext()
-                    )
-                    with context:
-                        sam_predictor.set_image(rgb)
-                        masks, scores, _ = sam_predictor.predict(
-                            box=np.asarray(liquid_box, dtype=np.float32),
-                            multimask_output=False,
-                        )
 
-                mask = np.asarray(masks[0], dtype=bool)
-                print("SAM2 mask pixels: ",int(mask.sum()))
-                mask_image = Image.fromarray(
-                    (mask.astype(np.uint8) * 255)
-                )
-                mask_image.save(ROOT / "integration/sam_mask.png")
-                overlay = np.asarray(output).copy()
-                overlay[mask] = (
-                    overlay[mask] * 0.5
-                    + np.array([0, 180, 255]) * 0.5
-                ).astype(np.uint8)
+    association_passed = (
+        presence_passed
+        and matched_vial is not None
+        and containment >= 0.90
+    )
 
-                output = Image.fromarray(overlay)
-                draw = ImageDraw.Draw(output)
-                print("SAM2 mask score:", float(scores[0]))
-            else:
-                print("Liquid box did not match a detected vial")
+    # Save only an associated liquid mask
+    accepted_mask = np.zeros(
+        (480, 640),
+        dtype=np.uint8
+    )
 
-            draw.rectangle(tuple(liquid_box), outline="red", width=3)
+    if association_passed:
+        accepted_mask = proposal_mask.astype(
+            np.uint8
+        )
 
-    output_path = ROOT / "integration/result.jpg"
-    output.save(output_path)
+        status = "mask_generated"
+
+    elif not presence_passed:
+        status = "no_model_proposal"
+
+    else:
+        status = "unmatched_liquid_proposal"
+
+    print("Association passed:", association_passed)
+    print("Containment:", containment)
+    print("Status:", status)
+
+    # Create visualization
+    output = current.copy()
+
+    if association_passed:
+        mask = accepted_mask.astype(bool)
+
+        output[mask] = (
+            output[mask] * 0.5
+            + np.array([0, 180, 255]) * 0.5
+        ).astype(np.uint8)
+
+    output_image = Image.fromarray(output)
+    draw = ImageDraw.Draw(output_image)
+
+    # All YOLO vial boxes in green
+    for vial_box in vial_boxes:
+        draw.rectangle(
+            tuple(vial_box),
+            outline="green",
+            width=2
+        )
+
+    # Accepted liquid proposal in red
+    if presence_passed and proposal_box is not None:
+        draw.rectangle(
+            tuple(proposal_box),
+            outline="red",
+            width=3
+        )
+
+        # Matched vial in yellow
+        draw.rectangle(
+            tuple(vial_boxes[matched_vial]),
+            outline="yellow",
+            width=3
+        )
+
+    OUTPUT_DIR.mkdir(
+        parents=True,
+        exist_ok=True
+    )
+
+    output_path = OUTPUT_DIR / "result.jpg"
+    mask_path = OUTPUT_DIR / "temporal_mask.png"
+    json_path = OUTPUT_DIR / "observation.json"
+
+    # Avoid leaving a mask from an earlier run
+    mask_path.unlink(missing_ok=True)
+
+    output_image.save(output_path)
+
+    Image.fromarray(
+        accepted_mask * 255
+    ).save(mask_path)
+
+    observation = {
+        "current": str(args.current),
+        "reference": str(args.reference),
+        "device": DEVICE,
+        "vial_detections": len(vial_boxes),
+        "vial_scores": vial_scores.tolist(),
+        "presence": presence,
+        "presence_gate_passed": presence_passed,
+        "proposal_box": proposal_box,
+        "matched_vial_index": (
+            int(matched_vial)
+            if association_passed
+            else None
+        ),
+        "containment": float(containment),
+        "association_passed": association_passed,
+        "mask_pixels": int(accepted_mask.sum()),
+        "reference_status": "unverified",
+        "measurement_QA_executed": False,
+        "status": status
+    }
+
+    def convert_numpy(obj):
+        if isinstance(obj, np.generic):
+            return obj.item()
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        raise TypeError(f"Cannot serialize {type(obj).__name__}")
+
+    with open(json_path, "w") as f:
+        json.dump(
+            observation,
+            f,
+            indent=2,
+            default = convert_numpy
+        )
+
     print("Saved:", output_path)
+    print("Saved:", mask_path)
+    print("Saved:", json_path)
 
 
 if __name__ == "__main__":

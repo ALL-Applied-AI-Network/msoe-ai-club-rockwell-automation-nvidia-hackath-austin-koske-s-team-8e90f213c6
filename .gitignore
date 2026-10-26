@@ -2,4 +2,12 @@ __pycache__/
 .pytest_cache/
 .coverage
 .venv/
+.env
+**/node_modules/
+/datasets/
+/results/
 replay-results/
+*.pt
+*.onnx
+*.engine
+*.zip

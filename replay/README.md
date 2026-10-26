@@ -1,12 +1,10 @@
-# Measurement and reference contracts for temporal integration
+# Measurement and reference checks
 
-This scoped main handoff includes unchanged config, geometry, segmentation and
-measurement modules, plus the candidate reference/evidence guard.
-Start with [the temporal CNN handoff](../team_handoff/temporal_cnn/README.md).
-It does not install the replay server or operator application. Those remain
-on austin-work and the mentee implementation branches.
+`geometry.py` associates fill-position geometry and builds the sampling mask.
+`measurement.py` extracts raw-source RGB/Lab and reports QA outcomes.
+`operator/commissioning.py` checks source/reference and recipe qualification.
 
-Keep model proposals separate from eligible raw-RGB samples, qualified recipe
-comparisons and operator responses. Existing measurement QA is unchanged.
-[Commissioning documentation](operator/COMMISSIONING.md) describes the broader
-development rehearsal and its explicitly pending qualification inputs.
+[Architecture](../docs/architecture.md#vial-association-and-measurement-qa) ·
+[Development and tests](../docs/development.md#checks)
+
+These modules do not start a video worker or operator server.

@@ -42,7 +42,7 @@ step "Machine facts -> $REPORT/facts.txt"
   echo "repo: $(git -C "$ROOT" rev-parse HEAD 2>/dev/null) $(git -C "$ROOT" status --porcelain 2>/dev/null | grep -q . && echo '(modified)')"
   echo "--- nvidia-smi"; nvidia-smi 2>&1 | head -15
   echo "--- docker"; docker version --format 'client {{.Client.Version}} server {{.Server.Version}}' 2>&1
-  docker compose version 2>&1; docker info --format 'runtimes: {{json .Runtimes}}' 2>&1 | head -3
+  docker compose version 2>&1; docker info --format 'runtimes: {{range $k, $v := .Runtimes}}{{$k}} {{end}}' 2>&1 | head -3
   echo "--- cameras"; ls -l /dev/video* 2>&1
   echo "--- disk"; df -h "$ROOT" "$HOME" 2>&1
 } > "$REPORT/facts.txt" 2>&1

@@ -1,0 +1,29 @@
+{
+  "schema": "architecture-decision/v1",
+  "date": "2026-10-24",
+  "branch": "austin-work",
+  "leading_candidate": "direct paired_diff_gain U-Net",
+  "SAM_required": false,
+  "SAM_status": "optional experimental refinement",
+  "DINO_status": "research comparator",
+  "R_CNN_required": false,
+  "app_defaults_changed": false,
+  "measurement_QA_changed": false,
+  "training_started": false,
+  "main_changed": false,
+  "pushed": false,
+  "document_sha256": {
+    "setup/vision/CURRENT-ARCHITECTURE.md": "fa9912aa50a901bf27e960af9c9880c9b1231fc449d7507bd6a64cfa9bf9db52",
+    "setup/vision/TEMPORAL-POOL-CANDIDATE.md": "7776396dd81a574170ad672b7bb544e9289b3f9442f32c4a118b639fe9440db6",
+    "setup/vision/SAM-TEMPORAL-COMPARISON.md": "f0c685136256622b2489c9e292e42cbca273e4fd5f3311e89147a2be2280af8c",
+    "setup/vision/README.md": "e4be5f4af7e242c4fd665df4cc6f1a1c1406535a4eae82ad00b1ac296fbc6e2d",
+    "HANDOFF.md": "87883e0eb8ed45f2ef1ecfc34355256dd09e46fe1c40e5196594c75d9724a9d9",
+    "README.md": "354ca1c662a84c5f4add86ee4f9f4eaeae97c7120a2c73e938cd2eec1411b09e",
+    "replay/README.md": "12ccc2afdeb529712a574b2a93637636d112063126a42da39e47965da87f4078",
+    "replay/operator/FULL-APP-DEMO.md": "cdf1953cd30a831cc1431a88ce4ea8f3115aa7ec57b467ee53fb9a9cfd78620e",
+    "team_handoff/README.md": "8444f04ae2a5a44fa9cac18fa058cf5af95e24946ad726ed2ed7bba4476ba252"
+  },
+  "local_links_checked": 157,
+  "missing_local_links": [],
+  "code_tests": "Not run: documentation and worktree metadata only; no implementation changes."
+}

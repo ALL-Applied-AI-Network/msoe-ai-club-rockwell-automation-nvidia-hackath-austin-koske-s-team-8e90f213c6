@@ -1,0 +1,67 @@
+{
+  "schema": "team-branch-review/v1",
+  "checked_at_UTC": "2026-10-25T03:32:59.351275+00:00",
+  "fetch_success": true,
+  "remote_heads": 11,
+  "mentee_branches_reviewed": 6,
+  "branches": [
+    {
+      "name": "IntegrationDashboard",
+      "commit": "5ed6668f48805a3339eaeb795e6685e76395eeee"
+    },
+    {
+      "name": "alayna-yolo",
+      "commit": "406b544122c4b4bbb3ad70d25ff3a542e5f35814"
+    },
+    {
+      "name": "liquid-pool-model-v5",
+      "commit": "dca8cdf66775d508589bddeb340e871dae5fb0b3"
+    },
+    {
+      "name": "team-3",
+      "commit": "5d154236619188bf88f160eecf4846472da497b2"
+    },
+    {
+      "name": "cameron/data_pipeline",
+      "commit": "53a6a2e95394f04ccf5529425bf46419f762a777"
+    },
+    {
+      "name": "hayden-work",
+      "commit": "c3535ea5fe8299887c99b7c73d1855645431bb92"
+    }
+  ],
+  "open_PRs_found": 0,
+  "only_PR_found": "PR1 merged app starter",
+  "primary_branch": "austin-work",
+  "merges_performed": 0,
+  "pushes_performed": 0,
+  "new_worktrees": 0,
+  "GPU_used": false,
+  "browser_or_camera_opened": false,
+  "runtime": "CPU in-process API and WebSocket fixtures; no network listener",
+  "python_modules_syntax_checked": 10,
+  "javascript_syntax": "node --check passed",
+  "reproduced_findings": [
+    "Unusable/no-proposal sample returns within_threshold when RGB matches supplied reference",
+    "Received upstream mask field is ignored; class1 with no SAM yields segmentation_unavailable",
+    "Malformed RGB types yield HTTP500",
+    "Srijan loader excludes annotation-free images"
+  ],
+  "not_executed": [
+    "New training",
+    "YOLO model inference",
+    "SAM model inference",
+    "Isaac rendering",
+    "Physical camera integration"
+  ],
+  "evidence": {
+    "inventory.json": "1c62095a08e5764205318c147776d46a5e604437170f005ece28b672f55d8e40",
+    "backend-runtime-checks.json": "bf5dfad5be4e5b51ae0c87fbdf4e78c189f5e232b77d9b45beb3146918820c5b",
+    "python-syntax.json": "81e0d3228b37693c1954405b86f69e2106fbdaf88b3cf76a56d9e78e4213a510",
+    "fixture-probes/dataset-loader-check.json": "ccfe593f47baa1dcba3d82407651bafd603405083f26d148b57c978a55477141",
+    "yolo-recorded-metrics.json": "c89bd9f5296e680036464113db8d69a20c4e62375b0d5d1047ee998838e300de"
+  },
+  "source_snapshot_blobs_verified": 25,
+  "review_document": "team_handoff/integration/BRANCH-REVIEW-20261024.md",
+  "review_document_sha256": "18527ed9279592c978af49d957628205799cd29e258658ccfdcd7e2d72abd8a0"
+}

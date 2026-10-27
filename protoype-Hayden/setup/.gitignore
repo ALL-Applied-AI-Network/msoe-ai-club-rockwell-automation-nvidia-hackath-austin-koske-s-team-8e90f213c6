@@ -1,0 +1,9 @@
+config.env
+*.local
+__pycache__/
+results/
+logs/
+*.sif
+*.key
+*.pem
+.env

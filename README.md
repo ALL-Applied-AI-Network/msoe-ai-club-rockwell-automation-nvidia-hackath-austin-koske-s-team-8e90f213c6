@@ -1,78 +1,35 @@
-# Rockwell Automation + NVIDIA Innovation Lab · Fall 2026
+# Recipe-aware liquid inspection
 
-**October 26 temporal CNN release:** [current architecture, exact model downloads and runnable examples](team_handoff/temporal_cnn/README.md). The selected liquid path is direct paired U-Net; Faster R-CNN and SAM are optional comparators. Austin authorized this scoped handoff on `main`; unrelated development remains on `austin-work`.
+Vision tools for inspecting vial fills at CSI's Fluid Mixing Station 3. The
+selected pipeline uses YOLO for vial geometry and a paired temporal U-Net for
+liquid masks, followed by sampling QA and recipe-related operator evidence.
 
-This is your team's repository for the four-week physical AI hackathon run by Rockwell Automation, NVIDIA, the MSOE AI Club and UWM's Connected Systems Institute. Build everything here. Sponsors can follow your work as it progresses, and your final submission links straight to this repository.
+The current release provides the frozen models, paired-image inference,
+measurement/reference checks and human evaluation tools. The FastAPI/React app
+is still a widgets skeleton; the complete video worker and operator loop need
+integration. See the [architecture](docs/architecture.md) for component status.
 
-**Full event guide** (datasets, compute, rules, judging, prizes): <https://msoe-maic.com/library/?article=Rockwell-NVIDIA-Fall-2026>
-**Your team workspace** (team, repository access, submissions): <https://dashboard.all-ai-network.org/j/L36HEH>
-**Questions:** [join the hackathon Slack](https://join.slack.com/t/rockwellnvidi-wq82211/shared_invite/zt-4bp05nsn9-UW3afFtM9wjzWtZiQoJBHg) and ask in the channel that matches your question. The event guide's "Getting help" section says who to ping for what.
+## Get started
 
-## Key dates
+- [Run liquid inference](docs/development.md#run-liquid-inference)
+- [Start the API and client](docs/development.md#app-skeleton)
+- [Download data and models](docs/data.md)
+- [Read measured results](docs/evaluation.md)
+- [Prepare the supervised test](docs/operations.md)
 
-| When | What |
-|---|---|
-| Thu Oct 8, 4:00–6:00 PM | Kickoff at Rockwell Automation HQ, 1201 S 2nd St, Milwaukee |
-| **Wed Oct 14, 11:59 PM CT** | **Team plan due:** [submit it here](https://dashboard.all-ai-network.org/s/V28NHK) |
-| **Sun Nov 1, 11:59 PM CT** | **Final submission due:** [submit it here](https://dashboard.all-ai-network.org/s/V28NHK) |
-| Thu Nov 5, 5:00–8:00 PM | Finals at MSOE Diercks Hall: live presentations and prizes |
+[All documentation](docs/README.md) · [Contributing](CONTRIBUTING.md)
 
-## First week
+## Results
 
-- [ ] Everyone on the team has an ALL AI Network account and has joined this team in the [workspace](https://dashboard.all-ai-network.org/j/L36HEH).
-- [ ] Everyone has connected GitHub and accepted the repository invitation (check your GitHub email, or open the workspace and press the check button).
-- [ ] Pick your dataset. We recommend one strong solution around a single dataset.
-- [ ] Download the data and make sure everyone who needs it can open it.
-- [ ] Read the compute guide and decide what you'll need.
-- [ ] Join Slack, open `#hackathon-announcements`, and find your dataset's channel.
-- [ ] Submit the [team plan](https://dashboard.all-ai-network.org/s/V28NHK) by Wednesday, October 14. It's a short resource request, not a graded paper, and any teammate can update it before the deadline.
+The latest GB10 comparison measures 16.37 ms median CV processing and 105 / 264
+QA-eligible samples on inspected Run4 frames. Timing excludes decode, transport
+and display. QA eligibility is sample availability, not segmentation or recipe
+accuracy. Independent real mask/onset evaluation and physical deployment remain
+unverified.
 
-## The three datasets
+## Project
 
-1. **[Final Vial Inspection](https://msoe-maic.com/library?article=Rockwell-NVIDIA-Fall-2026-Vial-Inspection):** find missing caps, crooked caps, damaged vials and unexpected empty positions after the robot fills a fixture.
-2. **[Fluid Mixing Station 3](https://msoe-maic.com/library?article=Rockwell-NVIDIA-Fall-2026-Fluid-Mixing):** use synchronized camera views to detect fill and color problems caused by recipes and fluid carryover.
-3. **[Grasping and Sorting](https://msoe-maic.com/library?article=Rockwell-NVIDIA-Fall-2026-Grasping-Sorting):** use a digital twin and multiple cameras to make a standalone FANUC arm grasp and sort objects more reliably.
-
-## Read before your team plan
-
-- **[Compute: Brev, DGX Spark and build.nvidia.com](https://msoe-maic.com/library?article=Rockwell-NVIDIA-Fall-2026-Compute).** Brev credits are spent whenever an instance is running, so stop instances you aren't using.
-- **[Collect and test your own data](https://msoe-maic.com/library?article=Rockwell-NVIDIA-Fall-2026-Data-Collection):** visits, extra data, digital twins, and booking a supervised test on the real equipment.
-- **[Tools and resources](https://msoe-maic.com/library?article=Rockwell-NVIDIA-Fall-2026-Resources):** AI coding tools, vision-language models, NVIDIA Cosmos and more. Start with a simple baseline.
-
-## Final submission (Sun Nov 1)
-
-- A video of about five minutes
-- A one-page project summary
-- A link to this repository
-- References and credits for data, models, code and tools
-
-## Working in this repository
-
-**Liquid vision teams: [start with the architecture brief and data downloads](team_handoff/README.md).**
-The [versioned team release](https://github.com/ALL-Applied-AI-Network/msoe-ai-club-rockwell-automation-nvidia-hackath-austin-koske-s-team-8e90f213c6/releases/tag/team-data-v1.0.0)
-contains the student PDFs, a combined core dataset and optional component archives.
-Large data stays in release attachments; development continues on `austin-work`.
-
-**Current development context: [consolidated handoff](HANDOFF.md).** Replay,
-annotation review and vision experiments are integrated on `austin-work`; start here
-for artifact locations, ownership and unfinished work.
-
-Team environment onboarding: **[start here](setup/START_HERE.md)** for laptop
-data work, GB10 Isaac/Cosmos, and Rosie Singularity/Slurm. The
-[setup guide](setup/README.md) includes commands and executed verification.
-
-Recording replay app: run `pwsh -File setup/run-replay.ps1`, then open
-<http://127.0.0.1:8765>. See [replay instructions](replay/README.md) for source
-paths, annotation handoffs, reference timing, batch exports and current limits.
-The [recipe-aware demo handoff](replay/HANDOFF.md) includes exact reproduction,
-explicit recipe/reference input, and the measurement QA review export.
-
-```bash
-git clone <this repository's URL from the green "Code" button>
-```
-
-- Commit early and push often. Mentors and judges see what's here.
-- **Don't commit large datasets or model weights.** Keep them out with `.gitignore` and note in this README where to download them.
-- Before the finals, replace this README with your project: the problem, your approach, results, how to run it, and credits.
-
-**Can't push or see this repository?** Open the [team workspace](https://dashboard.all-ai-network.org/j/L36HEH) and press the GitHub check button. If it still doesn't work, ping Brett Storoe in `#hackathon-general` on Slack.
+Built for the Rockwell Automation / NVIDIA Physical AI hackathon with MSOE and
+UWM CSI. [Organizer documentation](https://msoe-maic.com/library/?article=Rockwell-NVIDIA-Fall-2026)
+provides the event and supplied-data context. This system produces operator
+advice; it has no direct industrial control path.

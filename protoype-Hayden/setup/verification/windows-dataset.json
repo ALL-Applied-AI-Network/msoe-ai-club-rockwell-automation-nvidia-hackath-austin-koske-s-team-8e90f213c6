@@ -1,0 +1,144 @@
+{
+  "data": "C:\\git\\FDS-Dark\\ALL-Applied-AI-Network\\msoe-ai-club-rockwell-automation-nvidia-hackath-austin-koske-s-team-8e90f213c6\\datasets\\dataset2\\csi-vial-fill-dataset",
+  "videos": [
+    {
+      "camera": "vial_fill",
+      "run": 1,
+      "ok": true,
+      "width": 640,
+      "height": 480,
+      "first_frame_pts": 0,
+      "container_rate": "30/1"
+    },
+    {
+      "camera": "vial_fill",
+      "run": 2,
+      "ok": true,
+      "width": 640,
+      "height": 480,
+      "first_frame_pts": 0,
+      "container_rate": "30/1"
+    },
+    {
+      "camera": "vial_fill",
+      "run": 3,
+      "ok": true,
+      "width": 640,
+      "height": 480,
+      "first_frame_pts": 0,
+      "container_rate": "30/1"
+    },
+    {
+      "camera": "vial_fill",
+      "run": 4,
+      "ok": true,
+      "width": 640,
+      "height": 480,
+      "first_frame_pts": 0,
+      "container_rate": "30/1"
+    },
+    {
+      "camera": "vial_fill",
+      "run": 5,
+      "ok": true,
+      "width": 640,
+      "height": 480,
+      "first_frame_pts": 0,
+      "container_rate": "30/1"
+    },
+    {
+      "camera": "tank_level",
+      "run": 1,
+      "ok": true,
+      "width": 640,
+      "height": 480,
+      "first_frame_pts": 0,
+      "container_rate": "30/1"
+    },
+    {
+      "camera": "tank_level",
+      "run": 2,
+      "ok": true,
+      "width": 640,
+      "height": 480,
+      "first_frame_pts": 0,
+      "container_rate": "30/1"
+    },
+    {
+      "camera": "tank_level",
+      "run": 3,
+      "ok": true,
+      "width": 640,
+      "height": 480,
+      "first_frame_pts": 0,
+      "container_rate": "30/1"
+    },
+    {
+      "camera": "tank_level",
+      "run": 4,
+      "ok": true,
+      "width": 640,
+      "height": 480,
+      "first_frame_pts": 0,
+      "container_rate": "30/1"
+    },
+    {
+      "camera": "tank_level",
+      "run": 5,
+      "ok": true,
+      "width": 640,
+      "height": 480,
+      "first_frame_pts": 0,
+      "container_rate": "30/1"
+    },
+    {
+      "camera": "cap_seal",
+      "run": 1,
+      "ok": true,
+      "width": 640,
+      "height": 480,
+      "first_frame_pts": 0,
+      "container_rate": "30/1"
+    },
+    {
+      "camera": "cap_seal",
+      "run": 2,
+      "ok": true,
+      "width": 640,
+      "height": 480,
+      "first_frame_pts": 0,
+      "container_rate": "30/1"
+    },
+    {
+      "camera": "cap_seal",
+      "run": 3,
+      "ok": true,
+      "width": 640,
+      "height": 480,
+      "first_frame_pts": 0,
+      "container_rate": "30/1"
+    },
+    {
+      "camera": "cap_seal",
+      "run": 4,
+      "ok": true,
+      "width": 640,
+      "height": 480,
+      "first_frame_pts": 0,
+      "container_rate": "30/1"
+    },
+    {
+      "camera": "cap_seal",
+      "run": 5,
+      "ok": true,
+      "width": 640,
+      "height": 480,
+      "first_frame_pts": 0,
+      "container_rate": "30/1"
+    }
+  ],
+  "ok": true,
+  "timing_note": "Frame rate is container metadata, not verified wall-clock capture rate.",
+  "run5_label_rows": 30,
+  "run5_recipe_count": 10
+}

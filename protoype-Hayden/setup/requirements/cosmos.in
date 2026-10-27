@@ -1,0 +1,7 @@
+# Uses PyTorch already provided by the Rosie SIF; native Spark installs it first.
+transformers==5.20.1
+accelerate>=1,<2
+huggingface_hub>=1,<2
+safetensors>=0.8,<1
+pillow>=11,<13
+av>=19,<20

@@ -403,3 +403,7 @@ footer strong { color: #819795; font-weight: 700; }
 .vial-decided { color: var(--signal) !important; font: 11px var(--mono) !important; }
 @media (max-width: 1050px) { .recipe-card { grid-template-columns: 1fr 1fr; } .recipe-card-title, .recipe-active { grid-column: 1 / -1; } }
 @media (max-width: 640px) { .recipe-card { grid-template-columns: 1fr; } }
+.recipe-pick { display: grid; gap: 8px; min-width: 0; }
+.custom-amounts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.custom-amounts input { padding: 8px; background: #101b22; color: var(--text); border: 1px solid #294045; min-width: 0; }
+.vial-reference { padding: 8px; background: transparent; color: var(--warning); border: 1px dashed var(--warning); font: 11px var(--mono); cursor: pointer; }

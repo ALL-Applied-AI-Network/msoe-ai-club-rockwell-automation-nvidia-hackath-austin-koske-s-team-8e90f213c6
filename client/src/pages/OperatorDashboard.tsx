@@ -7,7 +7,7 @@ import {
   type FormEvent,
 } from "react";
 import { Link } from "react-router-dom";
-import { judgeVial, loadRecipeLibrary, recipeSummary, type RecipeLibrary, type VialVerdict } from "@/services/recipeCheck";
+import { judgeVial, loadRecipeLibrary, recipeSummary, type Lab, type RecipeDefinition, type RecipeLibrary, type VialVerdict } from "@/services/recipeCheck";
 import type {
   CreateSessionRequest,
   HealthStatus,
@@ -170,14 +170,28 @@ interface VialRecord {
   decision?: "confirmed" | "overridden";
 }
 
+/** Display name for a recipe id; custom ids encode their mL amounts. */
+function recipeLabel(id: string | null): string {
+  if (!id) return "—";
+  return id.startsWith("custom-") ? `custom ${id.slice(7).replace(/-/g, "/")} mL` : `recipe ${id}`;
+}
+
 /** Simulated line action. Nothing is sent to the PLC, sorter or Teledyne. */
 function simulatedAction(vial: VialRecord): { lane: "GOOD" | "SCRAP" | "HOLD"; text: string } {
   const verdict = vial.verdict;
   if (verdict.kind === "match") return { lane: "GOOD", text: "Route to GOOD lane" };
   if (verdict.kind === "differs") return verdict.towardPrevious
-    ? { lane: "SCRAP", text: `Divert to SCRAP · shifted toward recipe ${vial.previousId} (possible carryover); flush before next vial` }
+    ? { lane: "SCRAP", text: `Divert to SCRAP · shifted toward ${recipeLabel(vial.previousId)} (possible carryover); flush before next vial` }
     : { lane: "SCRAP", text: "Divert to SCRAP · color does not match the recipe" };
   return { lane: "HOLD", text: verdict.kind === "no_reference" ? "Hold for manual check · no reference color for this recipe" : "Hold for manual check · color could not be measured" };
+}
+
+function readStored<T>(key: string, fallback: T): T {
+  try { const raw = window.localStorage.getItem(key); return raw ? JSON.parse(raw) as T : fallback; } catch { return fallback; }
+}
+
+function writeStored(key: string, value: unknown) {
+  try { window.localStorage.setItem(key, JSON.stringify(value)); } catch { /* storage unavailable: keep in memory */ }
 }
 
 export default function OperatorDashboard() {
@@ -201,6 +215,9 @@ export default function OperatorDashboard() {
   const [, setReviewQueue] = useState<InspectionEvent[]>([]);
   const [library, setLibrary] = useState<RecipeLibrary | null>(null);
   const [nextRecipe, setNextRecipe] = useState("5");
+  const [customAmounts, setCustomAmounts] = useState({ t100: "10", t200: "10", t400: "10" });
+  const [customRecipes, setCustomRecipes] = useState<RecipeDefinition[]>(() => readStored("linewatch.customRecipes", []));
+  const [acceptedReferences, setAcceptedReferences] = useState<Record<string, { lab: Lab; from: string }>>(() => readStored("linewatch.acceptedReferences", {}));
   const [activeVial, setActiveVial] = useState<{ number: number; recipeId: string; previousId: string | null; startFrame: number } | null>(null);
   const [vialLog, setVialLog] = useState<VialRecord[]>([]);
   const [useClipReference, setUseClipReference] = useState(true);
@@ -591,21 +608,55 @@ export default function OperatorDashboard() {
   }, []);
 
   const lastRecipeId = vialLog[0]?.recipeId ?? null;
+  // Library recipes, operator-entered custom recipes, and operator-accepted reference colours.
+  const allRecipes = [...(library?.recipes ?? []), ...customRecipes]
+    .map((recipe) => recipe.reference || !acceptedReferences[recipe.id] ? recipe : { ...recipe, reference: acceptedReferences[recipe.id] });
+  const effectiveLibrary = library ? { ...library, recipes: allRecipes } : null;
+  const effectiveLibraryRef = useRef(effectiveLibrary);
+  effectiveLibraryRef.current = effectiveLibrary;
+
+  const resolveCustomRecipe = (): string | null => {
+    const amounts = [customAmounts.t100, customAmounts.t200, customAmounts.t400].map((value) => Number(value || 0));
+    if (amounts.some((value) => !Number.isFinite(value) || value < 0 || value > 500) || amounts.every((value) => value === 0)) {
+      setMessage("Enter mL amounts between 0 and 500, with at least one above 0");
+      return null;
+    }
+    const [t100, t200, t400] = amounts;
+    const same = allRecipes.find((recipe) => (recipe.t100_ml ?? 0) === t100 && (recipe.t200_ml ?? 0) === t200 && (recipe.t400_ml ?? 0) === t400);
+    if (same) return same.id;
+    const recipe: RecipeDefinition = { id: `custom-${t100}-${t200}-${t400}`, name: `Custom ${t100}/${t200}/${t400} mL`,
+      t100_ml: t100 || null, t200_ml: t200 || null, t400_ml: t400 || null,
+      order: ["T200", "T400", "T100"].filter((_, i) => [t200, t400, t100][i] > 0).join(">"), note: "Entered by operator", reference: null };
+    setCustomRecipes((current) => { const next = [...current, recipe]; writeStored("linewatch.customRecipes", next); return next; });
+    return recipe.id;
+  };
+
+  const acceptAsReference = (vial: VialRecord) => {
+    if (vial.verdict.kind !== "no_reference") return;
+    const reference = { lab: vial.verdict.lab, from: `Vial ${vial.number}, accepted by operator` };
+    setAcceptedReferences((current) => { const next = { ...current, [vial.recipeId]: reference }; writeStored("linewatch.acceptedReferences", next); return next; });
+    setMessage(`Vial ${vial.number} is now the reference colour for ${allRecipes.find((recipe) => recipe.id === vial.recipeId)?.name ?? vial.recipeId}`);
+  };
 
   const setRecipeForNextVial = () => {
+    const recipeId = nextRecipe === "custom" ? resolveCustomRecipe() : nextRecipe;
+    if (!recipeId) return;
+    if (nextRecipe === "custom") setNextRecipe(recipeId);
     // Carryover is judged against the last *different* recipe, which may be several vials back.
-    const priorRecipe = vialLog.find((vial) => vial.recipeId !== nextRecipe)?.recipeId ?? null;
-    const vial = { number: (vialLog[0]?.number ?? 0) + 1, recipeId: nextRecipe, previousId: priorRecipe,
+    const priorRecipe = vialLog.find((vial) => vial.recipeId !== recipeId)?.recipeId ?? null;
+    const vial = { number: (vialLog[0]?.number ?? 0) + 1, recipeId, previousId: priorRecipe,
       startFrame: sourceMode === "live_camera" && sessionRef.current ? (latestEvent?.frame_number ?? 0) + 1 : 1 };
     setActiveVial(vial);
-    const name = library?.recipes.find((recipe) => recipe.id === nextRecipe)?.name ?? `Recipe ${nextRecipe}`;
-    setConfig((current) => ({ ...current, recipe: { ...current.recipe, current_recipe_id: nextRecipe, current_recipe_name: name,
-      previous_recipe_id: priorRecipe, vial_index: vial.number, is_first_vial_after_change: Boolean(lastRecipeId && lastRecipeId !== nextRecipe) } }));
-    setMessage(`Vial ${vial.number}: recipe ${nextRecipe} received (manual entry simulating the recipe feed)`);
+    const name = allRecipes.find((recipe) => recipe.id === recipeId)?.name
+      ?? (recipeId.startsWith("custom-") ? `Custom ${recipeId.slice(7).replace(/-/g, "/")} mL` : `Recipe ${recipeId}`);
+    setConfig((current) => ({ ...current, recipe: { ...current.recipe, current_recipe_id: recipeId.slice(0, 80), current_recipe_name: name,
+      previous_recipe_id: priorRecipe, vial_index: vial.number, is_first_vial_after_change: Boolean(lastRecipeId && lastRecipeId !== recipeId) } }));
+    setMessage(`Vial ${vial.number}: ${name} received (manual entry simulating the recipe feed)`);
   };
 
   const closeVial = async (vialSessionId: string) => {
     const vial = activeVialRef.current;
+    const library = effectiveLibraryRef.current;
     if (!vial || !library) return;
     const saved = await listInspectionEvents(vialSessionId, 500);
     const vialEvents = saved.filter((event) => event.frame_number >= vial.startFrame);
@@ -614,9 +665,8 @@ export default function OperatorDashboard() {
       verdict: judgeVial(vialEvents, library, vial.recipeId, vial.previousId) };
     setVialLog((current) => [record, ...current]);
     setActiveVial(null);
-    const next = library.recipes.findIndex((recipe) => recipe.id === vial.recipeId);
     setMessage(`Vial ${vial.number} finished · ${simulatedAction(record).lane} (simulated)`);
-    if (next >= 0) setNextRecipe(vial.recipeId);
+    setNextRecipe(vial.recipeId);
   };
 
   const decideVial = async (vial: VialRecord, decision: "confirmed" | "overridden") => {
@@ -703,10 +753,11 @@ export default function OperatorDashboard() {
 
         <section className="recipe-card" aria-label="Next vial recipe">
           <div className="recipe-card-title"><span className="section-number">1</span><div><h2>Next vial recipe</h2><p>Entered by the operator before filling · stands in for a live recipe feed from the line</p></div></div>
-          <label><span>RECIPE</span><select value={nextRecipe} disabled={isProcessing} onChange={(event) => setNextRecipe(event.target.value)}>{(library?.recipes ?? []).map((recipe) => <option key={recipe.id} value={recipe.id}>{recipe.name} · {recipeSummary(recipe)}{recipe.reference ? "" : " · no reference color"}</option>)}</select></label>
+          <div className="recipe-pick"><label><span>RECIPE</span><select value={nextRecipe} disabled={isProcessing} onChange={(event) => setNextRecipe(event.target.value)}>{allRecipes.map((recipe) => <option key={recipe.id} value={recipe.id}>{recipe.name} · {recipeSummary(recipe)}{recipe.reference ? "" : " · no reference color"}</option>)}<option value="custom">Custom amounts…</option></select></label>
+            {nextRecipe === "custom" && <div className="custom-amounts">{([["t100", "CLEAR T100"], ["t200", "ORANGE T200"], ["t400", "BLUE T400"]] as const).map(([key, label]) => <label key={key}><span>{label} mL</span><input type="number" min="0" max="500" step="1" value={customAmounts[key]} onChange={(event) => setCustomAmounts({ ...customAmounts, [key]: event.target.value })} /></label>)}</div>}</div>
           <div className="recipe-previous"><span>LAST VIAL</span><strong>{lastRecipeId ? `Recipe ${lastRecipeId}` : "—"}</strong></div>
           <button className="button primary" type="button" disabled={isProcessing || !library} onClick={setRecipeForNextVial}>SET RECIPE</button>
-          <div className={`recipe-active ${activeVial ? "on" : ""}`}>{activeVial ? <><strong>Vial {activeVial.number} · recipe {activeVial.recipeId}</strong><span>{lastRecipeId && lastRecipeId !== activeVial.recipeId ? `Recipe change from ${lastRecipeId}` : activeVial.previousId ? `Same recipe · carryover checked against recipe ${activeVial.previousId}` : "First vial"} · now fill it</span></> : <span>No vial armed · set a recipe first</span>}</div>
+          <div className={`recipe-active ${activeVial ? "on" : ""}`}>{activeVial ? <><strong>Vial {activeVial.number} · {recipeLabel(activeVial.recipeId)}</strong><span>{lastRecipeId && lastRecipeId !== activeVial.recipeId ? `Recipe change from ${recipeLabel(lastRecipeId)}` : activeVial.previousId ? `Same recipe · carryover checked against ${recipeLabel(activeVial.previousId)}` : "First vial"} · now fill it</span></> : <span>No vial armed · set a recipe first</span>}</div>
         </section>
 
         <section className="source-mode-bar" aria-label="Inspection source">
@@ -742,7 +793,7 @@ export default function OperatorDashboard() {
               <div className={`drop-zone ${dragActive ? "active" : ""}`} onDragEnter={(event) => { event.preventDefault(); setDragActive(true); }} onDragOver={(event) => event.preventDefault()} onDragLeave={() => setDragActive(false)} onDrop={onDrop} onClick={() => fileInputRef.current?.click()}>
                 <input ref={fileInputRef} type="file" hidden multiple={sourceMode === "images"} accept={sourceMode === "images" ? "image/jpeg,image/png,image/webp" : "video/mp4,video/webm,video/quicktime,.mov"} onClick={(event) => event.stopPropagation()} onChange={(event) => { const files = Array.from(event.target.files ?? []); event.target.value = ""; void handleFiles(files); }} />
                 <strong>DROP {sourceMode === "images" ? "IMAGES" : "ONE VIAL'S RECORDING"} HERE</strong>
-                <span>{activeVial ? `Fills vial ${activeVial.number} (recipe ${activeVial.recipeId})` : "Set the next vial's recipe first"} · or click to choose a file</span>
+                <span>{activeVial ? `Fills vial ${activeVial.number} (${recipeLabel(activeVial.recipeId)})` : "Set the next vial's recipe first"} · or click to choose a file</span>
               </div>
             )}
 
@@ -788,9 +839,10 @@ export default function OperatorDashboard() {
                 const action = simulatedAction(vial);
                 const verdict = vial.verdict;
                 return <article className={`vial-result lane-${action.lane.toLowerCase()}`} key={vial.number}>
-                  <header><strong>Vial {vial.number} · recipe {vial.recipeId}</strong><span className="vial-chip">{verdict.kind === "match" ? "IN SPEC" : verdict.kind === "differs" ? "OUT OF SPEC" : "CAN'T VERIFY"}</span></header>
-                  <p>{verdict.kind === "match" || verdict.kind === "differs" ? `ΔE ${verdict.deltaE.toFixed(1)} to recipe ${vial.recipeId} (band ${library?.band_de2000 ?? 5})${verdict.deltaEPrevious != null ? ` · ΔE ${verdict.deltaEPrevious.toFixed(1)} to recipe ${vial.previousId}` : ""} · ${verdict.samples} samples` : verdict.kind === "no_reference" ? `Measured (${verdict.samples} samples) but recipe ${vial.recipeId} has no reference color` : "QA could not measure the finished color"}</p>
+                  <header><strong>Vial {vial.number} · {allRecipes.find((recipe) => recipe.id === vial.recipeId)?.name ?? `recipe ${vial.recipeId}`}</strong><span className="vial-chip">{verdict.kind === "match" ? "IN SPEC" : verdict.kind === "differs" ? "OUT OF SPEC" : "CAN'T VERIFY"}</span></header>
+                  <p>{verdict.kind === "match" || verdict.kind === "differs" ? `ΔE ${verdict.deltaE.toFixed(1)} to ${recipeLabel(vial.recipeId)} (band ${library?.band_de2000 ?? 5})${verdict.deltaEPrevious != null ? ` · ΔE ${verdict.deltaEPrevious.toFixed(1)} to ${recipeLabel(vial.previousId)}` : ""} · ${verdict.samples} samples` : verdict.kind === "no_reference" ? `Measured (${verdict.samples} samples) but ${recipeLabel(vial.recipeId)} has no reference color yet` : "QA could not measure the finished color"}</p>
                   <div className="vial-action"><span>SIMULATED ACTION</span><strong>{action.text}</strong></div>
+                  {verdict.kind === "no_reference" && !allRecipes.find((recipe) => recipe.id === vial.recipeId)?.reference && <button className="vial-reference" type="button" onClick={() => acceptAsReference(vial)}>USE AS REFERENCE FOR THIS RECIPE</button>}
                   {vial.decision ? <p className="vial-decided">Operator {vial.decision} · saved</p> : <div className="vial-buttons"><button type="button" disabled={!response.reviewer.trim() || !vial.eventId} onClick={() => void decideVial(vial, "confirmed")}>CONFIRM</button><button type="button" disabled={!response.reviewer.trim() || !vial.eventId} onClick={() => void decideVial(vial, "overridden")}>OVERRIDE</button></div>}
                 </article>;
               })}

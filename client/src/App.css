@@ -134,7 +134,6 @@ main { max-width: 1500px; margin: auto; padding: 35px 24px 56px; }
 .viewport-label { left: 12px; display: flex; align-items: center; gap: 7px; }
 .frame-code { right: 12px; color: #adc0bd; }
 .live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--failure); box-shadow: 0 0 8px var(--failure); }
-.scan-line { position: absolute; z-index: 4; left: 0; right: 0; height: 2px; background: var(--signal); box-shadow: 0 0 14px var(--signal); animation: scan 1.5s linear infinite; }
 
 .camera-actions { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; padding: 0 16px 16px; }
 .button { border: 1px solid transparent; padding: 10px 13px; font: 9px var(--mono); letter-spacing: .06em; font-weight: 700; }
@@ -286,7 +285,6 @@ footer strong { color: #819795; font-weight: 700; }
 .frame-metadata strong { margin-top: 7px; font-size: 11px; }
 .frame-metadata small { margin-top: 5px; color: var(--muted); font: 8px/1.4 var(--mono); }
 
-@keyframes scan { from { top: 0; } to { top: 100%; } }
 @keyframes pulse { 50% { opacity: .35; transform: scale(.7); } }
 
 @media (max-width: 1050px) {

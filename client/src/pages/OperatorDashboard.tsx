@@ -639,7 +639,6 @@ export default function OperatorDashboard() {
               {!isCameraLive && !latestEvent && <div className="empty-camera"><div className="vial-glyph"><span /></div><strong>NO FRAME SELECTED</strong><p>Start a camera or ingest images/recording frames.</p></div>}
               <div className="viewport-label"><span className={isCameraLive && view === "raw" ? "live-dot" : ""} />{view === "raw" ? sourceLabels[sourceMode].label : maskImage ? "POST-PIPELINE · MASK" : "POST-PIPELINE · SOURCE FALLBACK"}</div>
               <div className="frame-code">{latestEvent ? `${latestEvent.frame_id} · ${timestampLabel(latestEvent.source_timestamp_ms)}` : "WAITING FOR FRAME"}</div>
-              {isProcessing && <div className="scan-line" />}
             </div>
 
             {sourceMode === "live_camera" ? (

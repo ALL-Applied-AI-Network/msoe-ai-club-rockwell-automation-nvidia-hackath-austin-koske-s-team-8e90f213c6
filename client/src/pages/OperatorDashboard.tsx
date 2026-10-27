@@ -7,7 +7,7 @@ import {
   type FormEvent,
 } from "react";
 import { Link } from "react-router-dom";
-import InvestigationPanel from "@/components/InvestigationPanel";
+import { judgeVial, loadRecipeLibrary, recipeSummary, type RecipeLibrary, type VialVerdict } from "@/services/recipeCheck";
 import type {
   CreateSessionRequest,
   HealthStatus,
@@ -160,6 +160,26 @@ function waitForMedia(video: HTMLVideoElement, eventName: "loadedmetadata" | "lo
   });
 }
 
+interface VialRecord {
+  number: number;
+  recipeId: string;
+  previousId: string | null;
+  sessionId: string;
+  eventId: string | null;
+  verdict: VialVerdict;
+  decision?: "confirmed" | "overridden";
+}
+
+/** Simulated line action. Nothing is sent to the PLC, sorter or Teledyne. */
+function simulatedAction(vial: VialRecord): { lane: "GOOD" | "SCRAP" | "HOLD"; text: string } {
+  const verdict = vial.verdict;
+  if (verdict.kind === "match") return { lane: "GOOD", text: "Route to GOOD lane" };
+  if (verdict.kind === "differs") return verdict.towardPrevious
+    ? { lane: "SCRAP", text: `Divert to SCRAP · shifted toward recipe ${vial.previousId} (possible carryover); flush before next vial` }
+    : { lane: "SCRAP", text: "Divert to SCRAP · color does not match the recipe" };
+  return { lane: "HOLD", text: verdict.kind === "no_reference" ? "Hold for manual check · no reference color for this recipe" : "Hold for manual check · color could not be measured" };
+}
+
 export default function OperatorDashboard() {
   const [health, setHealth] = useState<HealthStatus | null>(null);
   const [config, setConfig] = useState<CreateSessionRequest>(initialConfig);
@@ -178,7 +198,14 @@ export default function OperatorDashboard() {
   const [processingError, setProcessingError] = useState<string | null>(null);
   const [referenceStatus, setReferenceStatus] = useState("Use a configured reference or choose an earlier aligned image");
   const [response, setResponse] = useState<OperatorResponse>({ reviewer: "", action: "reviewed", note: "" });
-  const [reviewQueue, setReviewQueue] = useState<InspectionEvent[]>([]);
+  const [, setReviewQueue] = useState<InspectionEvent[]>([]);
+  const [library, setLibrary] = useState<RecipeLibrary | null>(null);
+  const [nextRecipe, setNextRecipe] = useState("5");
+  const [activeVial, setActiveVial] = useState<{ number: number; recipeId: string; previousId: string | null; startFrame: number } | null>(null);
+  const [vialLog, setVialLog] = useState<VialRecord[]>([]);
+  const [useClipReference, setUseClipReference] = useState(true);
+  const activeVialRef = useRef(activeVial);
+  activeVialRef.current = activeVial;
   const [dragActive, setDragActive] = useState(false);
   const [ingestion, setIngestion] = useState<{ label: string; current: number; total: number } | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -408,7 +435,7 @@ export default function OperatorDashboard() {
   const selectSource = (mode: SourceMode) => {
     if (sessionRef.current) resetSession();
     setSourceMode(mode);
-    setSampleSeconds(mode === "recording" ? 0.2 : 1.5);
+    setSampleSeconds(mode === "recording" ? 0.5 : 1.5);
     setConfig((current) => ({ ...current, source_mode: mode, source_name: null }));
     setMessage(`${sourceLabels[mode].label} source selected`);
   };
@@ -457,6 +484,15 @@ export default function OperatorDashboard() {
       video.src = objectUrl;
       await firstFrame;
       if (!Number.isFinite(video.duration) || video.duration <= 0) throw new Error("Recording duration is unavailable");
+      if (useClipReference && health?.pipeline_mode === "model") {
+        // The vial is empty before dosing starts: use the clip's first frame as the temporal reference.
+        const still = document.createElement("canvas");
+        still.width = video.videoWidth; still.height = video.videoHeight;
+        still.getContext("2d")?.drawImage(video, 0, 0);
+        const blob = await new Promise<Blob>((resolve, reject) => still.toBlob((value) => value ? resolve(value) : reject(new Error("Could not encode reference frame")), "image/png"));
+        const result = await uploadReference(active.session_id, new File([blob], `${file.name}-first-frame.png`, { type: "image/png" }), signal);
+        setReferenceStatus(`First frame of ${file.name} · ${result.status}`);
+      }
       const intervalMs = Math.max(100, Math.round((Number.isFinite(sampleSeconds) && sampleSeconds > 0 ? sampleSeconds : 1.5) * 1000));
       const total = Math.max(1, Math.floor(video.duration * 1000 / intervalMs) + 1);
       const width = video.videoWidth, height = video.videoHeight;
@@ -481,6 +517,7 @@ export default function OperatorDashboard() {
         if (generation === generationRef.current) setIngestion({ label: file.name, current: index + 1, total });
       }
       if (generation === generationRef.current) setMessage(cancelIngestionRef.current ? "Recording ingestion stopped" : `Recording complete · ${total} sampled frames persisted (browser seek clock)`);
+      if (generation === generationRef.current && !cancelIngestionRef.current) await closeVial(active.session_id);
     } finally {
       if (objectUrl) URL.revokeObjectURL(objectUrl);
       if (generation === generationRef.current) setIsProcessing(false);
@@ -549,6 +586,54 @@ export default function OperatorDashboard() {
     }
   };
 
+  useEffect(() => {
+    void loadRecipeLibrary().then(setLibrary).catch(() => setLibrary(null));
+  }, []);
+
+  const lastRecipeId = vialLog[0]?.recipeId ?? null;
+
+  const setRecipeForNextVial = () => {
+    // Carryover is judged against the last *different* recipe, which may be several vials back.
+    const priorRecipe = vialLog.find((vial) => vial.recipeId !== nextRecipe)?.recipeId ?? null;
+    const vial = { number: (vialLog[0]?.number ?? 0) + 1, recipeId: nextRecipe, previousId: priorRecipe,
+      startFrame: sourceMode === "live_camera" && sessionRef.current ? (latestEvent?.frame_number ?? 0) + 1 : 1 };
+    setActiveVial(vial);
+    const name = library?.recipes.find((recipe) => recipe.id === nextRecipe)?.name ?? `Recipe ${nextRecipe}`;
+    setConfig((current) => ({ ...current, recipe: { ...current.recipe, current_recipe_id: nextRecipe, current_recipe_name: name,
+      previous_recipe_id: priorRecipe, vial_index: vial.number, is_first_vial_after_change: Boolean(lastRecipeId && lastRecipeId !== nextRecipe) } }));
+    setMessage(`Vial ${vial.number}: recipe ${nextRecipe} received (manual entry simulating the recipe feed)`);
+  };
+
+  const closeVial = async (vialSessionId: string) => {
+    const vial = activeVialRef.current;
+    if (!vial || !library) return;
+    const saved = await listInspectionEvents(vialSessionId, 500);
+    const vialEvents = saved.filter((event) => event.frame_number >= vial.startFrame);
+    const newest = [...vialEvents].sort((a, b) => b.frame_number - a.frame_number)[0];
+    const record: VialRecord = { ...vial, sessionId: vialSessionId, eventId: newest?.event_id ?? null,
+      verdict: judgeVial(vialEvents, library, vial.recipeId, vial.previousId) };
+    setVialLog((current) => [record, ...current]);
+    setActiveVial(null);
+    const next = library.recipes.findIndex((recipe) => recipe.id === vial.recipeId);
+    setMessage(`Vial ${vial.number} finished · ${simulatedAction(record).lane} (simulated)`);
+    if (next >= 0) setNextRecipe(vial.recipeId);
+  };
+
+  const decideVial = async (vial: VialRecord, decision: "confirmed" | "overridden") => {
+    if (!response.reviewer.trim() || !vial.eventId) return;
+    const action = simulatedAction(vial);
+    const body: OperatorResponse = { reviewer: response.reviewer,
+      action: decision === "overridden" ? "investigate" : action.lane === "GOOD" ? "reviewed" : "hold_for_review",
+      note: `Vial ${vial.number} recipe ${vial.recipeId}: ${decision} simulated ${action.lane}${response.note ? ` · ${response.note}` : ""}` };
+    try {
+      await acknowledgeInspectionEvent(vial.sessionId, vial.eventId, body);
+      setVialLog((current) => current.map((item) => item.number === vial.number ? { ...item, decision } : item));
+      setMessage(`Vial ${vial.number}: operator ${decision} the simulated action (saved; nothing sent to the line)`);
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not save the decision");
+    }
+  };
+
   const acknowledge = async (event = latestEvent) => {
     if (!session || !event || !response.reviewer.trim()) return;
     const generation = generationRef.current;
@@ -591,7 +676,6 @@ export default function OperatorDashboard() {
     return () => { active = false; };
   }, [sessionId]);
 
-  const pendingReview = reviewQueue[0];
   const measurements = latestEvent?.decision.measurements ?? [];
 
   return (
@@ -601,7 +685,7 @@ export default function OperatorDashboard() {
           <div className="brand-mark" aria-hidden="true"><span /></div>
           <div><strong>LINEWATCH</strong><small>VIAL FILL INSPECTION</small></div>
         </Link>
-        <nav className="main-nav"><Link className="active" to="/">MONITOR</Link><Link to="/recipe-check">RECIPE CHECK</Link><a href="#investigation">INVESTIGATION</a><Link to="/history">RUN HISTORY</Link></nav>
+        <nav className="main-nav"><Link className="active" to="/">MONITOR</Link><Link to="/recipe-check">RECIPE CHECK</Link><Link to="/history">RUN HISTORY</Link></nav>
         <div className="topbar-status">
           <span className={`connection-dot ${health ? "online" : ""}`} />
           <div>
@@ -613,8 +697,16 @@ export default function OperatorDashboard() {
 
       <main>
         <section className="page-intro simple-intro">
-          <div><h1>Fill monitor</h1><ol className="steps"><li><b>1</b> Choose a source</li><li><b>2</b> Watch what the model sees</li><li><b>3</b> Record your response</li></ol></div>
+          <div><h1>Fill monitor</h1><ol className="steps"><li><b>1</b> Enter the next vial&apos;s recipe</li><li><b>2</b> Fill it (camera or recording)</li><li><b>3</b> Act on the vial result</li></ol></div>
           <div className="intro-actions"><div className={`state-chip state-${status}`}><span className="pulse" />{statusLabel[status]}</div>{session && <button className="button quiet" type="button" onClick={resetSession}>NEW RUN</button>}</div>
+        </section>
+
+        <section className="recipe-card" aria-label="Next vial recipe">
+          <div className="recipe-card-title"><span className="section-number">1</span><div><h2>Next vial recipe</h2><p>Entered by the operator before filling · stands in for a live recipe feed from the line</p></div></div>
+          <label><span>RECIPE</span><select value={nextRecipe} disabled={isProcessing} onChange={(event) => setNextRecipe(event.target.value)}>{(library?.recipes ?? []).map((recipe) => <option key={recipe.id} value={recipe.id}>{recipe.name} · {recipeSummary(recipe)}{recipe.reference ? "" : " · no reference color"}</option>)}</select></label>
+          <div className="recipe-previous"><span>LAST VIAL</span><strong>{lastRecipeId ? `Recipe ${lastRecipeId}` : "—"}</strong></div>
+          <button className="button primary" type="button" disabled={isProcessing || !library} onClick={setRecipeForNextVial}>SET RECIPE</button>
+          <div className={`recipe-active ${activeVial ? "on" : ""}`}>{activeVial ? <><strong>Vial {activeVial.number} · recipe {activeVial.recipeId}</strong><span>{lastRecipeId && lastRecipeId !== activeVial.recipeId ? `Recipe change from ${lastRecipeId}` : activeVial.previousId ? `Same recipe · carryover checked against recipe ${activeVial.previousId}` : "First vial"} · now fill it</span></> : <span>No vial armed · set a recipe first</span>}</div>
         </section>
 
         <section className="source-mode-bar" aria-label="Inspection source">
@@ -628,7 +720,7 @@ export default function OperatorDashboard() {
         <div className="dashboard-grid">
           <section className="panel camera-panel">
             <div className="panel-heading">
-              <div><span className="section-number">1</span><div><h2>Frame</h2><p>Green = liquid the model proposes · blue = area actually sampled for color</p></div></div>
+              <div><span className="section-number">2</span><div><h2>Fill</h2><p>Green = liquid the model proposes · blue = area actually sampled for color</p></div></div>
               <div className="view-toggle"><button className={view === "output" ? "active" : ""} onClick={() => setView("output")} type="button">POST-PIPELINE</button><button className={view === "raw" ? "active" : ""} onClick={() => setView("raw")} type="button">SOURCE</button></div>
             </div>
 
@@ -643,13 +735,14 @@ export default function OperatorDashboard() {
             {sourceMode === "live_camera" ? (
               <div className="camera-actions">
                 {!isCameraLive ? <button className="button primary" onClick={() => void startCamera()} type="button"><span className="button-icon">●</span> START CAMERA</button> : <button className="button quiet" onClick={stopCamera} type="button">STOP CAMERA</button>}
+                {activeVial && session && <button className="button primary" type="button" onClick={() => void closeVial(session.session_id)}>FINISH VIAL {activeVial.number}</button>}
                 {health?.pipeline_mode === "mock" && <button className="button quiet" onClick={() => void sendGeneratedFrame(demoFrame)} disabled={isProcessing} type="button">SEND DEMO FRAME</button>}
               </div>
             ) : (
               <div className={`drop-zone ${dragActive ? "active" : ""}`} onDragEnter={(event) => { event.preventDefault(); setDragActive(true); }} onDragOver={(event) => event.preventDefault()} onDragLeave={() => setDragActive(false)} onDrop={onDrop} onClick={() => fileInputRef.current?.click()}>
                 <input ref={fileInputRef} type="file" hidden multiple={sourceMode === "images"} accept={sourceMode === "images" ? "image/jpeg,image/png,image/webp" : "video/mp4,video/webm,video/quicktime,.mov"} onClick={(event) => event.stopPropagation()} onChange={(event) => { const files = Array.from(event.target.files ?? []); event.target.value = ""; void handleFiles(files); }} />
-                <strong>DROP {sourceMode === "images" ? "IMAGES" : "A RECORDING"} HERE</strong>
-                <span>or click to choose a file · every frame and its result are saved</span>
+                <strong>DROP {sourceMode === "images" ? "IMAGES" : "ONE VIAL'S RECORDING"} HERE</strong>
+                <span>{activeVial ? `Fills vial ${activeVial.number} (recipe ${activeVial.recipeId})` : "Set the next vial's recipe first"} · or click to choose a file</span>
               </div>
             )}
 
@@ -657,8 +750,9 @@ export default function OperatorDashboard() {
             <div className="message-bar">{message}</div>
 
             <details className="advanced-setup">
-              <summary>Advanced setup <span>recipe timeline · reference image · sampling · raw QA evidence</span></summary>
+              <summary>Advanced setup <span>reference image · sampling · raw QA evidence · recipe timeline</span></summary>
               <div className="advanced-body">
+                <label className="check-field"><input type="checkbox" checked={useClipReference} onChange={(event) => setUseClipReference(event.target.checked)} /><span>Use each recording&apos;s first frame (empty vial) as the reference</span></label>
                 <label className="sample-control"><span>{sourceMode === "live_camera" ? "SAMPLE SEC" : "FRAME INTERVAL SEC"}</span><input type="number" min="0.1" step="0.1" value={sampleSeconds} onChange={(event) => setSampleSeconds(Number(event.target.value))} /></label>
                 <section className="evidence-controls">
                   <button className="button quiet" type="button" disabled={isProcessing || health?.pipeline_mode !== "model"} onClick={() => referenceInputRef.current?.click()}>CHOOSE REFERENCE IMAGE</button>
@@ -685,15 +779,21 @@ export default function OperatorDashboard() {
           </section>
 
           <aside className="side-column">
-            <section className={`panel decision-panel decision-${status}`}><div className="panel-heading compact"><div><span className="section-number">2</span><div><h2>What the model found</h2><p>Latest frame · operator decides</p></div></div><span className="mode-badge">{latestEvent?.pipeline_mode.toUpperCase() ?? "NO RESULT"}</span></div><div className="decision-body"><h2>{displayHeadline ?? "Waiting for a frame"}</h2><p>{displayDetail ?? "Choose a source to start."}</p>{measurements.length > 0 && <div className="measurements">{measurements.map((measurement) => <div className={`measurement ${measurement.state}`} key={measurement.label}><span>{measurement.label.toUpperCase()}</span><strong>{measurement.value}</strong></div>)}</div>}<div className="recommended-action"><span>OPERATOR ACTION</span><strong>{latestEvent?.decision.recommended_action ?? "Choose a source"}</strong></div>{latestEvent?.decision.status === "failure" && <button className="button acknowledge" type="button" disabled={Boolean(latestEvent.acknowledged_at) || !response.reviewer.trim()} onClick={() => void acknowledge()}>{latestEvent.acknowledged_at ? "ACKNOWLEDGED" : "ACKNOWLEDGE + REVIEW"}</button>}</div></section>
+            <section className={`panel decision-panel decision-${status}`}><div className="panel-heading compact"><div><div><h2>Latest frame</h2><p>What the model sees right now</p></div></div><span className="mode-badge">{latestEvent?.pipeline_mode.toUpperCase() ?? "NO RESULT"}</span></div><div className="decision-body"><h2>{displayHeadline ?? "Waiting for a frame"}</h2><p>{displayDetail ?? "Choose a source to start."}</p>{measurements.length > 0 && <div className="measurements">{measurements.map((measurement) => <div className={`measurement ${measurement.state}`} key={measurement.label}><span>{measurement.label.toUpperCase()}</span><strong>{measurement.value}</strong></div>)}</div>}<div className="recommended-action"><span>OPERATOR ACTION</span><strong>{latestEvent?.decision.recommended_action ?? "Choose a source"}</strong></div>{latestEvent?.decision.status === "failure" && <button className="button acknowledge" type="button" disabled={Boolean(latestEvent.acknowledged_at) || !response.reviewer.trim()} onClick={() => void acknowledge()}>{latestEvent.acknowledged_at ? "ACKNOWLEDGED" : "ACKNOWLEDGE + REVIEW"}</button>}</div></section>
 
-            <section className="panel response-panel"><h2><span className="section-number">3</span> Your response</h2>
-              <label>REVIEWER<input value={response.reviewer} placeholder="Your name" onChange={(e) => setResponse({ ...response, reviewer: e.target.value })} /></label>
-              <label>RESPONSE<select value={response.action} onChange={(e) => setResponse({ ...response, action: e.target.value as OperatorResponse["action"] })}><option value="reviewed">Reviewed evidence</option><option value="hold_for_review">Hold for review</option><option value="request_reference">Request reference</option><option value="investigate">Investigate</option></select></label>
-              <label>NOTE<input value={response.note} placeholder="Optional" onChange={(e) => setResponse({ ...response, note: e.target.value })} /></label>
-              {pendingReview ? <button className="button primary" type="button" disabled={!response.reviewer.trim()} onClick={() => void acknowledge(pendingReview)}>SAVE RESPONSE</button> : <p>No frames waiting for review.</p>}
-              {pendingReview && <p>Saves for frame {pendingReview.frame_number} ({pendingReview.decision.headline}) · {reviewQueue.length} waiting. Records review, not product approval.</p>}
-              {reviewQueue.length > 1 && <details className="queue-details"><summary>Choose another frame</summary>{reviewQueue.slice(1).map((item) => <div className="review-queue-item" key={item.event_id}><span>Frame {item.frame_number}: {item.decision.headline}</span><button type="button" disabled={!response.reviewer.trim()} onClick={() => void acknowledge(item)}>SAVE</button></div>)}</details>}
+            <section className="panel vial-panel"><h2><span className="section-number">3</span> Vial results</h2>
+              <p className="vial-panel-note">Simulated line actions · nothing is sent to the PLC, sorter or Teledyne. Today&apos;s sorter is not recipe-aware.</p>
+              <label>OPERATOR<input value={response.reviewer} placeholder="Your name (to confirm or override)" onChange={(e) => setResponse({ ...response, reviewer: e.target.value })} /></label>
+              {vialLog.length === 0 ? <p className="vial-empty">No finished vials yet.</p> : vialLog.map((vial) => {
+                const action = simulatedAction(vial);
+                const verdict = vial.verdict;
+                return <article className={`vial-result lane-${action.lane.toLowerCase()}`} key={vial.number}>
+                  <header><strong>Vial {vial.number} · recipe {vial.recipeId}</strong><span className="vial-chip">{verdict.kind === "match" ? "IN SPEC" : verdict.kind === "differs" ? "OUT OF SPEC" : "CAN'T VERIFY"}</span></header>
+                  <p>{verdict.kind === "match" || verdict.kind === "differs" ? `ΔE ${verdict.deltaE.toFixed(1)} to recipe ${vial.recipeId} (band ${library?.band_de2000 ?? 5})${verdict.deltaEPrevious != null ? ` · ΔE ${verdict.deltaEPrevious.toFixed(1)} to recipe ${vial.previousId}` : ""} · ${verdict.samples} samples` : verdict.kind === "no_reference" ? `Measured (${verdict.samples} samples) but recipe ${vial.recipeId} has no reference color` : "QA could not measure the finished color"}</p>
+                  <div className="vial-action"><span>SIMULATED ACTION</span><strong>{action.text}</strong></div>
+                  {vial.decision ? <p className="vial-decided">Operator {vial.decision} · saved</p> : <div className="vial-buttons"><button type="button" disabled={!response.reviewer.trim() || !vial.eventId} onClick={() => void decideVial(vial, "confirmed")}>CONFIRM</button><button type="button" disabled={!response.reviewer.trim() || !vial.eventId} onClick={() => void decideVial(vial, "overridden")}>OVERRIDE</button></div>}
+                </article>;
+              })}
             </section>
 
             <section className="panel events-panel"><div className="panel-heading compact"><div><div><h2>Recent frames</h2><p>Latest 40 · newest first</p></div></div><span className="event-count">{events.length}</span></div><div className="event-list">{events.length === 0 ? <div className="empty-events">No frames yet.</div> : events.map((item) => <div className={`event-row ${item.decision.status}`} key={item.event_id}><time>{timestampLabel(item.source_timestamp_ms)}</time><span className="event-marker" /><div><strong>{item.decision.headline}</strong><p>{item.recipe.current_recipe_id} · {item.original_filename ?? item.frame_id}</p></div></div>)}</div>{session && <Link className="review-link" to={`/runs/${session.session_id}`}>OPEN FULL FRAME REVIEW →</Link>}</section>
@@ -702,9 +802,6 @@ export default function OperatorDashboard() {
           </aside>
         </div>
 
-        <section className="investigation-section" id="investigation">
-          <InvestigationPanel key={sessionId ?? "no-run"} sessionId={sessionId} frameNumber={latestEvent?.frame_number} processing={isProcessing} />
-        </section>
       </main>
 
       <footer><div><strong>LINEWATCH · OPERATOR-IN-THE-LOOP PROTOTYPE</strong><span>Rockwell Automation + NVIDIA Innovation Lab · Fall 2026</span><span>FastAPI / React / SQLite · No PLC control</span></div><div className="team-credit"><strong>© 2026 Project Team</strong><span>Austin Koske · Alayna Ostler · Cameron Delpage · Zoe Kirkman · Srijan Kumar · Josiah Mathews · Hayden Fons · Reagan Burkemper</span></div></footer>

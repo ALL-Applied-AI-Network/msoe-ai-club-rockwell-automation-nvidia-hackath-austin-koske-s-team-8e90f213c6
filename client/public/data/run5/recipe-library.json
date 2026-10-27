@@ -1,0 +1,158 @@
+{
+ "schema": "recipe-library/v1",
+ "source": "Organizer dataset README \u00a74 (Run 5 recipes); reference colors are Run 5 proxy endpoints from the frozen pipeline (3rd vial of each recipe, 2nd as fallback), not certified",
+ "band_de2000": 5,
+ "direction_cos": 0.8,
+ "endpoint_rule": "median Lab of QA-valid samples in the last 6 s of the vial clip",
+ "recipes": [
+  {
+   "id": "5",
+   "name": "Recipe 5",
+   "t100_ml": 10.0,
+   "t200_ml": 10.0,
+   "t400_ml": 10.0,
+   "order": "T200>T400>T100",
+   "note": "mixed - low even (swapped in)",
+   "reference": {
+    "lab": [
+     9.483490983758605,
+     -4.087321231125554,
+     3.94755580053969
+    ],
+    "from": "Run 5 vial 3 endpoint (proxy)"
+   }
+  },
+  {
+   "id": "6",
+   "name": "Recipe 6",
+   "t100_ml": 30.0,
+   "t200_ml": 10.0,
+   "t400_ml": 0.0,
+   "order": "T200>T100",
+   "note": "pale orange (fresh ratio)",
+   "reference": {
+    "lab": [
+     20.35372155048975,
+     19.59049460213577,
+     25.33955023649812
+    ],
+    "from": "Run 5 vial 6 endpoint (proxy)"
+   }
+  },
+  {
+   "id": "7",
+   "name": "Recipe 7",
+   "t100_ml": 20.0,
+   "t200_ml": 0.0,
+   "t400_ml": 50.0,
+   "order": "T400>T100",
+   "note": "pale blue (fresh ratio)",
+   "reference": {
+    "lab": [
+     16.096400548085022,
+     -6.065532382290906,
+     -14.57842169175212
+    ],
+    "from": "Run 5 vial 9 endpoint (proxy)"
+   }
+  },
+  {
+   "id": "8",
+   "name": "Recipe 8",
+   "t100_ml": 20.0,
+   "t200_ml": 20.0,
+   "t400_ml": 20.0,
+   "order": "T200>T400>T100",
+   "note": "even (links to Cfg D)",
+   "reference": null
+  },
+  {
+   "id": "9",
+   "name": "Recipe 9",
+   "t100_ml": 10.0,
+   "t200_ml": 35.0,
+   "t400_ml": 35.0,
+   "order": "T200>T400>T100",
+   "note": "dark saturated (low clear)",
+   "reference": null
+  },
+  {
+   "id": "10",
+   "name": "Recipe 10",
+   "t100_ml": 45.0,
+   "t200_ml": 15.0,
+   "t400_ml": 15.0,
+   "order": "T200>T400>T100",
+   "note": "pale wash (high clear)",
+   "reference": {
+    "lab": [
+     17.34965700636727,
+     -2.836994896235734,
+     14.53981777326622
+    ],
+    "from": "Run 5 vial 18 endpoint (proxy)"
+   }
+  },
+  {
+   "id": "11",
+   "name": "Recipe 11",
+   "t100_ml": 10.0,
+   "t200_ml": 10.0,
+   "t400_ml": 50.0,
+   "order": "T200>T400>T100",
+   "note": null,
+   "reference": {
+    "lab": [
+     8.160704045370732,
+     -7.896213150252115,
+     -1.792839525201545
+    ],
+    "from": "Run 5 vial 20 endpoint (proxy)"
+   }
+  },
+  {
+   "id": "12",
+   "name": "Recipe 12",
+   "t100_ml": 10.0,
+   "t200_ml": 50.0,
+   "t400_ml": 10.0,
+   "order": "T200>T400>T100",
+   "note": null,
+   "reference": {
+    "lab": [
+     12.962261737236908,
+     9.306001367849689,
+     15.327770474999912
+    ],
+    "from": "Run 5 vial 24 endpoint (proxy)"
+   }
+  },
+  {
+   "id": "13",
+   "name": "Recipe 13",
+   "t100_ml": 0.0,
+   "t200_ml": 50.0,
+   "t400_ml": 20.0,
+   "order": "T200>T400",
+   "note": null,
+   "reference": null
+  },
+  {
+   "id": "14",
+   "name": "Recipe 14",
+   "t100_ml": 60.0,
+   "t200_ml": 0.0,
+   "t400_ml": 10.0,
+   "order": "T400>T100",
+   "note": null,
+   "reference": {
+    "lab": [
+     27.121713175638348,
+     -13.400795406317807,
+     3.2699714663807278
+    ],
+    "from": "Run 5 vial 30 endpoint (proxy)"
+   }
+  }
+ ]
+}

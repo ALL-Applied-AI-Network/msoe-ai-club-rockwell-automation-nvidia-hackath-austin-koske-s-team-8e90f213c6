@@ -7,7 +7,8 @@ Numbers below are integration and availability counts, not accuracy.
 ## Before presenting
 
 - App open at **http://localhost:8788**: laptop Docker, or a browser on the GB10 after
-  `bash START.sh --device cuda` ([GB10 deployment](../setup/gb10/README.md)). The header shows
+  `bash setup/gb10/onboard.sh` (USB backup: `bash START.sh`; see [GB10 deployment](../setup/gb10/README.md)).
+  Onboarding must end with *Self-test PASSED*. The header shows
   **SYSTEM ONLINE** and decision badge **MODEL** once a frame is processed.
 - `run4-demo-excerpt.mp4` and the fallback MP4 ready locally (see [Fallback](#fallback)).
 - Start from **NEW RUN** so history from rehearsals is not on screen.
@@ -54,8 +55,8 @@ Numbers below are integration and availability counts, not accuracy.
 | Source/rendered/mask artifacts and run review | Segmentation/presence accuracy on human-reviewed labels |
 | Run-reset, stale, offline, stopped states | End-to-end latency from native camera PTS to display |
 | Synthetic Investigation examples, isolated from runs | CSI station session and workstation |
-| Portable Docker kit on x86 | Live camera at the event GB10 (`/dev/video*` or browser-visible feed) |
-| GB10 native run on spark8 (aarch64, CUDA): same 41/29/14 browser rehearsal, Investigation checks, no page errors | Event GB10 provisioning (account, Docker access, internet) |
+| Portable Docker kit on x86; GitHub clone → `onboard.sh` → Docker GPU, self-test 40/40 (x86 GPU) | Live camera at the event GB10 (`/dev/video*` or browser-visible feed) |
+| GB10 native run on spark8 (aarch64, CUDA and CPU): self-test 40/40, same 41/29/14 browser rehearsal, no page errors | Docker GPU image on aarch64 (untested; onboarding falls back automatically) and event GB10 GitHub access |
 
 ## Likely questions
 
@@ -74,18 +75,19 @@ reference, confirmed fill completion and physical vial identity, none of which w
 **What does the RCA prove?** It generates hypotheses with alternatives. Carryover, dosing and
 optical causes can produce identical color traces, so it never confirms a cause.
 
-**How does it deploy on the GB10?** A one-folder kit by USB or GitHub release: `bash START.sh --device cuda`.
-It needs only Python 3.12 and pip (no Docker, Node or root); both checkpoints are hash-checked. We
-ran the full browser rehearsal natively on spark8, a GB10, with CUDA. The team account there cannot use
-Docker, which is why the native path exists.
+**How does it deploy on the GB10?** `git clone` and `bash setup/gb10/onboard.sh`. It downloads and
+verifies the model release, starts Docker with the GPU (falling back to Docker CPU, then a native
+launcher), and proves with a 40-frame self-test that the device reproduces our outputs. A USB kit
+with its own Python and hash-locked packages is the backup. We ran the native path and full browser
+rehearsal on a GB10 (spark8), and the GitHub onboarding with Docker GPU from a fresh clone on an x86 GPU.
 
-**Is it real-time?** On GB10 CUDA, a saved frame takes about 86 ms through the whole app, about 11 frames/s.
+**Is it real-time?** On GB10 CUDA, a saved frame takes about 86 ms through the whole app when sent one at a time.
 Camera-to-display latency from native camera timestamps hasn't been measured.
 
 ## Fallback
 
 If the live app fails, say so, then play
-`C:/Users/Austin/ai-club-tools/results/demo-rehearsal-20261027-v1/fallback-recording/linewatch-demo-fallback.mp4`
+`C:/Users/Austin/ai-club-tools/results/demo-rehearsal-20261027-v1/final-local/linewatch-demo-fallback-final.mp4`
 and narrate the same table. The same flow recorded natively on the GB10:
 `C:/Users/Austin/ai-club-tools/results/demo-rehearsal-20261027-v1/gb10/linewatch-gb10-demo.mp4`. Still backups:
 `C:/Users/Austin/ai-club-tools/results/demo-rehearsal-20261027-v1/app-checks/` (`recording-monitor.png`,

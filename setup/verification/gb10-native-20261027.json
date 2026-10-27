@@ -97,6 +97,20 @@
         "real_run_completed_vials": 0,
         "synthetic_import": "rejected"
       }
+    },
+    "github_onboarding_fresh_clone": {
+      "host": "x86 laptop, RTX 4080 SUPER, Docker with NVIDIA runtime",
+      "commit": "abecb8a",
+      "model_release": "downloaded via gh, SHA256SUMS and checkpoint pins verified",
+      "mode": "docker-gpu",
+      "container_cuda": true,
+      "selftest": {
+        "passed": true,
+        "frames_agreeing": "40/40",
+        "max_lab_delta": 0.5906,
+        "median_ms": 115
+      },
+      "report": "C:/Users/Austin/ai-club-tools/results/demo-rehearsal-20261027-v1/github-onboarding-test/"
     }
   },
   "local_evidence": {
@@ -111,6 +125,8 @@
     "Agreement shows device reproducibility against frozen outputs, not segmentation or recipe accuracy",
     "Run4 excerpt frames are evaluation-only; no fitting, tuning or Run5 data",
     "No physical camera, industrial connection or event GB10 was tested",
-    "The temporal reference remains the unreviewed Run4 example"
-  ]
+    "The temporal reference remains the unreviewed Run4 example",
+    "aarch64 Docker GPU image not built (no Docker access on spark8, no arm64 emulation locally); onboarding falls back to Docker CPU, then native"
+  ],
+  "spark8_cleanup": "All validation files, processes and Playwright browsers removed from spark8 after testing"
 }

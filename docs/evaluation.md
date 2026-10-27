@@ -109,6 +109,12 @@ extract on spark8, `START.sh --selftest` matched the frozen x86 reference output
 with CUDA (max ΔLab 0.59, 90 ms median) and on CPU (ΔLab below 1e-13, 171 ms median). The GB10
 CPU path also matched an offline wheelhouse install. A different GB10 should rerun the self-test
 before the demo.
+
+The GitHub path was tested from a fresh clone of `austin-work` on the x86 laptop with an NVIDIA
+GPU: `setup/gb10/onboard.sh` downloaded and checksum-verified the model release, built the
+`compose.gpu.yaml` image, confirmed CUDA inside the container and passed the self-test (40/40,
+max ΔLab 0.59, 115 ms median). The aarch64 Docker GPU image has not been built; on the GB10,
+onboarding falls back to Docker CPU and then to the validated native launcher.
 [Record](../setup/verification/gb10-native-20261027.json).
 
 ## Sequence-diagnosis pilot

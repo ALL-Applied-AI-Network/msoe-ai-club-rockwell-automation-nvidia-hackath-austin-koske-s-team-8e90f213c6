@@ -18,7 +18,11 @@ approvals that did not happen.
 
 ## Set up the GB10
 
+Copy the kit from the USB to the GB10's own disk and extract it there. A FAT32 stick cannot
+hold the bundled Python's symlinks and permissions, so do not run it from the USB.
+
 ```bash
+cp /media/$USER/<USB>/linewatch-gb10-v1.1.0.tar.gz ~ && cd ~
 tar -xzf linewatch-gb10-v1.1.0.tar.gz && cd linewatch-gb10
 # No internet: copy wheels/ from linewatch-gb10-offline.tar.gz into this folder first.
 bash START.sh --check
@@ -31,12 +35,30 @@ must sit under the nozzle as in the Run5 clips.
 
 ## Record each vial
 
+The app does not record continuous video. In LIVE CAMERA mode it keeps only the frames it
+samples (every 1.5 s by default), which is not enough for data collection. Record the native
+stream with `ffmpeg` to the GB10's local disk, not the USB:
+
 ```bash
+mkdir -p ~/csi-20261027/session-01/{raw,notes,references} && cd ~/csi-20261027/session-01/raw
 ffmpeg -f v4l2 -input_format mjpeg -video_size 640x480 -framerate 30 -i /dev/video0 -c copy vial-A1.mkv
 ```
 
 `-c copy` keeps the camera's frames and timestamps. Stop with `q`. Start just before the fill
-so the first frame shows the empty vial. Name files after the vial log.
+so the first frame shows the empty vial. Name files after the vial log. Keep each file under
+4 GB (per-vial recordings are far smaller) because FAT32 sticks cannot hold larger files.
+
+The camera can usually be opened by only one program at a time: while `ffmpeg` records, the
+browser's LIVE CAMERA cannot use it, and the reverse. Record first, then process the clip.
+
+## What is saved where
+
+| Location | Contents |
+| --- | --- |
+| `~/csi-20261027/session-01/raw/` | Native recordings from `ffmpeg` (the data-collection record) |
+| `~/csi-20261027/session-01/notes/` | Vial log, forms, CSI answers, photos of Recipe Setup |
+| `~/linewatch-data/` | App results: each processed frame's original, overlay and mask, SQLite results/QA reasons, a copy of every dropped recording, operator decisions |
+| `~/linewatch-data/selftest-*/` | Self-test reports |
 
 ## Live test in the app
 
@@ -59,8 +81,11 @@ empty-vial reference, so prefer recordings.
 
 ## Close out
 
-Replay a sample of every recording; copy the session folder (`raw/`, `notes/`,
-`references/`) and `~/linewatch-data` to the USB and a second location. If CSI approved
+Replay a sample of every recording, then copy both folders to the USB and a second location:
+
+```bash
+cp -r ~/csi-20261027 ~/linewatch-data /media/$USER/<USB>/
+``` If CSI approved
 off-site storage, from the laptop afterwards:
 
 ```bash

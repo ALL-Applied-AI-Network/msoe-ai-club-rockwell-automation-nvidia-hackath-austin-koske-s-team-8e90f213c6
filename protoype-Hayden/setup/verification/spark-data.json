@@ -1,0 +1,48 @@
+{
+  "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+  "architecture": "aarch64",
+  "profile": "data",
+  "checks": {
+    "numpy": {
+      "ok": true,
+      "version": "2.5.4"
+    },
+    "pandas": {
+      "ok": true,
+      "version": "3.0.6"
+    },
+    "scipy": {
+      "ok": true,
+      "version": "1.18.1"
+    },
+    "matplotlib": {
+      "ok": true,
+      "version": "3.11.2"
+    },
+    "PIL": {
+      "ok": true,
+      "version": "12.3.0"
+    },
+    "av": {
+      "ok": true,
+      "version": "19.0.1"
+    },
+    "cv2": {
+      "ok": true,
+      "version": "5.0.0"
+    },
+    "skimage": {
+      "ok": true,
+      "version": "0.26.0"
+    },
+    "sklearn": {
+      "ok": true,
+      "version": "1.9.1"
+    },
+    "colour": {
+      "ok": true,
+      "version": "0.4.7"
+    }
+  },
+  "ok": true
+}

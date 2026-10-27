@@ -1,0 +1,75 @@
+{
+  "date": "2026-10-16",
+  "checks": {
+    "spark_data_imports": "passed",
+    "windows_data": "passed; 15 first-frame decodes, 30 Run 5 labels, 10 recipes",
+    "spark_cuda_tensor": "passed; GB10 capability 12.1, torch 2.11.0+cu130",
+    "spark_isaac_primitive_render": {
+      "status": "passed",
+      "isaacsim": "6.0.0.1",
+      "resolution": [
+        320,
+        240
+      ],
+      "seconds": 181.815274638
+    },
+    "spark_existing_vial_render": {
+      "status": "passed with setup adapter",
+      "captures": 12,
+      "unique_images": 12,
+      "resolution": [
+        640,
+        480
+      ],
+      "maximum_color_pair_mae": 2.768205404281616,
+      "original_renderer_without_adapter": "failed: twelve identical empty-liquid images",
+      "scope": "uncalibrated geometry/color proxy; source CAD/code unchanged",
+      "startup_workaround": "setarch aarch64 -R, applied to Isaac process only",
+      "consecutive_startup_workaround_runs_passed": 2
+    },
+    "spark_cosmos_edge": {
+      "status": "passed",
+      "revision": "344d602b128d1bbdacb43b08d0a3626f46343e29",
+      "answer": "The image shows two rectangles, one orange and one blue."
+    },
+    "rosie_gpu": {
+      "status": "passed",
+      "job_id": 284886,
+      "gpu": "NVIDIA H100 80GB HBM3",
+      "capability": [
+        9,
+        0
+      ],
+      "torch_cuda": "12.9",
+      "final_job_id": 284899
+    },
+    "rosie_cosmos_edge": {
+      "status": "passed",
+      "initial_job_id": 284887,
+      "final_job_id": 284894,
+      "final_job_state": "COMPLETED",
+      "exit_code": "0:0",
+      "slurm_elapsed_seconds": 38
+    },
+    "rosie_data": {
+      "status": "passed",
+      "isolated_from_site_numpy": true,
+      "report": "rosie-data.json"
+    },
+    "offline_contract_tests": {
+      "passed": 5
+    },
+    "stale_capture_regression_tests": {
+      "passed": 2
+    },
+    "shell_syntax": "All Bash and PowerShell scripts passed; Python source parsed"
+  },
+  "unexecuted": [
+    "Hosted API with real credentials",
+    "Cosmos3-Nano",
+    "Cosmos video generation",
+    "Brev paid instance",
+    "Optional tool stacks in resources.md"
+  ],
+  "scope": "Software onboarding checks only; no detection accuracy or physical calibration claim."
+}

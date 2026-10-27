@@ -1,0 +1,45 @@
+{
+  "python": "3.12.3 (main, Feb  4 2025, 14:48:35) [GCC 13.3.0]",
+  "architecture": "x86_64",
+  "profile": "cosmos",
+  "checks": {
+    "torch": {
+      "ok": true,
+      "version": "2.8.0a0+5228986c39.nv25.05"
+    },
+    "transformers": {
+      "ok": true,
+      "version": "5.20.1"
+    },
+    "accelerate": {
+      "ok": true,
+      "version": "1.15.0"
+    },
+    "huggingface_hub": {
+      "ok": true,
+      "version": "1.33.0"
+    },
+    "safetensors": {
+      "ok": true,
+      "version": "0.8.0"
+    },
+    "av": {
+      "ok": true,
+      "version": "19.0.1"
+    }
+  },
+  "ok": true,
+  "gpu": {
+    "name": "NVIDIA H100 80GB HBM3",
+    "capability": [
+      9,
+      0
+    ],
+    "torch_cuda": "12.9",
+    "tensor_check": "passed"
+  },
+  "cosmos_classes": {
+    "Cosmos3OmniForConditionalGeneration": true,
+    "Cosmos3EdgeForConditionalGeneration": true
+  }
+}

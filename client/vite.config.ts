@@ -18,6 +18,12 @@ export default defineConfig({
         target: process.env.API_PROXY_TARGET || 'http://127.0.0.1:8443',
         changeOrigin: true,
         secure: false,
+        ws: true,
+      },
+      '/health': {
+        target: process.env.API_PROXY_TARGET || 'http://127.0.0.1:8443',
+        changeOrigin: true,
+        secure: false,
       },
     },
   },

@@ -1,0 +1,8 @@
+{
+  "ok": true,
+  "captures": 12,
+  "unique_images": 12,
+  "maximum_color_pair_mae": 2.768205404281616,
+  "cross_sample_check": true,
+  "scope": "Capture variation check only; not optical or physical calibration"
+}

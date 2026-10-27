@@ -1,0 +1,11 @@
+{
+  "captured": 1,
+  "requested": 1,
+  "complete": true,
+  "physics_calibrated": false,
+  "renderer": "PathTracing",
+  "resolution": [
+    640,
+    480
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "model": "nvidia/Cosmos3-Edge",
+  "revision": "344d602b128d1bbdacb43b08d0a3626f46343e29",
+  "transformers": "5.20.1",
+  "torch": "2.11.0+cu130",
+  "gpu": "NVIDIA GB10",
+  "image": "/home/hackathon8/ai-club-tools/results/example.png",
+  "prompt": "Describe the visible objects and colors. Do not infer hidden process conditions.",
+  "response": "The image shows two rectangles, one orange and one blue. The visible objects are an orange rectangle and a blue rectangle.",
+  "seconds_including_model_load": 33.66796175000127
+}

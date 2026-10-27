@@ -9,8 +9,8 @@ coordinates and reference state. Reuse the existing measurement QA. Model
 confidence must not bypass sample or recipe qualification. Changes to those
 boundaries need corresponding examples and evaluation.
 
-Train on synthetic data and fine-tune on the real train split defined in
-[the plan](docs/plan.md#data-splits). The real test split (Run5) stays outside fitting,
+Train on synthetic data only; Runs 1–4 are real development data and Run5 is the
+ground truth ([data splits](docs/plan.md#data-splits)). Run5 stays outside fitting,
 tuning and sampling decisions.
 Preserve labels, reviewer histories, scene assets and frozen experiment helpers.
 Publish new weights/data as versioned release assets with checksums.

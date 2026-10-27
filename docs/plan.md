@@ -26,7 +26,7 @@ The Teledyne database is static; our recipe library is ours.
 
 **Success bar:** the full pipeline works on synthetic line video, where every vial, fault and
 cause is known, and works well enough on the organizers' real line video for a convincing demo. We train on
-simulation and fine-tune on a small real set, and we measure the sim-to-real gap directly.
+simulation only, evaluate against Run 5 as real ground truth, and measure the sim-to-real gap directly.
 
 ## Inputs
 
@@ -100,20 +100,21 @@ One entry point runs the same pipeline offline and in the app:
 `python -m replay.line --video X --schedule S --library L --out DIR` (to be built), and the app
 reads the same ledger.
 
-## Training: simulation first, real fine-tune
+## Training: simulation only, Run 5 as ground truth
 
 | Step | What | Existing starting point |
 | --- | --- | --- |
 | 1. Synthetic line video | Render whole sessions from a recipe schedule with injected faults (carryover, wrong recipe, dose error, missed dose, short fill) and nuisances (lighting, white balance, occlusion, bubbles, position). Every frame carries vial ID, fill phase, mask, true recipe and fault cause | Isaac Sim 6.0 FillCam renderer and liquid geometry (`setup/isaac/`); digital twin simulator |
 | 2. Domain randomization | Randomize dye colours (organizer clear/orange/blue plus other hues), concentration, lighting, camera gain/white balance, noise, JPEG/H.264 compression, small camera shifts | Renderer already varies colour, opacity, fill height, illumination |
 | 3. Train on synthetic | YOLO vial geometry, U-Net liquid mask/presence, vial-event segmentation (stage 2), RCA LoRA on synthetic evidence packets | Synthetic-only U-Net is the released model |
-| 4. Fine-tune on real | Small real train split (below) at a low learning rate, or mixed batches with synthetic | Real+synthetic YOLO pilot (`setup/vision/REAL-SYNTHETIC.md`) |
-| 5. Measure the gap | Same metrics on synthetic test, real test before fine-tune, real test after fine-tune | — |
+| 4. Check transfer on real development runs | Run Runs 1–4 through the pipeline to find sim-to-real failures, then fix them with more randomization or renderer changes, not by training on real frames | Matched Run 4 comparison, Run 1–4 endpoint study |
+| 5. Measure the gap | Same metrics on synthetic test and on Run 5 | Run 5 retrospective (`replay/run5_endpoints.py`) |
 
-Real labels: Runs 1–4 fill windows and boxes exist (machine labels); masks are pseudo-labelled by the
-current models and spot-checked with `annotation_review/`. Run 5 has organizer recipe labels and fill
-frames for 30 vials. There is no real per-vial fault ground truth; real faults are the natural
-first-vial-after-changeover deviations. The CSI 10/27 visit produced no usable data.
+Ground truth: Run 5's organizer labels give recipe and fill start/end frames for 30 vials (10 recipes ×
+3), which define the schedule, vial segmentation truth and recipe changeovers. There is no per-vial
+fault label; real faults are the first vials after a changeover, judged against proxy references.
+Masks on Run 5 frames can be spot-checked with `annotation_review/`. The CSI 10/27 visit produced no
+usable data.
 Optional: Cosmos Transfer for photorealism. Our trial showed it invents liquid and shifts colours,
 so use it only with mask/edge control, and re-check labels.
 
@@ -124,16 +125,15 @@ Whole sessions/batches stay in one split; never split frames of one vial across 
 | Set | Train | Validation (select checkpoints/thresholds) | Test (scored once, after freeze) |
 | --- | --- | --- | --- |
 | Synthetic | Most rendered sessions | Held-out sessions | Held-out sessions with unseen fault/nuisance combinations |
-| Organizer Runs 1–3 | Fine-tune | — | — |
-| Organizer Run 4 | — | Real validation | — |
-| Organizer Run 5 | — | — | **Real test** (30 labelled vials, 10 recipes; not blind, inspected in earlier diagnostics) |
+| Organizer Runs 1–4 | — | Real development: transfer checks, rule sanity | — |
+| Organizer Run 5 | — | — | **Ground truth** (30 labelled vials, 10 recipes; not blind, inspected in earlier diagnostics) |
 
 Run 5 references stay proxies (a later vial of the same recipe), as in the existing retrospective.
 
 ## Metrics
 
 Targets are proposed goals, not results. Report every metric with its count (n), on **synthetic
-test** and **real test**, plus real before vs after fine-tuning (the sim-to-real gap).
+test** and **Run 5**; their difference is the sim-to-real gap.
 
 | Area | Metric | Target: synthetic | Target: real |
 | --- | --- | --- | --- |
@@ -157,7 +157,7 @@ test** and **real test**, plus real before vs after fine-tuning (the sim-to-real
 | --- | --- |
 | Tue 10/27 | Plan agreed; synthetic session spec (schedule + faults + nuisances) agreed; Run 5 schedule file written from organizer labels |
 | Wed 10/28 | First synthetic sessions rendered; stage 2 vial segmentation; offline runner writes the ledger; evidence-packet schema |
-| Thu 10/29 | Train on synthetic, fine-tune on real; stage 4 actions + deadlines; metrics harness on all splits; RCA comparison |
+| Thu 10/29 | Train on synthetic; transfer checks on Runs 1–4; stage 4 actions + deadlines; metrics harness on all splits; RCA comparison |
 | Fri 10/30 | **Freeze models and thresholds.** Score synthetic test + real test once; GB10 run; app shows ledger and RCA |
 | Sat 10/31 | Demo video (synthetic session with every fault caught, then real Run 5), metrics tables, write-up |
 | Sun 11/1 | Submit |
@@ -167,7 +167,7 @@ test** and **real test**, plus real before vs after fine-tuning (the sim-to-real
 | Stream | Scope | Proposed |
 | --- | --- | --- |
 | Synthetic sessions | Fault/nuisance session renderer, domain randomization, labels | Cameron, Hayden |
-| Training + sim-to-real | Synthetic training, real fine-tune, gap measurements | Srijan, Aleyna, Reagan |
+| Training + sim-to-real | Synthetic training, transfer checks on Runs 1–4, gap measurements | Srijan, Aleyna, Reagan |
 | Pipeline + integration | Stages 2–4, `replay.line` runner, ledger, metrics harness, GB10 | Austin |
 | App | Upload video + schedule, live ledger, actions, RCA panel | Josiah |
 | RCA | Evidence packets, synthetic RCA training data, LLM + Cosmos comparison | Zoe, Jev |
@@ -179,7 +179,7 @@ test** and **real test**, plus real before vs after fine-tuning (the sim-to-real
 2. Real Run 5 video with its recipe schedule: the same pipeline on the GB10 flags the first vials
    after recipe changes (e.g. vial 4: ΔE 24.5 to its recipe, 1.6 to the previous one) as
    OUT OF SPEC → SCRAP + FLUSH, with the RCA naming carryover.
-3. The sim-to-real table: synthetic test, real before fine-tuning, real after fine-tuning.
+3. The sim-to-real table: the same metrics on synthetic test and on Run 5.
 
 ## Not in scope before submission
 

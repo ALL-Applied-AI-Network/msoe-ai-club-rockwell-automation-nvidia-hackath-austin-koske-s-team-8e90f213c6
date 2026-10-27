@@ -9,9 +9,9 @@ app skeleton runs inference.
 - Do not spawn subagents unless explicitly authorized.
 - Keep model experiments in `setup/vision/`, measurement/reference logic in
   `replay/`, annotation tools in `annotation_review/`, and the app in `api/` / `client/`.
-- Train on synthetic data; fine-tune on the real train split only (Runs 1–3; Run 4 is
-  validation, see `docs/plan.md#data-splits`). Never fit, tune or select on the real
-  test split (Run5). Keep scene families,
+- Train on synthetic data only. Runs 1–4 are real development data (transfer checks,
+  no training). Run5 is the ground truth: never fit, tune or select on it (see
+  `docs/plan.md#data-splits`). Keep scene families,
   sessions and batches together and disclose generic pretraining.
 - Preserve source labels, reviewer histories, authored scenes and frozen helper
   bytes. Human review establishes label/reference/timing decisions.

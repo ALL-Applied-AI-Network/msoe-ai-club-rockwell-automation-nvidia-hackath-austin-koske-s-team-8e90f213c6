@@ -85,10 +85,10 @@ box is not proof of emptiness, and some older boxes include the incoming stream.
 
 ## Training and evaluation policy
 
-As of October 27, models train on synthetic data and may be fine-tuned on real
-Runs 1–3, with Run 4 as real validation; see [plan: data splits](plan.md#data-splits).
-Run5 is the real test split and stays out of fitting, checkpoint/threshold selection
-and sampling decisions; it is not blind, since earlier diagnostics inspected it. Keep
+Models train on synthetic data only. Runs 1–4 are real development data for transfer
+checks, not training; see [plan: data splits](plan.md#data-splits). Run5 is the ground
+truth and stays out of fitting, checkpoint/threshold selection and sampling decisions;
+it is not blind, since earlier diagnostics inspected it. Keep
 scene families, sessions and runs in one split. Freeze weights and thresholds before
 scoring the test split; disclose generic pretrained weights.
 

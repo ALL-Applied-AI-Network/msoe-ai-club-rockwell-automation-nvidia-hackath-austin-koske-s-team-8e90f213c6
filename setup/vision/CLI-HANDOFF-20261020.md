@@ -1,7 +1,7 @@
 # Model continuation — October 20, 2026
 
 Use the primary checkout on **austin-work**. Do not push or merge into main.
-Read [the consolidated handoff](../../HANDOFF.md) first.
+Read [the consolidated handoff](../../docs/archive/handoff-2026-10-20.md) first.
 
 ## Completed comparisons
 

@@ -16,3 +16,6 @@ The [October16 tooling catalog](resources-20261016.md) records earlier optional-
 The original release attachments remain unchanged. Dated development notes and
 branch reviews are available in Git history; verification JSON remains under
 `setup/verification/`.
+
+The [October 20 consolidated handoff](handoff-2026-10-20.md) was the repository's root
+`HANDOFF.md`. It is superseded by [the plan](../plan.md).

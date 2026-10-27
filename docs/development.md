@@ -1,7 +1,7 @@
 # Development
 
-Inference, the app skeleton and compute setup are separate entrypoints. Running
-the widgets app does not start a model worker.
+Standalone liquid inference, the operator app (which loads the models itself) and compute
+setup are separate entrypoints. The pipeline being built toward submission is in [the plan](plan.md).
 
 ## Run liquid inference
 

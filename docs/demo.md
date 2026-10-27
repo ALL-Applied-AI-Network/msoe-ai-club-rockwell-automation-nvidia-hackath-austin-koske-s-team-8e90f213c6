@@ -69,7 +69,10 @@ invented timestamp; recording seek time is not labeled native camera PTS.
 
 ## GB10 deployment
 
-From a GitHub checkout of `austin-work` on the GB10, `bash setup/gb10/onboard.sh` downloads
+Fastest: download `linewatch-gb10-v1.0.0.tar.gz` from the `linewatch-v1.0.0` GitHub release,
+extract it and run `bash START.sh --selftest`, then `bash START.sh`.
+
+From a GitHub checkout on the GB10, `bash setup/gb10/onboard.sh` downloads
 and verifies the model release, starts Docker with the GPU (falling back to Docker CPU, then
 native), runs a 40-frame reproducibility self-test and saves a device report under
 `~/linewatch-onboarding/`. See [setup/gb10](../setup/gb10/README.md).

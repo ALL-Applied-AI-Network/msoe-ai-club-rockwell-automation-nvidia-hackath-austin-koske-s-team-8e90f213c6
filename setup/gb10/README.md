@@ -5,10 +5,24 @@ UI running on an NVIDIA GB10 (aarch64 Linux). The primary path is a GitHub check
 `onboard.sh` (Docker, GPU). The backup is a USB kit that needs no Docker, Node, root or system
 Python: it carries CPython 3.12.15 and installs exact, hash-locked packages.
 
-## Primary: GitHub checkout + onboarding (Docker)
+## Fastest: release download (no Docker)
 
 ```bash
-git clone -b austin-work git@github.com:ALL-Applied-AI-Network/msoe-ai-club-rockwell-automation-nvidia-hackath-austin-koske-s-team-8e90f213c6.git linewatch
+gh release download linewatch-v1.0.0 -R ALL-Applied-AI-Network/msoe-ai-club-rockwell-automation-nvidia-hackath-austin-koske-s-team-8e90f213c6 -p 'linewatch-gb10-v1.0.0.tar.gz*'
+sha256sum -c linewatch-gb10-v1.0.0.tar.gz.sha256
+tar -xzf linewatch-gb10-v1.0.0.tar.gz && cd linewatch-gb10
+bash START.sh --selftest            # install (needs internet once) and verify 40/40
+bash START.sh                       # http://127.0.0.1:8788
+```
+
+Without `gh` on the GB10, download the same file from the release page on another computer
+and copy it over. The kit contains the app, both released checkpoints, CPython 3.12.15 and the
+self-test; the packages it installs are hash-locked. The offline wheel bundle stays on USB.
+
+## GitHub checkout + onboarding (Docker)
+
+```bash
+git clone git@github.com:ALL-Applied-AI-Network/msoe-ai-club-rockwell-automation-nvidia-hackath-austin-koske-s-team-8e90f213c6.git linewatch
 cd linewatch
 gh auth login                       # or: export GITHUB_TOKEN=...  (private model release)
 bash setup/gb10/onboard.sh          # or: --assets /media/usb/temporal-cnn-assets-v1.zip
@@ -27,7 +41,7 @@ Everything is logged to `~/linewatch-onboarding/<timestamp>/` (`facts.txt`, buil
 `selftest-report.json`, `summary.json`). Keep that folder; it is the device record. Options:
 `--port`, `--cpu`, `--native`, `--no-selftest`. Stop with `docker compose stop`; never `down -v`.
 
-## Backup: USB kit, no Docker (any account, any GB10)
+## Kit commands (release download or USB)
 
 ```bash
 tar -xzf linewatch-gb10.tar.gz        # or linewatch-gb10-offline.tar.gz from USB

@@ -120,6 +120,8 @@ class TemporalInspectionPipeline:
             measurements=[
                 PipelineMeasurement(label="Liquid proposal", value="Visible" if model_mask.any() else "Not proposed", state="neutral"),
                 PipelineMeasurement(label="Measurement QA", value="Available" if qa_pass else "Unavailable", state="good" if qa_pass else "warning"),
+                PipelineMeasurement(label="Sample Lab", value=("L {:.1f} a {:.1f} b {:.1f}".format(*measured["lab"])
+                                    if qa_pass and measured["lab"] else "—"), state="good" if qa_pass else "neutral"),
                 PipelineMeasurement(label="Recipe", value="Unqualified", state="warning"),
             ],
             evidence={"measurement_valid": qa_pass, "quality_flags": flags,

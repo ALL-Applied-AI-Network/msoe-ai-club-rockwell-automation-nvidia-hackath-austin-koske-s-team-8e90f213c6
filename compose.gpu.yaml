@@ -1,0 +1,16 @@
+# GPU override for an NVIDIA host with the NVIDIA Container Toolkit (e.g. the GB10):
+#   docker compose -f compose.yaml -f compose.gpu.yaml up -d --build
+services:
+  api:
+    build:
+      args:
+        MODEL_REQUIREMENTS: requirements-model-cuda.txt
+    environment:
+      APP__DEVICE: cuda:0
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]

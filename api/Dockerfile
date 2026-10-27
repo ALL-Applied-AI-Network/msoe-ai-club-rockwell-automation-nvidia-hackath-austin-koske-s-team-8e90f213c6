@@ -5,8 +5,10 @@ COPY --from=uv /uv /usr/local/bin/uv
 WORKDIR /app/api
 COPY api/pyproject.toml api/uv.lock ./
 RUN uv sync --frozen --no-dev --python /usr/local/bin/python
-COPY api/requirements-model.txt ./
-RUN uv pip install --python /app/api/.venv/bin/python -r requirements-model.txt
+# requirements-model.txt (CPU) or requirements-model-cuda.txt (GB10/NVIDIA GPU, see compose.gpu.yaml).
+ARG MODEL_REQUIREMENTS=requirements-model.txt
+COPY api/requirements-model.txt api/requirements-model-cuda.txt ./
+RUN uv pip install --python /app/api/.venv/bin/python -r ${MODEL_REQUIREMENTS}
 COPY api/ /app/api/
 COPY replay/__init__.py replay/config.py replay/geometry.py replay/measurement.py replay/diagnostics.py /app/replay/
 COPY integration/runtime.py integration/measurement_qa.py /app/integration/

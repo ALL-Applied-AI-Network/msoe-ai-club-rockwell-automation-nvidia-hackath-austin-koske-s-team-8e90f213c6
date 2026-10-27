@@ -21,6 +21,8 @@ class AppConfig(BaseSettings):
     model_assets: Path | None = None
     reference_image: Path | None = None
     device: str = "cpu"
+    # Native (non-Docker) deployments serve the prebuilt React UI from this folder.
+    client_dist: Path | None = None
 
 
 config = AppConfig()

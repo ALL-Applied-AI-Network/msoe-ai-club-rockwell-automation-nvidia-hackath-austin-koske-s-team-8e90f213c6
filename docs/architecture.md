@@ -134,9 +134,13 @@ the integration rehearsal.
 [Docker Compose](../compose.yaml) starts a CPU model API and the built React UI
 behind Nginx. Source and rendered artifacts are stored separately. Per-run model
 state resets on reference/source changes, rewinds and independent stills. Model
-inference is serialized off the HTTP event loop; queue capacity is32 frames.
+inference is serialized off the HTTP event loop; queue capacity is 32 frames.
 A run-generation boundary rejects obsolete HTTP/WebSocket updates after reset.
 Live stopped, offline and stale states take precedence over the last measurement.
+
+On the GB10, [the native launcher](../setup/gb10/README.md) runs the same API in one
+uvicorn process on CUDA or CPU. With `APP__CLIENT_DIST` set, it serves the prebuilt React UI
+from the same origin instead of Nginx. Model, QA and storage code are identical.
 
 The adapter retains actual QA and reference/source/model identities. Model proposals
 and sampling masks remain separate; uploaded/configured references stay explicitly

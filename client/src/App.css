@@ -198,7 +198,7 @@ main { max-width: 1500px; margin: auto; padding: 35px 24px 56px; }
 .progress-content { padding: 17px; }
 .progress-track { height: 5px; background: #071014; overflow: hidden; margin-bottom: 15px; }
 .progress-track span { display: block; height: 100%; background: linear-gradient(90deg, #3caf89, var(--signal)); transition: width .4s ease; }
-.measurements { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+.measurements { display: grid; grid-template-columns: repeat(2, 1fr); gap: 7px; }
 .measurement { border: 1px solid var(--line); background: #0a1418; padding: 10px; min-width: 0; }
 .measurement span { display: block; color: var(--muted); font: 7px var(--mono); letter-spacing: .08em; }
 .measurement strong { display: block; margin-top: 5px; font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -277,7 +277,7 @@ footer strong { color: #819795; font-weight: 700; }
 .artifact-grid figcaption { padding: 10px; color: var(--muted); font: 8px var(--mono); letter-spacing: .08em; }
 .artifact-grid img { width: 100%; flex: 1; min-height: 0; object-fit: contain; }
 .artifact-grid figure > div { flex: 1; display: grid; place-items: center; padding: 20px; text-align: center; color: #526a68; font: 8px var(--mono); }
-.frame-metadata { display: grid; grid-template-columns: repeat(4, 1fr); }
+.frame-metadata { display: grid; grid-template-columns: repeat(5, 1fr); }
 .frame-metadata > div { min-width: 0; padding: 16px; border-right: 1px solid var(--line); }
 .frame-metadata > div:last-child { border-right: 0; }
 .frame-metadata span, .frame-metadata strong, .frame-metadata small { display: block; }

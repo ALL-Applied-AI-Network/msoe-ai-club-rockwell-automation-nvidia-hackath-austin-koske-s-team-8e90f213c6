@@ -94,6 +94,8 @@ export interface InspectionEvent {
     evidence?: {
       measurement_valid?: boolean;
       quality_flags?: string[];
+      rgb?: number[] | null;
+      lab?: number[] | null;
       blocked_reasons?: string[];
       presence?: number;
       proposal_pixels?: number;

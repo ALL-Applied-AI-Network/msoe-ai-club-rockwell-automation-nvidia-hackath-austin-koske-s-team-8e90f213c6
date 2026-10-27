@@ -32,3 +32,4 @@ replay-results/
 *.onnx
 *.engine
 *.zip
+/models/

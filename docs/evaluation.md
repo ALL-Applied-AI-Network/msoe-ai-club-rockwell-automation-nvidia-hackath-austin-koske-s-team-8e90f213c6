@@ -71,7 +71,7 @@ cases. See [the test procedure](operations.md#supervised-test).
 
 The CPU Docker path on `austin-work` processes a re-encoded eight-second Run4 visual
 excerpt through the released YOLO/U-Net, unchanged QA, FastAPI and React/Nginx.
-The browser samples41 frames:29 have a model proposal and14 have an available
+The browser samples 41 frames: 29 have a model proposal and 14 have an available
 sample. These counts describe this integration clip, not segmentation accuracy,
 independent test examples, manufacturing defect accuracy or production throughput.
 Original Run4 source-frame hashes/PTS are retained separately from the browser
@@ -84,6 +84,32 @@ an exact rendered artifact survive an API restart. See the compact
 [verification record](../setup/verification/demo-integration-20261027.json) and
 [laptop instructions](demo.md). Physical camera/reference/recipe qualification and
 performance on the target laptop/CSI host remain separate tests.
+
+## GB10 native run
+
+On spark8 (NVIDIA GB10, aarch64, Ubuntu 24.04), the [native kit](../setup/gb10/README.md)
+installed torch 2.14.1+cu130 and served the app on `cuda:0` without Docker. The same 40
+extracted Run4 excerpt frames were posted sequentially to the API:
+
+| Path | Time per frame | Proposals | QA available |
+| --- | ---: | ---: | ---: |
+| x86 laptop, CPU Docker | ~300 ms | 28 / 40 | 14 / 40 |
+| GB10 native, CUDA, first pass after start | 138–145 ms | 28 / 40 | 14 / 40 |
+| GB10 native, CUDA, warm pass | 86 ms | 28 / 40 | 14 / 40 |
+
+Times are client-measured HTTP round trips, including decoding, inference, QA, rendering
+and SQLite/artifact persistence. They are not camera-to-display latency. Against the x86 CPU
+path, proposal and QA decisions agreed on 40/40 frames; mask areas differed by at most one
+pixel and Lab by at most 0.59. Two GB10 passes were identical. This shows device consistency,
+not accuracy. The browser rehearsal on the GB10 (headless Chromium on the device) reproduced
+41/29/14 and passed the response, artifact, reset, offline and Investigation checks.
+
+The reproducible kit adds a bundled CPython 3.12.15 and hash-locked packages. From a fresh
+extract on spark8, `START.sh --selftest` matched the frozen x86 reference outputs on 40/40 frames
+with CUDA (max ΔLab 0.59, 90 ms median) and on CPU (ΔLab below 1e-13, 171 ms median). The GB10
+CPU path also matched an offline wheelhouse install. A different GB10 should rerun the self-test
+before the demo.
+[Record](../setup/verification/gb10-native-20261027.json).
 
 ## Sequence-diagnosis pilot
 

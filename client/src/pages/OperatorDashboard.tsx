@@ -34,7 +34,7 @@ import {
 
 const initialConfig: CreateSessionRequest = {
   camera_id: "fillcam-1",
-  station_name: "Fluid Mixing Station 3",
+  station_name: "Demo station (no line connection)",
   run_name: `Inspection ${new Date().toLocaleDateString()}`,
   source_mode: "live_camera",
   source_name: null,
@@ -645,7 +645,7 @@ export default function OperatorDashboard() {
             {sourceMode === "live_camera" ? (
               <div className="camera-actions">
                 {!isCameraLive ? <button className="button primary" onClick={() => void startCamera()} type="button"><span className="button-icon">●</span> START CAMERA</button> : <button className="button quiet" onClick={stopCamera} type="button">STOP CAMERA</button>}
-                <button className="button quiet" onClick={() => void sendGeneratedFrame(demoFrame)} disabled={isProcessing || health?.pipeline_mode !== "mock"} type="button">SEND DEMO FRAME</button>
+                {health?.pipeline_mode === "mock" && <button className="button quiet" onClick={() => void sendGeneratedFrame(demoFrame)} disabled={isProcessing} type="button">SEND DEMO FRAME</button>}
                 <label className="sample-control"><span>SAMPLE SEC</span><input type="number" min="0.1" step="0.1" value={sampleSeconds} onChange={(event) => setSampleSeconds(Number(event.target.value))} /></label>
               </div>
             ) : (
@@ -702,7 +702,7 @@ export default function OperatorDashboard() {
               {reviewQueue.length === 0 ? <p>No pending review events.</p> : reviewQueue.map((item) => <div className="review-queue-item" key={item.event_id}><span>Frame {item.frame_number}: {item.decision.headline}</span><button type="button" disabled={!response.reviewer.trim()} onClick={() => void acknowledge(item)}>SAVE RESPONSE</button></div>)}
             </section>
 
-            <section className="simulation-tools"><span>INTEGRATION TEST CONTROLS</span><div><button type="button" onClick={() => void sendGeneratedFrame(demoFrame, "warning")} disabled={isProcessing || health?.pipeline_mode !== "mock"}>SIMULATE WARNING</button><button type="button" onClick={() => void sendGeneratedFrame(demoFrame, "failure")} disabled={isProcessing || health?.pipeline_mode !== "mock"}>SIMULATE FAILURE</button></div><p>Clearly labeled test states; not model predictions.</p></section>
+            {health?.pipeline_mode === "mock" && <section className="simulation-tools"><span>INTEGRATION TEST CONTROLS</span><div><button type="button" onClick={() => void sendGeneratedFrame(demoFrame, "warning")} disabled={isProcessing || health?.pipeline_mode !== "mock"}>SIMULATE WARNING</button><button type="button" onClick={() => void sendGeneratedFrame(demoFrame, "failure")} disabled={isProcessing || health?.pipeline_mode !== "mock"}>SIMULATE FAILURE</button></div><p>Clearly labeled test states; not model predictions.</p></section>}
           </aside>
         </div>
       </main>

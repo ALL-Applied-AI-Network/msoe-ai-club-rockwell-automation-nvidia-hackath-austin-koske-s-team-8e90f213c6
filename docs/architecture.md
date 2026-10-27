@@ -147,6 +147,18 @@ and sampling masks remain separate; uploaded/configured references stay explicit
 unreviewed. The app can demonstrate visual evidence without inventing an eligible
 recipe comparison or product approval. [Run the demo](demo.md).
 
+## Recipe-first vial check
+
+The monitor asks the operator for the next vial's recipe before filling, standing in for a
+future recipe feed. When a vial finishes (end of a one-vial recording, or FINISH VIAL on the
+camera), the UI takes the median Lab of QA-valid samples in its last 6 s and computes CIEDE2000
+to the recipe's reference colour and to the last different recipe
+([recipeCheck.ts](../client/src/services/recipeCheck.ts)). Band 5 and direction cosine 0.8
+are research settings. The result maps to a simulated GOOD/SCRAP/HOLD action that the operator
+confirms or overrides; the decision is stored as an attributed acknowledgement. No line
+equipment is contacted. References come from the Run5 retrospective proxies or from vials the
+operator accepts (browser-local). Model inference and measurement QA are unchanged.
+
 ## Investigation
 
 The [Investigation panel](investigation.md) consumes separately imported,

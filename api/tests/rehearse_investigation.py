@@ -21,8 +21,9 @@ async def main(args):
         try:
             health = await (await page.request.get(args.base_url + "/health")).json()
             assert health["service"] == "linewatch-inspection-api"
-            await page.goto(args.base_url, wait_until="networkidle")
-            await page.get_by_role("link", name="INVESTIGATION", exact=True).click()
+            # The Investigation panel lives in run review; open the most recent run.
+            runs = await (await page.request.get(args.base_url + '/api/v1/sessions')).json()
+            await page.goto(args.base_url + '/runs/' + runs[0]['session_id'], wait_until="networkidle")
             panel = page.get_by_role("region", name="Investigation", exact=True)
             await panel.get_by_role("button", name="SYNTHETIC EXAMPLE", exact=True).click()
             await panel.get_by_text("SYNTHETIC EXAMPLE · NOT THIS CAMERA/RUN", exact=True).wait_for()
@@ -54,7 +55,7 @@ async def main(args):
             await panel.get_by_role("heading", name="Diagnosis unavailable:", exact=False).wait_for()
             assert await panel.get_by_text("SYNTHETIC EXAMPLE · NOT THIS CAMERA/RUN", exact=True).is_visible()
             await panel.get_by_role("button", name="THIS RUN", exact=True).click()
-            await panel.get_by_text("Start an inspection run", exact=False).wait_for()
+            await panel.get_by_text("No qualified completed-vial records supplied.", exact=False).wait_for()
             assert await panel.locator('.synthetic-banner').count() == 0
             assert await panel.locator('tbody tr').count() == 0
             report["mode_switch"] = "synthetic values cleared when returning to this run"

@@ -1,12 +1,11 @@
 # Investigation panel
 
-The monitor and run-review screens show possible causes, endpoint evidence and
-requested checks. The panel calls the existing CPU sequence-diagnosis pilot; it
+The run-review screen shows possible causes, endpoint evidence and requested checks. The panel calls the existing CPU sequence-diagnosis pilot; it
 never changes model predictions, measurement QA, recipe decisions or hardware.
 
 ## Use
 
-Select **INVESTIGATION** in the monitor header. **THIS RUN** starts unavailable:
+Open a run from **RUN HISTORY**; the panel is below the frame review. **THIS RUN** starts unavailable:
 processed frames do not create completed-vial records. The card shows the actual
 frame count separately from the imported vial count and lists the missing inputs.
 

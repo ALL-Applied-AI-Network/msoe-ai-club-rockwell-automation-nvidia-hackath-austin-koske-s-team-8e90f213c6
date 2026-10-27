@@ -34,42 +34,43 @@ the models are mounted read-only. No industrial source is configured or contacte
 
 ## Rehearse
 
-Choose IMAGES and upload `examples/run4-fill1-f000339.png` from the model assets.
-A real model overlay should appear. A single independent still cannot establish a
-stable track, so unavailable sampling on the first still is expected.
+The monitor follows three steps:
 
-Choose RECORDING and upload an approved 640×480 recording. Reduce FRAME INTERVAL SEC
-to 0.2 for a short saved-clip rehearsal; this is sampling cadence, not an inference
-FPS guarantee. Each recording after an existing run creates a fresh run. Use SOURCE
-and POST-PIPELINE to inspect original pixels and model output, then open run review
-for the separate source/rendered/mask artifacts and QA reasons. A local screenshot
-or fallback video is not a physical line validation.
+1. **Next vial recipe.** Pick a recipe (or **Custom amounts…** for clear/orange/blue mL)
+   and press **SET RECIPE**. This manual entry stands in for a future live recipe feed.
+2. **Fill.** Choose RECORDING and drop one vial's recording, or start the camera and press
+   **FINISH VIAL** when it is full. Each recording uses its first frame (the empty vial) as
+   the temporal reference; this can be turned off under **Advanced setup**.
+3. **Vial results.** Each vial gets IN SPEC, OUT OF SPEC or CAN'T VERIFY, its ΔE2000 to the
+   intended recipe and to the last different recipe, and a **simulated** action: route to
+   GOOD, divert to SCRAP (noting possible carryover when the colour shifted toward the
+   previous recipe), or hold for a manual check. The operator confirms or overrides; the
+   decision is saved against the vial's last frame. Nothing is sent to the PLC, sorter or
+   Teledyne.
 
-The default reference is the released earlier Run4 example. **It is unreviewed** and
-only appropriate for previewing that same camera geometry. For another source,
-choose an earlier aligned reference image before processing. Uploading does not
-certify emptiness, timing or alignment. A new camera requires its own camera profile;
-the app rejects geometry outside the released 640×480 profile instead of resizing.
+The vial colour is the median Lab of QA-valid samples in the last 6 s of the vial. Reference
+colours come from the Run5 retrospective analysis (proxy endpoints for 7 of 10 recipes). A
+recipe without a reference returns CAN'T VERIFY; **USE AS REFERENCE FOR THIS RECIPE** accepts
+that vial as the operator's reference, stored in this browser only. Custom amounts that equal
+a library recipe reuse its reference.
 
-Green overlay is the liquid proposal; blue overlay is the actual sampling region.
-YOLO rectangles show vial geometry. The first frames and tiny/clear pools can have a
-proposal while color QA remains unavailable. When QA passes, RGB/Lab and reasons
-are retained, but recipe comparison remains unqualified until independent recipe
-reference, completion and physical-vial evidence exist. No automatic product pass,
-sorter/PLC command or claimed carryover diagnosis is produced.
+Demo clips are the `run5-vial*.mp4` assets of the release (one Run5 vial each, cut by
+`replay/make_run5_vial_clips.py`). Enter recipe 5 → vial 2 (in spec), recipe 6 → vial 4
+(out of spec, almost exactly recipe 5's colour), recipe 6 → vial 5 (still shifted toward 5).
+`api/tests/rehearse_vial_flow.py` drives this sequence in a browser.
 
-Enter a reviewer and response in the retained review queue; history also supports
-responses to old events and loading earlier frames. The response is evidence review,
-not product release. Mock test buttons are disabled in the normal model demo.
+Green overlay is the liquid proposal; blue is the region QA sampled. Frames where QA
+withholds colour still show their reasons. **Advanced setup** holds the sampling interval,
+reference upload, raw QA evidence and the recipe timeline/CSV import. **RECIPE CHECK** shows
+the full Run5 evidence. Run review keeps source, rendered and mask artifacts, accepts
+per-frame responses and contains the Investigation panel.
 
-Recipe CSV supports `recipe_id,start_s,end_s,vial` or explicit millisecond columns.
-Intervals are [start, end); missing/overlapping/inverted timing is rejected. The old
-frame-index CSV requires a reviewed source-clock mapping first. Stills have no
-invented timestamp; recording seek time is not labeled native camera PTS.
+A new camera requires its own camera profile; the app rejects geometry outside the released
+640×480 profile instead of resizing. Recording seek time is not native camera PTS.
 
 ## GB10 deployment
 
-Fastest: download `linewatch-gb10-v1.0.0.tar.gz` from the `linewatch-v1.0.0` GitHub release,
+Fastest: download `linewatch-gb10-v1.1.0.tar.gz` from the `linewatch-v1.1.0` GitHub release,
 extract it and run `bash START.sh --selftest`, then `bash START.sh`.
 
 From a GitHub checkout on the GB10, `bash setup/gb10/onboard.sh` downloads
@@ -106,13 +107,7 @@ The local rehearsal report under `setup/verification/` records actual image/HTTP
 checks and their limits; it does not establish segmentation accuracy, recipe
 acceptance or performance on an untested laptop or CSI workstation.
 
-## Investigation demo
+## Investigation
 
-Choose INVESTIGATION, then SYNTHETIC EXAMPLE. Switch between transient recovery,
-persistent deviation, a delivery-record discrepancy and unavailable camera evidence.
-The four-vial table and possible causes come from the frozen feature-level pilot;
-the banner remains synthetic, separate from the camera frame and operator decision.
-Choose THIS RUN to return to actual source-bound evidence; ordinary frame uploads
-leave completed-vial count at zero. Real imports require the declarations and
-source bindings in [the investigation guide](investigation.md). No cause is confirmed
-and no product or equipment action is authorized by a hypothesis.
+The Investigation panel is in run review, not on the monitor. Its synthetic examples remain
+labelled synthetic; real imports follow [the investigation guide](investigation.md).

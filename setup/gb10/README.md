@@ -8,9 +8,9 @@ Python: it carries CPython 3.12.15 and installs exact, hash-locked packages.
 ## Fastest: release download (no Docker)
 
 ```bash
-gh release download linewatch-v1.0.0 -R ALL-Applied-AI-Network/msoe-ai-club-rockwell-automation-nvidia-hackath-austin-koske-s-team-8e90f213c6 -p 'linewatch-gb10-v1.0.0.tar.gz*'
-sha256sum -c linewatch-gb10-v1.0.0.tar.gz.sha256
-tar -xzf linewatch-gb10-v1.0.0.tar.gz && cd linewatch-gb10
+gh release download linewatch-v1.1.0 -R ALL-Applied-AI-Network/msoe-ai-club-rockwell-automation-nvidia-hackath-austin-koske-s-team-8e90f213c6 -p 'linewatch-gb10-v1.1.0.tar.gz*'
+sha256sum -c linewatch-gb10-v1.1.0.tar.gz.sha256
+tar -xzf linewatch-gb10-v1.1.0.tar.gz && cd linewatch-gb10
 bash START.sh --selftest            # install (needs internet once) and verify 40/40
 bash START.sh                       # http://127.0.0.1:8788
 ```

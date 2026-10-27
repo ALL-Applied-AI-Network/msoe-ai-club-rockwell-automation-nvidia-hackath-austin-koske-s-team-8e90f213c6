@@ -117,6 +117,33 @@ max ΔLab 0.59, 115 ms median). The aarch64 Docker GPU image has not been built;
 onboarding falls back to Docker CPU and then to the validated native launcher.
 [Record](../setup/verification/gb10-native-20261027.json).
 
+## Run5 retrospective recipe check
+
+The organizers' Run5 recording labels 30 vials (10 recipes × 3) with fill start/end frames.
+The released YOLO11n/U-Net and unchanged QA ran per vial with a fresh tracker; the temporal
+reference was the frame at the labelled fill start. The endpoint rule (median Lab of QA-valid
+samples in the last 6 s of the fill) was selected on Runs 1–4 only: 22/32 detected fills
+covered with 0.49 median within-vial spread, against 18/32 and 4.77 for a 3 s after-fill window.
+A first Run5 pass with the after-fill window (15/30) prompted the comparison; the rule was then
+fixed on Runs 1–4 and applied to Run5 once.
+
+| Result | Value |
+| --- | --- |
+| Vials with a QA-valid endpoint | 20 / 30 |
+| Recipes with a proxy reference (3rd vial, 2nd as fallback) | 7 / 10 |
+| First vials after a change that could be compared | 5 / 10 |
+| …above ΔE2000 5 | 5 / 5 (7.8, 24.5, 17.1, 13.1, 6.0) |
+| Second vials within ΔE2000 5 | 4 / 6 |
+| Vial 4 (recipe 5 → 6) | ΔE 24.5 to recipe 6, 1.6 to recipe 5 |
+
+Run5 is diagnostic-only, not a blind test, and the references are proxies from the same
+recording. There are no delivery records or per-vial outcomes, so the strongest claim is
+"diverges from the intended recipe, consistent with carryover"; dosing and optical causes are
+not excluded. In the operator app, the same clips reproduce these verdicts through browser
+decoding (vial 2: ΔE 3.4 in spec; vial 4: 24.8 out of spec, 1.4 to recipe 5; vial 5: 10.1).
+Scripts: `replay/run5_endpoints.py`, `replay/export_run5_recipe_check.py`,
+`replay/make_run5_vial_clips.py`.
+
 ## Sequence-diagnosis pilot
 
 The investigation module was exercised on 1,620 analytic four-vial sequences across

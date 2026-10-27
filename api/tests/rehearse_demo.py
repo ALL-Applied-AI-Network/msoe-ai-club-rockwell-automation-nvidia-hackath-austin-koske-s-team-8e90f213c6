@@ -77,22 +77,20 @@ async def rehearse(args):
                 result["passed"] = True
                 await asyncio.sleep(4)
                 return
-            await page.locator('.response-panel input').first.fill("Demonstration reviewer")
-            await page.get_by_role("button", name="SAVE RESPONSE", exact=True).first.click()
-            await page.get_by_text("Operator response persisted; this does not approve product release", exact=True).wait_for()
-            saved = await get(f"/api/v1/sessions/{run['session_id']}/events?limit=500")
-            assert any(event.get("acknowledgement", {}).get("reviewer") == "Demonstration reviewer" for event in saved if event.get("acknowledgement"))
-            result["operator_response"] = "attributed response saved separately from product approval"
-            acknowledged = next(event for event in saved if event.get("acknowledgement"))
-            delayed_duplicate = dict(acknowledged, acknowledged_at=None, acknowledgement=None)
-            pending_before = await page.locator('.review-queue-item').count()
-            await page.evaluate("event=>window.reviewSockets.filter(s=>s.url.includes('/sessions/')).forEach(s=>s.dispatchEvent(new MessageEvent('message',{data:JSON.stringify(event)})))", delayed_duplicate)
-            await asyncio.sleep(.1)
-            assert await page.locator('.review-queue-item').count() == pending_before
-            result["late_duplicate_after_response"] = "acknowledged event stays out of review queue"
             await page.get_by_role("link", name="OPEN FULL FRAME REVIEW →").click()
             await page.wait_for_function("document.querySelectorAll('.artifact-grid img').length===3 && Array.from(document.querySelectorAll('.artifact-grid img')).every(i=>i.naturalWidth>0)")
             await page.screenshot(path=str(args.out / "recording-review.png"))
+            # Per-frame responses live in run review; vial decisions are covered by rehearse_vial_flow.py.
+            await page.locator('.response-panel input').first.fill("Demonstration reviewer")
+            await page.get_by_role("button", name="SAVE REVIEW RESPONSE", exact=True).click()
+            for _ in range(50):
+                saved = await get(f"/api/v1/sessions/{run['session_id']}/events?limit=500")
+                if any((event.get("acknowledgement") or {}).get("reviewer") == "Demonstration reviewer" for event in saved):
+                    break
+                await asyncio.sleep(.1)
+            else:
+                raise AssertionError("review response was not persisted")
+            result["operator_response"] = "attributed response saved separately from product approval"
             result["history"] = "source, rendered and mask artifacts decoded in review"
 
             # Delay a valid old-session response across NEW RUN. No actual inference is mocked above.

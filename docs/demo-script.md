@@ -10,25 +10,26 @@ Numbers below are integration and availability counts, not accuracy.
   `bash setup/gb10/onboard.sh` (USB backup: `bash START.sh`; see [GB10 deployment](../setup/gb10/README.md)).
   Onboarding must end with *Self-test PASSED*. The header shows
   **SYSTEM ONLINE** and decision badge **MODEL** once a frame is processed.
-- `run4-demo-excerpt.mp4` and the fallback MP4 ready locally (see [Fallback](#fallback)).
-- Start from **NEW RUN** so history from rehearsals is not on screen.
+- The `run5-vial02-recipe5.mp4`, `run5-vial04-recipe6.mp4` and `run5-vial05-recipe6.mp4` clips
+  from the release, plus the fallback video, ready locally (see [Fallback](#fallback)).
+- Reload the monitor so the vial list starts empty.
 
 ## Run-of-show
 
 | Time | Click / show | Say |
 | --- | --- | --- |
-| 0:00 | Monitor page | "We watch the vial under the filling nozzle, propose accumulated liquid early, and measure its color only when sampling checks allow it. The operator decides; the software never commands the line." |
-| 0:40 | **RECORDING** → set **FRAME INTERVAL SEC** to `0.2` → drop `run4-demo-excerpt.mp4` | "This is a re-encoded eight-second Run4 clip. Each sampled frame goes through YOLO11n vial geometry, a paired temporal U-Net against an earlier reference, then our unchanged measurement QA." |
-| 1:30 | Wait for *Recording complete*; toggle **SOURCE** then **POST-PIPELINE** | "SOURCE is the original 640×480 pixels, unresized. POST-PIPELINE adds the boxes and masks." |
-| 2:00 | Point at overlay | "Green is the liquid proposal. Blue is the region QA actually sampled. They differ deliberately: the sampling mask excludes walls, glare and the base." |
-| 2:20 | Select an early frame in **Recent frames** showing *Measurement unavailable* | "Here the model proposes liquid, but QA withholds color. The reasons are listed, for example `vial_track_not_stable` or `insufficient_final_liquid_pixels`. We show both states instead of hiding the gap." |
-| 2:50 | Select a later frame: *Liquid measurement available · review context* | "Here QA passed: the **SAMPLE LAB** tile shows the color measured from raw source pixels. Recipe stays **Unqualified**: the reference is unreviewed and no accepted recipe endpoint exists, so we do not claim agreement or a pass." |
-| 3:20 | Response panel: **REVIEWER** = your name, **RESPONSE** = *Reviewed evidence*, **SAVE RESPONSE** | "The response is attributed and persisted. It records evidence review, not product approval." |
-| 3:50 | **OPEN FULL FRAME REVIEW →** | "Every event keeps separate source, rendered and mask artifacts plus QA reasons. They survive an API restart." |
-| 4:20 | Header **INVESTIGATION** → **THIS RUN** | "Root-cause analysis needs completed-vial records. Frames are never counted as vials automatically, so this run is unavailable: 0 completed vials, with the missing inputs listed." |
-| 4:50 | **SYNTHETIC EXAMPLE** → *Transient color recovery* | "This is clearly labeled synthetic. The first vial shifts toward the previous recipe and later ones converge, which supports a carryover hypothesis. Optical and dosing alternatives stay listed. Confirmed cause: not identified." |
-| 5:30 | Example → *Delivery record disagrees inside the research color band* | "Color looks normal, but an attributed delivery record disagrees, and that stays visible. Color alone would miss it." |
-| 6:00 | Close | "Operator-in-the-loop: evidence, reasons and hypotheses. No PLC, sorter or valve control, and no automatic pass/fail." |
+| 0:00 | Monitor | "Today's sorter checks colour against a static database and isn't told the recipe. We add the missing link: what recipe *should* this vial be, and does it look like it?" |
+| 0:30 | **Next vial recipe** → Recipe 5 → **SET RECIPE** | "In production this recipe would come from the line. Here the operator enters it before the vial fills." |
+| 0:50 | **RECORDING** → drop `run5-vial02-recipe5.mp4` | "One vial from the organizers' labelled run. Every frame goes through YOLO for the vial, a temporal U-Net for the liquid, and our unchanged QA." |
+| 1:30 | Point at overlay and *Latest frame* | "Green is liquid the model proposes; blue is what QA actually samples. When QA isn't confident it says why instead of guessing." |
+| 1:50 | Vial result: **IN SPEC · route to GOOD** | "Finished colour is within the band of recipe 5." |
+| 2:10 | Recipe 6 → **SET RECIPE** → drop `run5-vial04-recipe6.mp4` | "Now the recipe changes to 6, a pale orange." |
+| 2:50 | Vial result: **OUT OF SPEC · divert to SCRAP · possible carryover** | "ΔE 25 from recipe 6, but only about 1.5 from recipe 5. The first vial after the change still looks like the old recipe. Today's sorter would likely pass it." |
+| 3:20 | Recipe 6 → drop `run5-vial05-recipe6.mp4` | "Second vial: closer, still shifted toward recipe 5. The line is recovering." |
+| 3:50 | Type your name → **CONFIRM** | "The action is simulated: nothing goes to the PLC or sorter. The operator confirms or overrides, and that decision is saved." |
+| 4:10 | Optional: **Custom amounts…** | "A new recipe has no reference yet, so the first vial is held; the operator can accept it as the reference for the next ones." |
+| 4:40 | **RECIPE CHECK** page | "Across the whole organizer run, all five measurable first-vials-after-change diverged; most second vials recovered." |
+| 5:30 | Close | "Operator in the loop today; the same signal can drive a scrap divert once PLC integration is approved." |
 
 ## Verified talking points
 
@@ -86,11 +87,8 @@ Camera-to-display latency from native camera timestamps hasn't been measured.
 
 ## Fallback
 
-If the live app fails, say so, then play
-`C:/Users/Austin/ai-club-tools/results/demo-rehearsal-20261027-v1/final-local/linewatch-demo-fallback-final.mp4`
-and narrate the same table. The same flow recorded natively on the GB10:
-`C:/Users/Austin/ai-club-tools/results/demo-rehearsal-20261027-v1/gb10/linewatch-gb10-demo.mp4`. Still backups:
-`C:/Users/Austin/ai-club-tools/results/demo-rehearsal-20261027-v1/app-checks/` (`recording-monitor.png`,
-`recording-review.png`, `still-qa.png`, `offline-state.png`) and
-`.../investigation-checks/` (`synthetic-transient.png`, `synthetic-dose-record.png`, `run-unavailable.png`).
+If the live app fails, say so, then play `linewatch-vial-flow-demo.mp4` from the
+`linewatch-v1.1.0` release: the same recipe 5 → 6 → 6 sequence recorded on this app.
+Still backups: the Recipe Check page screenshots and
+`C:/Users/Austin/ai-club-tools/results/run5-recipe-check-20261027/run5-recipe-evidence-board.png`.
 A recording is not a physical line validation; say that it is a recorded run of the same app.

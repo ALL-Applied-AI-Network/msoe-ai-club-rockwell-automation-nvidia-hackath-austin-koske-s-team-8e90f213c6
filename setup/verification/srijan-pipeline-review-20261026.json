@@ -1,0 +1,152 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-26",
+  "scope": "read-only branch review and CPU behavior probes",
+  "primary_branch": "austin-work",
+  "reviewed_commits": [
+    {
+      "branch": "three-model-integration",
+      "commit": "d5a143c9b0a30376bfb1ad39c885c86d9d725906"
+    },
+    {
+      "branch": "IntegrationDashboard",
+      "commit": "3894e9f7f3fcb4d2cf032a4f1755cfdb992d6f2a"
+    }
+  ],
+  "evidence_root_windows": "C:/Users/Austin/ai-club-tools/results/srijan-pipeline-review-20261026-v1",
+  "artifacts": [
+    {
+      "path": "/mnt/c/Users/Austin/ai-club-tools/results/srijan-pipeline-review-20261026-v1/inventory.json",
+      "sha256": "f2b949348743698784e9c91225b4b8515ddcb28692087254972f328ecc83feae",
+      "bytes": 7949
+    },
+    {
+      "path": "/mnt/c/Users/Austin/ai-club-tools/results/srijan-pipeline-review-20261026-v1/control-flow-probes.json",
+      "sha256": "9c5d59d995bca3ae556449fd044723e04d5f3b177ecdc4cdfa9b79abce25b6e0",
+      "bytes": 1173
+    },
+    {
+      "path": "/mnt/c/Users/Austin/ai-club-tools/results/srijan-pipeline-review-20261026-v1/yolo-channel-check.json",
+      "sha256": "462f7fd5e3fa867d6f8a3abcee7ce823df91e6a0ef418b48116f558adb1cc4d2",
+      "bytes": 404
+    },
+    {
+      "path": "/mnt/c/Users/Austin/ai-club-tools/results/srijan-pipeline-review-20261026-v1/dashboard-import-check.json",
+      "sha256": "9e055eccd71d34d680cdb764643faacbd125076a4a2b0eac3f07de4891a1d8ef",
+      "bytes": 447
+    },
+    {
+      "path": "/mnt/c/Users/Austin/ai-club-tools/results/srijan-pipeline-review-20261026-v1/syntax-checks.json",
+      "sha256": "f440c47110849df45f666b2af17ca8746b4ba1a15cab3f8a51512ef41f94bbcb",
+      "bytes": 248
+    },
+    {
+      "path": "/mnt/c/Users/Austin/ai-club-tools/results/srijan-pipeline-review-20261026-v1/probe_control_flow.py",
+      "sha256": "3a31893fca168cf2052c29620d9812fe4d4bf5b85c201987c978fe933d932e37",
+      "bytes": 4811
+    },
+    {
+      "path": "/mnt/c/Users/Austin/ai-club-tools/results/srijan-pipeline-review-20261026-v1/check_yolo_channels.py",
+      "sha256": "ca6df4efdcbb634616054c8c499631fa93a082eb6c30965bba6226f44f1320ae",
+      "bytes": 853
+    }
+  ],
+  "checks": {
+    "python_syntax": {
+      "python_sources_compiled": [
+        "snapshots/three-model-integration/integration/batch_integration.py",
+        "snapshots/three-model-integration/integration/integration.py",
+        "snapshots/three-model-integration/integration/test_models.py"
+      ]
+    },
+    "controller": {
+      "execution": "Unchanged main/valid_box function ASTs; fake model outputs; real numpy/Pillow/file writing",
+      "GPU_used": false,
+      "model_accuracy_measured": false,
+      "checks": [
+        {
+          "case": "control_valid_match",
+          "status": "mask_generated",
+          "SAM_calls": 1,
+          "liquid_candidates": 1,
+          "mask_pixels": 210
+        },
+        {
+          "case": "invalid_top_hides_valid_second",
+          "status": "invalid_liquid_box",
+          "SAM_calls": 0,
+          "liquid_candidates": 2,
+          "mask_pixels": 0
+        },
+        {
+          "case": "idle_neighbor_accepted",
+          "status": "mask_generated",
+          "SAM_calls": 1,
+          "liquid_candidates": 1,
+          "mask_pixels": 210,
+          "fixture_active_vial": "left box; controller has no active-vial input/selection"
+        },
+        {
+          "case": "positive_then_no_proposal",
+          "new_mask_generated": false,
+          "old_mask_still_present": true,
+          "old_mask_sha256": "504bb235f1aa9771fd96ab6d868356448d0d7ccc1cdf51b45d6aa955d70ac348"
+        },
+        {
+          "case": "unmatched_top_hides_valid_second",
+          "status": "unmatched_liquid_box",
+          "SAM_calls": 0,
+          "liquid_candidates": 2,
+          "mask_pixels": 0
+        }
+      ]
+    },
+    "ultralytics_channels": {
+      "ultralytics": "8.4.182",
+      "input_RGB_pixel": [
+        255,
+        0,
+        0
+      ],
+      "PIL_route_internal_BGR": [
+        0,
+        0,
+        255
+      ],
+      "current_numpy_RGB_route_internal_BGR": [
+        255,
+        0,
+        0
+      ],
+      "result": "RGB numpy input is treated as BGR; subsequent model RGB conversion swaps red/blue",
+      "GPU_used": false,
+      "weights_loaded": false,
+      "model_inference": false
+    },
+    "dashboard_import": {
+      "typescript": "5.9.3",
+      "diagnostics": [
+        {
+          "code": 2307,
+          "message": "Cannot find module './pages/OperatorDashboard' or its corresponding type declarations.",
+          "file": "/mnt/c/Users/Austin/ai-club-tools/results/srijan-pipeline-review-20261026-v1/snapshots/IntegrationDashboard/protoype-Hayden/client/src/main.tsx",
+          "line": 3
+        }
+      ],
+      "scope": "Compiler check of missing module only; not a full frontend build"
+    }
+  },
+  "boundaries": {
+    "models_loaded": false,
+    "model_inference": false,
+    "GPU_used": false,
+    "model_accuracy_measured": false,
+    "full_frontend_build": false,
+    "source_branches_modified": false,
+    "branch_merge": false,
+    "push": false,
+    "industrial_connection": false
+  },
+  "remote_blocker": "GB10 spark8.ai.msoe.edu hostname did not resolve; remote artifacts and runtime unverified",
+  "review_document": "team_handoff/integration/SRIJAN-PIPELINE-REVIEW-20261026.md"
+}

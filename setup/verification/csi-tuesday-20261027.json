@@ -1,0 +1,71 @@
+{
+  "schema": "csi-tuesday-guide-verification/v1",
+  "prepared": "2026-10-24",
+  "target_date": "2026-10-27",
+  "weekday": "Tuesday",
+  "booking_status": "unconfirmed_by_Austin",
+  "host_assignment": "unconfirmed",
+  "feed_arrangement": "unconfirmed",
+  "published_CSI_host": "Windows 11 / RTX PRO 5000 Blackwell",
+  "sources": [
+    {
+      "name": "compute",
+      "url": "https://github.com/MSOE-AI-Club/maic-content/blob/main/unlisted/Rockwell-NVIDIA-Fall-2026-Compute/Rockwell-NVIDIA-Fall-2026-Compute.md",
+      "title": "Rockwell-NVIDIA-Fall-2026-Compute.md",
+      "modified_date": "2026-10-09T13:59:23Z",
+      "checked": "2026-10-24",
+      "via": "GitHub connector public source read"
+    },
+    {
+      "name": "collection",
+      "url": "https://github.com/MSOE-AI-Club/maic-content/blob/main/unlisted/Rockwell-NVIDIA-Fall-2026-Data-Collection/Rockwell-NVIDIA-Fall-2026-Data-Collection.md",
+      "title": "Rockwell-NVIDIA-Fall-2026-Data-Collection.md",
+      "modified_date": "2026-10-07T11:29:01Z",
+      "checked": "2026-10-24",
+      "via": "GitHub connector public source read"
+    },
+    {
+      "name": "fluid",
+      "url": "https://github.com/MSOE-AI-Club/maic-content/blob/main/unlisted/Rockwell-NVIDIA-Fall-2026-Fluid-Mixing/Rockwell-NVIDIA-Fall-2026-Fluid-Mixing.md",
+      "title": "Rockwell-NVIDIA-Fall-2026-Fluid-Mixing.md",
+      "modified_date": "2026-10-08T19:42:34Z",
+      "checked": "2026-10-24",
+      "via": "GitHub connector public source read"
+    },
+    {
+      "name": "tensorrt",
+      "url": "https://docs.nvidia.com/deeplearning/tensorrt/latest/getting-started/support-matrix.html",
+      "checked": "2026-10-24",
+      "via": "official NVIDIA documentation"
+    }
+  ],
+  "PDF": "/mnt/c/Users/Austin/ai-club-tools/results/csi-tuesday-20261027/guide-v3/CSI-Tuesday-Visit-Guide.pdf",
+  "PDF_pages": 6,
+  "forms": 10,
+  "PDF_visual_review": true,
+  "PDF_text_bounds_verified": true,
+  "artifact_hashes_verified": 14,
+  "blank_decision_fields_verified": true,
+  "zip_integrity_verified": true,
+  "zip_sha256": "17451e4c3324f12314505093c0adc03fa4bce998fa63790fe413462e353e55bb",
+  "local_links_checked": 99,
+  "renderer_compilation": true,
+  "guide_only": true,
+  "runtime_included": false,
+  "weights_included": false,
+  "CSI_host_tested": false,
+  "hardware_connections": 0,
+  "messages_sent": 0,
+  "booking_created": false,
+  "training_started": false,
+  "GPU_used": false,
+  "main_changed": false,
+  "pushed": false,
+  "file_sha256": {
+    "team_handoff/integration/CSI-VISIT-20261027.md": "3ecdf61de2cedf9c62e9bd34970e6c62e602a2aeb84abfb1d2db8817830fc859",
+    "setup/vision/prepare_tuesday_visit_guide.py": "64f4a4952ec0395b48a6d280769c3d945d19fb79b179be948350d4980b0fa605",
+    "setup/vision/CSI-SESSION-PACKET.md": "b645a30f4d22a13b10c190e9e6a60722526c818aa2dff61fda063eb79cdb8a8f",
+    "HANDOFF.md": "5ffbce60e0718bd2b88ddf776f6042c24246111f1c2f196b08eb08367c75dcdc",
+    "team_handoff/README.md": "f8d85e1e47fb16d5e0b2662df98f2d25bab859ae6f2f3009634aaac3d77702ac"
+  }
+}

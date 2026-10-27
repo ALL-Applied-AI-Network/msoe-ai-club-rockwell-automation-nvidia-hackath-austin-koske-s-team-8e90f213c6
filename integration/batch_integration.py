@@ -11,14 +11,18 @@ from PIL import Image, ImageDraw
 from ultralytics import YOLO
 
 
-ROOT = Path.home() / "fluid-mixing-cnn"
+ROOT = Path(__file__).resolve().parents[1]
 VISION_DIR = ROOT / "setup/vision"
 
+sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(VISION_DIR))
+
 from temporal_pool import TemporalPool
+from measurement_qa import MeasurementQA
 
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+NOZZLE_X = 305
 
 YOLO_CHECKPOINT = ROOT / "integration/models/yolo_best.pt"
 
@@ -50,8 +54,9 @@ def mask_containment(liquid_mask, vial_box):
 
     return inside_pixels / total_pixels
 
+
 def read_image(path):
-    image = np.array (
+    image = np.array(
         Image.open(path).convert("RGB"),
         copy=True
     )
@@ -64,13 +69,13 @@ def read_image(path):
     return image
 
 
-def load_models():
+def load_models(yolo_checkpoint, temporal_checkpoint):
     print("Loading YOLO...")
-    yolo = YOLO(str(YOLO_CHECKPOINT))
+    yolo = YOLO(str(yolo_checkpoint))
 
     print("Loading Temporal CNN...")
     temporal = TemporalPool(
-        checkpoint=TEMPORAL_CHECKPOINT,
+        checkpoint=temporal_checkpoint,
         device=DEVICE
     )
 
@@ -83,7 +88,8 @@ def process_pair(
     yolo,
     temporal,
     output_dir,
-    number
+    number,
+    qa
 ):
     current = read_image(current_path)
     reference = read_image(reference_path)
@@ -92,12 +98,12 @@ def process_pair(
     yolo_result = yolo.predict(
         source=Image.fromarray(current),
         conf=0.25,
+        classes=[0],
         verbose=False
     )[0]
 
-    vial_boxes = (
-        yolo_result.boxes.xyxy.cpu().numpy()
-    )
+    vial_boxes = yolo_result.boxes.xyxy.cpu().numpy()
+    vial_scores = yolo_result.boxes.conf.cpu().numpy()
 
     # Temporal CNN liquid prediction
     prediction = temporal.predict(
@@ -118,12 +124,33 @@ def process_pair(
         dtype=bool
     )
 
+    # Associate liquid proposal with a detected vial
     matched_vial = None
     containment = 0.0
 
     if presence_passed and proposal_box is not None:
+        candidates = []
+
         for index, vial_box in enumerate(vial_boxes):
+            x0, y0, x1, y1 = vial_box
+
+            # Only consider vials beneath the nozzle
+            if x0 <= NOZZLE_X <= x1:
+                candidates.append(index)
+
+        if candidates:
+            # Choose vial closest to nozzle center
+            matched_vial = min(
+                candidates,
+                key=lambda i: abs(
+                    (vial_boxes[i][0] + vial_boxes[i][2]) / 2
+                    - NOZZLE_X
+                )
+            )
+
+            vial_box = vial_boxes[matched_vial]
             padding = 5
+
             expanded_vial_box = [
                 vial_box[0] - padding,
                 vial_box[1] - padding,
@@ -131,14 +158,10 @@ def process_pair(
                 vial_box[3] + padding
             ]
 
-            overlap = mask_containment(
+            containment = mask_containment(
                 proposal_mask,
                 expanded_vial_box
             )
-
-            if overlap > containment:
-                containment = overlap
-                matched_vial = index
 
     association_passed = (
         presence_passed
@@ -152,10 +175,7 @@ def process_pair(
     )
 
     if association_passed:
-        accepted_mask = proposal_mask.astype(
-            np.uint8
-        )
-
+        accepted_mask = proposal_mask.astype(np.uint8)
         status = "mask_generated"
 
     elif not presence_passed:
@@ -163,6 +183,23 @@ def process_pair(
 
     else:
         status = "unmatched_liquid_proposal"
+
+    # Run measurement QA
+    measurement = qa.measure(
+        rgb=current,
+        vial_boxes=vial_boxes,
+        vial_scores=vial_scores,
+        proposal_box=proposal_box,
+        proposal_mask=proposal_mask,
+        presence=presence,
+        association_passed=association_passed
+    )
+
+    measurement_valid = bool(
+        measurement["measurement_valid"]
+    )
+
+    quality_flags = measurement["quality_flags"]
 
     # Create visualization
     output = current.copy()
@@ -178,7 +215,7 @@ def process_pair(
     output_image = Image.fromarray(output)
     draw = ImageDraw.Draw(output_image)
 
-    # All detected vial boxes
+    # All YOLO vial boxes in green
     for vial_box in vial_boxes:
         draw.rectangle(
             tuple(vial_box),
@@ -186,7 +223,7 @@ def process_pair(
             width=2
         )
 
-    # Accepted liquid box and matched vial
+    # Accepted liquid proposal in red
     if association_passed:
         draw.rectangle(
             tuple(proposal_box),
@@ -194,6 +231,7 @@ def process_pair(
             width=3
         )
 
+        # Matched vial in yellow
         draw.rectangle(
             tuple(vial_boxes[matched_vial]),
             outline="yellow",
@@ -215,9 +253,17 @@ def process_pair(
         "current": current_path.name,
         "reference": str(reference_path),
         "vial_detections": len(vial_boxes),
+        "vial_scores": json.dumps(vial_scores.tolist()),
         "presence": presence,
         "presence_gate_passed": presence_passed,
-        "proposal_box": json.dumps(proposal_box),
+        "proposal_box": json.dumps(
+            proposal_box,
+            default=lambda x: x.tolist()
+            if isinstance(x, np.ndarray)
+            else x.item()
+            if isinstance(x, np.generic)
+            else str(x)
+        ),
         "matched_vial_index": (
             int(matched_vial)
             if association_passed
@@ -227,7 +273,9 @@ def process_pair(
         "association_passed": association_passed,
         "mask_pixels": int(accepted_mask.sum()),
         "reference_status": "unverified",
-        "measurement_QA_executed": False,
+        "measurement_QA_executed": True,
+        "measurement_valid": measurement_valid,
+        "quality_flags": json.dumps(quality_flags),
         "status": status,
         "result_file": result_path.name,
         "mask_file": mask_path.name
@@ -261,6 +309,18 @@ def main():
         default=ROOT / "integration/batch_results"
     )
 
+    parser.add_argument(
+        "--yolo-checkpoint",
+        type=Path,
+        default=YOLO_CHECKPOINT
+    )
+
+    parser.add_argument(
+        "--temporal-checkpoint",
+        type=Path,
+        default=TEMPORAL_CHECKPOINT
+    )
+
     args = parser.parse_args()
 
     if args.limit < 1:
@@ -269,7 +329,7 @@ def main():
     if not args.input_dir.is_dir():
         parser.error("Input directory does not exist")
 
-    # Read explicitly selected frame/reference pairs
+    # Read selected frame/reference pairs
     with open(args.pairs, newline="") as f:
         reader = csv.DictReader(f)
 
@@ -287,12 +347,11 @@ def main():
 
     pairs = pairs[:args.limit]
 
-    # Check all inputs before loading models
+    # Validate input paths before loading models
     resolved_pairs = []
 
     for row in pairs:
         current_path = args.input_dir / row["current"]
-
         reference_path = Path(row["reference"])
 
         if not reference_path.is_absolute():
@@ -313,7 +372,8 @@ def main():
             (current_path, reference_path)
         )
 
-    # Use a new output directory for each batch run
+    # Preserve chronological order from the CSV.
+    # QA state is reused across these frames.
     args.output_dir.mkdir(
         parents=True,
         exist_ok=False
@@ -322,7 +382,13 @@ def main():
     print("Device:", DEVICE)
     print("Pairs:", len(resolved_pairs))
 
-    yolo, temporal = load_models()
+    yolo, temporal = load_models(
+        args.yolo_checkpoint,
+        args.temporal_checkpoint
+    )
+
+    # One QA instance preserves tracking and motion history
+    qa = MeasurementQA()
 
     rows = []
 
@@ -340,7 +406,8 @@ def main():
             yolo=yolo,
             temporal=temporal,
             output_dir=args.output_dir,
-            number=number
+            number=number,
+            qa=qa
         )
 
         rows.append(row)
@@ -348,7 +415,12 @@ def main():
         print(
             f"  Status: {row['status']}, "
             f"presence: {row['presence']:.6f}, "
-            f"mask pixels: {row['mask_pixels']}"
+            f"mask pixels: {row['mask_pixels']}, "
+            f"QA valid: {row['measurement_valid']}"
+        )
+
+        print(
+            f"  QA flags: {row['quality_flags']}"
         )
 
     summary_path = args.output_dir / "summary.csv"

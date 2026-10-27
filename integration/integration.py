@@ -10,14 +10,17 @@ from PIL import Image, ImageDraw
 from ultralytics import YOLO
 
 
-ROOT = Path.home() / "fluid-mixing-cnn"
+ROOT = Path(__file__).resolve().parents[1]
 VISION_DIR = ROOT / "setup/vision"
 
+sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(VISION_DIR))
-from temporal_pool import TemporalPool
 
+from temporal_pool import TemporalPool
+from measurement_qa import MeasurementQA
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+NOZZLE_X = 305
 
 YOLO_CHECKPOINT = ROOT / "integration/models/yolo_best.pt"
 
@@ -27,16 +30,14 @@ TEMPORAL_CHECKPOINT = (
     / "models/liquid-best.pt"
 )
 
-OUTPUT_DIR = ROOT / "integration"
 
-
-def load_models():
+def load_models(yolo_checkpoint,temporal_checkpoint):
     print("Loading YOLO...")
-    yolo = YOLO(str(YOLO_CHECKPOINT))
+    yolo = YOLO(str(yolo_checkpoint))
 
     print("Loading Temporal CNN...")
     temporal = TemporalPool(
-        checkpoint=TEMPORAL_CHECKPOINT,
+        checkpoint=temporal_checkpoint,
         device=DEVICE
     )
 
@@ -79,8 +80,34 @@ def main():
         required=True
     )
 
-    args = parser.parse_args()
+    parser.add_argument(
+       "--yolo-checkpoint",
+       type=Path,
+       default=YOLO_CHECKPOINT
+    )
 
+    parser.add_argument(
+       "--temporal-checkpoint",
+       type=Path,
+       default=TEMPORAL_CHECKPOINT
+    )
+
+    parser.add_argument(
+       "--output-dir",
+       type=Path,
+       default=ROOT / "integration"
+    )
+
+    args = parser.parse_args()
+    output_dir = args.output_dir
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    for filename in (
+        "result.jpg",
+        "temporal_mask.png",
+        "observation.json"
+    ):
+        (output_dir / filename).unlink(missing_ok=True)
     current = np.array(
         Image.open(args.current).convert("RGB"),
         copy=True
@@ -103,13 +130,14 @@ def main():
 
     print("Device:", DEVICE)
 
-    yolo, temporal = load_models()
+    yolo, temporal = load_models(args.yolo_checkpoint, args.temporal_checkpoint)
 
     # Team 1: YOLO vial detection
     # PIL input preserves correct RGB handling
     yolo_result = yolo.predict(
         source=Image.fromarray(current),
         conf=0.25,
+        classes=[0],
         verbose=False
     )[0]
 
@@ -146,27 +174,40 @@ def main():
     # Associate liquid proposal with a detected vial
     matched_vial = None
     containment = 0.0
-    
+
     if presence_passed and proposal_box is not None:
+        candidates = []
+
         for index, vial_box in enumerate(vial_boxes):
-            padding = 5
+            x0, y0, x1, y1 = vial_box
 
-            expanded_vial_box = [
-                vial_box[0] - padding,
-                vial_box[1] - padding,
-                vial_box[2] + padding,
-                vial_box[3] + padding
-            ]
+            # Only consider vials beneath the nozzle
+            if x0 <= NOZZLE_X <= x1:
+                candidates.append(index)
 
-            overlap = mask_containment(
-                proposal_mask,
-                expanded_vial_box
+        if candidates:
+            # Choose the vial whose center is closest to the nozzle
+            matched_vial = min(
+                candidates,
+                key=lambda i: abs(
+                    (vial_boxes[i][0] + vial_boxes[i][2]) / 2
+                    - NOZZLE_X
+                )
             )
+        vial_box = vial_boxes[matched_vial]
+        padding = 5
 
-            if overlap > containment:
-                containment = overlap
-                matched_vial = index
+        expanded_vial_box = [
+            vial_box[0] - padding,
+            vial_box[1] - padding,
+            vial_box[2] + padding,
+            vial_box[3] + padding
+        ]
 
+        containment = mask_containment(
+            proposal_mask,
+            expanded_vial_box
+        )
 
     association_passed = (
         presence_passed
@@ -192,10 +233,32 @@ def main():
 
     else:
         status = "unmatched_liquid_proposal"
+    qa = MeasurementQA()
+
+    measurement = qa.measure(
+        rgb=current,
+        vial_boxes=vial_boxes,
+        vial_scores=vial_scores,
+        proposal_box=proposal_box,
+        proposal_mask=proposal_mask,
+        presence=presence,
+        association_passed=association_passed
+    )
+
+    print("Measurement valid:", measurement["measurement_valid"])
+    print("QA flags:", measurement["quality_flags"])
 
     print("Association passed:", association_passed)
     print("Containment:", containment)
     print("Status:", status)
+
+    # Create visualization
+    output = current.copy()
+
+    print("Association passed:", association_passed)
+    print("Containment:", containment)
+    print("Status:",
+ status)
 
     # Create visualization
     output = current.copy()
@@ -228,20 +291,21 @@ def main():
         )
 
         # Matched vial in yellow
-        draw.rectangle(
-            tuple(vial_boxes[matched_vial]),
-            outline="yellow",
-            width=3
+        if association_passed:
+            draw.rectangle(
+                tuple(vial_boxes[matched_vial]),
+                outline="yellow",
+                width=3
         )
 
-    OUTPUT_DIR.mkdir(
+    output_dir.mkdir(
         parents=True,
         exist_ok=True
     )
 
-    output_path = OUTPUT_DIR / "result.jpg"
-    mask_path = OUTPUT_DIR / "temporal_mask.png"
-    json_path = OUTPUT_DIR / "observation.json"
+    output_path = output_dir / "result.jpg"
+    mask_path = output_dir / "temporal_mask.png"
+    json_path = output_dir / "observation.json"
 
     # Avoid leaving a mask from an earlier run
     mask_path.unlink(missing_ok=True)
@@ -270,7 +334,10 @@ def main():
         "association_passed": association_passed,
         "mask_pixels": int(accepted_mask.sum()),
         "reference_status": "unverified",
-        "measurement_QA_executed": False,
+        "measurement_QA_executed": True,
+        "measurement_valid": bool(measurement["measurement_valid"]),
+        "quality_flags": measurement["quality_flags"],
+        "measurement": measurement,
         "status": status
     }
 

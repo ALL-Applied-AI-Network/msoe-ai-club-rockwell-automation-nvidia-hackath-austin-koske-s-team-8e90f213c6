@@ -1,8 +1,28 @@
-
 # Three-model integration
 integration/models/
 integration/batch_results/
 integration/result.jpg
 integration/sam_mask.png
+integration/temporal_mask.png
+integration/observation.json
 integration/test2_images/
 integration/__pycache__/
+
+# General Python and environment files
+__pycache__/
+.pytest_cache/
+.coverage
+.venv/
+.env
+**/node_modules/
+
+# Data and generated results
+/datasets/
+/results/
+replay-results/
+
+# Model checkpoints and archives
+*.pt
+*.onnx
+*.engine
+*.zip

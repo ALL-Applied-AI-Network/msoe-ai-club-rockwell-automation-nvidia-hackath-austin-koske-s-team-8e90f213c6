@@ -17,7 +17,7 @@ sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(VISION_DIR))
 
 from temporal_pool import TemporalPool
-from measurement_qa import MeasurementQA
+from integration.measurement_qa import MeasurementQA
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 NOZZLE_X = 305
@@ -194,21 +194,21 @@ def main():
                     - NOZZLE_X
                 )
             )
-        vial_box = vial_boxes[matched_vial]
-        padding = 5
+        if matched_vial is not None:
+            vial_box = vial_boxes[matched_vial]
+            padding = 5
 
-        expanded_vial_box = [
-            vial_box[0] - padding,
-            vial_box[1] - padding,
-            vial_box[2] + padding,
-            vial_box[3] + padding
-        ]
+            expanded_vial_box = [
+                vial_box[0] - padding,
+                vial_box[1] - padding,
+                vial_box[2] + padding,
+                vial_box[3] + padding
+            ]
 
-        containment = mask_containment(
-            proposal_mask,
-            expanded_vial_box
-        )
-
+            containment = mask_containment(
+                proposal_mask,
+                expanded_vial_box
+            )
     association_passed = (
         presence_passed
         and matched_vial is not None

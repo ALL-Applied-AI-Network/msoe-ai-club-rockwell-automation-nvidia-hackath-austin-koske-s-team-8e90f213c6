@@ -8,10 +8,12 @@ import type {
   RecipeSegment,
   RecipeSegmentCreate,
   SimulationMode,
+  OperatorResponse,
 } from "@/models/inspection";
 
 export async function getHealth(): Promise<HealthStatus> {
-  const response = await fetch("/health");
+  const base = import.meta.env.VITE_API_BASE_URL;
+  const response = await fetch(base && /^https?:\/\//.test(base) ? `${new URL(base).origin}/health` : "/health");
   if (!response.ok) throw new Error("Inspection API is unavailable");
   return response.json() as Promise<HealthStatus>;
 }
@@ -32,12 +34,15 @@ export async function submitInspectionFrame(
   sourceTimestampMs?: number,
   originalFilename?: string,
   simulate?: SimulationMode,
+  signal?: AbortSignal,
+  sourceClock = "unknown",
 ): Promise<InspectionEvent> {
   const response = await api.post<InspectionEvent>(
     `/sessions/${sessionId}/frames`,
     frame,
     {
       headers: { "Content-Type": frame.type || "image/jpeg" },
+      signal,
       params: {
         frame_id: frameId,
         width,
@@ -45,6 +50,7 @@ export async function submitInspectionFrame(
         source_timestamp_ms: sourceTimestampMs,
         original_filename: originalFilename,
         simulate,
+        source_clock: sourceClock,
       },
     },
   );
@@ -66,9 +72,11 @@ export async function getInspectionRun(runId: string): Promise<InspectionSession
 export async function listInspectionEvents(
   runId: string,
   limit = 250,
+  beforeFrame?: number,
+  reviewOnly = false,
 ): Promise<InspectionEvent[]> {
   const response = await api.get<InspectionEvent[]>(`/sessions/${runId}/events`, {
-    params: { limit },
+    params: { limit, before_frame: beforeFrame, review_only: reviewOnly },
   });
   return response.data;
 }
@@ -94,11 +102,12 @@ export async function listRecipeSegments(runId: string): Promise<RecipeSegment[]
 export async function importRecipeSegments(
   runId: string,
   file: File,
+  signal?: AbortSignal,
 ): Promise<RecipeSegment[]> {
   const response = await api.post<RecipeSegment[]>(
     `/sessions/${runId}/recipe-segments/import`,
     file,
-    { headers: { "Content-Type": "text/csv" } },
+    { headers: { "Content-Type": "text/csv" }, signal },
   );
   return response.data;
 }
@@ -106,12 +115,14 @@ export async function importRecipeSegments(
 export async function uploadRecording(
   runId: string,
   file: File,
+  signal?: AbortSignal,
 ): Promise<ArtifactRecord> {
   const response = await api.post<ArtifactRecord>(
     `/sessions/${runId}/recordings`,
     file,
     {
       headers: { "Content-Type": file.type || "application/octet-stream" },
+      signal,
       params: { filename: file.name },
     },
   );
@@ -132,10 +143,19 @@ export function artifactUrl(path?: string | null): string | undefined {
 export async function acknowledgeInspectionEvent(
   sessionId: string,
   eventId: string,
+  body?: OperatorResponse,
 ): Promise<void> {
   await api.put(
     `/sessions/${sessionId}/events/${eventId}/acknowledgement`,
+    body,
   );
+}
+
+export async function uploadReference(runId: string, file: File, signal?: AbortSignal): Promise<{ status: string }> {
+  const response = await api.post(`/sessions/${runId}/reference`, file, {
+    headers: { "Content-Type": file.type }, signal,
+  });
+  return response.data;
 }
 
 export function inspectionEventUrl(sessionId: string): string {

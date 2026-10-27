@@ -1,0 +1,126 @@
+{
+  "schema": "operator-demo-verification/v1",
+  "date": "2026-10-27",
+  "branch": "austin-work",
+  "integrated_refs": {
+    "IntegrationDashboard": "c3dc496",
+    "three-model-integration": "6a60cef",
+    "main_documentation": "9dd5298"
+  },
+  "model_mode": "actual YOLO + temporal U-Net + unchanged QA",
+  "device": "cpu",
+  "new_training": false,
+  "run5_used": false,
+  "physical_camera_used": false,
+  "industrial_connections": false,
+  "app_url": "http://localhost:8788",
+  "tests": {
+    "API": {
+      "passed": 13
+    },
+    "frozen_geometry": {
+      "passed": 4
+    },
+    "frontend_typecheck": "passed",
+    "frontend_lint": "passed",
+    "docker_API_build": "passed",
+    "docker_client_production_build": "passed",
+    "powershell_launcher": "AST parse passed; Windows Docker execution not performed"
+  },
+  "browser": {
+    "base_url": "http://127.0.0.1:8788",
+    "physical_camera": false,
+    "GPU_used": false,
+    "training": false,
+    "run5_used": false,
+    "independent_still": {
+      "has_mask": true,
+      "qa": [
+        "vial_track_not_stable",
+        "no_prior_frame_for_motion_check"
+      ],
+      "time": null
+    },
+    "source_toggle": "original source visible",
+    "recording": {
+      "session_id": "27bdfd01-daca-49b9-a94c-9c32dcfa754c",
+      "frames": 41,
+      "qa_available": 14,
+      "proposal_frames": 29,
+      "source_clock": [
+        "recording_seek"
+      ]
+    },
+    "operator_response": "attributed response saved separately from product approval",
+    "late_duplicate_after_response": "acknowledged event stays out of review queue",
+    "history": "source, rendered and mask artifacts decoded in review",
+    "late_response_after_reset": "obsolete result discarded",
+    "live_source": {
+      "pixels_preserved": [
+        210,
+        20,
+        30
+      ],
+      "stopped_state": "STOPPED"
+    },
+    "offline_state": "no current normal verdict",
+    "page_errors": [],
+    "passed": true
+  },
+  "persistence": {
+    "passed": true,
+    "events_retained": 41,
+    "event_ids_identical": true,
+    "operator_response_retained": true,
+    "rendered_artifact_sha256": "0edccc9c08ed2dd84b84b6dc2a89c41458a935314867ad109584c3732db82d2d",
+    "quality_decision": null
+  },
+  "frozen_example": {
+    "source": "released f000339 example",
+    "proposal_mask_exactly_equal": true,
+    "proposal_pixels": 1780,
+    "independent_accuracy": false
+  },
+  "running_API_source_sha256": {
+    "api/main.py": "e5fed4632b041d6d83c12e02dd752ed449ae721d2a397d18b680e0bba8c21399",
+    "api/dependencies.py": "99836f31caa1c5fd74aa27f2fc263013b13980e073560414339e93474ba8986b",
+    "api/settings.py": "913a5809a7bd8b26c1ea6e077fe1e89cf0712197b4903a62621646538f4d77c5",
+    "api/models/inspection.py": "d1ca4db0aaeed000281956197fe937030ae8f1a82ce74494c4e34af6a0f4c3c2",
+    "api/pipelines/base.py": "3adad02cf00e78e903e2eda7ee699e0f6cfe4b14d54543d71aa67096cafbc986",
+    "api/pipelines/temporal.py": "cf4f65085a945ce6325bdfdac4408c0dce901ef115e3ccb3dd9e9155dd811ba9",
+    "api/services/inspection.py": "481e44e5f92d24bf4557d44fcfdd495926fbe04be20182458116a275d79a2fa3",
+    "api/routers/inspection.py": "10e7291098c5013104cb26e1a9ba5041637abeec1bf1c8615808d4c2dd213682",
+    "api/databridge/sqlite_inspections.py": "455a92404efb4fc8e7a0124cd18382fe3dc3ebe772abde838ca65c0c6eb0acfa",
+    "integration/runtime.py": "c516d54db26f8cd75c5285ae7ef7b207e9fc43e313010d6eebc2be55a47d1407",
+    "integration/measurement_qa.py": "4e3348438310ab4fc32b4ed35615f0722e6b780b45720f8dce1774b241d6c3a4",
+    "replay/config.py": "e24ba8fd3802a8afd436ebef859b648ddb2571b590e26eeac3c8109dc5166cd6",
+    "replay/geometry.py": "f93dfdd71c199daaac4e46a3bd33ca9f2dc09f108534ad3e2c6323dfd31ac0dd",
+    "replay/measurement.py": "e34cddf74e9b5bfa64a95fc549e20dc058d76b51e4a1a9e5ddc340797f2bf0af",
+    "setup/vision/train_pair_masks.py": "a1bd2e6c2dc80d35743049ace3e37f30fe4c0c8f1cd9aa8614867c90081fd31c",
+    "setup/vision/temporal_pool.py": "9fe835a909784f1855d8a9278685f46fbc09ffa04b9fababadbd3f384fff7ef7"
+  },
+  "video": {
+    "fully_decoded": true,
+    "video": "/mnt/c/Users/Austin/ai-club-tools/results/demo-integration-20261027-v1/linewatch-app-demo.mp4",
+    "stream": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 1440,
+          "height": 1000,
+          "duration": "18.840000",
+          "nb_read_frames": "471"
+        }
+      ]
+    },
+    "content": "Actual CPU model/API/React processing of a Run4 visual excerpt; not a physical camera or product-quality validation."
+  },
+  "evidence_root": "C:/Users/Austin/ai-club-tools/results/demo-integration-20261027-v1",
+  "recovery_root": "C:/Users/Austin/ai-club-tools/recovery/demo-integration-20261027-v1",
+  "limits": [
+    "The clip is re-encoded visual rehearsal input with browser seek timing, not a native-PTS camera worker.",
+    "Example/uploaded references are unreviewed; recipe endpoint, fill completion and physical identity remain unqualified.",
+    "Proposal/sample counts are app behavior, not reviewed segmentation or product accuracy.",
+    "The current Docker host was tested; a fresh laptop and CSI hardware still require their own rehearsal."
+  ]
+}

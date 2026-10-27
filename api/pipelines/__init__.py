@@ -1,7 +1,6 @@
 """Long-lived frame pipeline adapters.
 
-Replace MockInspectionPipeline with adapters around the Team 1 detector, Team 2
-liquid detector, and Team 3 SAM refiner. Models should be loaded once at startup,
-not launched as a new CLI process for every frame.
+The default adapter runs YOLO vial geometry, paired temporal U-Net and the existing
+measurement QA. Mock decisions require an explicit APP__PIPELINE_MODE=mock.
 """
 

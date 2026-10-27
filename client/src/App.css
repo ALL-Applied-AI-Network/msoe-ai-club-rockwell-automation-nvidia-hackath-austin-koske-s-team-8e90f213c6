@@ -330,3 +330,9 @@ footer strong { color: #819795; font-weight: 700; }
   .recipe-timeline > strong { text-align: left; }
   .frame-metadata { grid-template-columns: 1fr 1fr; }
 }
+.evidence-controls, .response-panel { padding: 16px; color: var(--muted); font-size: 12px; overflow-wrap: anywhere; }
+.response-panel h2 { font-size: 16px; color: var(--text); }
+.response-panel label { display: grid; gap: 6px; margin: 12px 0; }
+.response-panel input, .response-panel select { min-width: 0; padding: 9px; background: #101b22; color: #dff8ef; border: 1px solid #294045; }
+.review-queue-item { display: grid; gap: 8px; margin: 12px 0; border-top: 1px solid #294045; padding-top: 10px; }
+.qa-evidence { border-top: 1px solid #294045; padding-top: 12px; margin-top: 12px; }

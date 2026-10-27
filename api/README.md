@@ -1,70 +1,48 @@
-# Frontend + API starter for the app team
+# Inspection API
 
-Josiah and Hayden: this is Austin's `full-stack-app` template adapted into a
-standalone local starter. Use it as a reference or copy it into your app branch;
-it does not replace anyone's dashboard/backend work.
+FastAPI owns sessions, recipe timelines, queued model work, source/artifact storage,
+WebSocket delivery and attributed operator responses. SQLite metadata and media files
+persist across restarts. There is no PLC, sorter, valve or sensor connection.
 
-- [`../client/`](../client/README.md): React, TypeScript, Vite, React Router, TanStack Query and Axios.
-- `api/`: FastAPI with router → service → in-memory data adapter boundaries.
-- The disposable widgets example demonstrates a working UI/API round trip.
-  Its state lives only in the API process and resets on restart. Use one worker.
+The default adapter is `pipelines/temporal.py`: YOLO vial geometry → paired temporal
+U-Net → the existing measurement QA. Models load once and inference runs off the
+HTTP event loop. State is separate per run and resets on source/reference changes,
+rewind and independent stills. The frozen measurement thresholds are unchanged.
+Explicit `APP__PIPELINE_MODE=mock` enables labeled integration test controls.
 
-There is no database, SQL driver, authentication requirement, Terraform,
-deployment pipeline, model inference or industrial connection in this starter.
-It needs no secrets. Keep real operator evidence/history requirements separate
-from the disposable widget example when implementing your application.
+Use [the Docker demo instructions](../docs/demo.md) for a laptop with no Python/Node
+setup. For development, install the base API with `uv sync --frozen`, the CPU model
+requirements with `uv pip install -r requirements-model.txt`, and point
+`APP__MODEL_ASSETS` at the extracted release. `APP__REFERENCE_IMAGE` is an optional
+preview reference; a run can instead upload a reference through `/reference`.
+Run `uv run --no-sync uvicorn main:app --host 127.0.0.1 --port 8001`.
 
-## Run locally
+## Contracts
 
-Use Python3.11+ and Node22.12+ (or a supported newer LTS). Open two terminals.
+- `/api/v1/sessions`: create/list runs with explicit source mode and operator context.
+- `/sessions/{id}/frames`: raw PNG/JPEG/WebP and frame metadata. Recording timestamps
+  are browser seek positions, live timestamps are browser elapsed time, and stills
+  have no inferred time. Model input must be original 640×480 RGB; never resize/mirror.
+- `/sessions/{id}/reference`: retain an earlier aligned image and reset run QA state.
+  An upload stays unreviewed; it cannot certify emptiness, alignment or recipe quality.
+- `/sessions/{id}/recordings`: retain the original recording. Sampling is currently
+  performed by the browser, not a native-PTS video worker.
+- `/sessions/{id}/recipe-segments/import`: atomically replace the timeline using
+  `recipe_id,start_s,end_s,vial` (or `start_ms,end_ms`). Half-open intervals; missing,
+  overlapping or inverted times are rejected. Frame-index CSV needs an explicit clock
+  mapping before import. Gaps stay unmatched.
+- `/sessions/{id}/events`: newest first; `limit`, `before_frame`, `review_only` support
+  complete evidence review and an outstanding review queue.
+- `/sessions/{id}/events/{event_id}/acknowledgement`: persist reviewer, response and note.
+- `/artifacts/{id}`: original source, rendered overlay, transparent proposal mask,
+  reference and original recording bytes, each with a stored hash.
 
-API, from the repository root:
+Events include actual measurement QA, reasons, sampling-mask RLE, model/reference
+identities, source hashes and separate proposal/sample counts. A valid color sample
+still does not establish recipe agreement. The demo has no independently qualified
+recipe endpoint/completion/identity inputs, so it never approves product or issues
+hardware commands. Progress/confidence are not fabricated for the model adapter.
 
-```text
-cd api
-uv sync --frozen
-uv run uvicorn main:app --reload --host 127.0.0.1 --port 8443
-```
-
-Frontend:
-
-```text
-cd client
-npm ci
-npm run dev
-```
-
-Open `http://localhost:3000`. The development server proxies `/api` to the API
-on8443. API documentation: `http://127.0.0.1:8443/docs`; health: `/health`.
-No page is opened automatically. Stop both processes with Ctrl+C.
-
-For a different local API port, set `API_PROXY_TARGET` before starting Vite.
-For an independently hosted API, set `VITE_API_BASE_URL` explicitly at build time.
-
-## Where to work
-
-Client: `models/` → `services/` → `hooks/` → `pages/` and `components/`.
-API: `models/` request/response contracts, `routers/` HTTP, `services/` behavior,
-`databridge/` replaceable data adapters, and `dependencies.py` wiring.
-
-Replace widgets with your operator-facing resources and Srijan's agreed model
-output contracts. This starter intentionally makes no model, recipe or quality
-decision. The dataset/training work remains elsewhere in the repository.
-
-## Checks
-
-```text
-cd api
-uv run pytest
-```
-
-```text
-cd client
-npm run typecheck
-npm run lint
-npm run build
-```
-
-Adapted from Austin's local `full-stack-app` source; database/auth/deployment
-examples were removed, and widget storage was replaced with a process-local
-dictionary. Dependency locks are included for repeatable installation.
+Run one API process. The model adapter serializes inference, the queue is bounded,
+and slow/disconnected WebSockets cannot indefinitely block a model result.
+`cd api && uv run --no-sync pytest` runs the API contract/regression checks.

@@ -29,33 +29,20 @@ The same scripts live in `setup/vision/`. For a worker, load
 for each source pair. Inputs must be RGB `uint8` arrays at 640 × 480.
 Use `cuda:0` only on the approved GPU host; CPU is the local default.
 
-## App skeleton
+## Operator app
 
-Requirements: Python 3.11+, `uv`, and Node 22.12+ or a supported newer LTS.
-Use two terminals from the repository root.
+For a laptop, use [the Docker demo](demo.md). It runs the built React client, Nginx,
+FastAPI, the selected models and persisted inspection history. Mock controls need
+explicit mock mode; the default never substitutes simulated success for inference.
 
-```bash
-cd api
-uv sync --frozen
-uv run uvicorn main:app --reload --host 127.0.0.1 --port 8443
-```
-
-```bash
-cd client
-npm ci
-npm run dev
-```
-
-Open `http://localhost:3000`. Vite proxies `/api` to port 8443; API docs are at
-`http://127.0.0.1:8443/docs`, health at `/health`. Stop both with Ctrl+C.
-The current page creates/lists/deletes example widgets. State lives in memory
-and resets with the API. It is not an operator evidence store.
-
-Client boundaries are types → services → hooks → pages/components. API
-boundaries are models → routers → services → databridge, with dependency wiring
-in `dependencies.py`. Add the model observation interface through those layers.
-`API_PROXY_TARGET` changes Vite's local proxy; `VITE_API_BASE_URL` selects a
-separately hosted API at build time. Defaults need no credentials or database.
+For development, run `uv sync --frozen` in `api/`, then install the model dependencies
+from `api/requirements-model.txt` into that environment. Set `APP__MODEL_ASSETS` and
+optionally `APP__REFERENCE_IMAGE` to the extracted release paths. Start
+`uv run --no-sync uvicorn main:app --host 127.0.0.1 --port 8001`.
+In `client/`, use `npm ci`, then `API_PROXY_TARGET=http://127.0.0.1:8001 npm run dev`.
+The API/router/service/databridge boundaries remain intact. Do not run `uv sync`
+without the model dependencies just before the demo; synchronization removes
+packages outside the base API lock.
 
 ## Checks
 

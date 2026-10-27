@@ -66,3 +66,21 @@ original dates, paths and hashes; old local paths are provenance, not run comman
 Use a fresh evaluation set without tuning the frozen candidate on its results.
 Report uncertain/excluded coverage and missed proposals alongside successful
 cases. See [the test procedure](operations.md#supervised-test).
+
+## Operator application rehearsal
+
+The CPU Docker path on `austin-work` processes a re-encoded eight-second Run4 visual
+excerpt through the released YOLO/U-Net, unchanged QA, FastAPI and React/Nginx.
+The browser samples41 frames:29 have a model proposal and14 have an available
+sample. These counts describe this integration clip, not segmentation accuracy,
+independent test examples, manufacturing defect accuracy or production throughput.
+Original Run4 source-frame hashes/PTS are retained separately from the browser
+seek clock and re-encoded demo clip. No Run5 data or model fitting is involved.
+
+The browser rehearsal covers original source display, mask artifacts, an attributed
+operator response, stale-run response rejection, capture orientation, stopped and
+offline states, and absence of invented progress. SQLite events, the response and
+an exact rendered artifact survive an API restart. See the compact
+[verification record](../setup/verification/demo-integration-20261027.json) and
+[laptop instructions](demo.md). Physical camera/reference/recipe qualification and
+performance on the target laptop/CSI host remain separate tests.

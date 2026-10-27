@@ -85,7 +85,8 @@ def test_frame_is_queued_persisted_and_acknowledged(client: TestClient):
     assert artifact.content == b"not-decoded-by-the-mock-adapter"
     events = client.get(resource + "/events").json()
     assert events[0]["event_id"] == event["event_id"]
-    ack = client.put(resource + f"/events/{event['event_id']}/acknowledgement")
+    ack = client.put(resource + f"/events/{event['event_id']}/acknowledgement",
+                     json={"reviewer": "Test operator", "action": "reviewed", "note": "Test fixture"})
     assert ack.status_code == 200
     assert ack.json()["acknowledged_at"]
 
@@ -192,7 +193,7 @@ def test_rendered_and_mask_artifacts_are_saved(tmp_path: Path):
     class VisualPipeline:
         mode = "model"
 
-        async def analyze(self, image_bytes, session, frame_number, simulate=None):
+        async def analyze(self, image_bytes, session, frame_number, simulate=None, context=None):
             return PipelineResult(
                 decision=OperatorDecision(
                     status=OperatorStatus.RUNNING_OK,

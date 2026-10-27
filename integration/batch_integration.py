@@ -18,7 +18,7 @@ sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(VISION_DIR))
 
 from temporal_pool import TemporalPool
-from measurement_qa import MeasurementQA
+from integration.measurement_qa import MeasurementQA
 
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"

@@ -20,6 +20,7 @@ class MockInspectionPipeline:
         session: InspectionSession,
         frame_number: int,
         simulate: str | None = None,
+        context=None,
     ) -> PipelineResult:
         if simulate == "failure":
             return PipelineResult(decision=OperatorDecision(

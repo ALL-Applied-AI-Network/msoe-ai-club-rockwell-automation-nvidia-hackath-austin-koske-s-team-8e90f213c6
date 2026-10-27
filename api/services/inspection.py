@@ -19,7 +19,7 @@ from models.inspection import (
     RecipeSegment,
     RecipeSegmentCreate,
 )
-from pipelines.base import InspectionPipeline, PipelineResult
+from pipelines.base import FrameContext, InspectionPipeline, PipelineResult
 from services.artifacts import ArtifactStore
 from services.event_broker import EventBroker
 
@@ -35,6 +35,7 @@ class FrameWorkItem:
     source_timestamp_ms: int | None
     original_filename: str | None
     simulate: str | None
+    source_clock: str
     future: asyncio.Future[InspectionEvent | None]
 
 
@@ -52,7 +53,7 @@ class InspectionService:
         self.broker = broker
         self.artifacts = artifacts
         self.worker_count = worker_count
-        self._queue: asyncio.Queue[FrameWorkItem | None] = asyncio.Queue()
+        self._queue: asyncio.Queue[FrameWorkItem | None] = asyncio.Queue(maxsize=32)
         self._workers: list[asyncio.Task[None]] = []
         self._start_lock = asyncio.Lock()
         self._run_locks: dict[UUID, asyncio.Lock] = {}
@@ -122,10 +123,11 @@ class InspectionService:
         source_timestamp_ms: int | None,
         original_filename: str | None,
         simulate: str | None,
+        source_clock: str = "unknown",
     ) -> InspectionEvent | None:
         await self.start()
         future: asyncio.Future[InspectionEvent | None] = asyncio.get_running_loop().create_future()
-        await self._queue.put(
+        self._queue.put_nowait(
             FrameWorkItem(
                 session_id=session_id,
                 frame_id=frame_id,
@@ -136,6 +138,7 @@ class InspectionService:
                 source_timestamp_ms=source_timestamp_ms,
                 original_filename=original_filename,
                 simulate=simulate,
+                source_clock=source_clock,
                 future=future,
             )
         )
@@ -147,9 +150,10 @@ class InspectionService:
             return None
         if item.original_filename and not session.source_name:
             await self.databridge.set_source_name(item.session_id, item.original_filename)
-        recipe = await self.databridge.resolve_recipe(
+        resolved_recipe = await self.databridge.resolve_recipe(
             item.session_id, item.source_timestamp_ms
-        ) or session.recipe
+        )
+        recipe = resolved_recipe or session.recipe
         frame_number = session.frames_processed + 1
         frame_session = session.model_copy(update={"recipe": recipe})
         event_id = uuid4()
@@ -168,20 +172,30 @@ class InspectionService:
 
         try:
             pipeline_result = await self.pipeline.analyze(
-                item.image_bytes, frame_session, frame_number, simulate=item.simulate
+                item.image_bytes, frame_session, frame_number, simulate=item.simulate,
+                context=FrameContext(item.frame_id, item.source_timestamp_ms, item.source_clock,
+                                     (item.original_filename or item.frame_id) if session.source_mode == "images"
+                                     else (session.source_name or str(session.session_id)),
+                                     resolved_recipe is not None, item.width, item.height),
             )
         except Exception as error:
             pipeline_result = PipelineResult(
                 decision=OperatorDecision(
                     status=OperatorStatus.UNAVAILABLE,
                     headline="Model pipeline unavailable",
-                    detail="The source frame was retained, but inference did not complete.",
+                    detail="Source retained. " + str(error),
                     recommended_action="Review the saved source frame and pipeline logs",
-                    recipe_progress_percent=0,
+                    recipe_progress_percent=None,
                     model_state=f"PIPELINE ERROR · {type(error).__name__}",
                     confidence=None,
                 )
             )
+
+        pipeline_result.decision.evidence.update(
+            recipe_context_matched=resolved_recipe is not None,
+            source_clock=item.source_clock,
+            source_timestamp_ms=item.source_timestamp_ms,
+        )
 
         async def save_visual(kind: str, content: bytes | None, mime_type: str):
             if content is None:

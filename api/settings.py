@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Literal
 
 from pydantic import BaseModel, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -16,6 +17,10 @@ class AppConfig(BaseSettings):
     environment: EnvironmentConfig = Field(default_factory=EnvironmentConfig)
     data_dir: Path = Field(default=Path(__file__).parent / "data")
     model_workers: int = Field(default=1, ge=1, le=8)
+    pipeline_mode: Literal["model", "mock"] = "model"
+    model_assets: Path | None = None
+    reference_image: Path | None = None
+    device: str = "cpu"
 
 
 config = AppConfig()

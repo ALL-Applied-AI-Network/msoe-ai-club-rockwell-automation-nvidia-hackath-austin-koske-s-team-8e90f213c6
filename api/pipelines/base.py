@@ -7,6 +7,17 @@ from models.inspection import InspectionSession, OperatorDecision
 
 
 @dataclass(slots=True)
+class FrameContext:
+    frame_id: str
+    source_timestamp_ms: int | None
+    source_clock: str
+    source_id: str
+    recipe_matched: bool
+    width: int
+    height: int
+
+
+@dataclass(slots=True)
 class PipelineResult:
     decision: OperatorDecision
     rendered_frame: bytes | None = None
@@ -24,5 +35,6 @@ class InspectionPipeline(Protocol):
         session: InspectionSession,
         frame_number: int,
         simulate: str | None = None,
+        context: FrameContext | None = None,
     ) -> PipelineResult: ...
 

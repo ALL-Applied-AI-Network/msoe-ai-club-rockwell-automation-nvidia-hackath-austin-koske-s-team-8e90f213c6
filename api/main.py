@@ -1,6 +1,6 @@
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from dependencies import get_inspection_service
@@ -35,8 +35,7 @@ app.include_router(artifact_router, prefix="/api/v1")
 
 
 @app.get("/health")
-async def health_check():
-    service = get_inspection_service()
+async def health_check(service=Depends(get_inspection_service)):
     return {
         "status": "healthy",
         "service": "linewatch-inspection-api",

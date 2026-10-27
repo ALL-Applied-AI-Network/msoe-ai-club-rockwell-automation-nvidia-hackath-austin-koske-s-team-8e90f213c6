@@ -8,6 +8,7 @@ from pathlib import Path
 from uuid import UUID, uuid4
 
 from models.inspection import (
+    AcknowledgeEventRequest,
     ArtifactRecord,
     CreateSessionRequest,
     FrameImage,
@@ -108,6 +109,11 @@ class SQLiteInspectionBridge:
         )
         self._connection.commit()
 
+        columns = {row[1] for row in self._connection.execute("PRAGMA table_info(inspection_events)")}
+        if "acknowledgement_json" not in columns:
+            self._connection.execute("ALTER TABLE inspection_events ADD COLUMN acknowledgement_json TEXT")
+            self._connection.commit()
+
     async def close(self) -> None:
         async with self._lock:
             self._connection.close()
@@ -174,22 +180,37 @@ class SQLiteInspectionBridge:
         )
         return segment
 
-    async def add_recipe_segment(
-        self, session_id: UUID, request: RecipeSegmentCreate
-    ) -> RecipeSegment | None:
+    async def add_recipe_segment(self, session_id, request):
+        values = await self.set_recipe_segments(session_id, [request], replace=False)
+        return next((v for v in values or [] if v.start_ms == request.start_ms), None)
+
+    async def set_recipe_segments(self, session_id, requests, replace=True):
         async with self._lock:
-            exists = self._connection.execute(
-                "SELECT 1 FROM inspection_runs WHERE session_id = ?", (str(session_id),)
-            ).fetchone()
-            if not exists:
+            if not self._connection.execute("SELECT 1 FROM inspection_runs WHERE session_id = ?", (str(session_id),)).fetchone():
                 return None
-            segment = self._insert_segment(session_id, request)
-            self._connection.execute(
-                "UPDATE inspection_runs SET updated_at = ? WHERE session_id = ?",
-                (_iso(segment.created_at), str(session_id)),
-            )
-            self._connection.commit()
-        return segment
+            existing = [] if replace else [self._segment(r) for r in self._connection.execute(
+                "SELECT * FROM recipe_segments WHERE session_id = ?", (str(session_id),)).fetchall()]
+            starts = [r.start_ms for r in requests]
+            if len(set(starts)) != len(starts):
+                raise ValueError("Duplicate recipe start times")
+            combined = [r for r in existing if r.start_ms not in starts] + list(requests)
+            combined.sort(key=lambda r: r.start_ms)
+            normalized = []
+            for i, row in enumerate(combined):
+                end = row.end_ms
+                following = combined[i + 1].start_ms if i + 1 < len(combined) else None
+                if following is not None:
+                    if end is None:
+                        end = following
+                    elif end > following:
+                        raise ValueError("Recipe intervals overlap")
+                normalized.append(RecipeSegmentCreate(start_ms=row.start_ms, end_ms=end, recipe=row.recipe))
+            # All rows validate before the transaction changes the active timeline.
+            with self._connection:
+                self._connection.execute("DELETE FROM recipe_segments WHERE session_id = ?", (str(session_id),))
+                values = [self._insert_segment(session_id, row) for row in normalized]
+                self._connection.execute("UPDATE inspection_runs SET updated_at = ? WHERE session_id = ?", (_iso(datetime.now(timezone.utc)), str(session_id)))
+        return values
 
     async def list_recipe_segments(self, session_id: UUID) -> list[RecipeSegment] | None:
         async with self._lock:
@@ -204,32 +225,17 @@ class SQLiteInspectionBridge:
             ).fetchall()
         return [self._segment(row) for row in rows]
 
-    async def resolve_recipe(
-        self, session_id: UUID, source_timestamp_ms: int | None
-    ) -> RecipeContext | None:
+    async def resolve_recipe(self, session_id, source_timestamp_ms):
+        if source_timestamp_ms is None:
+            return None
         async with self._lock:
-            if source_timestamp_ms is None:
-                row = self._connection.execute(
-                    """SELECT recipe_json FROM recipe_segments
-                    WHERE session_id = ? ORDER BY start_ms DESC, created_at DESC LIMIT 1""",
-                    (str(session_id),),
-                ).fetchone()
-            else:
-                row = self._connection.execute(
-                    """SELECT recipe_json FROM recipe_segments
-                    WHERE session_id = ? AND start_ms <= ?
-                      AND (end_ms IS NULL OR end_ms >= ?)
-                    ORDER BY start_ms DESC, created_at DESC LIMIT 1""",
-                    (str(session_id), source_timestamp_ms, source_timestamp_ms),
-                ).fetchone()
-                if row is None:
-                    row = self._connection.execute(
-                        """SELECT recipe_json FROM recipe_segments
-                        WHERE session_id = ? AND start_ms <= ?
-                        ORDER BY start_ms DESC, created_at DESC LIMIT 1""",
-                        (str(session_id), source_timestamp_ms),
-                    ).fetchone()
-            return RecipeContext.model_validate_json(row["recipe_json"]) if row else None
+            row = self._connection.execute(
+                """SELECT recipe_json FROM recipe_segments WHERE session_id = ?
+                AND start_ms <= ? AND (end_ms IS NULL OR ? < end_ms)
+                ORDER BY start_ms DESC, created_at DESC LIMIT 1""",
+                (str(session_id), source_timestamp_ms, source_timestamp_ms),
+            ).fetchone()
+        return RecipeContext.model_validate_json(row["recipe_json"]) if row else None
 
     async def get_session(self, session_id: UUID) -> InspectionSession | None:
         async with self._lock:
@@ -385,7 +391,7 @@ class SQLiteInspectionBridge:
         return session
 
     async def list_events(
-        self, session_id: UUID, limit: int = 25
+        self, session_id: UUID, limit: int = 25, before_frame: int | None = None, review_only: bool = False, event_id: UUID | None = None
     ) -> list[InspectionEvent] | None:
         async with self._lock:
             exists = self._connection.execute(
@@ -402,8 +408,13 @@ class SQLiteInspectionBridge:
                 JOIN artifacts s ON s.artifact_id = e.source_artifact_id
                 LEFT JOIN artifacts r ON r.artifact_id = e.rendered_artifact_id
                 LEFT JOIN artifacts m ON m.artifact_id = e.mask_artifact_id
-                WHERE e.session_id = ? ORDER BY e.frame_number DESC LIMIT ?""",
-                (str(session_id), limit),
+                WHERE e.session_id = ?
+                  AND (? IS NULL OR e.frame_number < ?)
+                  AND (? = 0 OR (e.acknowledged_at IS NULL AND json_extract(e.decision_json, '$.status') IN ('warning', 'failure')))
+                  AND (? IS NULL OR e.event_id = ?)
+                ORDER BY e.frame_number DESC LIMIT ?""",
+                (str(session_id), before_frame, before_frame, int(review_only),
+                 str(event_id) if event_id else None, str(event_id) if event_id else None, limit),
             ).fetchall()
         return [self._event(row) for row in rows]
 
@@ -440,20 +451,21 @@ class SQLiteInspectionBridge:
             ),
             decision=OperatorDecision.model_validate_json(row["decision_json"]),
             acknowledged_at=_dt(row["acknowledged_at"]) if row["acknowledged_at"] else None,
+            acknowledgement=AcknowledgeEventRequest.model_validate_json(row["acknowledgement_json"]) if row["acknowledgement_json"] else None,
         )
 
     async def acknowledge_event(
-        self, session_id: UUID, event_id: UUID
+        self, session_id: UUID, event_id: UUID, response: AcknowledgeEventRequest | None = None
     ) -> InspectionEvent | None:
         now = datetime.now(timezone.utc)
         async with self._lock:
             cursor = self._connection.execute(
-                """UPDATE inspection_events SET acknowledged_at = ?
+                """UPDATE inspection_events SET acknowledged_at = ?, acknowledgement_json = ?
                 WHERE session_id = ? AND event_id = ?""",
-                (_iso(now), str(session_id), str(event_id)),
+                (_iso(now), response.model_dump_json() if response else None, str(session_id), str(event_id)),
             )
             self._connection.commit()
         if cursor.rowcount == 0:
             return None
-        events = await self.list_events(session_id, 100)
+        events = await self.list_events(session_id, 1, event_id=event_id)
         return next((event for event in events or [] if event.event_id == event_id), None)

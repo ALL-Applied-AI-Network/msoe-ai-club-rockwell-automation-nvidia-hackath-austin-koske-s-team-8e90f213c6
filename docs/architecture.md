@@ -24,8 +24,9 @@ flowchart LR
 
 [Downloadable diagram](assets/architecture.svg) · [PNG](assets/architecture.png)
 
-GPU inference runs YOLO and U-Net. CPU work handles source decoding, reference
-management, geometry, measurement QA and application state. The API carries
+YOLO and U-Net can run on the approved GPU host; the portable Docker demo uses
+CPU inference. CPU work also handles source decoding, reference management,
+geometry, measurement QA and application state. The API carries
 observations and operator responses; it is not a model stage.
 
 ## What is implemented
@@ -37,11 +38,10 @@ observations and operator responses; it is not a model stage.
 | Sampling | [VialGeometry](../replay/geometry.py), [Extractor](../replay/measurement.py), [Config](../replay/config.py) | Existing geometry, tracking and color QA |
 | Reference qualification | [ReferenceGate](../replay/operator/commissioning.py) | Evidence checks; capture/alignment must be supplied by an adapter |
 | Human evaluation | [Mask review and scorers](../annotation_review/README.md) | Explicit presence, mask and onset review |
-| HTTP and UI | [FastAPI](../api/main.py), [React](../client/src/App.tsx) | Widgets skeleton; no inference or operator inspection route |
-| Video worker and operator loop | Source → inference → QA → backend → display | Still needs integration and a full recording rehearsal |
+| HTTP and UI | [FastAPI](../api/main.py), [React](../client/src/App.tsx) | Source ingestion, model overlays, QA evidence, persistent history and operator responses |
+| Operator loop | [Model adapter](../api/pipelines/temporal.py) and [runtime](../integration/runtime.py) | Long-lived YOLO/U-Net and unchanged QA; browser seek/capture clocks remain distinct from native PTS |
 
-Development branches contain additional dashboard and comparator work. This
-table describes the code in this branch, not an assumed merged application.
+Development branches contain additional dashboard and comparator work. The selected operator adapter is integrated on `austin-work`; recipe references and physical qualification remain separate commissioning work.
 
 ## Liquid model
 
@@ -128,3 +128,17 @@ evidence must not become an automatic “good” result.
 See [development](development.md) for the runnable model example,
 [evaluation](evaluation.md) for results, and [operations](operations.md) for
 the integration rehearsal.
+
+## Laptop runtime
+
+[Docker Compose](../compose.yaml) starts a CPU model API and the built React UI
+behind Nginx. Source and rendered artifacts are stored separately. Per-run model
+state resets on reference/source changes, rewinds and independent stills. Model
+inference is serialized off the HTTP event loop; queue capacity is32 frames.
+A run-generation boundary rejects obsolete HTTP/WebSocket updates after reset.
+Live stopped, offline and stale states take precedence over the last measurement.
+
+The adapter retains actual QA and reference/source/model identities. Model proposals
+and sampling masks remain separate; uploaded/configured references stay explicitly
+unreviewed. The app can demonstrate visual evidence without inventing an eligible
+recipe comparison or product approval. [Run the demo](demo.md).

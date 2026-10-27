@@ -19,6 +19,7 @@ from temporal_pool import TemporalPool
 
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+NOZZLE_X = 305
 
 YOLO_CHECKPOINT = ROOT / "integration/models/yolo_best.pt"
 
@@ -92,6 +93,7 @@ def process_pair(
     yolo_result = yolo.predict(
         source=Image.fromarray(current),
         conf=0.25,
+        classes=[0],
         verbose=False
     )[0]
 
@@ -120,25 +122,39 @@ def process_pair(
 
     matched_vial = None
     containment = 0.0
-
+    
     if presence_passed and proposal_box is not None:
-        for index, vial_box in enumerate(vial_boxes):
-            padding = 5
-            expanded_vial_box = [
-                vial_box[0] - padding,
-                vial_box[1] - padding,
-                vial_box[2] + padding,
-                vial_box[3] + padding
-            ]
+    	candidates = []
 
-            overlap = mask_containment(
-                proposal_mask,
-                expanded_vial_box
+    for index, vial_box in enumerate(vial_boxes):
+        x0, y0, x1, y1 = vial_box
+
+        if x0 <= NOZZLE_X <= x1:
+            candidates.append(index)
+
+    if candidates:
+        matched_vial = min(
+            candidates,
+            key=lambda i: abs(
+                (vial_boxes[i][0] + vial_boxes[i][2]) / 2
+                - NOZZLE_X
             )
+        )
 
-            if overlap > containment:
-                containment = overlap
-                matched_vial = index
+        vial_box = vial_boxes[matched_vial]
+        padding = 5
+
+        expanded_vial_box = [
+            vial_box[0] - padding,
+            vial_box[1] - padding,
+            vial_box[2] + padding,
+            vial_box[3] + padding
+        ]
+
+        containment = mask_containment(
+            proposal_mask,
+            expanded_vial_box
+        )
 
     association_passed = (
         presence_passed

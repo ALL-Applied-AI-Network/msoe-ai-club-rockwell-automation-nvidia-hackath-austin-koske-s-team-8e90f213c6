@@ -9,9 +9,10 @@ app skeleton runs inference.
 - Do not spawn subagents unless explicitly authorized.
 - Keep model experiments in `setup/vision/`, measurement/reference logic in
   `replay/`, annotation tools in `annotation_review/`, and the app in `api/` / `client/`.
-- New CSI fitting, checkpoint selection and threshold tuning use synthetic data.
-  Real imagery is evaluation-only. Exclude Run5 from fitting, tuning and sampling
-  decisions. Keep scene families together and disclose generic pretraining.
+- Train on synthetic data; fine-tune on the real train split only (Runs 1–3; Run 4 is
+  validation, see `docs/plan.md#data-splits`). Never fit, tune or select on the real
+  test split (Run5). Keep scene families,
+  sessions and batches together and disclose generic pretraining.
 - Preserve source labels, reviewer histories, authored scenes and frozen helper
   bytes. Human review establishes label/reference/timing decisions.
 - Reuse measurement QA. Keep proposals, sample eligibility, qualified recipe

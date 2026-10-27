@@ -24,13 +24,17 @@ Constraint from CSI (Derek Riley): we cannot talk to sensors, the PLC or the sor
 action is **issued to the operator** (and logged as the command a PLC integration would send).
 The Teledyne database is static; our recipe library is ours.
 
+**Success bar:** the full pipeline works on synthetic line video, where every vial, fault and
+cause is known, and works well enough on the organizers' real line video for a convincing demo. We train on
+simulation and fine-tune on a small real set, and we measure the sim-to-real gap directly.
+
 ## Inputs
 
 | Input | Format | Notes |
 | --- | --- | --- |
 | Video | MP4/MKV file or live 640×480 UVC camera (same fill-station view) | Native frame times retained |
 | Recipe schedule | CSV `seq,recipe_id[,dye amounts]`: the vials that will be made, in order | Stands in for the line's production order; the n-th detected vial is schedule row n |
-| Recipe library | JSON: per recipe, dye amounts and reference Lab (or "none") | One library per dye set (organizer clear/orange/blue; CSI 10/27 red/yellow/blue) |
+| Recipe library | JSON: per recipe, dye amounts and reference Lab (or "none") | One library per dye set (organizer clear/orange/blue) |
 
 ## Pipeline stages
 
@@ -62,15 +66,15 @@ tolerances. Ask CSI for their tolerance and compare.
 
 1. **Reference vials** (primary): the first qualified vials of each recipe in a commissioning pass.
 2. **Mixing model** (stretch): predict Lab for any dye mix from pure-dye baselines (absorbance-space
-   mixing). This removes the reference requirement for new/custom recipes. CSI 10/27 Tier 1 data
-   (pure R/Y/B plus mixes) is designed to test it.
+   mixing). This removes the reference requirement for new/custom recipes. Fit and test it on synthetic
+   sessions; check it on Runs 1–4 recipes.
 
 ### Stage 5: RCA design
 
 - **Evidence packet** (JSON, built by stages 1–4): schedule context (previous/intended/next recipe),
   vial Lab endpoint and trajectory, ΔE to intended and previous, direction cosine, neighbouring vials,
   QA flags, and 3 keyframes (empty, mid-fill, end).
-- **Cause taxonomy** (matches the CSI session fault labels): carryover, wrong recipe, dose error,
+- **Cause taxonomy** (the synthetic fault labels): carryover, wrong recipe, dose error,
   missed dose, short fill, occlusion, vial position, lighting, bubbles, unknown.
 - **Models**, compared on the same packets:
   1. rule baseline (`replay/diagnostics.py`);
@@ -96,64 +100,91 @@ One entry point runs the same pipeline offline and in the app:
 `python -m replay.line --video X --schedule S --library L --out DIR` (to be built), and the app
 reads the same ledger.
 
+## Training: simulation first, real fine-tune
+
+| Step | What | Existing starting point |
+| --- | --- | --- |
+| 1. Synthetic line video | Render whole sessions from a recipe schedule with injected faults (carryover, wrong recipe, dose error, missed dose, short fill) and nuisances (lighting, white balance, occlusion, bubbles, position). Every frame carries vial ID, fill phase, mask, true recipe and fault cause | Isaac Sim 6.0 FillCam renderer and liquid geometry (`setup/isaac/`); digital twin simulator |
+| 2. Domain randomization | Randomize dye colours (organizer clear/orange/blue plus other hues), concentration, lighting, camera gain/white balance, noise, JPEG/H.264 compression, small camera shifts | Renderer already varies colour, opacity, fill height, illumination |
+| 3. Train on synthetic | YOLO vial geometry, U-Net liquid mask/presence, vial-event segmentation (stage 2), RCA LoRA on synthetic evidence packets | Synthetic-only U-Net is the released model |
+| 4. Fine-tune on real | Small real train split (below) at a low learning rate, or mixed batches with synthetic | Real+synthetic YOLO pilot (`setup/vision/REAL-SYNTHETIC.md`) |
+| 5. Measure the gap | Same metrics on synthetic test, real test before fine-tune, real test after fine-tune | — |
+
+Real labels: Runs 1–4 fill windows and boxes exist (machine labels); masks are pseudo-labelled by the
+current models and spot-checked with `annotation_review/`. Run 5 has organizer recipe labels and fill
+frames for 30 vials. There is no real per-vial fault ground truth; real faults are the natural
+first-vial-after-changeover deviations. The CSI 10/27 visit produced no usable data.
+Optional: Cosmos Transfer for photorealism. Our trial showed it invents liquid and shifts colours,
+so use it only with mask/edge control, and re-check labels.
+
+## Data splits
+
+Whole sessions/batches stay in one split; never split frames of one vial across train and test.
+
+| Set | Train | Validation (select checkpoints/thresholds) | Test (scored once, after freeze) |
+| --- | --- | --- | --- |
+| Synthetic | Most rendered sessions | Held-out sessions | Held-out sessions with unseen fault/nuisance combinations |
+| Organizer Runs 1–3 | Fine-tune | — | — |
+| Organizer Run 4 | — | Real validation | — |
+| Organizer Run 5 | — | — | **Real test** (30 labelled vials, 10 recipes; not blind, inspected in earlier diagnostics) |
+
+Run 5 references stay proxies (a later vial of the same recipe), as in the existing retrospective.
+
 ## Metrics
 
-Targets are proposed goals, not results. Report every metric with its count (n).
+Targets are proposed goals, not results. Report every metric with its count (n), on **synthetic
+test** and **real test**, plus real before vs after fine-tuning (the sim-to-real gap).
 
-| Area | Metric | Proposed target |
-| --- | --- | --- |
-| Perception | QA-valid endpoint coverage (vials with an endpoint / all vials) | ≥ 80% |
-| | Repeatability: median ΔE between in-spec vials of the same recipe | ≤ 2 |
-| Vial segmentation | Vial count error per session; fill start/end timing error (s) | 0 miscounts; ≤ 1 s median |
-| Decision | Out-of-spec recall and precision vs ground truth | ≥ 90% recall, ≥ 90% precision |
-| | False SCRAP rate on nominal vials | ≤ 5% |
-| | Action accuracy (correct PASS/SCRAP/FLUSH/STOP vs labelled fault) | ≥ 85% |
-| | Minimum detectable dose error (mL), from the dose-error ladder | Report value |
-| | Timeliness: decisions before deadline; early-warning lead time | 100%; report seconds |
-| RCA | Top-1 cause accuracy vs labelled fault type; rule vs LLM vs Cosmos | Beat rule baseline |
-| | Evidence faithfulness (cited numbers/vials correct); invalid-output rate | 100%; ≤ 5% |
-| System | GB10 frames/s and end-to-end decision latency | ≥ 10 frames/s; ≤ 2 s after fill end |
-| Business | Faulty vials the recipe-unaware check would pass that we flag | Report count |
-
-## Evaluation data
-
-| Set | Use | Ground truth |
-| --- | --- | --- |
-| Runs 1–4 (organizer) | Development; rule selection | Machine labels, fill windows |
-| Run 5 (organizer) | Held-out diagnostic, never tuned on | 30 labelled vials, 10 recipes; no per-vial outcome |
-| **CSI 10/27 session** | **Primary real evaluation** of decisions and RCA | Our vial log: intended/actual R/Y/B, fault type, times |
-| Synthetic/simulated | Fitting and threshold selection (policy) | Generated |
-
-Policy: real imagery is evaluation-only and Run 5 stays out of fitting/tuning. **Decision needed**:
-whether reference vials (and the 3-parameter mixing model) from a commissioning subset of the CSI
-session count as commissioning rather than fitting. Proposed: yes, with the first vial of each Tier 1
-batch as references and every other vial scored.
+| Area | Metric | Target: synthetic | Target: real |
+| --- | --- | --- | --- |
+| Perception | Mask IoU (synthetic exact; real on spot-checked frames) | ≥ 0.85 | ≥ 0.6 |
+| | QA-valid endpoint coverage (vials with an endpoint / all vials) | ≥ 95% | ≥ 70% |
+| | Repeatability: median ΔE between nominal vials of the same recipe | ≤ 1 | ≤ 3 |
+| Vial segmentation | Vial count errors; fill start/end timing error | 0; ≤ 0.5 s | ≤ 1 per session; ≤ 1.5 s |
+| Decision | Out-of-spec recall / precision | ≥ 95% / 95% | ≥ 80% / 80% |
+| | False SCRAP rate on nominal vials | ≤ 2% | ≤ 10% |
+| | Action accuracy (PASS/SCRAP/FLUSH/STOP/HOLD vs labelled fault) | ≥ 90% | ≥ 70% |
+| | Minimum detectable dose error (mL) | Report | — (no real dose ground truth) |
+| | Decisions before deadline; early-warning lead time | 100%; report s | 100%; report s |
+| RCA | Top-1 cause accuracy; rule vs LLM vs Cosmos | Beat rule baseline | Report |
+| | Evidence faithfulness; invalid-output rate | 100%; ≤ 2% | 100%; ≤ 5% |
+| System | GB10 frames/s; decision latency after fill end | ≥ 10; ≤ 2 s | same |
+| Business | Faulty vials a recipe-unaware check would pass that we flag | Report | Report |
 
 ## Schedule
 
 | Day | Deliverable |
 | --- | --- |
-| Tue 10/27 | Plan agreed; CSI data copied, checksummed, vial log reviewed |
-| Wed 10/28 | Stage 2 automatic vial segmentation; offline runner writes the ledger; evidence-packet schema |
-| Thu 10/29 | Stage 4 actions + deadlines; metrics harness on CSI + Run 5; RCA comparison (rule/LLM/Cosmos) |
-| Fri 10/30 | **Freeze code and thresholds.** Scored run on GB10; app shows the ledger and RCA |
-| Sat 10/31 | Demo video, metrics tables, write-up |
+| Tue 10/27 | Plan agreed; synthetic session spec (schedule + faults + nuisances) agreed; Run 5 schedule file written from organizer labels |
+| Wed 10/28 | First synthetic sessions rendered; stage 2 vial segmentation; offline runner writes the ledger; evidence-packet schema |
+| Thu 10/29 | Train on synthetic, fine-tune on real; stage 4 actions + deadlines; metrics harness on all splits; RCA comparison |
+| Fri 10/30 | **Freeze models and thresholds.** Score synthetic test + real test once; GB10 run; app shows ledger and RCA |
+| Sat 10/31 | Demo video (synthetic session with every fault caught, then real Run 5), metrics tables, write-up |
 | Sun 11/1 | Submit |
 
 ## Workstreams (proposed owners)
 
 | Stream | Scope | Proposed |
 | --- | --- | --- |
-| Pipeline + integration | Stages 2–4, `replay.line` runner, ledger, GB10 | Austin, Srijan |
+| Synthetic sessions | Fault/nuisance session renderer, domain randomization, labels | Cameron, Hayden |
+| Training + sim-to-real | Synthetic training, real fine-tune, gap measurements | Srijan, Aleyna, Reagan |
+| Pipeline + integration | Stages 2–4, `replay.line` runner, ledger, metrics harness, GB10 | Austin |
 | App | Upload video + schedule, live ledger, actions, RCA panel | Josiah |
-| RCA | Evidence packets, LLM + Cosmos comparison, output schema | Zoe, Jev |
-| Data + ground truth | CSI log QA, fill-window labels, fault labels | Aleyna, Reagan |
-| Synthetic faults | Simulated carryover/dose cases for threshold freeze and RCA tests | Cameron |
+| RCA | Evidence packets, synthetic RCA training data, LLM + Cosmos comparison | Zoe, Jev |
+
+## Demo
+
+1. A synthetic session from a schedule with injected faults: every vial gets the right action at the
+   right time, with the RCA explaining each fault. This shows the system is correct where truth is known.
+2. Real Run 5 video with its recipe schedule: the same pipeline on the GB10 flags the first vials
+   after recipe changes (e.g. vial 4: ΔE 24.5 to its recipe, 1.6 to the previous one) as
+   OUT OF SPEC → SCRAP + FLUSH, with the RCA naming carryover.
+3. The sim-to-real table: synthetic test, real before fine-tuning, real after fine-tuning.
 
 ## Not in scope before submission
 
-Isaac/twin rendering, Cosmos Transfer synthetic video, SAM/Faster R-CNN comparators, Dataset 1,
-TensorRT, new model training. Code stays in the repo; see [branches](branches.md).
+SAM/Faster R-CNN comparators, Dataset 1, TensorRT, the live digital-twin UI. Code stays in the
+repo; see [branches](branches.md).
 
 ## Open questions for CSI
 

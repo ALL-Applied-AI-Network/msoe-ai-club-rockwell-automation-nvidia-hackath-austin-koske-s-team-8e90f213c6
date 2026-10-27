@@ -1,0 +1,83 @@
+{
+  "schema": "investigation-panel-verification/v1",
+  "date": "2026-10-27",
+  "branch": "austin-work",
+  "base_commit": "361ecbc",
+  "API_tests_passed": 25,
+  "diagnosis_contract_tests_passed": 12,
+  "frontend_typecheck": "passed",
+  "frontend_lint": "passed",
+  "docker_production_build": "passed",
+  "browser": {
+    "physical_camera": false,
+    "GPU_used": false,
+    "training": false,
+    "transient_example": "four completed synthetic vials, hypothesis plus alternatives, no confirmed cause",
+    "dose_record": "record discrepancy survives normal-band appearance; downloaded evidence remains synthetic",
+    "mode_switch": "synthetic values cleared when returning to this run",
+    "real_run": {
+      "frames": 41,
+      "completed_vials": 0,
+      "status": "unavailable"
+    },
+    "synthetic_import": "rejected; real run unchanged",
+    "late_example_response": "does not replace real-run evidence",
+    "page_errors": [],
+    "passed": true
+  },
+  "mode_separation": "Synthetic example API has no real session ID and does not persist into run records. Real imports bind saved model events, exact Lab and actual QA.",
+  "core_sha256": "357d4bbc023efd03f4f7248b217067e64822390a7dc504a755cf683860513de7",
+  "core_unchanged_from_pilot": true,
+  "frozen_examples": {
+    "experiment": "root-cause-pilot-20261026-v2",
+    "plan_sha256": "e271fcc88f6d30aa6edac2e6ffd39b8bf2fb768c52431e32a6a728e1808ce827",
+    "cases": [
+      {
+        "id": "transient",
+        "label": "Transient color recovery",
+        "file": "transient.json",
+        "sha256": "84a60d63994f669873fc0e7018b2903a065c1fe3dad12153a59146379c09d005",
+        "data_domain": "synthetic"
+      },
+      {
+        "id": "persistent",
+        "label": "Persistent recipe-appearance deviation",
+        "file": "persistent.json",
+        "sha256": "8bdb737e59fa22cb8dcc582b9fbe89e34c18994c7d51348184f96b02b66aa14a",
+        "data_domain": "synthetic"
+      },
+      {
+        "id": "dose-record",
+        "label": "Delivery record disagrees inside the research color band",
+        "file": "dose-record.json",
+        "sha256": "cc5249eca812760236dd6cbdbbb0d82cc3c657e632910490462c1b7ee8e43a56",
+        "data_domain": "synthetic"
+      },
+      {
+        "id": "camera",
+        "label": "Camera evidence unavailable",
+        "file": "camera.json",
+        "sha256": "1629f5a8d67ecae39c944bb603d30d2266efc8ebcaf9887d431bedc2db82806a",
+        "data_domain": "synthetic"
+      }
+    ]
+  },
+  "running_API_source_sha256": {
+    "api/main.py": "94bfe0c28555cf15a450caf719f115276d06652a77db548162245ca69e5f2160",
+    "api/routers/investigation.py": "670f71d6d37ec5824f1bc3d44fd473413953665e10821e8fdf1ce6d56f30ccdf",
+    "api/services/investigation.py": "8e47854fd86efee76e2dd3e3b255ad97c043109fdda9fbbf92e91dc72b55e2e3",
+    "api/databridge/sqlite_inspections.py": "2d32d26b0185f2093824b41fcbe4fa1e4320ea4a6ed08a59bb8da36dac5e97ec",
+    "replay/diagnostics.py": "357d4bbc023efd03f4f7248b217067e64822390a7dc504a755cf683860513de7",
+    "api/fixtures/investigation/manifest.json": "c0feb3d7ef04a141084a6a3978c63be7105119221aa4aaa2198d003d9a99bdf5"
+  },
+  "quality_decision": null,
+  "hardware_command": null,
+  "confirmed_root_cause": null,
+  "new_training": false,
+  "GPU_used": false,
+  "physical_camera_used": false,
+  "run5_used": false,
+  "measurement_QA_changed": false,
+  "independent_real_cause_accuracy": null,
+  "evidence_root": "C:/Users/Austin/ai-club-tools/results/investigation-panel-20261027-v1"
+}

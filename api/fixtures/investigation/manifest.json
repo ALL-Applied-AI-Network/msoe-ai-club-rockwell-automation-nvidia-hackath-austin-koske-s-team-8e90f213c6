@@ -1,0 +1,34 @@
+{
+  "experiment": "root-cause-pilot-20261026-v2",
+  "plan_sha256": "e271fcc88f6d30aa6edac2e6ffd39b8bf2fb768c52431e32a6a728e1808ce827",
+  "cases": [
+    {
+      "id": "transient",
+      "label": "Transient color recovery",
+      "file": "transient.json",
+      "sha256": "84a60d63994f669873fc0e7018b2903a065c1fe3dad12153a59146379c09d005",
+      "data_domain": "synthetic"
+    },
+    {
+      "id": "persistent",
+      "label": "Persistent recipe-appearance deviation",
+      "file": "persistent.json",
+      "sha256": "8bdb737e59fa22cb8dcc582b9fbe89e34c18994c7d51348184f96b02b66aa14a",
+      "data_domain": "synthetic"
+    },
+    {
+      "id": "dose-record",
+      "label": "Delivery record disagrees inside the research color band",
+      "file": "dose-record.json",
+      "sha256": "cc5249eca812760236dd6cbdbbb0d82cc3c657e632910490462c1b7ee8e43a56",
+      "data_domain": "synthetic"
+    },
+    {
+      "id": "camera",
+      "label": "Camera evidence unavailable",
+      "file": "camera.json",
+      "sha256": "1629f5a8d67ecae39c944bb603d30d2266efc8ebcaf9887d431bedc2db82806a",
+      "data_domain": "synthetic"
+    }
+  ]
+}

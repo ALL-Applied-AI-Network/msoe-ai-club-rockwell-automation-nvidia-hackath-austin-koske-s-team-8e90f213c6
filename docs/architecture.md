@@ -142,3 +142,12 @@ The adapter retains actual QA and reference/source/model identities. Model propo
 and sampling masks remain separate; uploaded/configured references stay explicitly
 unreviewed. The app can demonstrate visual evidence without inventing an eligible
 recipe comparison or product approval. [Run the demo](demo.md).
+
+## Investigation
+
+The [Investigation panel](investigation.md) consumes separately imported,
+source-bound completed-vial endpoints after QA. `replay.diagnostics` produces
+candidate explanations, supporting evidence and next checks. Frames do not become
+vials automatically. The run remains unavailable until the required inputs exist;
+synthetic examples are labeled and cannot become real run evidence. Diagnosis
+records append to SQLite and leave model/measurement/operator decisions unchanged.

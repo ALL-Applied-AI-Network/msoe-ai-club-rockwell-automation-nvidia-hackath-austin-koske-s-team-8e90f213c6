@@ -84,3 +84,27 @@ an exact rendered artifact survive an API restart. See the compact
 [verification record](../setup/verification/demo-integration-20261027.json) and
 [laptop instructions](demo.md). Physical camera/reference/recipe qualification and
 performance on the target laptop/CSI host remain separate tests.
+
+## Sequence-diagnosis pilot
+
+The investigation module was exercised on 1,620 analytic four-vial sequences across
+ten scenario families (162 each), frozen before scoring. No fitting, rendered
+Isaac images, real-data threshold selection or Run5 data was involved.
+
+| Scenario | Observed software behavior |
+| --- | --- |
+| Nominal | 162/162 inside the experimental color band |
+| Persistent wrong recipe | The legacy first-vial rule suggests carryover in 162/162; sequence logic reports persistent deviation with cause undetermined |
+| Unhealthy camera / unqualified recipe reference | 162/162 of each withhold diagnosis |
+| Attributed delivery discrepancy | All 162 remain visible, including 54 inside the color band |
+| Carryover and constructed dosing/optical alternatives | 162 identical-input triplets receive identical diagnoses;76/162 in each family receive a carryover hypothesis, with alternatives retained |
+
+These are feature-model scenario counts. Analytic counterexamples cover 54 process
+settings and 216 endpoints where alternative mechanisms share the same ideal color.
+They do not establish physical feasibility of the optical construction or real
+causal accuracy. The audited Run4 probe has 264 frames/six correlated clips and 105
+QA-eligible samples, but supplies zero qualified completed-vial RCA inputs.
+
+The [Investigation panel](investigation.md) exposes this uncertainty, source
+bindings and missing evidence. Its examples stay synthetic and separate from run
+records. Cause confirmation, product quality and hardware commands remain unset.

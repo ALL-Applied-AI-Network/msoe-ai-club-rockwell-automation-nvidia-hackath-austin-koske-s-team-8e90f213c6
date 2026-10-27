@@ -6,3 +6,4 @@ Dockerfile text eol=lf
 *.pdf binary
 *.png binary
 *.mp4 binary
+api/fixtures/investigation/*.json -text

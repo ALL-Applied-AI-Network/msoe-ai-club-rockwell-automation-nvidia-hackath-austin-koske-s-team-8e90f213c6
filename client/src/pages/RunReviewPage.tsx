@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import PageChrome from "@/components/PageChrome";
+import InvestigationPanel from "@/components/InvestigationPanel";
 import type { InspectionEvent, InspectionSession, RecipeSegment } from "@/models/inspection";
 import { acknowledgeInspectionEvent, artifactUrl, getInspectionRun, listInspectionEvents, listRecipeSegments } from "@/services/inspectionService";
 
@@ -76,6 +77,7 @@ export default function RunReviewPage() {
             </>}
           </section>
         </div>
+        <InvestigationPanel key={runId} sessionId={runId} frameNumber={run?.frames_processed} />
       </main>
     </PageChrome>
   );

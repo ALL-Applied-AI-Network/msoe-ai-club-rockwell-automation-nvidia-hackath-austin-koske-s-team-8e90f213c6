@@ -8,7 +8,7 @@ RUN uv sync --frozen --no-dev --python /usr/local/bin/python
 COPY api/requirements-model.txt ./
 RUN uv pip install --python /app/api/.venv/bin/python -r requirements-model.txt
 COPY api/ /app/api/
-COPY replay/__init__.py replay/config.py replay/geometry.py replay/measurement.py /app/replay/
+COPY replay/__init__.py replay/config.py replay/geometry.py replay/measurement.py replay/diagnostics.py /app/replay/
 COPY integration/runtime.py integration/measurement_qa.py /app/integration/
 COPY setup/vision/temporal_pool.py setup/vision/train_pair_masks.py /app/setup/vision/
 ENV PYTHONPATH=/app:/app/api PYTHONUNBUFFERED=1 APP__DATA_DIR=/data APP__MODEL_ASSETS=/models APP__DEVICE=cpu YOLO_CONFIG_DIR=/tmp/ultralytics

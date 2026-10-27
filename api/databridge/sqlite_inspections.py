@@ -105,6 +105,17 @@ class SQLiteInspectionBridge:
             );
             CREATE INDEX IF NOT EXISTS idx_events_run_number
                 ON inspection_events(session_id, frame_number DESC);
+            CREATE TABLE IF NOT EXISTS investigation_records (
+                investigation_id TEXT PRIMARY KEY,
+                session_id TEXT NOT NULL REFERENCES inspection_runs(session_id),
+                created_at TEXT NOT NULL,
+                reviewer TEXT NOT NULL,
+                evidence_id TEXT NOT NULL,
+                input_json TEXT NOT NULL,
+                result_json TEXT NOT NULL
+            );
+            CREATE INDEX IF NOT EXISTS idx_investigation_run_time
+                ON investigation_records(session_id, created_at DESC);
             """
         )
         self._connection.commit()
@@ -469,3 +480,22 @@ class SQLiteInspectionBridge:
             return None
         events = await self.list_events(session_id, 1, event_id=event_id)
         return next((event for event in events or [] if event.event_id == event_id), None)
+
+    async def save_investigation(self, session_id, reviewer, evidence_id, document, result):
+        record_id = str(uuid4())
+        async with self._lock:
+            self._connection.execute(
+                "INSERT INTO investigation_records VALUES (?, ?, ?, ?, ?, ?, ?)",
+                (record_id, str(session_id), _iso(datetime.now(timezone.utc)), reviewer, evidence_id,
+                 json.dumps(document, allow_nan=False), json.dumps(result, allow_nan=False)),
+            )
+            self._connection.commit()
+        return record_id
+
+    async def latest_investigation(self, session_id):
+        async with self._lock:
+            row = self._connection.execute(
+                "SELECT * FROM investigation_records WHERE session_id = ? ORDER BY created_at DESC, rowid DESC LIMIT 1",
+                (str(session_id),),
+            ).fetchone()
+        return dict(row) if row else None

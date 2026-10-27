@@ -82,3 +82,14 @@ not need the experiment folders, reviewer databases or full training dataset.
 The local rehearsal report under`setup/verification/` records actual image/HTTP/UI
 checks and their limits; it does not establish segmentation accuracy, recipe
 acceptance or performance on an untested laptop or CSI workstation.
+
+## Investigation demo
+
+Choose INVESTIGATION, then SYNTHETIC EXAMPLE. Switch between transient recovery,
+persistent deviation, a delivery-record discrepancy and unavailable camera evidence.
+The four-vial table and possible causes come from the frozen feature-level pilot;
+the banner remains synthetic, separate from the camera frame and operator decision.
+Choose THIS RUN to return to actual source-bound evidence; ordinary frame uploads
+leave completed-vial count at zero. Real imports require the declarations and
+source bindings in [the investigation guide](investigation.md). No cause is confirmed
+and no product or equipment action is authorized by a hypothesis.

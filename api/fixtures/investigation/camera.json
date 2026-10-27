@@ -1,0 +1,160 @@
+{
+  "schema": "vial-diagnosis-input/v1",
+  "data_domain": "synthetic",
+  "session_id": "sim-r0-o012-h2-s311",
+  "camera_id": "sim-camera",
+  "profile_id": "sim-Lab-endpoint",
+  "clock_domain_id": "sim-clock",
+  "recipe_id": "B",
+  "previous_recipe_id": "A",
+  "transition_evidence_id": "sim-transition",
+  "context_evidence_id": "sim-plan",
+  "context_available_s": 0.0,
+  "as_of_s": 90.0,
+  "references": [
+    {
+      "reference_id": "sim-reference-A",
+      "recipe_id": "A",
+      "lab": [
+        46.66579975669857,
+        13.935077218074188,
+        -0.440160293914138
+      ],
+      "data_domain": "synthetic",
+      "camera_id": "sim-camera",
+      "profile_id": "sim-Lab-endpoint",
+      "clock_domain_id": "sim-clock",
+      "available_s": 0.0,
+      "source_vial_id": "sim-standard-A",
+      "independent_of_evaluation": true,
+      "qualification": {
+        "status": "simulated",
+        "condition": "accepted_recipe_endpoint",
+        "evidence_id": "sim-reference-preparation"
+      }
+    },
+    {
+      "reference_id": "sim-reference-B",
+      "recipe_id": "B",
+      "lab": [
+        55.64004941403056,
+        -26.6400422709544,
+        16.46511753344324
+      ],
+      "data_domain": "synthetic",
+      "camera_id": "sim-camera",
+      "profile_id": "sim-Lab-endpoint",
+      "clock_domain_id": "sim-clock",
+      "available_s": 0.0,
+      "source_vial_id": "sim-standard-B",
+      "independent_of_evaluation": true,
+      "qualification": {
+        "status": "simulated",
+        "condition": "accepted_recipe_endpoint",
+        "evidence_id": "sim-reference-preparation"
+      }
+    }
+  ],
+  "vials": [
+    {
+      "vial_id": "v1",
+      "observation_id": "endpoint-1",
+      "source_evidence_id": "simulated-feature-1",
+      "recipe_id": "B",
+      "camera_id": "sim-camera",
+      "profile_id": "sim-Lab-endpoint",
+      "clock_domain_id": "sim-clock",
+      "position_after_change": 1,
+      "start_s": 1.0,
+      "source_time_s": 18.0,
+      "available_s": 19.0,
+      "completed": true,
+      "completion_evidence_id": "sim-complete-1",
+      "qa_pass": true,
+      "camera_health_valid": false,
+      "alignment_confirmed": true,
+      "identity_confirmed": true,
+      "temporal_reference_status": "simulated",
+      "lab": [
+        46.750925447145086,
+        14.079338560560508,
+        -0.42786606313394765
+      ]
+    },
+    {
+      "vial_id": "v2",
+      "observation_id": "endpoint-2",
+      "source_evidence_id": "simulated-feature-2",
+      "recipe_id": "B",
+      "camera_id": "sim-camera",
+      "profile_id": "sim-Lab-endpoint",
+      "clock_domain_id": "sim-clock",
+      "position_after_change": 2,
+      "start_s": 21.0,
+      "source_time_s": 38.0,
+      "available_s": 39.0,
+      "completed": true,
+      "completion_evidence_id": "sim-complete-2",
+      "qa_pass": true,
+      "camera_health_valid": false,
+      "alignment_confirmed": true,
+      "identity_confirmed": true,
+      "temporal_reference_status": "simulated",
+      "lab": [
+        46.84575734334172,
+        13.892776351238364,
+        -0.5728602539378769
+      ]
+    },
+    {
+      "vial_id": "v3",
+      "observation_id": "endpoint-3",
+      "source_evidence_id": "simulated-feature-3",
+      "recipe_id": "B",
+      "camera_id": "sim-camera",
+      "profile_id": "sim-Lab-endpoint",
+      "clock_domain_id": "sim-clock",
+      "position_after_change": 3,
+      "start_s": 41.0,
+      "source_time_s": 58.0,
+      "available_s": 59.0,
+      "completed": true,
+      "completion_evidence_id": "sim-complete-3",
+      "qa_pass": true,
+      "camera_health_valid": false,
+      "alignment_confirmed": true,
+      "identity_confirmed": true,
+      "temporal_reference_status": "simulated",
+      "lab": [
+        46.93709653029649,
+        13.77974238567366,
+        -0.3221048531599743
+      ]
+    },
+    {
+      "vial_id": "v4",
+      "observation_id": "endpoint-4",
+      "source_evidence_id": "simulated-feature-4",
+      "recipe_id": "B",
+      "camera_id": "sim-camera",
+      "profile_id": "sim-Lab-endpoint",
+      "clock_domain_id": "sim-clock",
+      "position_after_change": 4,
+      "start_s": 61.0,
+      "source_time_s": 78.0,
+      "available_s": 79.0,
+      "completed": true,
+      "completion_evidence_id": "sim-complete-4",
+      "qa_pass": true,
+      "camera_health_valid": false,
+      "alignment_confirmed": true,
+      "identity_confirmed": true,
+      "temporal_reference_status": "simulated",
+      "lab": [
+        46.85455841536204,
+        13.822248641981508,
+        -0.13445521080852246
+      ]
+    }
+  ]
+}

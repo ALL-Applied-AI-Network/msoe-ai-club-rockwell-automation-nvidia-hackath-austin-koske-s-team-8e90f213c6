@@ -7,6 +7,7 @@ import {
   type FormEvent,
 } from "react";
 import { Link } from "react-router-dom";
+import InvestigationPanel from "@/components/InvestigationPanel";
 import type {
   CreateSessionRequest,
   HealthStatus,
@@ -596,7 +597,7 @@ export default function OperatorDashboard() {
           <div className="brand-mark" aria-hidden="true"><span /></div>
           <div><strong>LINEWATCH</strong><small>CHANGEOVER INTELLIGENCE</small></div>
         </Link>
-        <nav className="main-nav"><Link className="active" to="/">MONITOR</Link><Link to="/history">RUN HISTORY</Link></nav>
+        <nav className="main-nav"><Link className="active" to="/">MONITOR</Link><a href="#investigation">INVESTIGATION</a><Link to="/history">RUN HISTORY</Link></nav>
         <div className="topbar-status">
           <span className={`connection-dot ${health ? "online" : ""}`} />
           <div>
@@ -668,6 +669,7 @@ export default function OperatorDashboard() {
               {latestEvent?.decision.evidence && <div className="qa-evidence"><strong>MEASUREMENT EVIDENCE</strong><p>Proposal pixels: {String(latestEvent.decision.evidence.proposal_pixels ?? "—")} · Sampling pixels: {String(latestEvent.decision.evidence.sampling_pixels ?? "—")}</p><p>{latestEvent.decision.evidence.blocked_reasons?.join(" · ") ?? latestEvent.decision.evidence.quality_flags?.join(" · ")}</p></div>}
             </section>
 
+            <InvestigationPanel key={sessionId ?? "no-run"} sessionId={sessionId} frameNumber={latestEvent?.frame_number} processing={isProcessing} />
             <form className="context-form" onSubmit={onContextSubmit}>
               <div className="context-title"><div><h3>Run and recipe timeline</h3><p>Every frame resolves the recipe segment active at its source timestamp.</p></div><span>{session ? `RUN ${session.session_id.slice(0, 8)}` : "NOT STARTED"}</span></div>
               <label><span>RUN NAME</span><input value={config.run_name} disabled={Boolean(session)} onChange={(event) => setConfig({ ...config, run_name: event.target.value })} /></label>

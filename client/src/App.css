@@ -352,3 +352,20 @@ footer strong { color: #819795; font-weight: 700; }
 .investigation-causes li { padding: 10px; border-left: 2px solid #637a78; display: grid; gap: 3px; }
 .investigation-limit { border-top: 1px solid #294045; padding-top: 12px; }
 .investigation-note, .investigation-loading { color: #8fa5a1; font-size: 11px; }
+
+/* Simplified monitor: three steps, advanced setup collapsed. */
+.simple-intro { align-items: center; }
+.steps { display: flex; flex-wrap: wrap; gap: 18px; margin: 4px 0 0; padding: 0; list-style: none; color: #9bb0ae; font-size: 14px; }
+.steps b { display: inline-grid; place-items: center; width: 22px; height: 22px; margin-right: 6px; border: 1px solid var(--signal); border-radius: 50%; color: var(--signal); font: 11px var(--mono); }
+.intro-actions { display: flex; align-items: center; gap: 10px; }
+.camera-panel .message-bar { border-top: 0; padding: 8px 2px 0; font-size: 10px; }
+.advanced-setup { margin-top: 16px; border: 1px solid var(--line); background: var(--surface); }
+.advanced-setup summary { cursor: pointer; padding: 12px 14px; font: 11px var(--mono); letter-spacing: .06em; color: var(--text); }
+.advanced-setup summary span { margin-left: 10px; color: var(--muted); letter-spacing: 0; }
+.advanced-body { padding: 0 14px 14px; display: grid; gap: 14px; }
+.advanced-body .sample-control { justify-self: start; }
+.decision-body .measurements { margin: 16px 0 4px; }
+.response-panel .button.primary { width: 100%; margin-top: 4px; }
+.queue-details summary { cursor: pointer; color: var(--muted); font: 10px var(--mono); margin: 6px 0; }
+.investigation-section { margin-top: 16px; scroll-margin-top: 80px; }
+.section-number { min-width: 22px; text-align: center; }

@@ -408,6 +408,7 @@ export default function OperatorDashboard() {
   const selectSource = (mode: SourceMode) => {
     if (sessionRef.current) resetSession();
     setSourceMode(mode);
+    setSampleSeconds(mode === "recording" ? 0.2 : 1.5);
     setConfig((current) => ({ ...current, source_mode: mode, source_name: null }));
     setMessage(`${sourceLabels[mode].label} source selected`);
   };
@@ -590,27 +591,30 @@ export default function OperatorDashboard() {
     return () => { active = false; };
   }, [sessionId]);
 
+  const pendingReview = reviewQueue[0];
+  const measurements = latestEvent?.decision.measurements ?? [];
+
   return (
     <div className="shell">
       <header className="topbar">
         <Link className="brand" to="/">
           <div className="brand-mark" aria-hidden="true"><span /></div>
-          <div><strong>LINEWATCH</strong><small>CHANGEOVER INTELLIGENCE</small></div>
+          <div><strong>LINEWATCH</strong><small>VIAL FILL INSPECTION</small></div>
         </Link>
-        <nav className="main-nav"><Link className="active" to="/">MONITOR</Link><a href="#investigation">INVESTIGATION</a><Link to="/history">RUN HISTORY</Link></nav>
+        <nav className="main-nav"><Link className="active" to="/">MONITOR</Link><Link to="/recipe-check">RECIPE CHECK</Link><a href="#investigation">INVESTIGATION</a><Link to="/history">RUN HISTORY</Link></nav>
         <div className="topbar-status">
           <span className={`connection-dot ${health ? "online" : ""}`} />
           <div>
             <strong>{health ? "SYSTEM ONLINE" : "BACKEND OFFLINE"}</strong>
-            <small>{health ? `${health.persistence.toUpperCase()} · QUEUE ${health.queue_depth}` : "CHECK API ON :8443"}</small>
+            <small>{health ? `${health.pipeline_mode === "model" ? "MODELS LOADED" : "MOCK MODE"} · QUEUE ${health.queue_depth}` : "CHECK THE API SERVICE"}</small>
           </div>
         </div>
       </header>
 
       <main>
-        <section className="page-intro">
-          <div><span className="kicker">OPERATOR STATION / MULTI-SOURCE INSPECTION</span><h1>Changeover monitor</h1><p>Inspect camera frames, image sets or recordings. Proposals, measurement QA and recipe qualification remain separate.</p></div>
-          <div className={`state-chip state-${status}`}><span className="pulse" />{statusLabel[status]}</div>
+        <section className="page-intro simple-intro">
+          <div><h1>Fill monitor</h1><ol className="steps"><li><b>1</b> Choose a source</li><li><b>2</b> Watch what the model sees</li><li><b>3</b> Record your response</li></ol></div>
+          <div className="intro-actions"><div className={`state-chip state-${status}`}><span className="pulse" />{statusLabel[status]}</div>{session && <button className="button quiet" type="button" onClick={resetSession}>NEW RUN</button>}</div>
         </section>
 
         <section className="source-mode-bar" aria-label="Inspection source">
@@ -621,90 +625,86 @@ export default function OperatorDashboard() {
           ))}
         </section>
 
-        <section className="pipeline-strip" aria-label="Integration pipeline">
-          {["SOURCE", "PERSIST + QUEUE", "MODEL ADAPTER", "DECISION", "OPERATOR"].map((stage, index) => (
-            <div className="pipeline-stage" key={stage}><span>{String(index + 1).padStart(2, "0")}</span><strong>{stage}</strong>{index < 4 && <i aria-hidden="true">→</i>}</div>
-          ))}
-        </section>
-
         <div className="dashboard-grid">
           <section className="panel camera-panel">
             <div className="panel-heading">
-              <div><span className="section-number">01</span><div><h2>Post-pipeline frame</h2><p>Persisted source, rendered frame, and mask artifacts</p></div></div>
+              <div><span className="section-number">1</span><div><h2>Frame</h2><p>Green = liquid the model proposes · blue = area actually sampled for color</p></div></div>
               <div className="view-toggle"><button className={view === "output" ? "active" : ""} onClick={() => setView("output")} type="button">POST-PIPELINE</button><button className={view === "raw" ? "active" : ""} onClick={() => setView("raw")} type="button">SOURCE</button></div>
             </div>
 
             <div className="viewport">
               <video ref={videoRef} className={view === "raw" && isCameraLive ? "visible" : ""} autoPlay muted playsInline />
               {latestEvent && (view === "output" || !isCameraLive) && <div className="pipeline-visual"><img src={imageSource(view === "raw" ? latestEvent.image : resultImage)} alt={view === "raw" ? "Original source frame" : "Latest post-pipeline frame"} />{view === "output" && maskImage && !latestEvent.visuals?.rendered_frame && <img className="mask-overlay" src={imageSource(maskImage)} alt="Liquid mask overlay" />}</div>}
-              {!isCameraLive && !latestEvent && <div className="empty-camera"><div className="vial-glyph"><span /></div><strong>NO FRAME SELECTED</strong><p>Start a camera or ingest images/recording frames.</p></div>}
-              <div className="viewport-label"><span className={isCameraLive && view === "raw" ? "live-dot" : ""} />{view === "raw" ? sourceLabels[sourceMode].label : maskImage ? "POST-PIPELINE · MASK" : "POST-PIPELINE · SOURCE FALLBACK"}</div>
-              <div className="frame-code">{latestEvent ? `${latestEvent.frame_id} · ${timestampLabel(latestEvent.source_timestamp_ms)}` : "WAITING FOR FRAME"}</div>
+              {!isCameraLive && !latestEvent && <div className="empty-camera"><div className="vial-glyph"><span /></div><strong>NO FRAME YET</strong><p>{sourceMode === "live_camera" ? "Press START CAMERA below." : `Drop ${sourceMode === "images" ? "images" : "a recording"} below to begin.`}</p></div>}
+              <div className="viewport-label"><span className={isCameraLive && view === "raw" ? "live-dot" : ""} />{view === "raw" ? "ORIGINAL PIXELS" : "MODEL VIEW"}</div>
+              <div className="frame-code">{latestEvent ? `Frame ${latestEvent.frame_number} · ${timestampLabel(latestEvent.source_timestamp_ms)}` : "WAITING FOR FRAME"}</div>
             </div>
 
             {sourceMode === "live_camera" ? (
               <div className="camera-actions">
                 {!isCameraLive ? <button className="button primary" onClick={() => void startCamera()} type="button"><span className="button-icon">●</span> START CAMERA</button> : <button className="button quiet" onClick={stopCamera} type="button">STOP CAMERA</button>}
                 {health?.pipeline_mode === "mock" && <button className="button quiet" onClick={() => void sendGeneratedFrame(demoFrame)} disabled={isProcessing} type="button">SEND DEMO FRAME</button>}
-                <label className="sample-control"><span>SAMPLE SEC</span><input type="number" min="0.1" step="0.1" value={sampleSeconds} onChange={(event) => setSampleSeconds(Number(event.target.value))} /></label>
               </div>
             ) : (
               <div className={`drop-zone ${dragActive ? "active" : ""}`} onDragEnter={(event) => { event.preventDefault(); setDragActive(true); }} onDragOver={(event) => event.preventDefault()} onDragLeave={() => setDragActive(false)} onDrop={onDrop} onClick={() => fileInputRef.current?.click()}>
                 <input ref={fileInputRef} type="file" hidden multiple={sourceMode === "images"} accept={sourceMode === "images" ? "image/jpeg,image/png,image/webp" : "video/mp4,video/webm,video/quicktime,.mov"} onClick={(event) => event.stopPropagation()} onChange={(event) => { const files = Array.from(event.target.files ?? []); event.target.value = ""; void handleFiles(files); }} />
                 <strong>DROP {sourceMode === "images" ? "IMAGES" : "A RECORDING"} HERE</strong>
-                <span>Drag files here or use the file picker · originals and pipeline outputs are retained</span>
-                <button className="button quiet file-picker-button" type="button" onClick={(event) => { event.stopPropagation(); fileInputRef.current?.click(); }}>CHOOSE FILES</button>
-                {sourceMode === "recording" && <label className="sample-control" onClick={(event) => event.stopPropagation()}><span>FRAME INTERVAL SEC</span><input type="number" min="0.1" step="0.1" value={sampleSeconds} onChange={(event) => setSampleSeconds(Number(event.target.value))} /></label>}
+                <span>or click to choose a file · every frame and its result are saved</span>
               </div>
             )}
 
             {ingestion && <div className="ingestion-progress"><div><strong>{ingestion.label}</strong><span>{ingestion.current} / {ingestion.total}</span></div><div className="progress-track"><span style={{ width: `${Math.round((ingestion.current / ingestion.total) * 100)}%` }} /></div>{isProcessing && <button type="button" onClick={() => { cancelIngestionRef.current = true; }}>STOP AFTER CURRENT FRAME</button>}</div>}
+            <div className="message-bar">{message}</div>
 
-            <div className={`visual-note ${maskImage ? "ready" : "pending"}`}><strong>{maskImage ? "MASK ARTIFACT SAVED" : "MASK OUTPUT PENDING"}</strong><span>{maskImage ? "Source, rendered output, and mask are available from run history." : "No mask was produced for this frame. Review the adapter, reference and QA evidence."}</span></div>
-
-            <section className="evidence-controls">
-              <button className="button quiet" type="button" disabled={isProcessing || health?.pipeline_mode !== "model"} onClick={() => referenceInputRef.current?.click()}>CHOOSE REFERENCE IMAGE</button>
-              <input ref={referenceInputRef} hidden type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => { void installReference(event.target.files?.[0]); event.target.value = ""; }} />
-              <p>{referenceStatus}. Upload alone does not certify an empty vial or approve a recipe.</p>
-              {latestEvent?.decision.evidence && <div className="qa-evidence"><strong>MEASUREMENT EVIDENCE</strong><p>Proposal pixels: {String(latestEvent.decision.evidence.proposal_pixels ?? "—")} · Sampling pixels: {String(latestEvent.decision.evidence.sampling_pixels ?? "—")}</p><p>{latestEvent.decision.evidence.blocked_reasons?.join(" · ") ?? latestEvent.decision.evidence.quality_flags?.join(" · ")}</p></div>}
-            </section>
-
-            <InvestigationPanel key={sessionId ?? "no-run"} sessionId={sessionId} frameNumber={latestEvent?.frame_number} processing={isProcessing} />
-            <form className="context-form" onSubmit={onContextSubmit}>
-              <div className="context-title"><div><h3>Run and recipe timeline</h3><p>Every frame resolves the recipe segment active at its source timestamp.</p></div><span>{session ? `RUN ${session.session_id.slice(0, 8)}` : "NOT STARTED"}</span></div>
-              <label><span>RUN NAME</span><input value={config.run_name} disabled={Boolean(session)} onChange={(event) => setConfig({ ...config, run_name: event.target.value })} /></label>
-              <label><span>CAMERA ID</span><input value={config.camera_id} disabled={Boolean(session)} onChange={(event) => setConfig({ ...config, camera_id: event.target.value })} /></label>
-              <label><span>SEGMENT START SEC</span><input type="number" min="0" step="0.1" value={segmentStartSeconds} onChange={(event) => setSegmentStartSeconds(Number(event.target.value))} /></label>
-              <label><span>ACTIVE RECIPE ID</span><input value={config.recipe.current_recipe_id} onChange={(event) => setConfig({ ...config, recipe: { ...config.recipe, current_recipe_id: event.target.value } })} /></label>
-              <label className="wide-field"><span>ACTIVE RECIPE NAME</span><input value={config.recipe.current_recipe_name} onChange={(event) => setConfig({ ...config, recipe: { ...config.recipe, current_recipe_name: event.target.value } })} /></label>
-              <label><span>PREVIOUS RECIPE ID</span><input value={config.recipe.previous_recipe_id ?? ""} onChange={(event) => setConfig({ ...config, recipe: { ...config.recipe, previous_recipe_id: event.target.value } })} /></label>
-              <label><span>VIAL INDEX</span><input type="number" min="1" value={config.recipe.vial_index} onChange={(event) => setConfig({ ...config, recipe: { ...config.recipe, vial_index: Number(event.target.value) } })} /></label>
-              <label className="check-field"><input type="checkbox" checked={config.recipe.is_first_vial_after_change} onChange={(event) => setConfig({ ...config, recipe: { ...config.recipe, is_first_vial_after_change: event.target.checked } })} /><span>FIRST VIAL AFTER RECIPE CHANGE</span></label>
-              <button className="button primary lock-button" type="submit">{session ? "ADD RECIPE SEGMENT" : "START INSPECTION RUN"}</button>
-              <button className="button quiet" type="button" onClick={() => recipeInputRef.current?.click()}>IMPORT RECIPE CSV</button>
-              <input ref={recipeInputRef} hidden type="file" accept=".csv,text/csv" onChange={(event) => void onRecipeImport(event.target.files?.[0])} />
-              {session && <button className="button quiet" type="button" onClick={resetSession}>NEW RUN</button>}
-            </form>
+            <details className="advanced-setup">
+              <summary>Advanced setup <span>recipe timeline · reference image · sampling · raw QA evidence</span></summary>
+              <div className="advanced-body">
+                <label className="sample-control"><span>{sourceMode === "live_camera" ? "SAMPLE SEC" : "FRAME INTERVAL SEC"}</span><input type="number" min="0.1" step="0.1" value={sampleSeconds} onChange={(event) => setSampleSeconds(Number(event.target.value))} /></label>
+                <section className="evidence-controls">
+                  <button className="button quiet" type="button" disabled={isProcessing || health?.pipeline_mode !== "model"} onClick={() => referenceInputRef.current?.click()}>CHOOSE REFERENCE IMAGE</button>
+                  <input ref={referenceInputRef} hidden type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => { void installReference(event.target.files?.[0]); event.target.value = ""; }} />
+                  <p>{referenceStatus}. Upload alone does not certify an empty vial or approve a recipe.</p>
+                  {latestEvent?.decision.evidence && <div className="qa-evidence"><strong>MEASUREMENT EVIDENCE</strong><p>Proposal pixels: {String(latestEvent.decision.evidence.proposal_pixels ?? "—")} · Sampling pixels: {String(latestEvent.decision.evidence.sampling_pixels ?? "—")}</p><p>{latestEvent.decision.evidence.blocked_reasons?.join(" · ") ?? latestEvent.decision.evidence.quality_flags?.join(" · ")}</p></div>}
+                </section>
+                <form className="context-form" onSubmit={onContextSubmit}>
+                  <div className="context-title"><div><h3>Run and recipe timeline</h3><p>Every frame is tagged with the recipe segment active at its timestamp.</p></div><span>{session ? `RUN ${session.session_id.slice(0, 8)}` : "NOT STARTED"}</span></div>
+                  <label><span>RUN NAME</span><input value={config.run_name} disabled={Boolean(session)} onChange={(event) => setConfig({ ...config, run_name: event.target.value })} /></label>
+                  <label><span>CAMERA ID</span><input value={config.camera_id} disabled={Boolean(session)} onChange={(event) => setConfig({ ...config, camera_id: event.target.value })} /></label>
+                  <label><span>SEGMENT START SEC</span><input type="number" min="0" step="0.1" value={segmentStartSeconds} onChange={(event) => setSegmentStartSeconds(Number(event.target.value))} /></label>
+                  <label><span>ACTIVE RECIPE ID</span><input value={config.recipe.current_recipe_id} onChange={(event) => setConfig({ ...config, recipe: { ...config.recipe, current_recipe_id: event.target.value } })} /></label>
+                  <label className="wide-field"><span>ACTIVE RECIPE NAME</span><input value={config.recipe.current_recipe_name} onChange={(event) => setConfig({ ...config, recipe: { ...config.recipe, current_recipe_name: event.target.value } })} /></label>
+                  <label><span>PREVIOUS RECIPE ID</span><input value={config.recipe.previous_recipe_id ?? ""} onChange={(event) => setConfig({ ...config, recipe: { ...config.recipe, previous_recipe_id: event.target.value } })} /></label>
+                  <label><span>VIAL INDEX</span><input type="number" min="1" value={config.recipe.vial_index} onChange={(event) => setConfig({ ...config, recipe: { ...config.recipe, vial_index: Number(event.target.value) } })} /></label>
+                  <label className="check-field"><input type="checkbox" checked={config.recipe.is_first_vial_after_change} onChange={(event) => setConfig({ ...config, recipe: { ...config.recipe, is_first_vial_after_change: event.target.checked } })} /><span>FIRST VIAL AFTER RECIPE CHANGE</span></label>
+                  <button className="button primary lock-button" type="submit">{session ? "ADD RECIPE SEGMENT" : "START INSPECTION RUN"}</button>
+                  <button className="button quiet" type="button" onClick={() => recipeInputRef.current?.click()}>IMPORT RECIPE CSV</button>
+                  <input ref={recipeInputRef} hidden type="file" accept=".csv,text/csv" onChange={(event) => void onRecipeImport(event.target.files?.[0])} />
+                </form>
+              </div>
+            </details>
           </section>
 
           <aside className="side-column">
-            <section className={`panel decision-panel decision-${status}`}><div className="panel-heading compact"><div><span className="section-number">02</span><div><h2>Operator decision</h2><p>Human-in-the-loop guidance</p></div></div><span className="mode-badge">{latestEvent?.pipeline_mode.toUpperCase() ?? "NO RESULT"}</span></div><div className="decision-body"><div className="decision-icon">{status === "running_ok" ? "✓" : status === "failure" ? "!" : status === "warning" ? "?" : "i"}</div><span className="decision-label">CURRENT STATUS</span><h2>{displayHeadline ?? "Awaiting inspection frame"}</h2><p>{displayDetail ?? "Create a run and choose a source and reference."}</p><div className="recommended-action"><span>OPERATOR ACTION</span><strong>{latestEvent?.decision.recommended_action ?? "Choose source and recipe context"}</strong></div>{latestEvent?.decision.status === "failure" && <button className="button acknowledge" type="button" disabled={Boolean(latestEvent.acknowledged_at) || !response.reviewer.trim()} onClick={() => void acknowledge()}>{latestEvent.acknowledged_at ? "ACKNOWLEDGED" : "ACKNOWLEDGE + REVIEW"}</button>}</div></section>
+            <section className={`panel decision-panel decision-${status}`}><div className="panel-heading compact"><div><span className="section-number">2</span><div><h2>What the model found</h2><p>Latest frame · operator decides</p></div></div><span className="mode-badge">{latestEvent?.pipeline_mode.toUpperCase() ?? "NO RESULT"}</span></div><div className="decision-body"><h2>{displayHeadline ?? "Waiting for a frame"}</h2><p>{displayDetail ?? "Choose a source to start."}</p>{measurements.length > 0 && <div className="measurements">{measurements.map((measurement) => <div className={`measurement ${measurement.state}`} key={measurement.label}><span>{measurement.label.toUpperCase()}</span><strong>{measurement.value}</strong></div>)}</div>}<div className="recommended-action"><span>OPERATOR ACTION</span><strong>{latestEvent?.decision.recommended_action ?? "Choose a source"}</strong></div>{latestEvent?.decision.status === "failure" && <button className="button acknowledge" type="button" disabled={Boolean(latestEvent.acknowledged_at) || !response.reviewer.trim()} onClick={() => void acknowledge()}>{latestEvent.acknowledged_at ? "ACKNOWLEDGED" : "ACKNOWLEDGE + REVIEW"}</button>}</div></section>
 
-            <section className="panel progress-panel"><div className="panel-heading compact"><div><span className="section-number">03</span><div><h2>Recipe progress</h2><p>{latestEvent?.recipe.current_recipe_name ?? session?.recipe.current_recipe_name ?? "No active segment"}</p></div></div><strong className="progress-value">{latestEvent?.decision.recipe_progress_percent != null ? `${latestEvent.decision.recipe_progress_percent}%` : "—"}</strong></div><div className="progress-content">{latestEvent?.decision.recipe_progress_percent != null ? <div className="progress-track" role="progressbar" aria-valuenow={latestEvent.decision.recipe_progress_percent} aria-valuemin={0} aria-valuemax={100}><span style={{ width: `${latestEvent.decision.recipe_progress_percent}%` }} /></div> : <p>Progress not measured</p>}<div className="measurements">{(latestEvent?.decision.measurements ?? [{ label: "Vial", value: "Waiting", state: "neutral" as const }, { label: "Fill", value: "Waiting", state: "neutral" as const }, { label: "Color", value: "Waiting", state: "neutral" as const }]).map((measurement) => <div className={`measurement ${measurement.state}`} key={measurement.label}><span>{measurement.label.toUpperCase()}</span><strong>{measurement.value}</strong></div>)}</div><div className="model-note"><span>PIPELINE SOURCE</span><p>{latestEvent?.decision.model_state ?? "No frame processed"}</p></div></div></section>
-
-            <section className="panel events-panel"><div className="panel-heading compact"><div><span className="section-number">04</span><div><h2>Recent frames</h2><p>Persisted newest first</p></div></div><span className="event-count">{events.length}</span></div><div className="event-list">{events.length === 0 ? <div className="empty-events">No persisted inspection frames yet.</div> : events.map((item) => <div className={`event-row ${item.decision.status}`} key={item.event_id}><time>{timestampLabel(item.source_timestamp_ms)}</time><span className="event-marker" /><div><strong>{item.decision.headline}</strong><p>{item.recipe.current_recipe_id} · {item.original_filename ?? item.frame_id}</p></div></div>)}</div><div className="message-bar">{message}</div>{session && <Link className="review-link" to={`/runs/${session.session_id}`}>OPEN FULL FRAME REVIEW →</Link>}</section>
-
-            <section className="panel response-panel"><h2>Operator review queue</h2>
-              <label>REVIEWER<input value={response.reviewer} onChange={(e) => setResponse({ ...response, reviewer: e.target.value })} /></label>
+            <section className="panel response-panel"><h2><span className="section-number">3</span> Your response</h2>
+              <label>REVIEWER<input value={response.reviewer} placeholder="Your name" onChange={(e) => setResponse({ ...response, reviewer: e.target.value })} /></label>
               <label>RESPONSE<select value={response.action} onChange={(e) => setResponse({ ...response, action: e.target.value as OperatorResponse["action"] })}><option value="reviewed">Reviewed evidence</option><option value="hold_for_review">Hold for review</option><option value="request_reference">Request reference</option><option value="investigate">Investigate</option></select></label>
-              <label>NOTE<input value={response.note} onChange={(e) => setResponse({ ...response, note: e.target.value })} /></label>
-              <p>Acknowledgement records a response, not product approval.</p>
-              {reviewQueue.length === 0 ? <p>No pending review events.</p> : reviewQueue.map((item) => <div className="review-queue-item" key={item.event_id}><span>Frame {item.frame_number}: {item.decision.headline}</span><button type="button" disabled={!response.reviewer.trim()} onClick={() => void acknowledge(item)}>SAVE RESPONSE</button></div>)}
+              <label>NOTE<input value={response.note} placeholder="Optional" onChange={(e) => setResponse({ ...response, note: e.target.value })} /></label>
+              {pendingReview ? <button className="button primary" type="button" disabled={!response.reviewer.trim()} onClick={() => void acknowledge(pendingReview)}>SAVE RESPONSE</button> : <p>No frames waiting for review.</p>}
+              {pendingReview && <p>Saves for frame {pendingReview.frame_number} ({pendingReview.decision.headline}) · {reviewQueue.length} waiting. Records review, not product approval.</p>}
+              {reviewQueue.length > 1 && <details className="queue-details"><summary>Choose another frame</summary>{reviewQueue.slice(1).map((item) => <div className="review-queue-item" key={item.event_id}><span>Frame {item.frame_number}: {item.decision.headline}</span><button type="button" disabled={!response.reviewer.trim()} onClick={() => void acknowledge(item)}>SAVE</button></div>)}</details>}
             </section>
 
-            {health?.pipeline_mode === "mock" && <section className="simulation-tools"><span>INTEGRATION TEST CONTROLS</span><div><button type="button" onClick={() => void sendGeneratedFrame(demoFrame, "warning")} disabled={isProcessing || health?.pipeline_mode !== "mock"}>SIMULATE WARNING</button><button type="button" onClick={() => void sendGeneratedFrame(demoFrame, "failure")} disabled={isProcessing || health?.pipeline_mode !== "mock"}>SIMULATE FAILURE</button></div><p>Clearly labeled test states; not model predictions.</p></section>}
+            <section className="panel events-panel"><div className="panel-heading compact"><div><div><h2>Recent frames</h2><p>Latest 40 · newest first</p></div></div><span className="event-count">{events.length}</span></div><div className="event-list">{events.length === 0 ? <div className="empty-events">No frames yet.</div> : events.map((item) => <div className={`event-row ${item.decision.status}`} key={item.event_id}><time>{timestampLabel(item.source_timestamp_ms)}</time><span className="event-marker" /><div><strong>{item.decision.headline}</strong><p>{item.recipe.current_recipe_id} · {item.original_filename ?? item.frame_id}</p></div></div>)}</div>{session && <Link className="review-link" to={`/runs/${session.session_id}`}>OPEN FULL FRAME REVIEW →</Link>}</section>
+
+            {health?.pipeline_mode === "mock" && <section className="simulation-tools"><span>INTEGRATION TEST CONTROLS</span><div><button type="button" onClick={() => void sendGeneratedFrame(demoFrame, "warning")} disabled={isProcessing}>SIMULATE WARNING</button><button type="button" onClick={() => void sendGeneratedFrame(demoFrame, "failure")} disabled={isProcessing}>SIMULATE FAILURE</button></div><p>Clearly labeled test states; not model predictions.</p></section>}
           </aside>
         </div>
+
+        <section className="investigation-section" id="investigation">
+          <InvestigationPanel key={sessionId ?? "no-run"} sessionId={sessionId} frameNumber={latestEvent?.frame_number} processing={isProcessing} />
+        </section>
       </main>
 
       <footer><div><strong>LINEWATCH · OPERATOR-IN-THE-LOOP PROTOTYPE</strong><span>Rockwell Automation + NVIDIA Innovation Lab · Fall 2026</span><span>FastAPI / React / SQLite · No PLC control</span></div><div className="team-credit"><strong>© 2026 Project Team</strong><span>Austin Koske · Alayna Ostler · Cameron Delpage · Zoe Kirkman · Srijan Kumar · Josiah Mathews · Hayden Fons · Reagan Burkemper</span></div></footer>

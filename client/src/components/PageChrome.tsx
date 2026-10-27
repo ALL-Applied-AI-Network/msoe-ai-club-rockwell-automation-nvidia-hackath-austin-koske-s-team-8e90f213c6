@@ -8,11 +8,12 @@ export default function PageChrome({ children }: { children: ReactNode }) {
       <header className="topbar">
         <Link className="brand" to="/">
           <div className="brand-mark" aria-hidden="true"><span /></div>
-          <div><strong>LINEWATCH</strong><small>CHANGEOVER INTELLIGENCE</small></div>
+          <div><strong>LINEWATCH</strong><small>VIAL FILL INSPECTION</small></div>
         </Link>
         <nav className="main-nav">
           <Link className={location.pathname === "/" ? "active" : ""} to="/">MONITOR</Link>
-          <Link className={location.pathname !== "/" ? "active" : ""} to="/history">RUN HISTORY</Link>
+          <Link className={location.pathname === "/recipe-check" ? "active" : ""} to="/recipe-check">RECIPE CHECK</Link>
+          <Link className={location.pathname.startsWith("/history") || location.pathname.startsWith("/runs") ? "active" : ""} to="/history">RUN HISTORY</Link>
         </nav>
         <div className="topbar-status"><div><strong>PERSISTED REVIEW</strong><small>SQLITE + ARTIFACT STORE</small></div></div>
       </header>

@@ -42,7 +42,9 @@ async def record(args):
             await shot("01-monitor-empty")
 
             await page.get_by_role("button", name="RECORDING", exact=False).click()
+            await page.locator(".advanced-setup summary").click()
             await page.locator(".sample-control input").fill("0.2")
+            await page.locator(".advanced-setup summary").click()
             await pause(1.5)
             await page.locator("input[type=file]").first.set_input_files(str(args.clip))
             await page.wait_for_function(

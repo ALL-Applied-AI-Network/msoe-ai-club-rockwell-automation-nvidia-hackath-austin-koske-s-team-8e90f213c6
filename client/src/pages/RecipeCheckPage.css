@@ -1,0 +1,64 @@
+.rc-main { max-width: 1280px; margin: 0 auto; padding: 28px 24px 48px; display: grid; gap: 24px; min-width: 0; }
+.rc-intro h1 { margin: 6px 0 10px; font-size: clamp(24px, 3vw, 36px); }
+.rc-banner { margin: 0; padding: 12px 14px; border: 1px solid var(--warning); background: rgba(243, 188, 102, .08); color: var(--text); font-size: 14px; }
+
+.rc-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.rc-stat { padding: 18px; border: 1px solid var(--line); background: var(--surface-raised); display: grid; gap: 4px; }
+.rc-stat strong { font: 600 34px var(--sans); }
+.rc-stat span { font-size: 14px; }
+.rc-stat small { color: var(--muted); font: 11px var(--mono); }
+.rc-stat.rc-failure strong { color: var(--failure); }
+.rc-stat.rc-signal strong { color: var(--signal); }
+
+.rc-changes h2, .rc-chart h2 { font-size: 16px; margin: 0 0 12px; }
+.rc-row { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 16px; padding: 14px 0; border-top: 1px solid var(--line); }
+.rc-row header { display: grid; align-content: start; gap: 6px; }
+.rc-row header strong { font-size: 15px; }
+.rc-row header small { color: var(--muted); font: 11px/1.4 var(--mono); }
+.rc-row header .rc-gap { color: var(--warning); }
+.rc-vials { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.rc-vial { margin: 0; display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 10px; padding: 8px; border: 1px solid var(--line); background: var(--surface); }
+.rc-vial img { width: 96px; height: 170px; object-fit: cover; display: block; }
+.rc-row-compact .rc-vial img { height: 110px; }
+.rc-vial.rc-failure { border-color: var(--failure); }
+.rc-vial.rc-signal { border-color: rgba(116, 231, 183, .5); }
+.rc-vial figcaption { display: grid; align-content: start; gap: 6px; min-width: 0; font-size: 13px; }
+.rc-vial figcaption p { margin: 0; color: var(--text); }
+.rc-vial-head { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.rc-vial-head small { color: var(--muted); font: 10px var(--mono); }
+.rc-swatch { width: 16px; height: 16px; border: 1px solid var(--line-bright); flex: none; }
+.rc-chip { justify-self: start; padding: 2px 6px; font: 600 10px var(--mono); letter-spacing: .06em; border: 1px solid currentColor; }
+.rc-chip-failure { color: var(--failure); }
+.rc-chip-signal { color: var(--signal); }
+.rc-chip-muted { color: var(--muted); }
+.rc-toward { color: var(--warning) !important; font-size: 12px; }
+
+.rc-chart { padding: 18px; border: 1px solid var(--line); background: var(--surface-raised); }
+.rc-bars { position: relative; height: 220px; display: flex; align-items: flex-end; gap: 10px; padding: 0 4px; border-bottom: 1px solid var(--line-bright); }
+.rc-band { position: absolute; left: 0; right: 0; border-top: 1px dashed var(--text); pointer-events: none; }
+.rc-band span { position: absolute; right: 0; top: -18px; font: 10px var(--mono); color: var(--muted); }
+.rc-bar-col { flex: 1; min-width: 0; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; }
+.rc-bar { width: 100%; max-width: 48px; position: relative; }
+.rc-bar span { position: absolute; top: -16px; left: 0; right: 0; text-align: center; font: 10px var(--mono); }
+.rc-bar-col small { margin-top: 4px; color: var(--muted); font: 10px var(--mono); position: absolute; bottom: -18px; }
+.rc-bar-col { position: relative; }
+.rc-pos-1 { background: var(--failure); }
+.rc-pos-2 { background: var(--warning); }
+.rc-pos-3 { background: var(--muted); }
+.rc-legend { margin: 26px 0 0; color: var(--muted); font-size: 12px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.rc-legend i { display: inline-block; width: 10px; height: 10px; }
+
+.rc-notes { display: grid; gap: 8px; }
+.rc-notes details { border: 1px solid var(--line); background: var(--surface); padding: 10px 14px; }
+.rc-notes summary { cursor: pointer; font-weight: 600; }
+.rc-notes ul { margin: 10px 0 0; padding-left: 18px; color: var(--muted); font-size: 13px; display: grid; gap: 6px; }
+
+@media (max-width: 960px) {
+  .rc-row { grid-template-columns: minmax(0, 1fr); }
+  .rc-vials { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 640px) {
+  .rc-main { padding: 20px 16px 40px; }
+  .rc-stats { grid-template-columns: minmax(0, 1fr); }
+  .rc-bars { gap: 4px; }
+}

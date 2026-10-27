@@ -51,6 +51,7 @@ async def rehearse(args):
             await page.screenshot(path=str(args.out / "still-qa.png"))
 
             await page.get_by_role("button", name="RECORDING", exact=False).click()
+            await page.locator('.advanced-setup summary').click()
             await page.locator('.sample-control input').fill("0.2")
             await page.locator('input[type=file]').first.set_input_files(str(args.clip))
             await page.wait_for_function("document.querySelector('.message-bar')?.textContent.includes('Recording complete')", timeout=180000)
@@ -68,8 +69,8 @@ async def rehearse(args):
                 "source_clock": sorted({event["decision"]["evidence"]["source_clock"] for event in events})}
             (args.out / "recording-events.json").write_text(json.dumps(events, indent=2))
             await page.evaluate("window.scrollTo(0,0)")
-            await page.get_by_text("Progress not measured", exact=True).wait_for()
-            assert await page.locator(".progress-panel [role=progressbar]").count() == 0
+            await page.locator(".decision-body .measurements").wait_for()
+            assert await page.locator("[role=progressbar]").count() == 0  # no invented progress
             await page.screenshot(path=str(args.out / "recording-monitor.png"))
             if args.presentation_only:
                 result["presentation_only"] = True

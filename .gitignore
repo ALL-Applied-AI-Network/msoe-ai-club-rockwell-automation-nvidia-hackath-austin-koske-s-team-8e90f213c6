@@ -1,0 +1,8 @@
+
+# Three-model integration
+integration/models/
+integration/batch_results/
+integration/result.jpg
+integration/sam_mask.png
+integration/test2_images/
+integration/__pycache__/

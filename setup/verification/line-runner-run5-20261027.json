@@ -1,0 +1,358 @@
+{
+ "summary": {
+  "scheduled_vials": 30,
+  "labelled_vials": 30,
+  "detected_vials": 30,
+  "segmentation": {
+   "matched": 30,
+   "false_positives": 0,
+   "missed": 0,
+   "fill_start_error_s_median": 1.23,
+   "fill_end_error_s_median": 4.85
+  },
+  "schedule_alignment": "30/30 matched vials got the right recipe",
+  "endpoint_coverage": "24/30",
+  "repeatability_de_median_non_first": 2.59,
+  "verdicts_by_position_after_change": {
+   "1": {
+    "OUT_OF_SPEC": 5,
+    "CANT_VERIFY": 5
+   },
+   "2": {
+    "IN_SPEC": 4,
+    "OUT_OF_SPEC": 3,
+    "CANT_VERIFY": 3
+   },
+   "3": {
+    "IN_SPEC": 6,
+    "CANT_VERIFY": 3,
+    "OUT_OF_SPEC": 1
+   }
+  },
+  "actions": {
+   "PASS": 10,
+   "SCRAP": 9,
+   "FLUSH": 5,
+   "FLUSH_RECOMMENDED": 4,
+   "STOP_CHECK_DOSING": 0,
+   "HOLD": 11
+  },
+  "decision_latency_s_median": 8.4,
+  "scrap_before_deadline": "9/9",
+  "flush_before_next_fill": "5/5",
+  "vials_a_flush_would_likely_have_saved": [
+   5
+  ]
+ },
+ "vials": [
+  {
+   "seq": 1,
+   "true_vial": 1,
+   "true_recipe": "5",
+   "scheduled_recipe": "5",
+   "position_after_change": 1,
+   "verdict": "OUT_OF_SPEC",
+   "pattern": "deviation",
+   "de_intended": 12.48206522091161
+  },
+  {
+   "seq": 2,
+   "true_vial": 2,
+   "true_recipe": "5",
+   "scheduled_recipe": "5",
+   "position_after_change": 2,
+   "verdict": "IN_SPEC",
+   "pattern": "nominal",
+   "de_intended": 2.842008352924879
+  },
+  {
+   "seq": 3,
+   "true_vial": 3,
+   "true_recipe": "5",
+   "scheduled_recipe": "5",
+   "position_after_change": 3,
+   "verdict": "IN_SPEC",
+   "pattern": "nominal",
+   "de_intended": 2.0502254698676
+  },
+  {
+   "seq": 4,
+   "true_vial": 4,
+   "true_recipe": "6",
+   "scheduled_recipe": "6",
+   "position_after_change": 1,
+   "verdict": "OUT_OF_SPEC",
+   "pattern": "carryover",
+   "de_intended": 23.973458527047608
+  },
+  {
+   "seq": 5,
+   "true_vial": 5,
+   "true_recipe": "6",
+   "scheduled_recipe": "6",
+   "position_after_change": 2,
+   "verdict": "OUT_OF_SPEC",
+   "pattern": "carryover",
+   "de_intended": 9.291319155937126
+  },
+  {
+   "seq": 6,
+   "true_vial": 6,
+   "true_recipe": "6",
+   "scheduled_recipe": "6",
+   "position_after_change": 3,
+   "verdict": "IN_SPEC",
+   "pattern": "nominal",
+   "de_intended": 1.8729314458067476
+  },
+  {
+   "seq": 7,
+   "true_vial": 7,
+   "true_recipe": "7",
+   "scheduled_recipe": "7",
+   "position_after_change": 1,
+   "verdict": "OUT_OF_SPEC",
+   "pattern": "carryover",
+   "de_intended": 23.55148340482169
+  },
+  {
+   "seq": 8,
+   "true_vial": 8,
+   "true_recipe": "7",
+   "scheduled_recipe": "7",
+   "position_after_change": 2,
+   "verdict": "IN_SPEC",
+   "pattern": "nominal",
+   "de_intended": 1.0584697790049062
+  },
+  {
+   "seq": 9,
+   "true_vial": 9,
+   "true_recipe": "7",
+   "scheduled_recipe": "7",
+   "position_after_change": 3,
+   "verdict": "IN_SPEC",
+   "pattern": "nominal",
+   "de_intended": 2.3438039094005454
+  },
+  {
+   "seq": 10,
+   "true_vial": 10,
+   "true_recipe": "8",
+   "scheduled_recipe": "8",
+   "position_after_change": 1,
+   "verdict": "CANT_VERIFY",
+   "pattern": "no_reference",
+   "de_intended": null
+  },
+  {
+   "seq": 11,
+   "true_vial": 11,
+   "true_recipe": "8",
+   "scheduled_recipe": "8",
+   "position_after_change": 2,
+   "verdict": "CANT_VERIFY",
+   "pattern": "unmeasured",
+   "de_intended": null
+  },
+  {
+   "seq": 12,
+   "true_vial": 12,
+   "true_recipe": "8",
+   "scheduled_recipe": "8",
+   "position_after_change": 3,
+   "verdict": "CANT_VERIFY",
+   "pattern": "no_reference",
+   "de_intended": null
+  },
+  {
+   "seq": 13,
+   "true_vial": 13,
+   "true_recipe": "9",
+   "scheduled_recipe": "9",
+   "position_after_change": 1,
+   "verdict": "CANT_VERIFY",
+   "pattern": "no_reference",
+   "de_intended": null
+  },
+  {
+   "seq": 14,
+   "true_vial": 14,
+   "true_recipe": "9",
+   "scheduled_recipe": "9",
+   "position_after_change": 2,
+   "verdict": "CANT_VERIFY",
+   "pattern": "no_reference",
+   "de_intended": null
+  },
+  {
+   "seq": 15,
+   "true_vial": 15,
+   "true_recipe": "9",
+   "scheduled_recipe": "9",
+   "position_after_change": 3,
+   "verdict": "CANT_VERIFY",
+   "pattern": "no_reference",
+   "de_intended": null
+  },
+  {
+   "seq": 16,
+   "true_vial": 16,
+   "true_recipe": "10",
+   "scheduled_recipe": "10",
+   "position_after_change": 1,
+   "verdict": "OUT_OF_SPEC",
+   "pattern": "deviation",
+   "de_intended": 13.519515500462854
+  },
+  {
+   "seq": 17,
+   "true_vial": 17,
+   "true_recipe": "10",
+   "scheduled_recipe": "10",
+   "position_after_change": 2,
+   "verdict": "IN_SPEC",
+   "pattern": "nominal",
+   "de_intended": 3.329625155377665
+  },
+  {
+   "seq": 18,
+   "true_vial": 18,
+   "true_recipe": "10",
+   "scheduled_recipe": "10",
+   "position_after_change": 3,
+   "verdict": "IN_SPEC",
+   "pattern": "nominal",
+   "de_intended": 1.71233880115491
+  },
+  {
+   "seq": 19,
+   "true_vial": 19,
+   "true_recipe": "11",
+   "scheduled_recipe": "11",
+   "position_after_change": 1,
+   "verdict": "OUT_OF_SPEC",
+   "pattern": "carryover",
+   "de_intended": 13.540955371495258
+  },
+  {
+   "seq": 20,
+   "true_vial": 20,
+   "true_recipe": "11",
+   "scheduled_recipe": "11",
+   "position_after_change": 2,
+   "verdict": "IN_SPEC",
+   "pattern": "nominal",
+   "de_intended": 2.310874459281127
+  },
+  {
+   "seq": 21,
+   "true_vial": 21,
+   "true_recipe": "11",
+   "scheduled_recipe": "11",
+   "position_after_change": 3,
+   "verdict": "IN_SPEC",
+   "pattern": "nominal",
+   "de_intended": 3.2996346539959833
+  },
+  {
+   "seq": 22,
+   "true_vial": 22,
+   "true_recipe": "12",
+   "scheduled_recipe": "12",
+   "position_after_change": 1,
+   "verdict": "CANT_VERIFY",
+   "pattern": "unmeasured",
+   "de_intended": null
+  },
+  {
+   "seq": 23,
+   "true_vial": 23,
+   "true_recipe": "12",
+   "scheduled_recipe": "12",
+   "position_after_change": 2,
+   "verdict": "OUT_OF_SPEC",
+   "pattern": "carryover",
+   "de_intended": 5.452548225524144
+  },
+  {
+   "seq": 24,
+   "true_vial": 24,
+   "true_recipe": "12",
+   "scheduled_recipe": "12",
+   "position_after_change": 3,
+   "verdict": "IN_SPEC",
+   "pattern": "nominal",
+   "de_intended": 1.5467778831342147
+  },
+  {
+   "seq": 25,
+   "true_vial": 25,
+   "true_recipe": "13",
+   "scheduled_recipe": "13",
+   "position_after_change": 1,
+   "verdict": "CANT_VERIFY",
+   "pattern": "unmeasured",
+   "de_intended": null
+  },
+  {
+   "seq": 26,
+   "true_vial": 26,
+   "true_recipe": "13",
+   "scheduled_recipe": "13",
+   "position_after_change": 2,
+   "verdict": "CANT_VERIFY",
+   "pattern": "unmeasured",
+   "de_intended": null
+  },
+  {
+   "seq": 27,
+   "true_vial": 27,
+   "true_recipe": "13",
+   "scheduled_recipe": "13",
+   "position_after_change": 3,
+   "verdict": "CANT_VERIFY",
+   "pattern": "unmeasured",
+   "de_intended": null
+  },
+  {
+   "seq": 28,
+   "true_vial": 28,
+   "true_recipe": "14",
+   "scheduled_recipe": "14",
+   "position_after_change": 1,
+   "verdict": "CANT_VERIFY",
+   "pattern": "unmeasured",
+   "de_intended": null
+  },
+  {
+   "seq": 29,
+   "true_vial": 29,
+   "true_recipe": "14",
+   "scheduled_recipe": "14",
+   "position_after_change": 2,
+   "verdict": "OUT_OF_SPEC",
+   "pattern": "deviation",
+   "de_intended": 14.876271105745165
+  },
+  {
+   "seq": 30,
+   "true_vial": 30,
+   "true_recipe": "14",
+   "scheduled_recipe": "14",
+   "position_after_change": 3,
+   "verdict": "OUT_OF_SPEC",
+   "pattern": "deviation",
+   "de_intended": 9.950772407106607
+  }
+ ],
+ "notes": "Run5 has no per-vial outcome truth; verdict counts by position after a recipe change are descriptive. References are proxies from Run5 itself (3rd vial).",
+ "record": {
+  "date": "2026-10-27",
+  "command": "python -m replay.line --video vial_fill_video_5.mp4 --schedule replay/examples/run5-schedule.csv --library client/public/data/run5/recipe-library.json --labels video5_vial_recipes.csv --device cuda:0",
+  "host": "RTX 4080 Super (Docker linewatch-onboard-test-api), 3 min 18 s for 50,941 frames",
+  "models": "released temporal-cnn-assets-v1, unchanged MeasurementQA",
+  "stage2_parameters": "set before scoring; sanity-checked on Run 4 only; Run5 scored once",
+  "output_dir": "/mnt/c/Users/Austin/ai-club-tools/results/line-runner-20261027/run5-v1"
+ }
+}

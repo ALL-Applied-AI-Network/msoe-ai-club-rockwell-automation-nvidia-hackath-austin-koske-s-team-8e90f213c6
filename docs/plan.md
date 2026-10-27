@@ -42,10 +42,10 @@ simulation only, evaluate against Run 5 as real ground truth, and measure the si
 | # | Stage | What it does | Status |
 | --- | --- | --- | --- |
 | 1 | Perceive | YOLO11n vial geometry, paired temporal U-Net liquid mask/presence, unchanged measurement QA → per-frame Lab or "unavailable" with reasons | **Done** (released models, GB10 validated) |
-| 2 | Segment vials | Detect vial arrival → fill start → fill end → departure from the video, with no manual FINISH VIAL. Empty-vial frame becomes that vial's temporal reference | **Gap**: today the operator marks vials or we use labelled frames |
+| 2 | Segment vials | Detect vial arrival → fill start → fill end → departure from the video, with no manual FINISH VIAL. Empty-vial frame becomes that vial's temporal reference | **Done v1** (`replay/line.py`): Run 5 30/30 vials, 0 false positives |
 | 3 | Measure | Endpoint = median Lab of QA-valid samples in the last 6 s of the fill (rule fixed on Runs 1–4). Also keep the in-fill Lab trajectory | **Done** (`replay/run5_endpoints.py`, `client/src/services/recipeCheck.ts`) |
-| 4 | Decide | Deterministic rules turn measurements + schedule + library into a verdict, an action and a deadline (below) | **Partial**: per-vial verdict exists; flush/stop logic and timing do not |
-| 5 | Explain (RCA) | Evidence packet → cause from a fixed taxonomy, confidence, cited evidence, next check | **Partial**: rule-based `replay/diagnostics.py`; Cosmos Reason2 LoRA on `zoe_jev_cosmos` not yet reliable |
+| 4 | Decide | Deterministic rules turn measurements + schedule + library into a verdict, an action and a deadline (below) | **Done v1** (`replay/decide.py`): PASS/SCRAP/FLUSH/STOP/HOLD + proactive flush, with deadlines |
+| 5 | Explain (RCA) | Evidence packet → cause from a fixed taxonomy, confidence, cited evidence, next check | **Partial**: evidence packets + rule baseline written per non-PASS vial (`rca/vial-NN.json`); LLM and Cosmos explainers to plug in |
 
 Stages 1–4 are deterministic and numeric. The VLM/LLM explains; it never changes a verdict or action.
 
@@ -99,8 +99,8 @@ tolerances are a deliverable**: we propose them from reference vials and report 
 | Metrics report | The tables below, per dataset |
 
 One entry point runs the same pipeline offline and in the app:
-`python -m replay.line --video X --schedule S --library L --out DIR` (to be built), and the app
-reads the same ledger.
+`python -m replay.line --video X --schedule S --library L --assets A --out DIR [--labels GT]`
+(built; `--samples frames.jsonl` re-decides without the models). The app will read the same ledger.
 
 ## Training: simulation only, Run 5 as ground truth
 

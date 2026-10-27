@@ -144,6 +144,32 @@ decoding (vial 2: ΔE 3.4 in spec; vial 4: 24.8 out of spec, 1.4 to recipe 5; vi
 Scripts: `replay/run5_endpoints.py`, `replay/export_run5_recipe_check.py`,
 `replay/make_run5_vial_clips.py`.
 
+## Line runner on Run 5 (v1)
+
+`replay/line.py` ran the whole Run 5 video with only the recipe schedule: automatic vial
+segmentation (carrier still periods, empty-vial reference taken as the carrier settles), the
+released models and unchanged QA, then `replay/decide.py`. Stage 2 parameters were set before
+scoring and sanity-checked on Run 4; Run 5 was scored once. 50,941 frames took 3 min 18 s on an
+RTX 4080 Super. [Record](../setup/verification/line-runner-run5-20261027.json).
+
+| Result | Value |
+| --- | --- |
+| Vials detected / labelled | 30 / 30, 0 false positives |
+| Fill start / end error (median) | 1.2 s / 4.9 s |
+| Schedule alignment | 30 / 30 vials assigned the right recipe |
+| Endpoint coverage | 24 / 30 |
+| Repeatability (median ΔE, non-first vials of a recipe) | 2.6 |
+| First vials after a change | 5 OUT OF SPEC, 5 CAN'T VERIFY (recipes 8, 9, 13 have no reference) |
+| Second / third vials | 4 / 6 IN SPEC; 3 / 1 OUT OF SPEC; 3 / 3 CAN'T VERIFY |
+| Actions | PASS 10, SCRAP 9, FLUSH 5, FLUSH RECOMMENDED 4, HOLD 11, STOP 0 |
+| Timeliness | SCRAP 9 / 9 before the 120 s deadline; FLUSH 5 / 5 before the next fill; median decision 8.4 s after fill end |
+| Counterfactual | Vial 5 (still carryover) likely saved by the FLUSH issued after vial 4 |
+
+Limits: references are Run 5 proxies (3rd vial, from labelled windows), so second/third-vial
+verdicts are partly circular; there is no per-vial outcome truth, so these are descriptive, not
+accuracy. Vial 1 starts mid-fill at frame 0, so its reference is not empty. Vial 30's fill window
+is truncated at the end of the video.
+
 ## Sequence-diagnosis pilot
 
 The investigation module was exercised on 1,620 analytic four-vial sequences across

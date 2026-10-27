@@ -35,6 +35,7 @@ simulation only, evaluate against Run 5 as real ground truth, and measure the si
 | Video | MP4/MKV file or live 640×480 UVC camera (same fill-station view) | Native frame times retained |
 | Recipe schedule | CSV `seq,recipe_id[,dye amounts]`: the vials that will be made, in order | Stands in for the line's production order; the n-th detected vial is schedule row n |
 | Recipe library | JSON: per recipe, dye amounts and reference Lab (or "none") | One library per dye set (organizer clear/orange/blue) |
+| Line settings | JSON: SCRAP deadline, flush cost, persistence count | Defaults from CSI: vial reaches the sorter 2–3 min after fill end (deadline 120 s); a flush is one water vial (one fill cycle) |
 
 ## Pipeline stages
 
@@ -53,14 +54,15 @@ Stages 1–4 are deterministic and numeric. The VLM/LLM explains; it never chang
 | Action | Trigger | When it must be issued |
 | --- | --- | --- |
 | **PASS** | ΔE2000 to the intended recipe ≤ band (5) | At vial decision time |
-| **SCRAP** | ΔE > band | Before the vial reaches the sorter (deadline = fill end + transfer time; ask CSI for transfer time) |
-| **FLUSH LINE** | Scrapped vial whose colour shifted toward the previous recipe (direction cosine ≥ 0.8) → carryover. Also *proactive*: at a scheduled changeover whose previous→next recipe distance is large | Before the next vial's fill starts (reactive) or before the changeover (proactive) |
+| **SCRAP** | ΔE > band | Before the vial reaches the sorter: fill end + 120 s (CSI: 2–3 min) |
+| **FLUSH LINE** (order 1 water vial) | Scrapped vial whose colour shifted toward the previous recipe (direction cosine ≥ 0.8) → carryover. Also *proactive*: at a scheduled changeover whose previous→next recipe distance is large | Before the next vial's fill starts (reactive) or before the changeover (proactive). Costs one fill cycle |
 | **STOP & CHECK DOSING** | ≥ 3 consecutive out-of-spec vials **not** toward the previous recipe → persistent deviation (wrong recipe loaded, pump/dose fault) | Immediately; hold subsequent vials |
 | **HOLD / RECHECK** | No QA-valid endpoint, camera unhealthy, or no reference for this recipe | At vial decision time; operator inspects |
 | *(stretch)* **EARLY WARNING** | In-fill trajectory already outside the band | During the fill, before fill end; measured as lead time |
 
-Thresholds are research settings, frozen before scoring on held-out data, not product
-tolerances. Ask CSI for their tolerance and compare.
+Thresholds are research settings, frozen before scoring on held-out data. CSI has no colour
+baseline or per-recipe tolerance today, only upper thresholds, so **per-recipe baselines and
+tolerances are a deliverable**: we propose them from reference vials and report the evidence.
 
 ### Expected colour per recipe
 
@@ -186,9 +188,14 @@ test** and **Run 5**; their difference is the sim-to-real gap.
 SAM/Faster R-CNN comparators, Dataset 1, TensorRT, the live digital-twin UI. Code stays in the
 repo; see [branches](branches.md).
 
-## Open questions for CSI
+## From CSI (October 27)
 
-- Their out-of-spec tolerance, and what Teledyne would have reported for our fault vials.
-- Time from fill end to the sorter (sets the SCRAP deadline).
-- Their flush procedure: what triggers it today and how long it takes.
-- The most common real causes of bad vials, to prioritise the RCA taxonomy.
+- No colour baseline or per-recipe tolerance exists; the line has upper thresholds only.
+- A vial reaches the sorter 2–3 minutes after its fill ends (SCRAP deadline).
+- A flush is ordering one vial of water: it takes one fill cycle.
+
+**Requested reference recording** (emailed to Shamar Webster, due Thursday 10/29): 10 red/yellow/blue
+recipes of 40 mL, each with a water-vial flush before and after, recorded continuously on the vial
+camera; optionally 2–3 deliberately unflushed changeovers (blue → yellow ×2, red → green). If it
+arrives, it is evaluation/reference data only: independent per-recipe baselines and proposed tolerances,
+water-vial clear baselines, and real carryover examples with a known cause. It is not training data.

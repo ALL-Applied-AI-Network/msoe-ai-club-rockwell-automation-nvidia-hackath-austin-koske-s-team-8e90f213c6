@@ -202,6 +202,8 @@ frames. [Record](../setup/verification/rca-explainers-run5-20261028.json).
 | Qwen2.5-VL-7B + images | 20 | 20 | 5/10 | 5 | 10.6 | carryover 20 |
 | Jev 1.14 (TypeSafe API) + images | n/a¹ | 20 | 10/10 | 17 | 0.24 | carryover 8, occlusion 6, no reference 5, dose error 1 |
 | Jev 1.14 (TypeSafe API), numbers only | n/a¹ | 20 | 10/10 | 17 | 0.19 | carryover 8, no reference 5, short fill 3, occlusion 3, dose error 1 |
+| OpenAI Decisions API (gpt-6-luna) + images | n/a¹ | 20 | 10/10 | 20 | 0.34 | carryover 5, no reference 5, unknown 4, dose error 3, bubbles 2, occlusion 1 |
+| OpenAI Decisions API (gpt-6-luna), numbers only | n/a¹ | 20 | 10/10 | 20 | 0.26 | unknown 7, carryover 5, no reference 5, occlusion 3 |
 
 "Consistent with packet" fails a claim the packet rules out: carryover on the first vial of the
 run, carryover with no colour comparison (no measurement or no reference), carryover when colour
@@ -217,8 +219,13 @@ to validate. It was run zero-shot with the same packets and system text, from a 
 crops padded to its 280 px minimum). It matches the rules on every determined vial (carryover at
 0.98–1.00, no reference at 0.87–0.99) and puts unmeasured vials on occlusion or short fill at low
 confidence (0.3–0.75) instead of carryover. Its three contradictions are vials 16, 29 and 30
-(deviation with no colour comparison) called carryover at 0.23–0.47. It is the best
-cause-picker tested, but it needs the network; the rule baseline still decides.
+(deviation with no colour comparison) called carryover at 0.23–0.47. The OpenAI Decisions API (same
+packets, system text and cause descriptions, `--backend decisions`) also matches the rules on every
+determined vial at 0.89–1.00 and has no contradictions. With images it picks dose error on the three
+deviation vials the rules call dose error (0.45–0.64) and suggests bubbles on two unmeasured vials;
+numbers only, it answers unknown wherever the packet does not settle the cause. Both decision APIs
+are far better cause-pickers than the zero-shot VLMs, but they need the network; the rule baseline
+still decides.
 
 ## Finished-vial tray on Run 5 (v1)
 

@@ -40,6 +40,7 @@ observations and operator responses; it is not a model stage.
 | Human evaluation | [Mask review and scorers](../annotation_review/README.md) | Explicit presence, mask and onset review |
 | HTTP and UI | [FastAPI](../api/main.py), [React](../client/src/App.tsx) | Source ingestion, model overlays, QA evidence, persistent history and operator responses |
 | Operator loop | [Model adapter](../api/pipelines/temporal.py) and [runtime](../integration/runtime.py) | Long-lived YOLO/U-Net and unchanged QA; browser seek/capture clocks remain distinct from native PTS |
+| Line runner | [line](../replay/line.py), [decide](../replay/decide.py), [explain](../replay/explain.py), [tray](../replay/tray.py), [annotate](../replay/annotate.py) | Offline: video + recipe schedule → vial ledger, actions with deadlines, RCA packets/explanations, finished-tray reconciliation, annotated video |
 
 Development branches contain additional dashboard and comparator work. The selected operator adapter is integrated on `austin-work`; recipe references and physical qualification remain separate commissioning work.
 

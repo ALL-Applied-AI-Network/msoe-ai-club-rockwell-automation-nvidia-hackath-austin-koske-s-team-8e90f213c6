@@ -1,6 +1,7 @@
 """Annotated demo video from a line run: original frames plus an operator panel.
 
     python -m replay.annotate --video V --run DIR --library L --out annotated.mp4 [--start S --end S]
+        [--tray-video cap_seal.mp4 --tray DIR/tray]   # adds the finished-vial tray camera
 
 Reads DIR/frames.jsonl, ledger.json and actions.jsonl from `python -m replay.line`; no models run.
 Verdicts, actions and banners appear at their causal issue time. Fill-phase labels and the fill
@@ -195,6 +196,46 @@ def draw_video(bgr, frame, t, timeline):
             put(bgr, line, (14, 52 + 18 * i), 0.45, WHITE)
 
 
+NO_CAP = (255, 0, 255)
+STATUS_TEXT = {"escaped": "we said {decision}: would divert", "routed_as_decided": "as decided",
+               "good_vial_in_bad_tray": "good vial in Bad tray"}
+
+
+def draw_tray(bgr, t, rows):
+    """Finished-vial tray camera: slots coloured by our verdict once the vial lands."""
+    from replay.tray import GOOD_SLOTS
+    slot_xy = {f"R{i // 6 + 1}C{i % 6 + 1}": xy for i, xy in enumerate(GOOD_SLOTS)}
+    landed = [r for r in rows if r["tray_arrival_s"] is not None and r["tray_arrival_s"] <= t]
+    for r in landed:
+        if r.get("slot") not in slot_xy:
+            continue
+        x, y = slot_xy[r["slot"]]
+        colour = NO_CAP if r.get("capped") is False else VERDICT_COLOUR.get(r["verdict"], WHITE)
+        cv2.rectangle(bgr, (x - 14, y - 14), (x + 14, y + 14), colour, 2)
+        put(bgr, str(r["seq"]), (x - 9, y + 5), 0.42, (0, 0, 0), 3)
+        put(bgr, str(r["seq"]), (x - 9, y + 5), 0.42, WHITE, 1)
+        if r.get("capped") is False:
+            put(bgr, "NO CAP", (x - 22, y + 27), 0.4, NO_CAP, 1)
+    transit = [r for r in rows if r["left_fill_s"] <= t and (r["tray_arrival_s"] is None or r["tray_arrival_s"] > t)]
+    escaped = [r for r in landed if r["status"] == "escaped"]
+    cv2.rectangle(bgr, (0, 0), (bgr.shape[1], 50), (20, 20, 20), -1)
+    put(bgr, "FINISHED TRAY", (12, 20), 0.55, WHITE, 2)
+    put(bgr, f"in tray {len(landed)}   in transit {len(transit)}   left fill {len(landed) + len(transit)}",
+        (190, 20), 0.45, WHITE)
+    put(bgr, f"should have been diverted: {len(escaped)}", (12, 42), 0.45, KIND_COLOUR["SCRAP"])
+    caps = [r for r in landed if r.get("capped") is False]
+    if caps:
+        put(bgr, f"missing/crooked cap: {', '.join(str(r['seq']) for r in caps)}", (330, 42), 0.45, NO_CAP)
+    recent = [r for r in landed if t - r["tray_arrival_s"] < BANNER_S]
+    if recent:
+        r = recent[-1]
+        text = f"Vial {r['seq']} -> {r['tray']} tray {r.get('slot') or ''} after {r['transit_s']:.0f}s"
+        note = "NO CAP" if r.get("capped") is False else STATUS_TEXT.get(r["status"], "").format(decision=r["decision"])
+        cv2.rectangle(bgr, (0, bgr.shape[0] - 52), (bgr.shape[1], bgr.shape[0] - 22), (20, 20, 20), -1)
+        colour = NO_CAP if r.get("capped") is False else KIND_COLOUR["SCRAP"] if r["status"] == "escaped" else WHITE
+        put(bgr, f"{text}  {note}", (12, bgr.shape[0] - 31), 0.5, colour, 1)
+
+
 def render(args):
     library = json.loads(args.library.read_text())
     timeline = Timeline(args.run, library)
@@ -204,7 +245,13 @@ def render(args):
     first = int(args.start * fps)
     last = int(args.end * fps) if args.end else None
     capture.set(cv2.CAP_PROP_POS_FRAMES, first)
-    writer = cv2.VideoWriter(str(args.out), cv2.VideoWriter_fourcc(*"mp4v"), fps * args.speed, (width + PANEL, height))
+    tray_capture, rows = None, []
+    if args.tray_video:
+        tray_capture = cv2.VideoCapture(str(args.tray_video))
+        tray_capture.set(cv2.CAP_PROP_POS_FRAMES, first)
+        rows = json.loads((args.tray / "reconciliation.json").read_text())["vials"]
+    size = (width + PANEL + (width if tray_capture else 0), height)
+    writer = cv2.VideoWriter(str(args.out), cv2.VideoWriter_fourcc(*"mp4v"), fps * args.speed, size)
     panel = np.zeros((height, PANEL, 3), np.uint8)
     frame = first
     while last is None or frame <= last:
@@ -214,7 +261,13 @@ def render(args):
         t = frame / fps
         draw_video(bgr, frame, t, timeline)
         draw_panel(panel, frame, t, timeline)
-        writer.write(np.hstack([bgr, panel]))
+        parts = [bgr, panel]
+        if tray_capture:
+            ok, tray = tray_capture.read()
+            tray = tray if ok else np.zeros_like(bgr)
+            draw_tray(tray, t, rows)
+            parts.append(tray)
+        writer.write(np.hstack(parts))
         frame += 1
         if frame % 3000 == 0:
             print(f"frame {frame}", flush=True)
@@ -232,7 +285,12 @@ def main():
     parser.add_argument("--start", type=float, default=0.0, help="seconds")
     parser.add_argument("--end", type=float, help="seconds")
     parser.add_argument("--speed", type=float, default=1.0, help="playback speed-up written into the file")
-    render(parser.parse_args())
+    parser.add_argument("--tray-video", type=Path, help="cap_seal video on the same clock")
+    parser.add_argument("--tray", type=Path, help="output directory of python -m replay.tray")
+    args = parser.parse_args()
+    if bool(args.tray_video) != bool(args.tray):
+        parser.error("--tray-video and --tray go together")
+    render(args)
 
 
 if __name__ == "__main__":

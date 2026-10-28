@@ -187,6 +187,30 @@ and cause accuracy when `--truth seq,cause` exists (synthetic sessions). Rule ba
 Run 5 packets: 20/20 valid and grounded, 10/10 agreement (5 carryover, 5 no reference); the other
 10 are dose error 4 / unknown 6, which Run 5 cannot check because it has no cause labels.
 
+## Finished-vial tray on Run 5 (v1)
+
+`replay/tray.py` reads the Run 5 cap_seal video (same clock as the fill camera; burned-in clocks
+agree within ~20 ms). Good-tray slots are occupied when their patch differs from the empty tray at
+frame 0 for 5 s with no arm over the trays; a slot without yellow is a missing or crooked cap. The
+Bad tray is counted by yellow caps only. Arrivals are aligned in order to the line runner's vials,
+allowing a vial that never arrives. Slot grid and thresholds were set by looking at Run 5
+(start/end frames and the 1215–1290 s window), so this is a demonstration, not a blind test.
+
+| Result | Value |
+| --- | --- |
+| Vials that left the fill station | 30 |
+| Good-tray arrivals / matched | 26 / 26 (Bad tray: 0) |
+| Still in transit at video end | vials 27–30; none missing |
+| Transit, fill-station departure → tray | median 128 s, range 100–166 s (CSI: 2–3 min) |
+| Fill order | column 6 → 1, top to bottom, matching vial order |
+| Cap not detected on the slot | vials 17 (R2C3, cap visible beside the slot: likely crooked) and 20 (R5C3, open vial) — both colour PASS |
+| Reached Good although we decided SCRAP / HOLD | 7 (1, 4, 5, 7, 16, 19, 23) / 9 |
+
+The yellow-cap count alone gives 25 Good-tray caps and misses vial 20; the slot view recovers it.
+Run 5 had no sorting, so "reached Good" is what the line did, not an error by the line. Decisions are
+issued at fill-station departure, so every SCRAP had at least 100 s before its vial reached the tray.
+`python -m replay.annotate ... --tray-video cap_seal_video_5.mp4 --tray DIR` adds the tray view.
+
 ## Sequence-diagnosis pilot
 
 The investigation module was exercised on 1,620 analytic four-vial sequences across

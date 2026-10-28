@@ -2,10 +2,14 @@
 
     python -m replay.explain --run DIR --backend rule
     python -m replay.explain --run DIR --backend openai --url http://HOST:8000/v1 --model M [--video V]
+    python -m replay.explain --run DIR --export-keyframes DIR/keyframes --video V     # needs cv2
+    python -m replay.explain --run DIR --backend hf --model PATH_OR_ID [--keyframes DIR/keyframes]
 
 Backends see the same packets. `rule` is the deterministic baseline. `openai` calls any
-OpenAI-compatible chat endpoint: vLLM serving Cosmos Reason2-2B (+ LoRA) on the GB10, or a text
-LLM. With --video, the empty / mid-fill / fill-end keyframes (vial region) are attached as images.
+OpenAI-compatible chat endpoint (vLLM serving Cosmos, or a text LLM). `hf` loads a Qwen2.5-VL
+family model (Cosmos-Reason1-7B, Qwen2.5-VL-7B) with transformers on the local GPU; it needs no
+cv2, so keyframes are exported first where cv2 exists. With --video or --keyframes, the empty /
+mid-fill / fill-end keyframes (vial region) are attached as images.
 The explainer never changes a verdict or action; output that fails the schema is recorded as
 cause "unknown". Results go to DIR/rca-<backend>/ (packets are not modified) with a metrics file.
 """
@@ -93,6 +97,45 @@ def keyframes(video, packet):
     return images
 
 
+def export_keyframes(run, video, out):
+    out.mkdir(parents=True, exist_ok=True)
+    for path in sorted((run / "rca").glob("vial-*.json")):
+        for name, data in keyframes(video, json.loads(path.read_text())).items():
+            (out / f"{path.stem}-{name}.jpg").write_bytes(base64.b64decode(data))
+
+
+def load_keyframes(directory, path):
+    return {name: base64.b64encode((directory / f"{path.stem}-{name}.jpg").read_bytes()).decode()
+            for name in IMAGES if (directory / f"{path.stem}-{name}.jpg").is_file()}
+
+
+class LocalVLM:
+    """Qwen2.5-VL-architecture model (Cosmos-Reason1-7B, Qwen2.5-VL-7B-Instruct) via transformers."""
+
+    def __init__(self, model, max_tokens):
+        import torch
+        from transformers import AutoProcessor, Qwen2_5_VLForConditionalGeneration
+        self.torch, self.max_tokens = torch, max_tokens
+        self.processor = AutoProcessor.from_pretrained(model)
+        self.model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
+            model, dtype=torch.bfloat16, device_map="cuda").eval()
+
+    def __call__(self, packet, images):
+        import io
+        from PIL import Image
+        body = {k: packet[k] for k in SECTIONS if k in packet}
+        content, pictures = [{"type": "text", "text": "Evidence packet:\n" + json.dumps(body, indent=1)}], []
+        for name, data in images.items():
+            content += [{"type": "text", "text": f"image:{name}"}, {"type": "image"}]
+            pictures.append(Image.open(io.BytesIO(base64.b64decode(data))).convert("RGB"))
+        messages = [{"role": "system", "content": [{"type": "text", "text": SYSTEM}]}, {"role": "user", "content": content}]
+        prompt = self.processor.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+        inputs = self.processor(text=[prompt], images=pictures or None, return_tensors="pt").to("cuda")
+        with self.torch.inference_mode():
+            output = self.model.generate(**inputs, max_new_tokens=self.max_tokens, do_sample=False)
+        return self.processor.batch_decode(output[:, inputs["input_ids"].shape[1]:], skip_special_tokens=True)[0]
+
+
 def openai_explain(packet, args, images):
     body = {k: packet[k] for k in SECTIONS if k in packet}
     content = [{"type": "text", "text": "Evidence packet:\n" + json.dumps(body, indent=1)}]
@@ -170,30 +213,43 @@ def rule_map(packet):
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--run", type=Path, required=True, help="output directory of python -m replay.line")
-    parser.add_argument("--backend", choices=("rule", "openai"), default="rule")
+    parser.add_argument("--backend", choices=("rule", "openai", "hf"), default="rule")
     parser.add_argument("--name", help="output suffix (default: backend, or backend-model)")
     parser.add_argument("--url", help="OpenAI-compatible base URL, e.g. http://gb10:8000/v1")
     parser.add_argument("--model")
     parser.add_argument("--key-env", default="OPENAI_API_KEY", help="environment variable holding the API key")
     parser.add_argument("--video", type=Path, help="attach keyframe crops (for VLMs such as Cosmos)")
+    parser.add_argument("--keyframes", type=Path, help="directory from --export-keyframes (instead of --video)")
+    parser.add_argument("--export-keyframes", type=Path, help="write keyframe crops for every packet and exit")
+    parser.add_argument("--text-only", action="store_true", help="send no images (numbers only)")
     parser.add_argument("--truth", type=Path, help="CSV seq,cause (synthetic sessions) for cause accuracy")
-    parser.add_argument("--max-tokens", type=int, default=600)
+    parser.add_argument("--max-tokens", type=int, default=1024)
     parser.add_argument("--timeout", type=float, default=120)
     args = parser.parse_args()
+    if args.export_keyframes:
+        export_keyframes(args.run, args.video, args.export_keyframes)
+        return
     if args.backend == "openai" and not (args.url and args.model):
         parser.error("--url and --model are required for --backend openai")
+    if args.backend == "hf" and not args.model:
+        parser.error("--model is required for --backend hf")
 
     name = args.name or (args.backend if args.backend == "rule" else f"{args.backend}-{Path(args.model).name}")
+    local = LocalVLM(args.model, args.max_tokens) if args.backend == "hf" else None
     out = args.run / f"rca-{name}"
     out.mkdir(exist_ok=False)
     results = []
     for path in sorted((args.run / "rca").glob("vial-*.json")):
         packet = json.loads(path.read_text())
-        images = keyframes(args.video, packet) if args.video and args.backend != "rule" else {}
+        images = {}
+        if args.backend != "rule" and not args.text_only:
+            images = load_keyframes(args.keyframes, path) if args.keyframes else \
+                keyframes(args.video, packet) if args.video else {}
         allowed = set(SECTIONS) | {f"image:{k}" for k in images}
         started = time.perf_counter()
         try:
-            raw = rule_explain(packet) if args.backend == "rule" else openai_explain(packet, args, images)
+            raw = rule_explain(packet) if args.backend == "rule" else local(packet, images) if local \
+                else openai_explain(packet, args, images)
             explanation, problems = parse(raw, allowed)
         except Exception as error:  # endpoint down or timeout: record, keep going
             raw, explanation, problems = repr(error), parse(None, allowed)[0], ["request_failed"]

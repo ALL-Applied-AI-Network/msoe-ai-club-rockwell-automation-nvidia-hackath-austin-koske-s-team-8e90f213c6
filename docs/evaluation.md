@@ -200,6 +200,8 @@ frames. [Record](../setup/verification/rca-explainers-run5-20261028.json).
 | Cosmos-Reason1-7B + images | 18 | 19 | 5/10 | 6 | 17.0 | carryover 19, unknown 1 |
 | Cosmos-Reason1-7B, numbers only | 16 | 18 | 7/10 | 9 | 16.4 | carryover 15, no reference 3, unknown 2 |
 | Qwen2.5-VL-7B + images | 20 | 20 | 5/10 | 5 | 10.6 | carryover 20 |
+| Jev 1.14 (TypeSafe API) + images | n/a¹ | 20 | 10/10 | 17 | 0.24 | carryover 8, occlusion 6, no reference 5, dose error 1 |
+| Jev 1.14 (TypeSafe API), numbers only | n/a¹ | 20 | 10/10 | 17 | 0.19 | carryover 8, no reference 5, short fill 3, occlusion 3, dose error 1 |
 
 "Consistent with packet" fails a claim the packet rules out: carryover on the first vial of the
 run, carryover with no colour comparison (no measurement or no reference), carryover when colour
@@ -208,6 +210,15 @@ all 5 real carryovers but call almost everything carryover with 0.7–0.95 confi
 images make Cosmos worse, not better. Zero-shot VLM causes are not usable; verdicts and actions stay
 numeric, and the VLM's job (if any) is wording plus visual causes after a LoRA on synthetic packets.
 Run 5 has no cause labels, so none of this is cause accuracy.
+
+¹ Jev answers a `choice` question over the same 11 causes (with a description per cause) and
+returns the cause with per-cause probabilities, not prose, so it has no explanation or next check
+to validate. It was run zero-shot with the same packets and system text, from a hosted API (vial
+crops padded to its 280 px minimum). It matches the rules on every determined vial (carryover at
+0.98–1.00, no reference at 0.87–0.99) and puts unmeasured vials on occlusion or short fill at low
+confidence (0.3–0.75) instead of carryover. Its three contradictions are vials 16, 29 and 30
+(deviation with no colour comparison) called carryover at 0.23–0.47. It is the best
+cause-picker tested, but it needs the network; the rule baseline still decides.
 
 ## Finished-vial tray on Run 5 (v1)
 

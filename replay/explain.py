@@ -168,25 +168,46 @@ CAUSE_CRITERIA = {
 }
 
 
+def jev_image(data, minimum=280):
+    """JPEG padded with black to Jev's minimum side (280 px); the vial crop itself is not resampled."""
+    import io
+    from PIL import Image
+    image = Image.open(io.BytesIO(base64.b64decode(data))).convert("RGB")
+    if min(image.size) >= minimum:
+        return base64.b64decode(data)
+    canvas = Image.new("RGB", (max(minimum, image.width), max(minimum, image.height)))
+    canvas.paste(image, ((canvas.width - image.width) // 2, (canvas.height - image.height) // 2))
+    out = io.BytesIO()
+    canvas.save(out, "JPEG", quality=95)
+    return out.getvalue()
+
+
 def jev_explain(packet, args, images):
     """TypeSafe Jev System One: the cause as a `choice` question over CAUSE_CRITERIA.
     Jev returns a decision, not prose, so explanation/next_check stay empty (scored as missing)."""
+    import uuid
     import requests
     body = {k: packet[k] for k in SECTIONS if k in packet}
     state, assets, files = {"system": SYSTEM.split("Answer with")[0].strip(), "packet": json.dumps(body, indent=1)}, {}, []
     for name, data in images.items():
-        state[name] = name
-        assets[name] = {"type": "image", "part": name + "-file"}
-        files.append((name + "-file", (name + ".jpg", base64.b64decode(data), "image/jpeg")))
+        reference = str(uuid.uuid4())  # Jev replaces any text equal to a reference, so never reuse packet words
+        state[name] = reference
+        assets[reference] = {"type": "image", "part": name + "-file"}
+        files.append((name + "-file", (name + ".jpg", jev_image(data), "image/jpeg")))
     seen = " and the keyframes " + ", ".join(f"`{n}`" for n in images) if images else ""
     questions = {"cause": {"type": "choice", "criteria": CAUSE_CRITERIA,
                            "instructions": f"Following `system`, what is the most likely cause of this vial's verdict, "
                                            f"given the evidence packet `packet`{seen}?"}}
-    response = requests.post(args.url or JEV_URL, timeout=(15, args.timeout), allow_redirects=False,
-                             headers={"Authorization": "Bearer " + os.environ[args.key_env],
-                                      **({"TypeSafe-Danger-Zone-Images": "true"} if images else {})},
-                             files=[("request", (None, json.dumps({"model": args.model, "state": state, "assets": assets,
-                                                                   "questions": questions}), "application/json"))] + files)
+    request = {"model": args.model, "state": state, "questions": questions}
+    headers = {"Authorization": "Bearer " + os.environ[args.key_env]}
+    if images:
+        request["assets"] = assets
+        response = requests.post(args.url or JEV_URL, timeout=(15, args.timeout), allow_redirects=False,
+                                 headers={**headers, "TypeSafe-Danger-Zone-Images": "true"},
+                                 files=[("request", (None, json.dumps(request), "application/json"))] + files)
+    else:
+        response = requests.post(args.url or JEV_URL, timeout=(15, args.timeout), allow_redirects=False,
+                                 headers=headers, json=request)
     if response.status_code != 200:
         raise RuntimeError(f"HTTP {response.status_code}: {response.text[:500]}")
     answer = response.json()["answers"]["cause"]

@@ -5,6 +5,7 @@
     python -m replay.explain --run DIR --export-keyframes DIR/keyframes --video V     # needs cv2
     python -m replay.explain --run DIR --backend hf --model PATH_OR_ID [--keyframes DIR/keyframes]
     TYPESAFE_API_KEY=... python -m replay.explain --run DIR --backend jev [--keyframes DIR/keyframes]
+    OPENAI_API_KEY=... python -m replay.explain --run DIR --backend decisions [--keyframes DIR/keyframes]
 
 Backends see the same packets. `rule` is the deterministic baseline. `openai` calls any
 OpenAI-compatible chat endpoint (vLLM serving Cosmos, or a text LLM). `hf` loads a Qwen2.5-VL
@@ -216,6 +217,32 @@ def jev_explain(packet, args, images):
                        "explanation": None, "next_check": None, "jev_answer": answer})
 
 
+def decisions_explain(packet, args, images):
+    """OpenAI Decisions API (gpt-6-luna): the same cause choice as Jev, through POST /v1/decisions."""
+    body = {k: packet[k] for k in SECTIONS if k in packet}
+    content = [{"type": "input_text", "text": "Evidence packet:\n" + json.dumps(body, indent=1)}]
+    for name, data in images.items():
+        content.append({"type": "input_text", "text": f"image:{name}"})
+        content.append({"type": "input_image", "image_url": f"data:image/jpeg;base64,{data}", "detail": "high"})
+    question = {"type": "choice", "name": "cause",
+                "instructions": "What is the most likely cause of this vial's verdict, given the evidence packet"
+                                + (" and the keyframes?" if images else "?"),
+                "choices": [{"value": k, "description": v} for k, v in CAUSE_CRITERIA.items()]}
+    request = urllib.request.Request(
+        (args.url or "https://api.openai.com/v1").rstrip("/") + "/decisions",
+        data=json.dumps({"model": args.model, "questions": [question],
+                         "input": [{"role": "system", "content": SYSTEM.split("Answer with")[0].strip()},
+                                   {"role": "user", "content": content}]}).encode(),
+        headers={"Content-Type": "application/json", "Authorization": f"Bearer {os.environ[args.key_env]}"})
+    with urllib.request.urlopen(request, timeout=args.timeout) as response:
+        answer = json.loads(response.read())["answers"][0]
+    if answer["type"] == "refusal":
+        return json.dumps({"cause": None, "decision_answer": answer})
+    return json.dumps({"cause": answer["choice"], "confidence": answer["confidence"],
+                       "evidence_ids": [k for k in body] + [f"image:{n}" for n in images],
+                       "explanation": None, "next_check": None, "decision_answer": answer})
+
+
 def parse(text, allowed_ids):
     """Validate model output against the schema. Returns (explanation, problems)."""
     if isinstance(text, dict):
@@ -296,7 +323,7 @@ def rule_map(packet):
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--run", type=Path, required=True, help="output directory of python -m replay.line")
-    parser.add_argument("--backend", choices=("rule", "openai", "hf", "jev"), default="rule")
+    parser.add_argument("--backend", choices=("rule", "openai", "hf", "jev", "decisions"), default="rule")
     parser.add_argument("--name", help="output suffix (default: backend, or backend-model)")
     parser.add_argument("--url", help="OpenAI-compatible base URL, e.g. http://gb10:8000/v1")
     parser.add_argument("--model")
@@ -329,6 +356,10 @@ def main():
             args.key_env = "TYPESAFE_API_KEY"
         if not os.environ.get(args.key_env):
             parser.error(f"--backend jev needs the API key in ${args.key_env}")
+    if args.backend == "decisions":
+        args.model = args.model or "gpt-6-luna"
+        if not os.environ.get(args.key_env):
+            parser.error(f"--backend decisions needs the API key in ${args.key_env}")
 
     name = args.name or (args.backend if args.backend == "rule" else f"{args.backend}-{Path(args.model).name}")
     local = LocalVLM(args.model, args.max_tokens) if args.backend == "hf" else None
@@ -345,7 +376,8 @@ def main():
         started = time.perf_counter()
         try:
             raw = rule_explain(packet) if args.backend == "rule" else local(packet, images) if local \
-                else jev_explain(packet, args, images) if args.backend == "jev" else openai_explain(packet, args, images)
+                else jev_explain(packet, args, images) if args.backend == "jev" \
+                else decisions_explain(packet, args, images) if args.backend == "decisions" else openai_explain(packet, args, images)
             explanation, problems = parse(raw, allowed)
         except Exception as error:  # endpoint down or timeout: record, keep going
             raw, explanation, problems = repr(error), parse(None, allowed)[0], ["request_failed"]

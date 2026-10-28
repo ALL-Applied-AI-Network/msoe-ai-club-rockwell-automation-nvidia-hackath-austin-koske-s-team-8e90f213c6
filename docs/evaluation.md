@@ -170,6 +170,13 @@ verdicts are partly circular; there is no per-vial outcome truth, so these are d
 accuracy. Vial 1 starts mid-fill at frame 0, so its reference is not empty. Vial 30's fill window
 is truncated at the end of the video.
 
+Annotated video: `python -m replay.annotate --video V --run DIR --library L --out annotated.mp4`
+redraws the run from its saved outputs (about 2 min for Run 5, no models): the vial region,
+fill phase, measured vs reference colour with live ΔE, the verdict, an action log with deadline
+countdowns and a strip of all scheduled vials. Verdicts and actions appear at their causal issue
+time; fill phase uses the finalized segmentation. Local renders are in the results directory
+(`run5-v1/annotated.mp4` and an 8x `annotated-8x.mp4`), not in Git.
+
 ## Sequence-diagnosis pilot
 
 The investigation module was exercised on 1,620 analytic four-vial sequences across

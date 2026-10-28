@@ -95,7 +95,7 @@ tolerances are a deliverable**: we propose them from reference vials and report 
 | Vial ledger (CSV + JSON) | Per vial: seq, intended recipe, fill start/end times, endpoint Lab, ΔE intended/previous, verdict, action, issue time vs deadline, RCA cause |
 | Action log | Timestamped actions as an operator would receive them (and as PLC commands, simulated) |
 | RCA reports | One per non-PASS vial, with evidence and keyframes |
-| Annotated video | Overlays, live verdict and actions; the demo artifact |
+| Annotated video | Overlays, live verdict and actions; the demo artifact (`replay/annotate.py`, done v1) |
 | Metrics report | The tables below, per dataset |
 
 One entry point runs the same pipeline offline and in the app:

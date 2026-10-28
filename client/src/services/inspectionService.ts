@@ -7,6 +7,8 @@ import type {
   InspectionSession,
   RecipeSegment,
   RecipeSegmentCreate,
+  RecipeContext,
+  RecipePlanItem,
   SimulationMode,
 } from "@/models/inspection";
 
@@ -87,6 +89,24 @@ export async function addRecipeSegment(
 export async function listRecipeSegments(runId: string): Promise<RecipeSegment[]> {
   const response = await api.get<RecipeSegment[]>(
     `/sessions/${runId}/recipe-segments`,
+  );
+  return response.data;
+}
+
+export async function listRecipePlan(runId: string): Promise<RecipePlanItem[]> {
+  const response = await api.get<RecipePlanItem[]>(
+    `/sessions/${runId}/recipe-plan`,
+  );
+  return response.data;
+}
+
+export async function replaceRecipePlan(
+  runId: string,
+  recipes: RecipeContext[],
+): Promise<RecipePlanItem[]> {
+  const response = await api.put<RecipePlanItem[]>(
+    `/sessions/${runId}/recipe-plan`,
+    { recipes },
   );
   return response.data;
 }

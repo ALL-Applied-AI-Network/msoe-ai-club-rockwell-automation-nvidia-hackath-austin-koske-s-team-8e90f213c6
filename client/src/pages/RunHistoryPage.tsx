@@ -22,11 +22,11 @@ export default function RunHistoryPage() {
         <section className="page-intro"><div><span className="kicker">PERSISTED INSPECTION EVIDENCE</span><h1>Run history</h1><p>Review every camera session, image batch, and recording replay after an API restart.</p></div><Link className="button primary" to="/">NEW INSPECTION RUN</Link></section>
         {error && <div className="history-error">{error}</div>}
         <section className="run-table panel">
-          <div className="run-table-head"><span>RUN</span><span>SOURCE</span><span>ACTIVE RECIPE</span><span>FRAMES</span><span>UPDATED</span><span /></div>
+          <div className="run-table-head"><span>RUN</span><span>SOURCE</span><span>LATEST RECIPE CONTEXT</span><span>FRAMES</span><span>UPDATED</span><span /></div>
           {runs.length === 0 ? <div className="empty-history">No persisted runs yet. Start one from the monitor.</div> : runs.map((run) => (
             <div className="run-table-row" key={run.session_id}>
               <div><strong>{run.run_name}</strong><small>{run.session_id.slice(0, 8)} · {run.camera_id}</small></div>
-              <div><span className="source-badge">{run.source_mode.replace("_", " ").toUpperCase()}</span><small>{run.source_name ?? "—"}</small></div>
+              <div><span className="source-badge">{run.source_mode.replace("_", " ").toUpperCase()}</span><small>{run.pipeline_mode.toUpperCase()} · {run.source_name ?? "—"}</small></div>
               <div><strong>{run.recipe.current_recipe_name}</strong><small>{run.recipe.current_recipe_id}</small></div>
               <strong className="frame-total">{run.frames_processed}</strong>
               <span>{dateLabel(run.updated_at)}</span>

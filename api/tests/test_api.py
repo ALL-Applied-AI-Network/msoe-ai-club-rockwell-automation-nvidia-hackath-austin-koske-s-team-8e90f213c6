@@ -105,6 +105,14 @@ def test_recipe_csv_resolves_context_by_source_timestamp(client: TestClient):
     )
     assert imported.status_code == 201, imported.text
     assert len(imported.json()) == 2
+    repeated = client.post(
+        resource + "/recipe-segments/import",
+        content=recipe_csv,
+        headers={"content-type": "text/csv"},
+    )
+    assert repeated.status_code == 201, repeated.text
+    assert repeated.json() == []
+    assert len(client.get(resource + "/recipe-segments").json()) == 3
     frame = client.post(
         resource + "/frames?frame_id=frame-2&width=2&height=2&source_timestamp_ms=15000",
         content=b"frame",
@@ -112,6 +120,61 @@ def test_recipe_csv_resolves_context_by_source_timestamp(client: TestClient):
     )
     assert frame.status_code == 202
     assert frame.json()["recipe"]["current_recipe_id"] == "6"
+
+
+def test_operator_recipe_plan_preserves_order_and_expected_color(client: TestClient):
+    session = create_session(client)
+    resource = f"/api/v1/sessions/{session['session_id']}"
+    recipes = [
+        {
+            "current_recipe_id": "blue-01",
+            "current_recipe_name": "Blue recipe",
+            "vial_index": 1,
+            "is_first_vial_after_change": True,
+            "expected_color_name": "Blue",
+            "expected_color_hex": "#287fb5",
+        },
+        {
+            "current_recipe_id": "orange-02",
+            "current_recipe_name": "Orange recipe",
+            "previous_recipe_id": "blue-01",
+            "vial_index": 2,
+            "is_first_vial_after_change": True,
+            "expected_color_name": "Orange",
+            "expected_color_hex": "#dc6b2f",
+        },
+    ]
+    replaced = client.put(resource + "/recipe-plan", json={"recipes": recipes})
+    assert replaced.status_code == 200, replaced.text
+    assert [item["position"] for item in replaced.json()] == [1, 2]
+    assert replaced.json()[0]["recipe"]["expected_color_name"] == "Blue"
+    persisted = client.get(resource + "/recipe-plan")
+    assert persisted.status_code == 200
+    assert [item["recipe"]["current_recipe_id"] for item in persisted.json()] == [
+        "blue-01", "orange-02",
+    ]
+
+
+def test_recipe_csv_keeps_recipe_formula_and_color_intent(client: TestClient):
+    session = create_session(client, "recording")
+    resource = f"/api/v1/sessions/{session['session_id']}"
+    recipe_csv = (
+        "recipe_id,type,start_s,end_s,vial,t100_ml,t200_ml,t300_ml,t400_ml,total_ml,dispense_order,color_purpose\n"
+        "7,Pair 100+400,4.0,8.0,7,20,,0,50,70,T400>T100,pale blue\n"
+    )
+    imported = client.post(
+        resource + "/recipe-segments/import",
+        content=recipe_csv,
+        headers={"content-type": "text/csv"},
+    )
+    assert imported.status_code == 201, imported.text
+    recipe = imported.json()[0]["recipe"]
+    assert recipe["expected_color_name"] == "pale blue"
+    assert recipe["t100_ml"] == 20
+    assert recipe["t300_ml"] == 0
+    assert recipe["t400_ml"] == 50
+    assert recipe["total_ml"] == 70
+    assert recipe["dispense_order"] == "T400>T100"
 
 
 def test_recording_upload_and_frame_validation(client: TestClient):

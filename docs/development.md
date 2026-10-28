@@ -1,7 +1,8 @@
 # Development
 
-Inference, the app skeleton and compute setup are separate entrypoints. Running
-the widgets app does not start a model worker.
+The operator app defaults to a deterministic mock pipeline. Model mode uses the
+same FastAPI entrypoint and loads YOLO plus the Temporal CNN lazily on the first
+frame. Compute setup and standalone model verification remain separate.
 
 ## Run liquid inference
 
@@ -29,7 +30,7 @@ The same scripts live in `setup/vision/`. For a worker, load
 for each source pair. Inputs must be RGB `uint8` arrays at 640 × 480.
 Use `cuda:0` only on the approved GPU host; CPU is the local default.
 
-## App skeleton
+## Operator app
 
 Requirements: Python 3.11+, `uv`, and Node 22.12+ or a supported newer LTS.
 Use two terminals from the repository root.
@@ -48,12 +49,64 @@ npm run dev
 
 Open `http://localhost:3000`. Vite proxies `/api` to port 8443; API docs are at
 `http://127.0.0.1:8443/docs`, health at `/health`. Stop both with Ctrl+C.
-The current page creates/lists/deletes example widgets. State lives in memory
-and resets with the API. It is not an operator evidence store.
+Inspection metadata is stored in SQLite and source/rendered/mask/recording
+artifacts are stored under `api/data/`; both are local runtime state excluded
+from Git. The dashboard supports live-camera, image and recording source setup,
+recipe-segment import, run history and frame review. Recording upload currently
+stores the original file and the browser decodes sampled frames with millisecond
+media seek timestamps. A backend decoder that retains native PTS/time base is
+still an integration step.
+
+Recipe CSV import can be staged before a run starts, then attaches to the run
+created for the selected source mode. Once a run starts its source mode is
+locked; use **New Run** to change sources. The import assigns recipe context by
+frame timestamp only. Descriptive color intent is not a qualified recipe color
+reference or acceptance decision, and re-importing identical rows does not create
+duplicates.
+The dashboard also persists an ordered vial plan. Before starting a run, the
+operator may add and reorder vial steps and provide descriptive expected-color
+labels/swatches plus Tank 100/200/300/400 volumes. The displayed recipe total is
+calculated from those inputs. During an operator-led run, **Activate** records the selected
+vial as a new timestamped context segment. This is operator intent and remains
+separate from measured RGB/Lab evidence and qualified recipe references.
+Each run retains its initial recipe as a fallback context. Image batches currently
+receive ordered timestamps at 0, 1, 2, … seconds; recording ingestion uses media
+seek timestamps. A recording-timestamp CSV should therefore be paired with the
+recording replay unless external image timestamps are added.
+
+To enable real frame inference, install the recorded model requirements into the
+API environment and copy `api/example.env` to the ignored `api/.env`. Set these
+values to the extracted, hash-verified release assets:
+
+```dotenv
+APP__PIPELINE_MODE=model
+APP__MODEL_WORKERS=1
+APP__YOLO_CHECKPOINT=/absolute/path/temporal-cnn-assets-v1/models/vial-best.pt
+APP__TEMPORAL_CHECKPOINT=/absolute/path/temporal-cnn-assets-v1/models/liquid-best.pt
+APP__TEMPORAL_REFERENCE_IMAGE=/absolute/path/to/reviewed-aligned-empty.png
+APP__TEMPORAL_REFERENCE_QUALIFIED=false
+```
+
+Install `setup/requirements/temporal-pool.in` with the API environment's package
+manager before starting the server. Keep `TEMPORAL_REFERENCE_QUALIFIED=false`
+until a human has independently reviewed the aligned empty-vial reference. The
+release example reference is unreviewed and is suitable only for an explicitly
+unqualified smoke test. `/health` reports `pipeline_mode` and `pipeline_status`;
+`reference_review_required` means inference is available but recipe conclusions
+must remain unavailable.
 
 Client boundaries are types → services → hooks → pages/components. API
 boundaries are models → routers → services → databridge, with dependency wiring
-in `dependencies.py`. Add the model observation interface through those layers.
+in `dependencies.py`. The model bridge lives in
+`pipelines/temporal_cnn_bridge.py`; pipeline output crosses those existing
+layers rather than bypassing persistence.
+
+`integration/model_pipeline.py` is the single reusable implementation of model
+loading, per-pair inference, vial association, measurement QA and visualization.
+`integration/integration.py` is a thin one-pair CLI and
+`integration/batch_integration.py` is a thin ordered-pairs CLI; neither contains
+a separate copy of the inference algorithm. The FastAPI bridge imports the same
+core directly.
 `API_PROXY_TARGET` changes Vite's local proxy; `VITE_API_BASE_URL` selects a
 separately hosted API at build time. Defaults need no credentials or database.
 

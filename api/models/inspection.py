@@ -24,6 +24,17 @@ class RecipeContext(BaseModel):
     previous_recipe_id: str | None = Field(default=None, max_length=80)
     vial_index: int = Field(default=1, ge=1)
     is_first_vial_after_change: bool = False
+    expected_color_name: str | None = Field(default=None, max_length=120)
+    expected_color_hex: str | None = Field(
+        default=None, pattern=r"^#[0-9a-fA-F]{6}$"
+    )
+    t100_ml: float | None = Field(default=None, ge=0)
+    t200_ml: float | None = Field(default=None, ge=0)
+    t300_ml: float | None = Field(default=None, ge=0)
+    t400_ml: float | None = Field(default=None, ge=0)
+    total_ml: float | None = Field(default=None, ge=0)
+    dispense_order: str | None = Field(default=None, max_length=120)
+    color_purpose: str | None = Field(default=None, max_length=240)
 
 
 SourceMode = Literal["live_camera", "images", "recording"]
@@ -38,6 +49,18 @@ class RecipeSegmentCreate(BaseModel):
 class RecipeSegment(RecipeSegmentCreate):
     segment_id: UUID
     session_id: UUID
+    created_at: datetime
+
+
+class ReplaceRecipePlanRequest(BaseModel):
+    recipes: list[RecipeContext] = Field(min_length=1, max_length=200)
+
+
+class RecipePlanItem(BaseModel):
+    plan_item_id: UUID
+    session_id: UUID
+    position: int = Field(ge=1)
+    recipe: RecipeContext
     created_at: datetime
 
 

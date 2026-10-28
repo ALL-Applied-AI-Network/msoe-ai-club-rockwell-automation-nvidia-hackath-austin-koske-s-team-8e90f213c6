@@ -17,6 +17,7 @@ from models.inspection import (
     OperatorStatus,
     PipelineVisuals,
     RecipeContext,
+    RecipePlanItem,
     RecipeSegment,
     RecipeSegmentCreate,
 )
@@ -70,6 +71,16 @@ class SQLiteInspectionBridge:
             );
             CREATE INDEX IF NOT EXISTS idx_recipe_segments_run_time
                 ON recipe_segments(session_id, start_ms);
+            CREATE TABLE IF NOT EXISTS recipe_plan_items (
+                plan_item_id TEXT PRIMARY KEY,
+                session_id TEXT NOT NULL REFERENCES inspection_runs(session_id) ON DELETE CASCADE,
+                position INTEGER NOT NULL,
+                recipe_json TEXT NOT NULL,
+                created_at TEXT NOT NULL,
+                UNIQUE(session_id, position)
+            );
+            CREATE INDEX IF NOT EXISTS idx_recipe_plan_run_position
+                ON recipe_plan_items(session_id, position);
             CREATE TABLE IF NOT EXISTS artifacts (
                 artifact_id TEXT PRIMARY KEY,
                 session_id TEXT NOT NULL REFERENCES inspection_runs(session_id) ON DELETE CASCADE,
@@ -204,6 +215,58 @@ class SQLiteInspectionBridge:
             ).fetchall()
         return [self._segment(row) for row in rows]
 
+    async def replace_recipe_plan(
+        self, session_id: UUID, recipes: list[RecipeContext]
+    ) -> list[RecipePlanItem] | None:
+        now = datetime.now(timezone.utc)
+        async with self._lock:
+            exists = self._connection.execute(
+                "SELECT 1 FROM inspection_runs WHERE session_id = ?", (str(session_id),)
+            ).fetchone()
+            if not exists:
+                return None
+            self._connection.execute(
+                "DELETE FROM recipe_plan_items WHERE session_id = ?", (str(session_id),)
+            )
+            items: list[RecipePlanItem] = []
+            for position, recipe in enumerate(recipes, 1):
+                item = RecipePlanItem(
+                    plan_item_id=uuid4(),
+                    session_id=session_id,
+                    position=position,
+                    recipe=recipe,
+                    created_at=now,
+                )
+                self._connection.execute(
+                    """INSERT INTO recipe_plan_items
+                    (plan_item_id, session_id, position, recipe_json, created_at)
+                    VALUES (?, ?, ?, ?, ?)""",
+                    (
+                        str(item.plan_item_id), str(session_id), item.position,
+                        item.recipe.model_dump_json(), _iso(item.created_at),
+                    ),
+                )
+                items.append(item)
+            self._connection.execute(
+                "UPDATE inspection_runs SET updated_at = ? WHERE session_id = ?",
+                (_iso(now), str(session_id)),
+            )
+            self._connection.commit()
+        return items
+
+    async def list_recipe_plan(self, session_id: UUID) -> list[RecipePlanItem] | None:
+        async with self._lock:
+            exists = self._connection.execute(
+                "SELECT 1 FROM inspection_runs WHERE session_id = ?", (str(session_id),)
+            ).fetchone()
+            if not exists:
+                return None
+            rows = self._connection.execute(
+                "SELECT * FROM recipe_plan_items WHERE session_id = ? ORDER BY position",
+                (str(session_id),),
+            ).fetchall()
+        return [self._plan_item(row) for row in rows]
+
     async def resolve_recipe(
         self, session_id: UUID, source_timestamp_ms: int | None
     ) -> RecipeContext | None:
@@ -294,6 +357,16 @@ class SQLiteInspectionBridge:
             session_id=UUID(row["session_id"]),
             start_ms=row["start_ms"],
             end_ms=row["end_ms"],
+            recipe=RecipeContext.model_validate_json(row["recipe_json"]),
+            created_at=_dt(row["created_at"]),
+        )
+
+    @staticmethod
+    def _plan_item(row: sqlite3.Row) -> RecipePlanItem:
+        return RecipePlanItem(
+            plan_item_id=UUID(row["plan_item_id"]),
+            session_id=UUID(row["session_id"]),
+            position=row["position"],
             recipe=RecipeContext.model_validate_json(row["recipe_json"]),
             created_at=_dt(row["created_at"]),
         )

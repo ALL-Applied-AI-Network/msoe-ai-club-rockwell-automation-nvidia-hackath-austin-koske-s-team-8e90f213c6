@@ -41,6 +41,7 @@ async def health_check():
         "status": "healthy",
         "service": "linewatch-inspection-api",
         "pipeline_mode": service.pipeline.mode,
+        "pipeline_status": getattr(service.pipeline, "status", "ready"),
         "connected_frontends": await service.broker.connected_count(),
         "queue_depth": service.queue_depth,
         "persistence": "sqlite+filesystem",

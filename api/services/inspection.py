@@ -16,6 +16,8 @@ from models.inspection import (
     OperatorDecision,
     OperatorStatus,
     PipelineVisuals,
+    RecipeContext,
+    RecipePlanItem,
     RecipeSegment,
     RecipeSegmentCreate,
 )
@@ -110,6 +112,16 @@ class InspectionService:
         self, session_id: UUID, request: RecipeSegmentCreate
     ) -> RecipeSegment | None:
         return await self.databridge.add_recipe_segment(session_id, request)
+
+    async def replace_recipe_plan(
+        self, session_id: UUID, recipes: list[RecipeContext]
+    ) -> list[RecipePlanItem] | None:
+        return await self.databridge.replace_recipe_plan(session_id, recipes)
+
+    async def list_recipe_plan(
+        self, session_id: UUID
+    ) -> list[RecipePlanItem] | None:
+        return await self.databridge.list_recipe_plan(session_id)
 
     async def process_frame(
         self,

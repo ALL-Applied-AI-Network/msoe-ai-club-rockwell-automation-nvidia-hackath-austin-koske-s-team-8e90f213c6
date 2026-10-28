@@ -10,6 +10,8 @@ from models.inspection import (
     InspectionEvent,
     InspectionSession,
     OperatorStatus,
+    RecipeContext,
+    RecipePlanItem,
 )
 
 
@@ -26,6 +28,7 @@ class MemoryInspectionBridge:
             lambda: deque(maxlen=max_events_per_session)
         )
         self._lock = asyncio.Lock()
+        self._recipe_plans: dict[UUID, list[RecipePlanItem]] = {}
 
     async def create_session(
         self, request: CreateSessionRequest, pipeline_mode: str
@@ -49,6 +52,35 @@ class MemoryInspectionBridge:
         async with self._lock:
             session = self._sessions.get(session_id)
             return session.model_copy(deep=True) if session else None
+
+    async def replace_recipe_plan(
+        self, session_id: UUID, recipes: list[RecipeContext]
+    ) -> list[RecipePlanItem] | None:
+        now = datetime.now(timezone.utc)
+        async with self._lock:
+            if session_id not in self._sessions:
+                return None
+            items = [
+                RecipePlanItem(
+                    plan_item_id=uuid4(),
+                    session_id=session_id,
+                    position=position,
+                    recipe=recipe,
+                    created_at=now,
+                )
+                for position, recipe in enumerate(recipes, 1)
+            ]
+            self._recipe_plans[session_id] = items
+            return [item.model_copy(deep=True) for item in items]
+
+    async def list_recipe_plan(self, session_id: UUID) -> list[RecipePlanItem] | None:
+        async with self._lock:
+            if session_id not in self._sessions:
+                return None
+            return [
+                item.model_copy(deep=True)
+                for item in self._recipe_plans.get(session_id, [])
+            ]
 
     async def add_event(self, event: InspectionEvent) -> InspectionSession:
         async with self._lock:

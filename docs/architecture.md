@@ -28,6 +28,38 @@ GPU inference runs YOLO and U-Net. CPU work handles source decoding, reference
 management, geometry, measurement QA and application state. The API carries
 observations and operator responses; it is not a model stage.
 
+## Application/runtime flow
+
+```mermaid
+flowchart LR
+    B[Browser camera, images or recording] --> A[FastAPI session and frame API]
+    C[Operator vial plan or recipe CSV] --> T[Ordered plan plus timestamped recipe segments]
+    T --> A
+    A --> S[Save original source artifact]
+    A --> W[Per-run ordered work queue]
+    W --> G[Temporal CNN API bridge]
+    G --> K[Shared integration/model_pipeline.py core]
+    K --> V[YOLO vial plus Temporal CNN liquid plus association plus measurement QA]
+    V --> P[Rendered frame, accepted mask and evidence state]
+    P --> D[SQLite metadata plus filesystem artifacts]
+    S --> D
+    D --> O[React operator monitor, history and frame review]
+    O --> H[Operator acknowledgement]
+```
+
+Recipe resolution happens before inference so every work item retains the
+recipe context active at its source timestamp. The shared model core does not
+query the database or decide recipe compliance. The bridge owns API adaptation
+and per-run QA state; persistence owns evidence history; the React application
+displays those states to an operator. No component commands the PLC.
+
+The operator can arrange a planned vial order before a run, including recipe ID,
+name, an expected-color label/swatch and Tank 100/200/300/400 volumes in mL. The
+UI derives the displayed total from those tank amounts. The plan is durable run
+intent, not a vision result or calibrated acceptance reference. During an operator-led run,
+activating a planned vial creates the timestamped recipe boundary used by later
+frames. Recording replay may instead import authoritative timestamped segments.
+
 ## What is implemented
 
 | Component | Implementation | Status |
@@ -37,11 +69,14 @@ observations and operator responses; it is not a model stage.
 | Sampling | [VialGeometry](../replay/geometry.py), [Extractor](../replay/measurement.py), [Config](../replay/config.py) | Existing geometry, tracking and color QA |
 | Reference qualification | [ReferenceGate](../replay/operator/commissioning.py) | Evidence checks; capture/alignment must be supplied by an adapter |
 | Human evaluation | [Mask review and scorers](../annotation_review/README.md) | Explicit presence, mask and onset review |
-| HTTP and UI | [FastAPI](../api/main.py), [React](../client/src/App.tsx) | Widgets skeleton; no inference or operator inspection route |
-| Video worker and operator loop | Source → inference → QA → backend → display | Still needs integration and a full recording rehearsal |
+| HTTP and UI | [FastAPI](../api/main.py), [React](../client/src/App.tsx) | Persistent inspection sessions, image/recording intake, run history, frame review and operator acknowledgement |
+| Shared model core | [model_pipeline.py](../integration/model_pipeline.py) | Srijan's consolidated integration: YOLO vial geometry → paired Temporal CNN liquid proposal → vial association → measurement QA → render/mask |
+| Frame worker and operator loop | [InspectionService](../api/services/inspection.py), [Temporal CNN bridge](../api/pipelines/temporal_cnn_bridge.py) | Load-once model mode connects queued frames to the shared model core and stored render/mask artifacts |
+| Recording ingestion | Browser-sampled decode, millisecond seek timestamps, original recording storage and recipe-segment import | Integrated with the frame queue; native PTS/time-base backend decoding and a full rehearsal remain pending |
 
-Development branches contain additional dashboard and comparator work. This
-table describes the code in this branch, not an assumed merged application.
+Model mode is opt-in and requires the released checkpoints plus an explicit
+reference image. The default remains deterministic mock mode. This table
+describes the code in this branch, not an assumed deployment.
 
 ## Liquid model
 
@@ -102,13 +137,22 @@ accepted endpoint reference, confirmed fill completion and physical vial
 identity. A recognized color alone does not establish recipe agreement. Operator
 acknowledgement records a response; it does not approve product release.
 
+Imported recipe CSV rows are timeline context: the API resolves each frame to
+the segment covering its source timestamp. Importing a recipe ID/name does not
+provide expected color values or acceptance thresholds and therefore cannot turn
+measurement QA into recipe pass/fail. Exact repeated rows are ignored on import.
+When present, recipe formula fields and descriptive color intent are retained for
+operator display, but descriptive color labels still do not qualify a reference.
+
 ## Worker and application contract
 
 The model-only CLI writes `temporal-pool-proposal/v1`: masks, presence, source
 file/RGB hashes, checkpoint identity and an unreviewed reference status. It
 does not provide native video timing or measurement QA.
 
-The video worker must attach the source clock and wrap results for the
+The current frame API preserves a supplied source timestamp and recipe context,
+but a recording decoder must still attach the native source clock and wrap
+results for the
 `station-evidence/v1` checks in `commissioning.py`:
 
 | Group | Required information |

@@ -13,6 +13,15 @@ export interface RecipeContext {
   previous_recipe_id?: string | null;
   vial_index: number;
   is_first_vial_after_change: boolean;
+  expected_color_name?: string | null;
+  expected_color_hex?: string | null;
+  t100_ml?: number | null;
+  t200_ml?: number | null;
+  t300_ml?: number | null;
+  t400_ml?: number | null;
+  total_ml?: number | null;
+  dispense_order?: string | null;
+  color_purpose?: string | null;
 }
 
 export interface CreateSessionRequest {
@@ -35,6 +44,14 @@ export interface RecipeSegmentCreate {
 export interface RecipeSegment extends RecipeSegmentCreate {
   segment_id: string;
   session_id: string;
+  created_at: string;
+}
+
+export interface RecipePlanItem {
+  plan_item_id: string;
+  session_id: string;
+  position: number;
+  recipe: RecipeContext;
   created_at: string;
 }
 
@@ -99,6 +116,7 @@ export interface HealthStatus {
   status: string;
   service: string;
   pipeline_mode: "mock" | "model";
+  pipeline_status: string;
   connected_frontends: number;
   queue_depth: number;
   persistence: string;

@@ -13,6 +13,7 @@ import type {
   InspectionEvent,
   InspectionSession,
   OperatorStatus,
+  RecipeContext,
   SimulationMode,
   SourceMode,
 } from "@/models/inspection";
@@ -24,6 +25,7 @@ import {
   getHealth,
   importRecipeSegments,
   inspectionEventUrl,
+  replaceRecipePlan,
   submitInspectionFrame,
   uploadRecording,
 } from "@/services/inspectionService";
@@ -36,10 +38,18 @@ const initialConfig: CreateSessionRequest = {
   source_name: null,
   recipe: {
     current_recipe_id: "recipe-07",
-    current_recipe_name: "Recipe 07 · Ocean Blue",
+    current_recipe_name: "Recipe 07 · Pale Blue",
     previous_recipe_id: "recipe-06",
     vial_index: 1,
     is_first_vial_after_change: true,
+    expected_color_name: "Pale blue",
+    expected_color_hex: "#287fb5",
+    t100_ml: 20,
+    t200_ml: 0,
+    t300_ml: 0,
+    t400_ml: 50,
+    total_ml: 70,
+    dispense_order: "T400>T100",
   },
 };
 
@@ -58,6 +68,45 @@ const statusLabel: Record<OperatorStatus, string> = {
   unavailable: "UNAVAILABLE",
   stopped: "STOPPED",
 };
+
+type RecipeImportState = {
+  fileName: string;
+  state: "staged" | "imported";
+  segmentCount?: number;
+};
+
+function normalizeRecipePlan(recipes: RecipeContext[]): RecipeContext[] {
+  return recipes.map((recipe, index) => {
+    const previous = recipes[index - 1];
+    return {
+      ...recipe,
+      vial_index: index + 1,
+      previous_recipe_id: previous?.current_recipe_id ?? null,
+      is_first_vial_after_change: !previous
+        || previous.current_recipe_id !== recipe.current_recipe_id,
+    };
+  });
+}
+
+type TankAmountField = "t100_ml" | "t200_ml" | "t300_ml" | "t400_ml";
+
+const tankAmountFields: { field: TankAmountField; label: string }[] = [
+  { field: "t100_ml", label: "TANK 100" },
+  { field: "t200_ml", label: "TANK 200" },
+  { field: "t300_ml", label: "TANK 300" },
+  { field: "t400_ml", label: "TANK 400" },
+];
+
+function formulaTotal(recipe: RecipeContext): number {
+  return (recipe.t100_ml ?? 0)
+    + (recipe.t200_ml ?? 0)
+    + (recipe.t300_ml ?? 0)
+    + (recipe.t400_ml ?? 0);
+}
+
+function formatMl(value?: number | null): string {
+  return (value ?? 0).toLocaleString(undefined, { maximumFractionDigits: 2 });
+}
 
 function imageSource(image: InspectionEvent["image"] | null | undefined) {
   if (!image) return undefined;
@@ -167,6 +216,11 @@ export default function OperatorDashboard() {
   const [sampleSeconds, setSampleSeconds] = useState(1.5);
   const [dragActive, setDragActive] = useState(false);
   const [ingestion, setIngestion] = useState<{ label: string; current: number; total: number } | null>(null);
+  const [recipeImport, setRecipeImport] = useState<RecipeImportState | null>(null);
+  const [recipePlan, setRecipePlan] = useState<RecipeContext[]>([
+    { ...initialConfig.recipe },
+  ]);
+  const [activePlanIndex, setActivePlanIndex] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const timerRef = useRef<number | null>(null);
@@ -176,14 +230,71 @@ export default function OperatorDashboard() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const recipeInputRef = useRef<HTMLInputElement>(null);
   const cancelIngestionRef = useRef(false);
+  const pendingRecipeFileRef = useRef<File | null>(null);
 
   const latestEvent = events[0] ?? null;
+  const modelEvidenceOnly = latestEvent?.pipeline_mode === "model"
+    || (!latestEvent && health?.pipeline_mode === "model");
   const sessionId = session?.session_id;
   const resultImage = latestEvent?.visuals?.rendered_frame ?? latestEvent?.image;
   const maskImage = latestEvent?.visuals?.mask;
   const status: OperatorStatus = isProcessing
     ? "processing"
     : latestEvent?.decision.status ?? session?.status ?? "stopped";
+
+  const applyRecipePlan = useCallback((recipes: RecipeContext[]) => {
+    const normalized = normalizeRecipePlan(recipes);
+    setRecipePlan(normalized);
+    if (!sessionRef.current && normalized[0]) {
+      setConfig((current) => ({ ...current, recipe: normalized[0] }));
+    }
+  }, []);
+
+  const updatePlanRecipe = (index: number, patch: Partial<RecipeContext>) => {
+    applyRecipePlan(recipePlan.map((recipe, recipeIndex) => (
+      recipeIndex === index ? { ...recipe, ...patch } : recipe
+    )));
+  };
+
+  const updateTankAmount = (
+    index: number,
+    field: TankAmountField,
+    rawValue: string,
+  ) => {
+    const amount = Math.max(0, Number.parseFloat(rawValue) || 0);
+    const recipe = { ...recipePlan[index], [field]: amount };
+    updatePlanRecipe(index, { [field]: amount, total_ml: formulaTotal(recipe) });
+  };
+
+  const movePlanRecipe = (index: number, direction: -1 | 1) => {
+    const target = index + direction;
+    if (target < 0 || target >= recipePlan.length) return;
+    const reordered = [...recipePlan];
+    [reordered[index], reordered[target]] = [reordered[target], reordered[index]];
+    applyRecipePlan(reordered);
+  };
+
+  const addPlanRecipe = () => {
+    const last = recipePlan.at(-1);
+    applyRecipePlan([
+      ...recipePlan,
+      {
+        current_recipe_id: last?.current_recipe_id ?? "recipe-new",
+        current_recipe_name: last?.current_recipe_name ?? "New recipe",
+        previous_recipe_id: last?.current_recipe_id ?? null,
+        vial_index: recipePlan.length + 1,
+        is_first_vial_after_change: false,
+        expected_color_name: last?.expected_color_name ?? "Not set",
+        expected_color_hex: last?.expected_color_hex ?? "#82918f",
+        t100_ml: last?.t100_ml ?? 0,
+        t200_ml: last?.t200_ml ?? 0,
+        t300_ml: last?.t300_ml ?? 0,
+        t400_ml: last?.t400_ml ?? 0,
+        total_ml: last?.total_ml ?? 0,
+        dispense_order: last?.dispense_order ?? null,
+      },
+    ]);
+  };
 
   const mergeEvent = useCallback((event: InspectionEvent) => {
     setEvents((current) => [
@@ -214,17 +325,44 @@ export default function OperatorDashboard() {
 
   const ensureSession = useCallback(async (sourceName?: string) => {
     if (sessionRef.current) return sessionRef.current;
+    const planForRun = normalizeRecipePlan(recipePlan);
     const request: CreateSessionRequest = {
       ...config,
       source_mode: sourceMode,
       source_name: sourceName || config.source_name,
+      recipe: planForRun[activePlanIndex] ?? planForRun[0] ?? config.recipe,
     };
     const created = await createInspectionSession(request);
+    await replaceRecipePlan(created.session_id, planForRun);
     sessionRef.current = created;
     setSession(created);
-    setMessage(`Inspection run ${created.session_id.slice(0, 8)} started`);
-    return created;
-  }, [config, sourceMode]);
+    const pendingRecipe = pendingRecipeFileRef.current;
+    if (!pendingRecipe) {
+      setMessage(`Inspection run ${created.session_id.slice(0, 8)} started · ${planForRun.length} planned vial${planForRun.length === 1 ? "" : "s"}`);
+      return created;
+    }
+
+    const segments = await importRecipeSegments(created.session_id, pendingRecipe);
+    const importedPlan = segments.length
+      ? normalizeRecipePlan(segments.map((segment) => segment.recipe))
+      : planForRun;
+    await replaceRecipePlan(created.session_id, importedPlan);
+    setRecipePlan(importedPlan);
+    setActivePlanIndex(0);
+    const active = importedPlan[0] ? { ...created, recipe: importedPlan[0] } : created;
+    pendingRecipeFileRef.current = null;
+    sessionRef.current = active;
+    setSession(active);
+    setRecipeImport({
+      fileName: pendingRecipe.name,
+      state: "imported",
+      segmentCount: segments.length,
+    });
+    setMessage(
+      `Run ${created.session_id.slice(0, 8)} started · ${segments.length} recipe segments and ${importedPlan.length} planned vials imported`,
+    );
+    return active;
+  }, [activePlanIndex, config, recipePlan, sourceMode]);
 
   const submitBlob = useCallback(async (
     blob: Blob,
@@ -326,11 +464,17 @@ export default function OperatorDashboard() {
     setSession(null);
     setEvents([]);
     setIngestion(null);
+    pendingRecipeFileRef.current = null;
+    setRecipeImport(null);
+    setActivePlanIndex(0);
     setMessage("Ready for a new persisted inspection run");
   }, [stopCamera]);
 
   const selectSource = (mode: SourceMode) => {
-    if (sessionRef.current) resetSession();
+    if (sessionRef.current) {
+      setMessage("Source is locked to this run. Choose NEW RUN before changing source.");
+      return;
+    }
     setSourceMode(mode);
     setConfig((current) => ({ ...current, source_mode: mode, source_name: null }));
     setMessage(`${sourceLabels[mode].label} source selected`);
@@ -464,18 +608,71 @@ export default function OperatorDashboard() {
   const onRecipeImport = async (file?: File) => {
     if (!file) return;
     try {
-      const active = await ensureSession();
-      const segments = await importRecipeSegments(active.session_id, file);
-      const latest = segments.at(-1);
-      if (latest) {
-        setSession((current) => current ? { ...current, recipe: latest.recipe } : current);
+      if (!sessionRef.current) {
+        pendingRecipeFileRef.current = file;
+        setRecipeImport({ fileName: file.name, state: "staged" });
+        setMessage(`${file.name} staged · it will attach when this run starts`);
+        return;
       }
-      setMessage(`${segments.length} timestamped recipe segments imported`);
+      const active = sessionRef.current;
+      const segments = await importRecipeSegments(active.session_id, file);
+      if (segments.length) {
+        const importedPlan = normalizeRecipePlan(segments.map((segment) => segment.recipe));
+        await replaceRecipePlan(active.session_id, importedPlan);
+        setRecipePlan(importedPlan);
+        setActivePlanIndex(0);
+        const updated = { ...active, recipe: importedPlan[0] };
+        sessionRef.current = updated;
+        setSession(updated);
+        setConfig((current) => ({ ...current, recipe: importedPlan[0] }));
+      }
+      setRecipeImport({ fileName: file.name, state: "imported", segmentCount: segments.length });
+      setMessage(segments.length
+        ? `${segments.length} timestamped recipe segments imported into run ${active.session_id.slice(0, 8)}`
+        : `${file.name} was already imported; no duplicate segments were added`);
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Recipe CSV import failed");
     } finally {
       if (recipeInputRef.current) recipeInputRef.current.value = "";
     }
+  };
+
+  const activatePlanRecipe = async (index: number) => {
+    const recipe = recipePlan[index];
+    if (!recipe) return;
+    try {
+      const active = await ensureSession();
+      const elapsed = Math.max(0, Date.now() - new Date(active.created_at).getTime());
+      const lastSourceTime = latestEvent?.source_timestamp_ms;
+      const startMs = lastSourceTime === null || lastSourceTime === undefined
+        ? elapsed
+        : lastSourceTime + 1;
+      const segment = await addRecipeSegment(active.session_id, {
+        start_ms: startMs,
+        recipe,
+      });
+      const updated = { ...active, recipe: segment.recipe };
+      sessionRef.current = updated;
+      setSession(updated);
+      setConfig((current) => ({ ...current, recipe: segment.recipe }));
+      setActivePlanIndex(index);
+      setSegmentStartSeconds(startMs / 1000);
+      setMessage(`Vial ${recipe.vial_index} activated · ${recipe.current_recipe_name} · ${recipe.expected_color_name ?? "color target not set"}`);
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Planned vial could not be activated");
+    }
+  };
+
+  const choosePlanRecipe = (index: number) => {
+    const recipe = recipePlan[index];
+    if (!recipe) return;
+    if (sessionRef.current) {
+      void activatePlanRecipe(index);
+      return;
+    }
+    setActivePlanIndex(index);
+    setConfig((current) => ({ ...current, recipe }));
+    setMessage(`Vial ${recipe.vial_index} selected as the starting plan step`);
   };
 
   const acknowledge = async () => {
@@ -499,7 +696,7 @@ export default function OperatorDashboard() {
           <span className={`connection-dot ${health ? "online" : ""}`} />
           <div>
             <strong>{health ? "SYSTEM ONLINE" : "BACKEND OFFLINE"}</strong>
-            <small>{health ? `${health.persistence.toUpperCase()} · QUEUE ${health.queue_depth}` : "CHECK API ON :8443"}</small>
+            <small>{health ? `${health.pipeline_mode.toUpperCase()} · ${health.pipeline_status.replaceAll("_", " ").toUpperCase()} · QUEUE ${health.queue_depth}` : "CHECK API ON :8443"}</small>
           </div>
         </div>
       </header>
@@ -512,16 +709,22 @@ export default function OperatorDashboard() {
 
         <section className="source-mode-bar" aria-label="Inspection source">
           {(Object.keys(sourceLabels) as SourceMode[]).map((mode) => (
-            <button className={sourceMode === mode ? "active" : ""} key={mode} type="button" onClick={() => selectSource(mode)}>
+            <button className={sourceMode === mode ? "active" : ""} key={mode} type="button" disabled={Boolean(session)} title={session ? "Choose NEW RUN before changing source" : undefined} onClick={() => selectSource(mode)}>
               <strong>{sourceLabels[mode].label}</strong><span>{sourceLabels[mode].detail}</span>
             </button>
           ))}
         </section>
 
         <section className="pipeline-strip" aria-label="Integration pipeline">
-          {["SOURCE", "PERSIST + QUEUE", "MODEL ADAPTER", "DECISION", "OPERATOR"].map((stage, index) => (
+          {["SOURCE + CLOCK", "PERSIST + QUEUE", "MODEL BRIDGE", "QA + ARTIFACTS", "OPERATOR REVIEW"].map((stage, index) => (
             <div className="pipeline-stage" key={stage}><span>{String(index + 1).padStart(2, "0")}</span><strong>{stage}</strong>{index < 4 && <i aria-hidden="true">→</i>}</div>
           ))}
+        </section>
+
+        <section className="architecture-summary" aria-label="Runtime architecture">
+          <div><span>SHARED MODEL CORE</span><strong>integration/model_pipeline.py</strong><p>Srijan integration consolidated here: YOLO vial geometry → paired Temporal CNN liquid proposal → association → measurement QA.</p></div>
+          <div><span>API BRIDGE</span><strong>api/pipelines/temporal_cnn_bridge.py</strong><p>Loads models once, preserves QA state per run, and maps model output into the inspection contract.</p></div>
+          <div><span>OPERATOR APPLICATION</span><strong>FastAPI + SQLite/artifacts + React</strong><p>Resolves timestamped recipe context, stores source/render/mask evidence, and presents review—not PLC control.</p></div>
         </section>
 
         <div className="dashboard-grid">
@@ -543,14 +746,14 @@ export default function OperatorDashboard() {
             {sourceMode === "live_camera" ? (
               <div className="camera-actions">
                 {!isCameraLive ? <button className="button primary" onClick={() => void startCamera()} type="button"><span className="button-icon">●</span> START CAMERA</button> : <button className="button quiet" onClick={stopCamera} type="button">STOP CAMERA</button>}
-                <button className="button quiet" onClick={() => void sendGeneratedFrame(demoFrame)} disabled={isProcessing} type="button">SEND DEMO FRAME</button>
+                {health?.pipeline_mode === "mock" && <button className="button quiet" onClick={() => void sendGeneratedFrame(demoFrame)} disabled={isProcessing} type="button">SEND DEMO FRAME</button>}
                 <label className="sample-control"><span>SAMPLE SEC</span><input type="number" min="0.1" step="0.1" value={sampleSeconds} onChange={(event) => setSampleSeconds(Number(event.target.value))} /></label>
               </div>
             ) : (
               <div className={`drop-zone ${dragActive ? "active" : ""}`} onDragEnter={(event) => { event.preventDefault(); setDragActive(true); }} onDragOver={(event) => event.preventDefault()} onDragLeave={() => setDragActive(false)} onDrop={onDrop} onClick={() => fileInputRef.current?.click()}>
                 <input ref={fileInputRef} type="file" hidden multiple={sourceMode === "images"} accept={sourceMode === "images" ? "image/jpeg,image/png,image/webp" : "video/mp4,video/webm,video/quicktime,.mov"} onClick={(event) => event.stopPropagation()} onChange={(event) => { const files = Array.from(event.target.files ?? []); event.target.value = ""; void handleFiles(files); }} />
                 <strong>DROP {sourceMode === "images" ? "IMAGES" : "A RECORDING"} HERE</strong>
-                <span>Drag files here or use the file picker · originals and pipeline outputs are retained</span>
+                <span>{sourceMode === "images" ? "Image order supplies 0 s, 1 s, 2 s… timestamps · originals and outputs are retained" : "Media seek time supplies each frame timestamp · original recording and outputs are retained"}</span>
                 <button className="button quiet file-picker-button" type="button" onClick={(event) => { event.stopPropagation(); fileInputRef.current?.click(); }}>CHOOSE FILES</button>
                 {sourceMode === "recording" && <label className="sample-control" onClick={(event) => event.stopPropagation()}><span>FRAME INTERVAL SEC</span><input type="number" min="0.1" step="0.1" value={sampleSeconds} onChange={(event) => setSampleSeconds(Number(event.target.value))} /></label>}
               </div>
@@ -558,33 +761,59 @@ export default function OperatorDashboard() {
 
             {ingestion && <div className="ingestion-progress"><div><strong>{ingestion.label}</strong><span>{ingestion.current} / {ingestion.total}</span></div><div className="progress-track"><span style={{ width: `${Math.round((ingestion.current / ingestion.total) * 100)}%` }} /></div>{isProcessing && <button type="button" onClick={() => { cancelIngestionRef.current = true; }}>STOP AFTER CURRENT FRAME</button>}</div>}
 
-            <div className={`visual-note ${maskImage ? "ready" : "pending"}`}><strong>{maskImage ? "MASK ARTIFACT SAVED" : "MASK OUTPUT PENDING"}</strong><span>{maskImage ? "Source, rendered output, and mask are available from run history." : "The mock adapter persists source frames; the production adapter will add rendered and mask files."}</span></div>
+            <div className={`visual-note ${maskImage ? "ready" : "pending"}`}><strong>{maskImage ? "MASK ARTIFACT SAVED" : "MASK OUTPUT PENDING"}</strong><span>{maskImage ? "Source, rendered output, and mask are available from run history." : health?.pipeline_mode === "model" ? "The model bridge will attach rendered and mask artifacts after successful inference." : "The mock pipeline persists source frames without fabricating model visuals."}</span></div>
 
             <form className="context-form" onSubmit={onContextSubmit}>
-              <div className="context-title"><div><h3>Run and recipe timeline</h3><p>Every frame resolves the recipe segment active at its source timestamp.</p></div><span>{session ? `RUN ${session.session_id.slice(0, 8)}` : "NOT STARTED"}</span></div>
+              <div className="context-title"><div><h3>Planned vial order</h3><p>Define what should arrive, then activate each vial as production advances.</p></div><span>{session ? `RUN ${session.session_id.slice(0, 8)}` : "NOT STARTED"}</span></div>
               <label><span>RUN NAME</span><input value={config.run_name} disabled={Boolean(session)} onChange={(event) => setConfig({ ...config, run_name: event.target.value })} /></label>
               <label><span>CAMERA ID</span><input value={config.camera_id} disabled={Boolean(session)} onChange={(event) => setConfig({ ...config, camera_id: event.target.value })} /></label>
-              <label><span>SEGMENT START SEC</span><input type="number" min="0" step="0.1" value={segmentStartSeconds} onChange={(event) => setSegmentStartSeconds(Number(event.target.value))} /></label>
-              <label><span>ACTIVE RECIPE ID</span><input value={config.recipe.current_recipe_id} onChange={(event) => setConfig({ ...config, recipe: { ...config.recipe, current_recipe_id: event.target.value } })} /></label>
-              <label className="wide-field"><span>ACTIVE RECIPE NAME</span><input value={config.recipe.current_recipe_name} onChange={(event) => setConfig({ ...config, recipe: { ...config.recipe, current_recipe_name: event.target.value } })} /></label>
-              <label><span>PREVIOUS RECIPE ID</span><input value={config.recipe.previous_recipe_id ?? ""} onChange={(event) => setConfig({ ...config, recipe: { ...config.recipe, previous_recipe_id: event.target.value } })} /></label>
-              <label><span>VIAL INDEX</span><input type="number" min="1" value={config.recipe.vial_index} onChange={(event) => setConfig({ ...config, recipe: { ...config.recipe, vial_index: Number(event.target.value) } })} /></label>
-              <label className="check-field"><input type="checkbox" checked={config.recipe.is_first_vial_after_change} onChange={(event) => setConfig({ ...config, recipe: { ...config.recipe, is_first_vial_after_change: event.target.checked } })} /><span>FIRST VIAL AFTER RECIPE CHANGE</span></label>
-              <button className="button primary lock-button" type="submit">{session ? "ADD RECIPE SEGMENT" : "START INSPECTION RUN"}</button>
+              <div className="recipe-plan-editor">
+                <div className="recipe-plan-head"><span>ORDER</span><span>RECIPE</span><span>EXPECTED COLOR</span><span>ACTIONS</span></div>
+                <div className="recipe-plan-list">
+                  {recipePlan.map((recipe, index) => (
+                    <div className={`recipe-plan-row ${index === activePlanIndex ? "active" : ""}`} key={`${recipe.vial_index}-${index}`}>
+                      <div className="vial-order"><strong>VIAL {index + 1}</strong><small>{index === activePlanIndex ? "ACTIVE / NEXT" : `STEP ${index + 1}`}</small></div>
+                      <div className="plan-recipe-fields">
+                        <input aria-label={`Vial ${index + 1} recipe ID`} disabled={Boolean(session)} value={recipe.current_recipe_id} onChange={(event) => updatePlanRecipe(index, { current_recipe_id: event.target.value })} />
+                        <input aria-label={`Vial ${index + 1} recipe name`} disabled={Boolean(session)} value={recipe.current_recipe_name} onChange={(event) => updatePlanRecipe(index, { current_recipe_name: event.target.value })} />
+                      </div>
+                      <div className="plan-color-fields">
+                        <input aria-label={`Vial ${index + 1} color swatch`} className="color-picker" disabled={Boolean(session)} type="color" value={recipe.expected_color_hex ?? "#82918f"} onChange={(event) => updatePlanRecipe(index, { expected_color_hex: event.target.value })} />
+                        <input aria-label={`Vial ${index + 1} expected color`} disabled={Boolean(session)} placeholder="e.g. Blue" value={recipe.expected_color_name ?? ""} onChange={(event) => updatePlanRecipe(index, { expected_color_name: event.target.value })} />
+                      </div>
+                      <div className="plan-actions">
+                        {!session && <><button type="button" disabled={index === 0} onClick={() => movePlanRecipe(index, -1)} title="Move vial up">↑</button><button type="button" disabled={index === recipePlan.length - 1} onClick={() => movePlanRecipe(index, 1)} title="Move vial down">↓</button><button type="button" disabled={recipePlan.length === 1} onClick={() => { applyRecipePlan(recipePlan.filter((_, itemIndex) => itemIndex !== index)); setActivePlanIndex(0); }} title="Remove vial">×</button></>}
+                        <button className="activate-plan" type="button" onClick={() => choosePlanRecipe(index)}>{session ? "ACTIVATE" : "START HERE"}</button>
+                      </div>
+                      <div className="plan-formula">
+                        <span className="formula-heading">FILL STATION 3 VOLUME (mL)</span>
+                        {tankAmountFields.map(({ field, label }) => <label className="tank-dose" key={field}><span>{label}</span><input aria-label={`Vial ${index + 1} ${label} milliliters`} disabled={Boolean(session)} min="0" step="0.1" type="number" value={recipe[field] ?? 0} onChange={(event) => updateTankAmount(index, field, event.target.value)} /></label>)}
+                        <div className="formula-total"><span>TOTAL</span><strong>{formatMl(formulaTotal(recipe))} mL</strong></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                {!session && <button className="button quiet add-vial-button" type="button" onClick={addPlanRecipe}>+ ADD VIAL</button>}
+                <div className="recipe-plan-note"><strong>PLAN ≠ PREDICTION</strong><span>The expected color is operator intent. Activating a vial records when that plan step becomes active; vision independently reports what it observes.</span></div>
+              </div>
+              <div className="active-plan-summary"><span>SELECTED PLAN STEP</span><strong>Vial {config.recipe.vial_index} · {config.recipe.current_recipe_name}</strong><small><i style={{ background: config.recipe.expected_color_hex ?? "#82918f" }} />Expected {config.recipe.expected_color_name ?? "color not set"}</small><small>T100 {formatMl(config.recipe.t100_ml)} · T200 {formatMl(config.recipe.t200_ml)} · T300 {formatMl(config.recipe.t300_ml)} · T400 {formatMl(config.recipe.t400_ml)} · {formatMl(formulaTotal(config.recipe))} mL total</small></div>
+              {!session ? <button className="button primary lock-button" type="submit">START RUN + SAVE ORDER</button> : <div className="activation-help"><strong>NEXT VIAL</strong><span>Choose ACTIVATE on the matching plan row. The source-time boundary is recorded automatically.</span></div>}
               <button className="button quiet" type="button" onClick={() => recipeInputRef.current?.click()}>IMPORT RECIPE CSV</button>
               <input ref={recipeInputRef} hidden type="file" accept=".csv,text/csv" onChange={(event) => void onRecipeImport(event.target.files?.[0])} />
               {session && <button className="button quiet" type="button" onClick={resetSession}>NEW RUN</button>}
+              {recipeImport && <div className={`recipe-import-status ${recipeImport.state}`}><strong>{recipeImport.state === "staged" ? "CSV STAGED" : "CSV IMPORTED"}</strong><span>{recipeImport.fileName}{recipeImport.segmentCount === undefined ? " · will attach when the run starts" : ` · ${recipeImport.segmentCount} new timestamped segments · run ${session?.session_id.slice(0, 8) ?? "pending"}`}</span></div>}
+              <div className="recipe-import-scope"><strong>ORDER + CONTEXT</strong><span>CSV rows populate the vial plan and timestamped replay context. Color labels describe operator intent; qualified references and the decision layer are still required for recipe pass/fail.</span></div>
             </form>
           </section>
 
           <aside className="side-column">
-            <section className={`panel decision-panel decision-${status}`}><div className="panel-heading compact"><div><span className="section-number">02</span><div><h2>Operator decision</h2><p>Human-in-the-loop guidance</p></div></div><span className="mode-badge">{latestEvent?.pipeline_mode.toUpperCase() ?? "NO RESULT"}</span></div><div className="decision-body"><div className="decision-icon">{status === "failure" ? "!" : status === "warning" ? "?" : "✓"}</div><span className="decision-label">CURRENT STATUS</span><h2>{latestEvent?.decision.headline ?? "Awaiting inspection frame"}</h2><p>{latestEvent?.decision.detail ?? "Create a run and ingest a source to exercise the durable pipeline."}</p><div className="recommended-action"><span>OPERATOR ACTION</span><strong>{latestEvent?.decision.recommended_action ?? "Choose source and recipe context"}</strong></div>{latestEvent?.decision.status === "failure" && <button className="button acknowledge" type="button" disabled={Boolean(latestEvent.acknowledged_at)} onClick={() => void acknowledge()}>{latestEvent.acknowledged_at ? "ACKNOWLEDGED" : "ACKNOWLEDGE + REVIEW"}</button>}</div></section>
+            <section className={`panel decision-panel decision-${status}`}><div className="panel-heading compact"><div><span className="section-number">02</span><div><h2>Evidence and QA</h2><p>Human-in-the-loop guidance</p></div></div><span className="mode-badge">{latestEvent?.pipeline_mode.toUpperCase() ?? health?.pipeline_mode.toUpperCase() ?? "NO RESULT"}</span></div><div className="decision-body"><div className="decision-icon">{status === "failure" ? "!" : status === "warning" ? "?" : "✓"}</div><span className="decision-label">EVIDENCE / QA STATUS</span><h2>{latestEvent?.decision.headline ?? "Awaiting inspection frame"}</h2><p>{latestEvent?.decision.detail ?? "Create a run and ingest a source to exercise the durable pipeline."}</p><div className="recommended-action"><span>OPERATOR ACTION</span><strong>{latestEvent?.decision.recommended_action ?? "Choose source and recipe context"}</strong></div>{latestEvent?.decision.status === "failure" && <button className="button acknowledge" type="button" disabled={Boolean(latestEvent.acknowledged_at)} onClick={() => void acknowledge()}>{latestEvent.acknowledged_at ? "ACKNOWLEDGED" : "ACKNOWLEDGE + REVIEW"}</button>}</div></section>
 
-            <section className="panel progress-panel"><div className="panel-heading compact"><div><span className="section-number">03</span><div><h2>Recipe progress</h2><p>{latestEvent?.recipe.current_recipe_name ?? session?.recipe.current_recipe_name ?? "No active segment"}</p></div></div><strong className="progress-value">{latestEvent?.decision.recipe_progress_percent ?? 0}%</strong></div><div className="progress-content"><div className="progress-track"><span style={{ width: `${latestEvent?.decision.recipe_progress_percent ?? 0}%` }} /></div><div className="measurements">{(latestEvent?.decision.measurements ?? [{ label: "Vial", value: "Waiting", state: "neutral" as const }, { label: "Fill", value: "Waiting", state: "neutral" as const }, { label: "Color", value: "Waiting", state: "neutral" as const }]).map((measurement) => <div className={`measurement ${measurement.state}`} key={measurement.label}><span>{measurement.label.toUpperCase()}</span><strong>{measurement.value}</strong></div>)}</div><div className="model-note"><span>PIPELINE SOURCE</span><p>{latestEvent?.decision.model_state ?? "No frame processed"}</p></div></div></section>
+            <section className="panel progress-panel"><div className="panel-heading compact"><div><span className="section-number">03</span><div><h2>{modelEvidenceOnly ? "Recipe context" : "Recipe progress"}</h2><p>{latestEvent?.recipe.current_recipe_name ?? session?.recipe.current_recipe_name ?? "No active segment"} · expected {latestEvent?.recipe.expected_color_name ?? session?.recipe.expected_color_name ?? "color unset"}</p></div></div><strong className={`progress-value ${modelEvidenceOnly ? "not-scored" : ""}`}>{modelEvidenceOnly ? "NOT SCORED" : `${latestEvent?.decision.recipe_progress_percent ?? 0}%`}</strong></div><div className="progress-content"><div className="progress-track"><span style={{ width: modelEvidenceOnly ? "0%" : `${latestEvent?.decision.recipe_progress_percent ?? 0}%` }} /></div><div className="measurements">{(latestEvent?.decision.measurements ?? [{ label: "Vial", value: "Waiting", state: "neutral" as const }, { label: "Fill", value: "Waiting", state: "neutral" as const }, { label: "Color", value: "Waiting", state: "neutral" as const }]).map((measurement) => <div className={`measurement ${measurement.state}`} key={measurement.label}><span>{measurement.label.toUpperCase()}</span><strong>{measurement.value}</strong></div>)}</div>{modelEvidenceOnly && <div className="recipe-scope-note"><strong>PLAN ASSIGNED, NOT YET COMPARED</strong><span>The active vial supplies intended recipe and color. Acceptance still needs a qualified recipe reference and decision layer.</span></div>}<div className="model-note"><span>PIPELINE SOURCE</span><p>{latestEvent?.decision.model_state ?? "No frame processed"}</p></div></div></section>
 
-            <section className="panel events-panel"><div className="panel-heading compact"><div><span className="section-number">04</span><div><h2>Recent frames</h2><p>Persisted newest first</p></div></div><span className="event-count">{events.length}</span></div><div className="event-list">{events.length === 0 ? <div className="empty-events">No persisted inspection frames yet.</div> : events.map((item) => <div className={`event-row ${item.decision.status}`} key={item.event_id}><time>{timestampLabel(item.source_timestamp_ms)}</time><span className="event-marker" /><div><strong>{item.decision.headline}</strong><p>{item.recipe.current_recipe_id} · {item.original_filename ?? item.frame_id}</p></div></div>)}</div><div className="message-bar">{message}</div>{session && <Link className="review-link" to={`/runs/${session.session_id}`}>OPEN FULL FRAME REVIEW →</Link>}</section>
+            <section className="panel events-panel"><div className="panel-heading compact"><div><span className="section-number">04</span><div><h2>Recent frames</h2><p>Persisted newest first · plan context + QA state</p></div></div><span className="event-count">{events.length}</span></div><div className="event-list">{events.length === 0 ? <div className="empty-events">No persisted inspection frames yet.</div> : events.map((item) => <div className={`event-row ${item.decision.status}`} key={item.event_id}><time>{timestampLabel(item.source_timestamp_ms)}</time><span className="event-marker" /><div><strong>{item.pipeline_mode === "model" && item.decision.status === "warning" ? `QA review · ${item.decision.headline}` : item.decision.headline}</strong><p>Vial {item.recipe.vial_index} · planned {item.recipe.expected_color_name ?? item.recipe.current_recipe_id} · {item.original_filename ?? item.frame_id}</p></div></div>)}</div><div className="message-bar">{message}</div>{session && <Link className="review-link" to={`/runs/${session.session_id}`}>OPEN FULL FRAME REVIEW →</Link>}</section>
 
-            <section className="simulation-tools"><span>INTEGRATION TEST CONTROLS</span><div><button type="button" onClick={() => void sendGeneratedFrame(demoFrame, "warning")} disabled={isProcessing}>SIMULATE WARNING</button><button type="button" onClick={() => void sendGeneratedFrame(demoFrame, "failure")} disabled={isProcessing}>SIMULATE FAILURE</button></div><p>Clearly labeled test states; not model predictions.</p></section>
+            {health?.pipeline_mode === "mock" && <section className="simulation-tools"><span>INTEGRATION TEST CONTROLS</span><div><button type="button" onClick={() => void sendGeneratedFrame(demoFrame, "warning")} disabled={isProcessing}>SIMULATE WARNING</button><button type="button" onClick={() => void sendGeneratedFrame(demoFrame, "failure")} disabled={isProcessing}>SIMULATE FAILURE</button></div><p>Clearly labeled test states; not model predictions.</p></section>}
           </aside>
         </div>
       </main>

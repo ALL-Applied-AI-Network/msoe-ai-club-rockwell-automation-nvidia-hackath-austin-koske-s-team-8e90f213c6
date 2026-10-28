@@ -1,24 +1,14 @@
-# Frontend + API starter for the app team
+# Linewatch inspection API
 
-Josiah and Hayden: this is Austin's `full-stack-app` template adapted into a
-standalone local starter. Use it as a reference or copy it into your app branch;
-it does not replace anyone's dashboard/backend work.
+FastAPI service for multi-source frame ingestion, recipe timelines, persistent
+run history, model work queues, and operator-in-the-loop results.
 
-- [`../client/`](../client/README.md): React, TypeScript, Vite, React Router, TanStack Query and Axios.
-- `api/`: FastAPI with router → service → in-memory data adapter boundaries.
-- The disposable widgets example demonstrates a working UI/API round trip.
-  Its state lives only in the API process and resets on restart. Use one worker.
-
-There is no database, SQL driver, authentication requirement, Terraform,
-deployment pipeline, model inference or industrial connection in this starter.
-It needs no secrets. Keep real operator evidence/history requirements separate
-from the disposable widget example when implementing your application.
+The service stores metadata in SQLite and source/rendered/mask/recording files
+under `api/data/`. The React client in `../client/` consumes these endpoints.
 
 ## Run locally
 
-Use Python3.11+ and Node22.12+ (or a supported newer LTS). Open two terminals.
-
-API, from the repository root:
+From the repository root:
 
 ```text
 cd api
@@ -26,30 +16,48 @@ uv sync --frozen
 uv run uvicorn main:app --reload --host 127.0.0.1 --port 8443
 ```
 
-Frontend:
+API documentation is available at `http://127.0.0.1:8443/docs` outside the
+production environment. Health and model readiness are reported at `/health`.
 
-```text
-cd client
-npm ci
-npm run dev
-```
+## Pipeline modes
 
-Open `http://localhost:3000`. The development server proxies `/api` to the API
-on8443. API documentation: `http://127.0.0.1:8443/docs`; health: `/health`.
-No page is opened automatically. Stop both processes with Ctrl+C.
+The default `mock` mode exercises ingestion, persistence, queueing and operator
+states without claiming model inference. Its test controls are visible only in
+mock mode.
 
-For a different local API port, set `API_PROXY_TARGET` before starting Vite.
-For an independently hosted API, set `VITE_API_BASE_URL` explicitly at build time.
+The Temporal CNN bridge is enabled with `APP__PIPELINE_MODE=model`. It adapts
+the reusable `integration/model_pipeline.py` core into the API's frame,
+artifact and operator-review contracts. It runs:
 
-## Where to work
+1. YOLO vial detection.
+2. Paired Temporal CNN liquid proposal using a qualified empty reference.
+3. Same-frame vial association.
+4. Stateful measurement QA, isolated per inspection run.
+5. Rendered frame, mask and operator-review metadata persistence.
 
-Client: `models/` → `services/` → `hooks/` → `pages/` and `components/`.
-API: `models/` request/response contracts, `routers/` HTTP, `services/` behavior,
-`databridge/` replaceable data adapters, and `dependencies.py` wiring.
+That core consolidates Srijan's former single-frame and batch integration
+implementations; both CLI entrypoints and FastAPI now call the same functions.
 
-Replace widgets with your operator-facing resources and Srijan's agreed model
-output contracts. This starter intentionally makes no model, recipe or quality
-decision. The dataset/training work remains elsewhere in the repository.
+## Recipe plans
+
+`PUT /api/v1/sessions/{session_id}/recipe-plan` persists the operator's ordered
+vial plan. Each step contains a recipe, vial position and optional descriptive
+expected-color intent plus Tank 100/200/300/400 volumes in mL. `GET` on the same
+path returns the durable order for run
+review. Activating a step creates a normal recipe segment, so subsequent frames
+resolve the intended vial by source time without treating the plan as a model
+prediction or qualified color reference.
+
+Copy `example.env` to `api/.env` and configure the two ignored checkpoints and
+an aligned 640×480 empty-vial reference. Set
+`APP__TEMPORAL_REFERENCE_QUALIFIED=true` only after that reference has been
+independently reviewed. A temporal reference is not a recipe endpoint reference;
+recipe acceptance remains an explicit future decision layer.
+
+The pinned vision packages are listed in
+`../setup/requirements/temporal-pool.in`. Install the appropriate PyTorch wheel
+for the target CPU/CUDA host before enabling model mode. Keep one model worker
+unless shared-model concurrency is deliberately validated.
 
 ## Checks
 
@@ -58,13 +66,6 @@ cd api
 uv run pytest
 ```
 
-```text
-cd client
-npm run typecheck
-npm run lint
-npm run build
-```
-
-Adapted from Austin's local `full-stack-app` source; database/auth/deployment
-examples were removed, and widget storage was replaced with a process-local
-dictionary. Dependency locks are included for repeatable installation.
+The bridge tests use a fake inference backend, so API contract and safety-state
+tests do not require GPU packages or checkpoints. Actual model execution still
+requires the configured assets and vision environment.

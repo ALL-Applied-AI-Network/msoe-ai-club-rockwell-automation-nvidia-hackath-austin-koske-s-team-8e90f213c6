@@ -15,6 +15,8 @@ from models.inspection import (
     InspectionEvent,
     InspectionSession,
     RecipeContext,
+    RecipePlanItem,
+    ReplaceRecipePlanRequest,
     RecipeSegment,
     RecipeSegmentCreate,
 )
@@ -82,6 +84,29 @@ async def list_recipe_segments(
     return segments
 
 
+@router.get("/{session_id}/recipe-plan", response_model=list[RecipePlanItem])
+async def list_recipe_plan(
+    session_id: UUID,
+    service: InspectionService = Depends(get_inspection_service),
+):
+    plan = await service.list_recipe_plan(session_id)
+    if plan is None:
+        raise HTTPException(404, "Inspection run not found")
+    return plan
+
+
+@router.put("/{session_id}/recipe-plan", response_model=list[RecipePlanItem])
+async def replace_recipe_plan(
+    session_id: UUID,
+    body: ReplaceRecipePlanRequest,
+    service: InspectionService = Depends(get_inspection_service),
+):
+    plan = await service.replace_recipe_plan(session_id, body.recipes)
+    if plan is None:
+        raise HTTPException(404, "Inspection run not found")
+    return plan
+
+
 @router.post("/{session_id}/recipe-segments", response_model=RecipeSegment, status_code=201)
 async def add_recipe_segment(
     session_id: UUID,
@@ -114,12 +139,17 @@ async def import_recipe_segments(
     if not rows:
         raise HTTPException(400, "Recipe CSV contains no rows")
 
-    imported: list[RecipeSegment] = []
+    parsed: list[RecipeSegmentCreate] = []
     previous_id: str | None = None
     for index, row in enumerate(rows, 1):
         recipe_id = (row.get("recipe_id") or row.get("current_recipe_id") or "").strip()
         if not recipe_id:
             raise HTTPException(400, f"Row {index} is missing recipe_id")
+
+        def optional_float(name: str) -> float | None:
+            value = (row.get(name) or "").strip()
+            return float(value) if value else None
+
         try:
             start_ms = int(float(row.get("start_ms") or float(row.get("start_s") or 0) * 1000))
             end_value = row.get("end_ms")
@@ -128,8 +158,15 @@ async def import_recipe_segments(
                 else int(float(row["end_s"]) * 1000) if row.get("end_s") else None
             )
             vial_index = int(row.get("vial") or row.get("vial_index") or 1)
+            t100_ml = optional_float("t100_ml")
+            t200_ml = optional_float("t200_ml")
+            t300_ml = optional_float("t300_ml")
+            t400_ml = optional_float("t400_ml")
+            total_ml = optional_float("total_ml")
         except ValueError as error:
             raise HTTPException(400, f"Row {index} has an invalid timestamp or vial") from error
+        if end_ms is not None and end_ms < start_ms:
+            raise HTTPException(400, f"Row {index} ends before it starts")
         recipe = RecipeContext(
             current_recipe_id=recipe_id,
             current_recipe_name=(
@@ -139,14 +176,45 @@ async def import_recipe_segments(
             previous_recipe_id=(row.get("previous_recipe_id") or previous_id or None),
             vial_index=vial_index,
             is_first_vial_after_change=recipe_id != previous_id,
+            expected_color_name=(
+                row.get("expected_color_name") or row.get("expected_color")
+                or row.get("color_purpose") or None
+            ),
+            expected_color_hex=(row.get("expected_color_hex") or None),
+            t100_ml=t100_ml,
+            t200_ml=t200_ml,
+            t300_ml=t300_ml,
+            t400_ml=t400_ml,
+            total_ml=total_ml,
+            dispense_order=(row.get("dispense_order") or None),
+            color_purpose=(row.get("color_purpose") or None),
         )
-        segment = await service.add_recipe_segment(
-            session_id,
-            RecipeSegmentCreate(start_ms=start_ms, end_ms=end_ms, recipe=recipe),
+        parsed.append(RecipeSegmentCreate(start_ms=start_ms, end_ms=end_ms, recipe=recipe))
+        previous_id = recipe_id
+
+    def key(segment: RecipeSegment | RecipeSegmentCreate):
+        recipe = segment.recipe
+        return (
+            segment.start_ms, segment.end_ms, recipe.current_recipe_id,
+            recipe.current_recipe_name, recipe.previous_recipe_id,
+            recipe.vial_index, recipe.is_first_vial_after_change,
+            recipe.expected_color_name, recipe.expected_color_hex,
+            recipe.t100_ml, recipe.t200_ml, recipe.t300_ml, recipe.t400_ml,
+            recipe.total_ml,
+            recipe.dispense_order, recipe.color_purpose,
         )
+
+    existing = await service.databridge.list_recipe_segments(session_id) or []
+    known = {key(segment) for segment in existing}
+    imported: list[RecipeSegment] = []
+    for request_body in parsed:
+        segment_key = key(request_body)
+        if segment_key in known:
+            continue
+        segment = await service.add_recipe_segment(session_id, request_body)
         if segment:
             imported.append(segment)
-        previous_id = recipe_id
+            known.add(segment_key)
     return imported
 
 

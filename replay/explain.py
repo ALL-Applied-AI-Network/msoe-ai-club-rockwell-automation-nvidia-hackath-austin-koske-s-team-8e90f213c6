@@ -183,6 +183,21 @@ def parse(text, allowed_ids):
     return {k: obj.get(k) for k in ("cause", "confidence", "evidence_ids", "explanation", "next_check")}, problems
 
 
+def contradictions(packet, explanation):
+    """Claims the packet's own numbers rule out."""
+    ctx, c, cause = packet["context"], packet["comparison"], explanation["cause"]
+    found = []
+    if cause == "carryover" and not ctx.get("previous_recipe"):
+        found.append("carryover_without_previous_recipe")
+    elif cause == "carryover" and c.get("direction_cos") is None:
+        found.append("carryover_without_colour_comparison")
+    if cause == "carryover" and c.get("direction_cos") is not None and c["direction_cos"] < 0.5:
+        found.append("carryover_but_colour_not_toward_previous")
+    if cause == "no_reference" and c.get("de_intended") is not None:
+        found.append("no_reference_but_reference_used")
+    return found
+
+
 def score(results, truth=None):
     n = len(results)
     rule = [r["rule_baseline"]["cause"] for r in results]
@@ -196,6 +211,9 @@ def score(results, truth=None):
             sum(c == rule_map(r) for c, r in zip(causes, results) if rule_map(r)), sum(bool(rule_map(r)) for r in results)),
         "latency_s_median": sorted(r["explanation_meta"]["latency_s"] for r in results)[n // 2] if n else None,
         "stage4_rule_causes": dict(Counter(rule)),
+        "consistent_with_packet": sum(not contradictions(r, r["explanation"]) for r in results),
+        "contradictions": {f"vial {r['context']['seq']}": contradictions(r, r["explanation"])
+                           for r in results if contradictions(r, r["explanation"])},
     }
     if truth:
         scored = [(r["context"]["seq"], c) for r, c in zip(results, causes) if r["context"]["seq"] in truth]
@@ -222,10 +240,17 @@ def main():
     parser.add_argument("--keyframes", type=Path, help="directory from --export-keyframes (instead of --video)")
     parser.add_argument("--export-keyframes", type=Path, help="write keyframe crops for every packet and exit")
     parser.add_argument("--text-only", action="store_true", help="send no images (numbers only)")
+    parser.add_argument("--rescore", type=Path, help="recompute metrics.json for an existing rca-<name> directory")
     parser.add_argument("--truth", type=Path, help="CSV seq,cause (synthetic sessions) for cause accuracy")
     parser.add_argument("--max-tokens", type=int, default=1024)
     parser.add_argument("--timeout", type=float, default=120)
     args = parser.parse_args()
+    if args.rescore:
+        results = [json.loads(p.read_text()) for p in sorted(args.rescore.glob("vial-*.json"))]
+        summary = score(results)
+        (args.rescore / "metrics.json").write_text(json.dumps(summary, indent=1))
+        print(json.dumps(summary, indent=1))
+        return
     if args.export_keyframes:
         export_keyframes(args.run, args.video, args.export_keyframes)
         return

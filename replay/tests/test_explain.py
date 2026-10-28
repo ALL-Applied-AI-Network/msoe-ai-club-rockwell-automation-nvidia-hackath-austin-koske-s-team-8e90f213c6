@@ -1,6 +1,6 @@
 import unittest
 
-from replay.explain import SECTIONS, parse, rule_explain
+from replay.explain import SECTIONS, contradictions, parse, rule_explain
 
 ALLOWED = set(SECTIONS) | {"image:fill_end_frame"}
 
@@ -36,6 +36,15 @@ class ExplainTest(unittest.TestCase):
             explanation, problems = parse(rule_explain(packet(pattern)), ALLOWED)
             assert problems == [], (pattern, problems)
         assert rule_explain(packet("carryover"))["cause"] == "carryover"
+
+
+    def test_carryover_needs_a_previous_recipe_and_direction(self):
+        first = packet("deviation", cos=None)
+        first["context"]["previous_recipe"] = None
+        self.assertEqual(contradictions(first, {"cause": "carryover"}), ["carryover_without_previous_recipe"])
+        self.assertEqual(contradictions(packet("deviation", cos=0.1), {"cause": "carryover"}),
+                         ["carryover_but_colour_not_toward_previous"])
+        self.assertEqual(contradictions(packet("carryover"), {"cause": "carryover"}), [])
 
 
 if __name__ == "__main__":

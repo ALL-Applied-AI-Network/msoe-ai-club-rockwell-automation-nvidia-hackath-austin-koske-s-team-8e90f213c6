@@ -187,12 +187,35 @@ and cause accuracy when `--truth seq,cause` exists (synthetic sessions). Rule ba
 Run 5 packets: 20/20 valid and grounded, 10/10 agreement (5 carryover, 5 no reference); the other
 10 are dose error 4 / unknown 6, which Run 5 cannot check because it has no cause labels.
 
+## RCA explainers on Run 5 (v1)
+
+The 20 non-PASS Run 5 evidence packets went to each explainer unchanged. Cosmos-Reason1-7B and
+Qwen2.5-VL-7B ran zero-shot on the GB10 (bf16, greedy) with the same prompt, written before the
+run and not changed after. Images are the vial-region crops at the empty, mid-fill and fill-end
+frames. [Record](../setup/verification/rca-explainers-run5-20261028.json).
+
+| Explainer | Schema-valid | Cited real evidence | Agrees where stage 4 fixes the cause | Consistent with packet | Median s/vial | Causes |
+| --- | --- | --- | --- | --- | --- | --- |
+| Rule baseline | 20 | 20 | 10/10 | 20 | 0 | carryover 5, no reference 5, dose error 4, unknown 6 |
+| Cosmos-Reason1-7B + images | 18 | 19 | 5/10 | 6 | 17.0 | carryover 19, unknown 1 |
+| Cosmos-Reason1-7B, numbers only | 16 | 18 | 7/10 | 9 | 16.4 | carryover 15, no reference 3, unknown 2 |
+| Qwen2.5-VL-7B + images | 20 | 20 | 5/10 | 5 | 10.6 | carryover 20 |
+
+"Consistent with packet" fails a claim the packet rules out: carryover on the first vial of the
+run, carryover with no colour comparison (no measurement or no reference), carryover when colour
+moved away from the previous recipe, or "no reference" when a reference was used. Both VLMs find
+all 5 real carryovers but call almost everything carryover with 0.7–0.95 confidence, and the
+images make Cosmos worse, not better. Zero-shot VLM causes are not usable; verdicts and actions stay
+numeric, and the VLM's job (if any) is wording plus visual causes after a LoRA on synthetic packets.
+Run 5 has no cause labels, so none of this is cause accuracy.
+
 ## Finished-vial tray on Run 5 (v1)
 
 `replay/tray.py` reads the Run 5 cap_seal video (same clock as the fill camera; burned-in clocks
 agree within ~20 ms). Good-tray slots are occupied when their patch differs from the empty tray at
 frame 0 for 5 s with no arm over the trays; a slot without yellow is a missing or crooked cap. The
-Bad tray is counted by yellow caps only. Arrivals are aligned in order to the line runner's vials,
+Bad tray is counted by yellow caps only. Run 4 with unchanged settings: 3 arrivals matched (transit
+118–148 s), the remaining vials in transit when its 5-minute video ends. Arrivals are aligned in order to the line runner's vials,
 allowing a vial that never arrives. Slot grid and thresholds were set by looking at Run 5
 (start/end frames and the 1215–1290 s window), so this is a demonstration, not a blind test.
 

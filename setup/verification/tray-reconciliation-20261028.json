@@ -1,0 +1,115 @@
+{
+ "record": "tray-reconciliation-20261028",
+ "date": "2026-10-28",
+ "command": "python -m replay.tray --video cap_seal_video_N.mp4 --run <line run> --out <dir>",
+ "inputs": {
+  "run5": "cap_seal_video_5.mp4 + line runner run5-v3 ledger",
+  "run4": "cap_seal_video_4.mp4 + line runner run4-v1 ledger"
+ },
+ "settings": "Slot grid, thresholds and stability set by inspecting Run 5 start/end frames and the 1215-1290 s window; Run 4 run afterwards without changes. Demonstration, not a blind test.",
+ "run5": {
+  "vials_left_fill_station": 30,
+  "tray_arrivals": 26,
+  "matched": 26,
+  "typical_transit_s": 136.3,
+  "transit_s_median": 127.8,
+  "transit_s_range": [
+   100.4,
+   166.2
+  ],
+  "unmatched_arrivals": [],
+  "not_seen_arriving": [],
+  "in_transit_at_end": [
+   27,
+   28,
+   29,
+   30
+  ],
+  "routed_as_decided": [
+   2,
+   3,
+   6,
+   8,
+   9,
+   17,
+   18,
+   20,
+   21,
+   24
+  ],
+  "escaped_to_good": {
+   "SCRAP": [
+    1,
+    4,
+    5,
+    7,
+    16,
+    19,
+    23
+   ],
+   "HOLD": [
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    22,
+    25,
+    26
+   ]
+  },
+  "good_vial_in_bad_tray": [],
+  "missing_cap": [
+   17,
+   20
+  ],
+  "final_cap_counts": {
+   "good": 25,
+   "bad": 0
+  },
+  "final_good_slots_occupied": 26,
+  "good_tray_cap_arrivals": 25,
+  "cap_count_dips": 3,
+  "slots_vacated": []
+ },
+ "run4": {
+  "vials_left_fill_station": 7,
+  "tray_arrivals": 3,
+  "matched": 3,
+  "typical_transit_s": 131.8,
+  "transit_s_median": 131.8,
+  "transit_s_range": [
+   118.2,
+   148.2
+  ],
+  "unmatched_arrivals": [],
+  "not_seen_arriving": [],
+  "in_transit_at_end": [
+   4,
+   5,
+   6,
+   7
+  ],
+  "routed_as_decided": [],
+  "escaped_to_good": {
+   "SCRAP": [],
+   "HOLD": [
+    1,
+    2,
+    3
+   ]
+  },
+  "good_vial_in_bad_tray": [],
+  "missing_cap": [],
+  "final_cap_counts": {
+   "good": 3,
+   "bad": 0
+  },
+  "final_good_slots_occupied": 3,
+  "good_tray_cap_arrivals": 3,
+  "cap_count_dips": 0,
+  "slots_vacated": []
+ },
+ "outputs": "/mnt/c/Users/Austin/ai-club-tools/results/tray-20261028/ (samples, events, reconciliation, line-and-tray.mp4)"
+}

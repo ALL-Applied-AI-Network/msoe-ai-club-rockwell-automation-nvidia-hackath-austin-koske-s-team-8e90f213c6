@@ -10,6 +10,7 @@
 | [Demo](demo.md) · [script](demo-script.md) | Laptop/GB10 operator app and rehearsal |
 | [CSI session](csi-session.md) | On-site setup, recording and data handling |
 | [Line runner on GB10](deploy-gb10-line.md) | Plan: capture, line runner, tray and RCA on CSI GB10s |
+| [Handoff 2026-10-28](handoff-20261028.md) | What is new on the line-runner branch and what each person needs |
 | [Operations](operations.md) · [Compute](compute.md) | Reference setup, supervised test, compute hosts |
 | [Investigation](investigation.md) | Rule-based sequence diagnosis panel (RCA baseline) |
 | [Branches](branches.md) | What each branch holds and what to do with it |

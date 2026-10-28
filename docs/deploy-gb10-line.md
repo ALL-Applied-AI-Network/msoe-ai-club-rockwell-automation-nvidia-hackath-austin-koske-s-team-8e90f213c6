@@ -8,11 +8,15 @@ Plan for running the whole pipeline on site:
 4. annotated video;
 5. RCA.
 
-Everything runs on a CSI GB10, without CSI's inspection software. It builds on the existing
-GB10 kit ([setup/gb10](../setup/gb10/README.md), `linewatch-gb10-v1.1.0`). That kit already
-runs on spark8 without Docker or root and passes its self-test on CUDA. The kit serves the
-per-frame app only. The line runner (`replay.line`, `replay.tray`, `replay.annotate`,
-`replay.explain`) is not in it yet.
+The target is **CSI's own GB10(s)**, not our campus Spark. We also don't use CSI's inspection
+software. We don't know how CSI's machines are set up: admin rights, Docker, internet. So the
+kit has to work either way, and the first step on site records what is there.
+
+The plan builds on the existing GB10 kit ([setup/gb10](../setup/gb10/README.md),
+`linewatch-gb10-v1.1.0`). It is self-contained: it brings its own Python, needs no root and
+uses Docker only if Docker is present. It has passed its self-test on GB10 hardware (40/40 on
+CUDA). The kit serves the per-frame app only. The line runner (`replay.line`, `replay.tray`,
+`replay.annotate`, `replay.explain`) is not in it yet.
 
 The plan makes no connection to the line: no PLC, no sorter, no industrial network. Actions are
 recommendations shown to the operator and logged. Cameras are UVC devices plugged into the GB10.
@@ -27,6 +31,8 @@ tray camera (USB, cap_seal view) ──┘           annotated video, rule RCA, 
                                                     ▼
                                     GB10-B (optional)  Cosmos/Qwen RCA, spare for A
 ```
+
+GB10-A and GB10-B are both CSI machines.
 
 - **GB10-A runs everything that decides.**
   - Two 640×480 streams are light.
@@ -49,17 +55,26 @@ tray camera (USB, cap_seal view) ──┘           annotated video, rule RCA, 
 | Piece | Status | Work |
 | --- | --- | --- |
 | Python 3.12, torch cu130, OpenCV, numpy | In the kit lock (`lock-cuda.txt`) | none |
-| Fill models (YOLO11n + temporal U-Net) | In the kit; self-test 40/40 on spark8 | none |
+| Fill models (YOLO11n + temporal U-Net) | In the kit; self-test 40/40 on GB10 hardware | Rerun the self-test on CSI's GB10 (gate 1) |
 | `replay.line/decide/tray/annotate/explain` | On `austin/line-runner` | Add the modules to `build-kit.sh`, plus `integration/runtime.py`, which is already copied |
 | Headless capture | Missing | New `replay/capture.py`: OpenCV V4L2, MJPEG 640×480 at 30 fps per camera. Writes 60 s MJPEG segments and a `frames.jsonl` of `(camera, frame, mono_ns, wall)` |
-| H.264 output | Missing: spark8 has no `ffmpeg`, and the kit avoids apt | `annotate.py` keeps its OpenCV `mp4v` output when no `ffmpeg` is present. Add `imageio-ffmpeg`, which ships an aarch64 binary, to the lock for H.264 |
+| H.264 output | Missing: CSI's GB10 may not have `ffmpeg`, and the kit avoids apt | `annotate.py` keeps its OpenCV `mp4v` output when no `ffmpeg` is present. Add `imageio-ffmpeg`, which ships an aarch64 binary, to the lock for H.264 |
 | Kit entry points | `START.sh` serves the app only | `START.sh capture`, `START.sh line`, `START.sh selftest-line` |
-| VLM explainer (GB10-B) | Ran on spark8 in a separate env (torch 2.11, transformers 5.20) | A separate `cosmos` lock and an offline weight bundle of about 16 GB per 7B model (Cosmos-Reason1-7B, Qwen2.5-VL-7B), carried by USB on exFAT. Load by snapshot path, because model-ID lookup fails offline |
+| VLM explainer (GB10-B) | Run 5 results came from a separate env (torch 2.11, transformers 5.20) | A separate `cosmos` lock and an offline weight bundle of about 16 GB per 7B model (Cosmos-Reason1-7B, Qwen2.5-VL-7B), carried by USB on exFAT. CSI's GB10 may have no internet. Load by snapshot path, because model-ID lookup fails offline |
 
-The Linewatch recorder (`Linewatch-recorder`, the Tk capture GUI) stays a laptop tool. On a
-GB10 it would need `python3-tk` and `ffmpeg` from apt. We should not assume root on CSI's
-GB10s, and our account on spark8 has no Docker or apt. Its vial log format (`vial_log.csv`) is
-still the right way to write down ground truth. `capture.py` should write the same columns.
+The Linewatch recorder (`Linewatch-recorder`, the Tk capture GUI) needs `python3-tk` and
+`ffmpeg` from apt. If CSI gives us admin rights on their GB10, it can run there as a backup
+recorder. The plan doesn't depend on it: `capture.py` runs headless from the kit with no
+installs. Its vial log format (`vial_log.csv`) is still the right way to write down ground
+truth. `capture.py` should write the same columns.
+
+**What to use, by what CSI's GB10 allows** (`START.sh --check` reports it):
+
+| CSI GB10 has | Run with |
+| --- | --- |
+| Docker and the NVIDIA Container Toolkit (stock DGX OS ships both) | `onboard.sh` Docker GPU path for the app; the line runner from the kit |
+| No Docker, no admin | The native kit only (bundled Python, hash-locked wheels) |
+| No internet | The offline kit (`wheels/`) and the Cosmos weights from USB |
 
 ## Calibration on site (per camera mount)
 
@@ -108,9 +123,10 @@ segments and decides each vial when its dwell closes:
 
 | Gate | Pass condition | Where |
 | --- | --- | --- |
-| 1. Kit self-test | `START.sh --selftest`: 40/40 on CUDA | Done on spark8 |
-| 2. Line self-test | A Run 5 clip and its samples rebuild the committed ledger and `reconciliation.json` byte for byte, and `line` run with the models matches the verdicts | spark8 before travel |
-| 3. Throughput | Runner on the full Run 5 video keeps up with real time (≥ 10 frames/s as sampled) on GB10 CUDA. Record the measured speed in [evaluation](evaluation.md) | spark8 before travel |
+| 0. Kit build test | `selftest-line` passes on CPU (rebuilds the Run 5 ledger and reconciliation from stored samples) | Laptop/WSL before travel |
+| 1. Kit self-test | `START.sh --check` facts saved; `START.sh --selftest`: 40/40 on CUDA | CSI GB10 |
+| 2. Line self-test | A Run 5 clip and its samples rebuild the committed ledger and `reconciliation.json` byte for byte, and `line` run with the models matches the verdicts | CSI GB10 |
+| 3. Throughput | Runner on the full Run 5 video keeps up with real time (≥ 10 frames/s as sampled) on CUDA. Record the measured speed in [evaluation](evaluation.md) | CSI GB10 |
 | 4. Camera check | Both `/dev/video*` open at 640×480 MJPEG, no dropped frames over 10 min, `mono_ns` gaps < 50 ms | CSI GB10 |
 | 5. Framing | Calibration overlay reviewed and `station.json` saved | CSI GB10 |
 | 6. Dry run | 3 vials with a known recipe give the right verdicts, all 3 reach the tray in the reconciliation, and the annotated video is readable | CSI GB10 |
@@ -126,7 +142,7 @@ session is real data. It is evaluation only and is never used for tuning, like R
 | 2 | `--station station.json` in `line`/`tray`/`annotate`, and `tray --calibrate` with an overlay | ½ day | Austin |
 | 3 | `annotate.py` falls back to `mp4v`, and `imageio-ffmpeg` goes in the lock (regenerate the locks, rerun the self-test) | 2 h | Austin |
 | 4 | `build-kit.sh` copies the line-runner modules; `START.sh capture/line/selftest-line`; kit v1.2.0 | ½ day | Austin |
-| 5 | Gates 2 and 3 on spark8, with results recorded in `setup/verification/` | 2 h | Austin |
+| 5 | `selftest-line` plus gate 0 on the laptop; online and offline kits on USB (exFAT) | 2 h | Austin |
 | 6 | Per-dwell `decide` (live mode) and ledger tail in the app | 1 day | Austin + Josiah |
 | 7 | Offline Cosmos bundle (lock, weights, `explain.py --backend hf`) for GB10-B, used for the LoRA once Zoe and Jev have one | ½ day | Zoe/Jev |
 
@@ -135,7 +151,8 @@ Items 1–5 are enough for mode 1 at CSI. Item 6 is the live demo. Item 7 is opt
 ## Ask CSI before the visit
 
 - How many GB10s, and is one free for us for the whole session? Is there a user account with
-  USB camera access (the `video` group)? Is there internet, or do we bring the offline kit?
+  USB camera access (the `video` group)? Admin rights or Docker? Is there internet, or do we
+  bring the offline kit?
 - Can we mount our two USB cameras in the Run 5 positions, or use CSI's existing cameras over
   USB (UVC)? We do not use network cameras on their network.
 - The recipe schedule for each run, in order (`seq,recipe_id`), and the Recipe Setup limits.

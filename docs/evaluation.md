@@ -177,6 +177,16 @@ countdowns and a strip of all scheduled vials. Verdicts and actions appear at th
 time; fill phase uses the finalized segmentation. Local renders are in the results directory
 (`run5-v1/annotated.mp4` and an 8x `annotated-8x.mp4`), not in Git.
 
+RCA explainers: `python -m replay.explain --run DIR --backend rule` or `--backend openai --url
+http://HOST:8000/v1 --model M --video V` (any OpenAI-compatible server, e.g. vLLM serving Cosmos
+Reason2-2B with the team LoRA; `--video` attaches empty / mid-fill / fill-end crops). Output that is
+not one JSON object with a taxonomy cause, cited packet sections and an operator explanation is
+recorded as `unknown` with the problem listed. Reported per backend: schema-valid and grounded
+counts, cause distribution, agreement with the stage-4 pattern where it determines a cause, latency,
+and cause accuracy when `--truth seq,cause` exists (synthetic sessions). Rule baseline on the 20
+Run 5 packets: 20/20 valid and grounded, 10/10 agreement (5 carryover, 5 no reference); the other
+10 are dose error 4 / unknown 6, which Run 5 cannot check because it has no cause labels.
+
 ## Sequence-diagnosis pilot
 
 The investigation module was exercised on 1,620 analytic four-vial sequences across

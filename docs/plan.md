@@ -45,7 +45,7 @@ simulation only, evaluate against Run 5 as real ground truth, and measure the si
 | 2 | Segment vials | Detect vial arrival → fill start → fill end → departure from the video, with no manual FINISH VIAL. Empty-vial frame becomes that vial's temporal reference | **Done v1** (`replay/line.py`): Run 5 30/30 vials, 0 false positives |
 | 3 | Measure | Endpoint = median Lab of QA-valid samples in the last 6 s of the fill (rule fixed on Runs 1–4). Also keep the in-fill Lab trajectory | **Done** (`replay/run5_endpoints.py`, `client/src/services/recipeCheck.ts`) |
 | 4 | Decide | Deterministic rules turn measurements + schedule + library into a verdict, an action and a deadline (below) | **Done v1** (`replay/decide.py`): PASS/SCRAP/FLUSH/STOP/HOLD + proactive flush, with deadlines |
-| 5 | Explain (RCA) | Evidence packet → cause from a fixed taxonomy, confidence, cited evidence, next check | **Partial**: evidence packets + rule baseline written per non-PASS vial (`rca/vial-NN.json`); LLM and Cosmos explainers to plug in |
+| 5 | Explain (RCA) | Evidence packet → cause from a fixed taxonomy, confidence, cited evidence, next check | **Partial**: evidence packets per non-PASS vial (`rca/vial-NN.json`, with QA flags and 3 keyframes); `replay/explain.py` runs the rule baseline or any OpenAI-compatible endpoint (vLLM + Cosmos, text LLM) with keyframe crops, validates the schema and scores. Live Cosmos/LLM run pending a served endpoint |
 
 Stages 1–4 are deterministic and numeric. The VLM/LLM explains; it never changes a verdict or action.
 

@@ -13,6 +13,7 @@ seconds (frame / fps). The n-th detected filled vial is schedule row n.
 import argparse
 import csv
 import json
+from collections import Counter
 from pathlib import Path
 
 import cv2
@@ -108,6 +109,8 @@ def segment(dwell, fps):
         "fill_start_frame": samples[start]["frame"], "fill_end_frame": samples[end]["frame"],
         "final_liquid_px": final, "samples": len(samples), "qa_valid_samples": sum(s["qa_valid"] for s in samples),
         "endpoint_samples": len(window), "endpoint_lab": lab,
+        "mid_fill_frame": samples[(start + end) // 2]["frame"],
+        "qa_flags": dict(Counter(f for s in samples[start:] for f in s.get("flags", [])).most_common()),
         # Causal decision time: the vial is decided when the carrier moves it on.
         "decision_s": dwell["end_frame"] / fps,
     }
@@ -201,12 +204,12 @@ def write_outputs(out, vials, verdicts, actions, schedule, dwells, args):
             "context": {"seq": vial["seq"], "intended_recipe": v.recipe_id, "previous_recipe": v.previous_recipe_id,
                         "next_recipe": schedule[vial["seq"]] if vial["seq"] < len(schedule) else None},
             "measurement": {k: vial[k] for k in ("endpoint_lab", "endpoint_samples", "qa_valid_samples", "samples",
-                                                 "fill_start_s", "fill_end_s", "final_liquid_px")},
+                                                 "fill_start_s", "fill_end_s", "final_liquid_px", "qa_flags")},
             "comparison": {"de_intended": v.de_intended, "de_previous": v.de_previous, "direction_cos": v.direction_cos,
                            "verdict": v.verdict, "pattern": v.pattern},
             "neighbours": neighbours,
             "keyframes": {"reference_frame": vial["reference_frame"], "fill_start_frame": vial["fill_start_frame"],
-                          "fill_end_frame": vial["fill_end_frame"]},
+                          "mid_fill_frame": vial["mid_fill_frame"], "fill_end_frame": vial["fill_end_frame"]},
             "actions": [as_dict(a) for a in v.actions],
             "rule_baseline": {"cause": rule_cause(v)},
             "explanation": None,

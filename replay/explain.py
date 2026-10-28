@@ -4,6 +4,7 @@
     python -m replay.explain --run DIR --backend openai --url http://HOST:8000/v1 --model M [--video V]
     python -m replay.explain --run DIR --export-keyframes DIR/keyframes --video V     # needs cv2
     python -m replay.explain --run DIR --backend hf --model PATH_OR_ID [--keyframes DIR/keyframes]
+    TYPESAFE_API_KEY=... python -m replay.explain --run DIR --backend jev [--keyframes DIR/keyframes]
 
 Backends see the same packets. `rule` is the deterministic baseline. `openai` calls any
 OpenAI-compatible chat endpoint (vLLM serving Cosmos, or a text LLM). `hf` loads a Qwen2.5-VL
@@ -151,6 +152,49 @@ def openai_explain(packet, args, images):
         return json.loads(response.read())["choices"][0]["message"]["content"]
 
 
+JEV_URL = "https://api.typesafe.ai/v1/systemone"
+CAUSE_CRITERIA = {
+    "carryover": "Colour from the previous recipe remains in the line: endpoint shifted toward the previous recipe soon after a recipe change.",
+    "wrong_recipe": "The line dosed a different recipe than intended: several consecutive vials miss the intended colour the same way.",
+    "dose_error": "One tank dosed too much or too little: endpoint off the intended colour but not toward the previous recipe.",
+    "missed_dose": "One dye was not dosed at all: the colour lacks one component entirely.",
+    "short_fill": "Too little liquid in the vial to measure or release.",
+    "occlusion": "The vial or liquid was hidden (arm, nozzle, glare) so the colour could not be measured.",
+    "vial_position": "The vial was not in the expected position under the nozzle.",
+    "lighting": "Lighting or exposure changed, so the measured colour is unreliable.",
+    "bubbles": "Bubbles or foam disturbed the colour measurement.",
+    "no_reference": "The intended recipe has no approved reference colour, so the vial cannot be verified.",
+    "unknown": "The evidence does not support any single cause.",
+}
+
+
+def jev_explain(packet, args, images):
+    """TypeSafe Jev System One: the cause as a `choice` question over CAUSE_CRITERIA.
+    Jev returns a decision, not prose, so explanation/next_check stay empty (scored as missing)."""
+    import requests
+    body = {k: packet[k] for k in SECTIONS if k in packet}
+    state, assets, files = {"system": SYSTEM.split("Answer with")[0].strip(), "packet": json.dumps(body, indent=1)}, {}, []
+    for name, data in images.items():
+        state[name] = name
+        assets[name] = {"type": "image", "part": name + "-file"}
+        files.append((name + "-file", (name + ".jpg", base64.b64decode(data), "image/jpeg")))
+    seen = " and the keyframes " + ", ".join(f"`{n}`" for n in images) if images else ""
+    questions = {"cause": {"type": "choice", "criteria": CAUSE_CRITERIA,
+                           "instructions": f"Following `system`, what is the most likely cause of this vial's verdict, "
+                                           f"given the evidence packet `packet`{seen}?"}}
+    response = requests.post(args.url or JEV_URL, timeout=(15, args.timeout), allow_redirects=False,
+                             headers={"Authorization": "Bearer " + os.environ[args.key_env],
+                                      **({"TypeSafe-Danger-Zone-Images": "true"} if images else {})},
+                             files=[("request", (None, json.dumps({"model": args.model, "state": state, "assets": assets,
+                                                                   "questions": questions}), "application/json"))] + files)
+    if response.status_code != 200:
+        raise RuntimeError(f"HTTP {response.status_code}: {response.text[:500]}")
+    answer = response.json()["answers"]["cause"]
+    return json.dumps({"cause": answer.get("choice"), "confidence": answer.get("confidence", 0.0),
+                       "evidence_ids": [k for k in body] + [f"image:{n}" for n in images],
+                       "explanation": None, "next_check": None, "jev_answer": answer})
+
+
 def parse(text, allowed_ids):
     """Validate model output against the schema. Returns (explanation, problems)."""
     if isinstance(text, dict):
@@ -231,7 +275,7 @@ def rule_map(packet):
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--run", type=Path, required=True, help="output directory of python -m replay.line")
-    parser.add_argument("--backend", choices=("rule", "openai", "hf"), default="rule")
+    parser.add_argument("--backend", choices=("rule", "openai", "hf", "jev"), default="rule")
     parser.add_argument("--name", help="output suffix (default: backend, or backend-model)")
     parser.add_argument("--url", help="OpenAI-compatible base URL, e.g. http://gb10:8000/v1")
     parser.add_argument("--model")
@@ -258,6 +302,12 @@ def main():
         parser.error("--url and --model are required for --backend openai")
     if args.backend == "hf" and not args.model:
         parser.error("--model is required for --backend hf")
+    if args.backend == "jev":
+        args.model = args.model or "jev-1.14.0"
+        if args.key_env == "OPENAI_API_KEY":
+            args.key_env = "TYPESAFE_API_KEY"
+        if not os.environ.get(args.key_env):
+            parser.error(f"--backend jev needs the API key in ${args.key_env}")
 
     name = args.name or (args.backend if args.backend == "rule" else f"{args.backend}-{Path(args.model).name}")
     local = LocalVLM(args.model, args.max_tokens) if args.backend == "hf" else None
@@ -274,7 +324,7 @@ def main():
         started = time.perf_counter()
         try:
             raw = rule_explain(packet) if args.backend == "rule" else local(packet, images) if local \
-                else openai_explain(packet, args, images)
+                else jev_explain(packet, args, images) if args.backend == "jev" else openai_explain(packet, args, images)
             explanation, problems = parse(raw, allowed)
         except Exception as error:  # endpoint down or timeout: record, keep going
             raw, explanation, problems = repr(error), parse(None, allowed)[0], ["request_failed"]

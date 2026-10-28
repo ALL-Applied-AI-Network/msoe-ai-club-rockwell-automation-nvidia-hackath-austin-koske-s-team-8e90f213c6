@@ -9,14 +9,33 @@ Plan for running the whole pipeline on site:
 5. RCA.
 
 The target is **CSI's own GB10(s)**, not our campus Spark. We also don't use CSI's inspection
-software. We don't know how CSI's machines are set up: admin rights, Docker, internet. So the
-kit has to work either way, and the first step on site records what is there.
+software.
+
+**What we know about CSI's GB10:**
+
+| Fact | Status | What follows |
+| --- | --- | --- |
+| GPU support | Confirmed | The models run on CUDA |
+| Internet access | Confirmed | Online install, and the online RCA APIs are possible (data leaving the site still needs CSI's approval) |
+| Admin rights | Confirmed | apt packages such as `ffmpeg` can be installed if needed |
+| Tk and the Linewatch recorder | Confirmed: CSI's recorder (`Linewatch-recorder`) ran there | A known-good capture fallback |
+| Docker | Assumed, not confirmed | Ship two builds: Docker and native |
+
+**The deliverable is the full-stack app** (FastAPI and React) with the line runner behind it.
+CLI scripts or the recorder GUI on their own are not enough. It comes in two builds that run
+the same code:
+
+- **Docker:** `compose.yaml` plus `compose.gpu.yaml`, through `onboard.sh`.
+- **Native:** the self-contained kit with bundled Python, used if Docker or the NVIDIA
+  Container Toolkit is missing.
+
+`START.sh --check` records which build applies on the first morning.
 
 The plan builds on the existing GB10 kit ([setup/gb10](../setup/gb10/README.md),
-`linewatch-gb10-v1.1.0`). It is self-contained: it brings its own Python, needs no root and
-uses Docker only if Docker is present. It has passed its self-test on GB10 hardware (40/40 on
-CUDA). The kit serves the per-frame app only. The line runner (`replay.line`, `replay.tray`,
-`replay.annotate`, `replay.explain`) is not in it yet.
+`linewatch-gb10-v1.1.0`). It has passed its self-test on GB10 hardware (40/40 on CUDA). Both
+builds currently serve the per-frame app only. Neither `api/Dockerfile` nor `build-kit.sh`
+copies the line runner yet (`replay.line`, `replay.decide`, `replay.tray`, `replay.annotate`,
+`replay.explain`).
 
 The plan makes no connection to the line: no PLC, no sorter, no industrial network. Actions are
 recommendations shown to the operator and logged. Cameras are UVC devices plugged into the GB10.
@@ -55,8 +74,12 @@ GB10-A and GB10-B are both CSI machines.
     decision path for the GPU.
   - It is also the spare if A fails.
 - **With only one GB10,** the VLM runs on A after the session, or not at all.
-  - Rule RCA is the default anyway. On Run 5 it was consistent with the evidence on 20/20
-    vials; zero-shot Cosmos was consistent on 6/20 (see [evaluation](evaluation.md)).
+  - RCA does not need the VLM. On Run 5, the rule baseline and the OpenAI Decisions API were
+    both consistent with the evidence on 20/20 vials; zero-shot Cosmos was consistent on 6/20
+    (see [evaluation](evaluation.md)).
+  - The Decisions API is the online option, because CSI's GB10 has internet. It is used only
+    if CSI approves sending packets and vial crops off site. Otherwise the rule baseline is
+    used.
 - **Both cameras use the GB10's clock.**
   - The capture step stamps every frame with `CLOCK_MONOTONIC` and wall time.
   - This removes the burned-in-clock matching we needed for Run 5. There, the two clocks agreed
@@ -68,25 +91,30 @@ GB10-A and GB10-B are both CSI machines.
 | --- | --- | --- |
 | Python 3.12, torch cu130, OpenCV, numpy | In the kit lock (`lock-cuda.txt`) | none |
 | Fill models (YOLO11n + temporal U-Net) | In the kit; self-test 40/40 on GB10 hardware | Rerun the self-test on CSI's GB10 (gate 1) |
-| `replay.line/decide/tray/annotate/explain` | On `austin/line-runner` | Add the modules to `build-kit.sh`, plus `integration/runtime.py`, which is already copied |
-| Headless capture | Missing | New `replay/capture.py`: OpenCV V4L2, MJPEG 640×480 at 30 fps per camera. Writes 60 s MJPEG segments and a `frames.jsonl` of `(camera, frame, mono_ns, wall)` |
-| H.264 output | Missing: CSI's GB10 may not have `ffmpeg`, and the kit avoids apt | `annotate.py` keeps its OpenCV `mp4v` output when no `ffmpeg` is present. Add `imageio-ffmpeg`, which ships an aarch64 binary, to the lock for H.264 |
-| Kit entry points | `START.sh` serves the app only | `START.sh capture`, `START.sh line`, `START.sh selftest-line` |
-| VLM explainer (GB10-B) | Run 5 results came from a separate env (torch 2.11, transformers 5.20) | A separate `cosmos` lock and an offline weight bundle of about 16 GB per 7B model (Cosmos-Reason1-7B, Qwen2.5-VL-7B), carried by USB on exFAT. CSI's GB10 may have no internet. Load by snapshot path, because model-ID lookup fails offline |
+| `replay.line/decide/tray/annotate/explain` | On `austin/line-runner` | Copy the modules in both builds: `api/Dockerfile` and `build-kit.sh`. Both already copy `integration/runtime.py` |
+| Capture | The Linewatch recorder (Tk GUI) ran on CSI's GB10 | New headless `replay/capture.py`, started from the app: OpenCV V4L2, MJPEG 640×480 at 30 fps per camera. Writes 60 s MJPEG segments and a `frames.jsonl` of `(camera, frame, mono_ns, wall)`. The recorder is the fallback |
+| App views of run outputs | The app shows the per-vial check only | API endpoints and React pages for the ledger, actions, reconciliation and RCA, with start/stop for capture and line runs (Josiah) |
+| H.264 output | The kit has no `ffmpeg`; the Docker image can install it | Docker: add `ffmpeg` with apt. Native: put `imageio-ffmpeg` (ships an aarch64 binary) in the lock. `annotate.py` falls back to OpenCV `mp4v` |
+| Kit entry points | `START.sh` serves the app only | `START.sh capture`, `START.sh line`, `START.sh selftest-line`, which the app also calls |
+| Online RCA | `explain.py --backend decisions` / `jev` | The key comes from an environment variable at launch and is never stored in the kit or the repo. Used only with CSI's approval |
+| VLM explainer (GB10-B) | Run 5 results came from a separate env (torch 2.11, transformers 5.20) | A separate `cosmos` lock. Weights download from Hugging Face over CSI's internet; a USB bundle of about 16 GB per 7B model is the backup. Load by snapshot path |
 
-The Linewatch recorder (`Linewatch-recorder`, the Tk capture GUI) needs `python3-tk` and
-`ffmpeg` from apt. If CSI gives us admin rights on their GB10, it can run there as a backup
-recorder. The plan doesn't depend on it: `capture.py` runs headless from the kit with no
-installs. Its vial log format (`vial_log.csv`) is still the right way to write down ground
-truth. `capture.py` should write the same columns.
+The Linewatch recorder (`Linewatch-recorder`, the Tk capture GUI) is the tool CSI gave us,
+and it ran on their GB10. Tk and its dependencies are therefore present. It is the proven
+fallback if `capture.py` fails gate 4. Its `vial_log.csv` is the way to write down ground
+truth, and `capture.py` writes the same columns. `capture.py` is still the primary capture,
+for three reasons:
+- it runs headless from the app;
+- it stamps both cameras on one GB10 clock;
+- it writes the segment layout that live mode tails.
 
-**What to use, by what CSI's GB10 allows** (`START.sh --check` reports it):
+**Two builds, same code** (`START.sh --check` reports which applies):
 
-| CSI GB10 has | Run with |
-| --- | --- |
-| Docker and the NVIDIA Container Toolkit (stock DGX OS ships both) | `onboard.sh` Docker GPU path for the app; the line runner from the kit |
-| No Docker, no admin | The native kit only (bundled Python, hash-locked wheels) |
-| No internet | The offline kit (`wheels/`) and the Cosmos weights from USB |
+| CSI GB10 has | Build | How |
+| --- | --- | --- |
+| Docker and the NVIDIA Container Toolkit (stock DGX OS ships both) | **Docker** | `onboard.sh`: `compose.yaml` plus `compose.gpu.yaml`. The API container gets `/dev/video*` and a results volume |
+| No working Docker or toolkit | **Native** | The kit's `START.sh` with bundled Python and hash-locked wheels. One uvicorn process serves the API and the built UI |
+| Internet lost on the day | Either build | The offline kit (`wheels/`, models), rule RCA, and Cosmos from USB |
 
 ## Calibration on site (per camera mount)
 
@@ -150,21 +178,26 @@ session is real data. It is evaluation only and is never used for tuning, like R
 
 | # | Item | Size | Who |
 | --- | --- | --- | --- |
-| 1 | `replay/capture.py`: headless two-camera capture, segments plus frame clock log, `--snapshot` | ½ day | Austin |
+| 1 | `replay/capture.py`: headless two-camera capture, segments plus frame clock log, `--snapshot`, `vial_log.csv` columns | ½ day | Austin |
 | 2 | `--station station.json` in `line`/`tray`/`annotate`, and `tray --calibrate` with an overlay | ½ day | Austin |
-| 3 | `annotate.py` falls back to `mp4v`, and `imageio-ffmpeg` goes in the lock (regenerate the locks, rerun the self-test) | 2 h | Austin |
-| 4 | `build-kit.sh` copies the line-runner modules; `START.sh capture/line/selftest-line`; kit v1.2.0 | ½ day | Austin |
-| 5 | `selftest-line` plus gate 0 on the laptop; online and offline kits on USB (exFAT) | 2 h | Austin |
-| 6 | Per-dwell `decide` (live mode) and ledger tail in the app | 1 day | Austin + Josiah |
-| 7 | Offline Cosmos bundle (lock, weights, `explain.py --backend hf`) for GB10-B, used for the LoRA once Zoe and Jev have one | ½ day | Zoe/Jev |
+| 3 | H.264 output: `ffmpeg` in the Docker image, `imageio-ffmpeg` in the native lock, `mp4v` fallback (regenerate the locks, rerun the self-test) | 2 h | Austin |
+| 4 | Line-runner modules in `api/Dockerfile` and `build-kit.sh`; `START.sh capture/line/selftest-line`; camera devices and results volume in compose; kit v1.2.0 | ½ day | Austin |
+| 5 | `selftest-line` plus gate 0 on the laptop, in both builds; online and offline kits on USB (exFAT) | 2 h | Austin |
+| 6 | App: API endpoints and React pages for runs (start/stop capture, run the line, show the ledger, actions, reconciliation, RCA and video) | 1 day | Josiah + Austin |
+| 7 | Per-dwell `decide` (live mode) and a live ledger tail in the app | 1 day | Austin + Josiah |
+| 8 | Online RCA in the app: `decisions` backend with the key from the environment, rule fallback when offline or not approved | 2 h | Austin |
+| 9 | Cosmos env for GB10-B (lock, `explain.py --backend hf`), for the LoRA once Zoe and Jev have one | ½ day | Zoe/Jev |
 
-Items 1–5 are enough for mode 1 at CSI. Item 6 is the live demo. Item 7 is optional.
+Items 1–6 give the full-stack app in mode 1 at CSI. Item 7 is the live demo. Items 8 and 9
+are optional.
 
 ## Ask CSI before the visit
 
-- How many GB10s, and is one free for us for the whole session? Is there a user account with
-  USB camera access (the `video` group)? Admin rights or Docker? Is there internet, or do we
-  bring the offline kit?
+- How many GB10s, and is one free for us for the whole session? Is Docker installed, with the
+  NVIDIA Container Toolkit? We bring both builds either way. GPU, internet and admin rights
+  are already confirmed.
+- May evidence packets and vial crops go to an external API (OpenAI Decisions) for root-cause
+  explanations? If not, we use the on-box rule baseline.
 - Can we mount our two USB cameras in the Run 5 positions, or use CSI's existing cameras over
   USB (UVC)? We do not use network cameras on their network.
 - The recipe schedule for each run, in order (`seq,recipe_id`), and the Recipe Setup limits.

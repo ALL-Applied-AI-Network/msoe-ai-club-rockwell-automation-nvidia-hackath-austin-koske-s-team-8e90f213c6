@@ -5,6 +5,42 @@ liquid, extracts a color sample when the image supports one, and presents
 recipe-related evidence to an operator. Camera observations supplement the
 existing line; the software does not command its PLC, sorter or valves.
 
+## System overview
+
+The per-frame perception and measurement feed two consumers. The operator app checks one
+vial at a time, and a person confirms each vial. The line runner processes a whole run from
+the recipe schedule. It adds actions with deadlines, finished-tray reconciliation and
+root-cause packets. The line runner is offline batch work on `austin/line-runner`. The dotted
+links into the app are planned, not built.
+
+```mermaid
+flowchart LR
+    FC[Fill camera video] --> PER
+    subgraph PER["Per-frame perception · unchanged"]
+        Y[YOLO11n vial] --> Q[Measurement QA<br/>RGB/Lab sample or unavailable]
+        U[Temporal U-Net liquid mask] --> Q
+    end
+    subgraph APP["Operator app · existing"]
+        OP[Recipe-first vial check<br/>operator confirms GOOD/SCRAP/HOLD] --> J[(History and<br/>operator responses)]
+        INV[Investigation panel]
+    end
+    subgraph LINE["Line runner · new, offline batch"]
+        SCH[schedule.csv] --> LR[replay.line<br/>dwells, vials, decide]
+        LR --> L[Ledger and actions<br/>with deadlines]
+        LR --> P[RCA packets] --> X[replay.explain]
+        TC[Tray camera video] --> T[replay.tray]
+        L --> T --> R[Tray reconciliation]
+        L --> AN[replay.annotate MP4]
+        R --> AN
+    end
+    Q --> OP
+    Q --> LR
+    L -. planned .-> OP
+    X -. planned .-> INV
+```
+
+[SVG](assets/architecture-system.svg) · [PNG](assets/architecture-system.png)
+
 ## Processing path
 
 ```mermaid
@@ -159,6 +195,60 @@ are research settings. The result maps to a simulated GOOD/SCRAP/HOLD action tha
 confirms or overrides; the decision is stored as an attributed acknowledgement. No line
 equipment is contacted. References come from the Run5 retrospective proxies or from vials the
 operator accepts (browser-local). Model inference and measurement QA are unchanged.
+
+## Line runner
+
+`python -m replay.line` takes one fill video, a `schedule.csv` (`seq,recipe_id`) and the recipe
+library:
+
+1. **Vial dwells.** It finds them from carrier motion.
+2. **Reference.** The frame just after the carrier settles is the empty-vial reference.
+3. **Sampling.** It runs the unchanged YOLO/U-Net/QA path every 15 frames.
+4. **Endpoint.** It takes the endpoint Lab for each vial. The n-th filled vial is schedule
+   row n.
+5. **Decision.** `decide` compares the endpoint against the intended recipe and the previous
+   recipe (ΔE2000). It issues simulated actions with deadlines.
+
+`--samples` reruns stages 4 and 5 from an earlier `frames.jsonl` without the models.
+
+`replay.tray` reads the cap/seal camera on the same clock. It matches arrivals in the finished
+tray to departures in the ledger, then reports routing, escapes, vials in transit and missing
+caps. Its slot grid and thresholds are pixel constants from the Run 5 view. They still need
+checking on other data.
+
+`replay.explain` scores RCA backends on the evidence packets. The rule baseline is the
+default and works offline. See [evaluation](evaluation.md) for the comparison.
+
+```mermaid
+flowchart TB
+    V[Fill video] --> M[Carrier motion<br/>vial dwells]
+    M --> REF[Settled frame<br/>empty-vial reference]
+    REF --> S[YOLO + U-Net every 15 frames<br/>measurement QA]
+    SM[(frames.jsonl<br/>--samples reuse)] -.-> S
+    S --> FIN[Fill end and endpoint Lab per vial]
+    SCH[schedule.csv<br/>seq, recipe_id] --> D
+    LIB[Recipe library references] --> D
+    FIN --> D[decide<br/>ΔE2000 to intended and previous recipe]
+    D --> LED[ledger.csv / .json]
+    D --> ACT[actions.jsonl<br/>PASS, SCRAP, FLUSH, HOLD,<br/>STOP_CHECK_DOSING, deadline]
+    D --> PK[rca/vial-NN.json<br/>evidence packets]
+    GT[labels.csv, optional] -.-> MET[metrics.json]
+    LED -.-> MET
+    PK --> EX{explain backend}
+    EX --> RB[Rule · default, offline]
+    EX --> DA[OpenAI Decisions or Jev · online]
+    EX --> VLM[Cosmos or Qwen · vLLM or HF]
+    TV[Tray camera video] --> TS[Slot occupancy and cap colour]
+    TS --> TM[Arrival matching DP]
+    LED --> TM --> REC[reconciliation.json<br/>routed, escaped, in transit, missing cap]
+    LED --> AN[annotate<br/>line-and-tray MP4]
+    REC --> AN
+```
+
+[SVG](assets/architecture-line-runner.svg) · [PNG](assets/architecture-line-runner.png)
+
+The runner decides each vial only after the run ends. Live use needs a per-dwell
+`decide` call. On-site deployment is in [deploy-gb10-line](deploy-gb10-line.md).
 
 ## Investigation
 

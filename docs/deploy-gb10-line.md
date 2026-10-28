@@ -23,14 +23,26 @@ recommendations shown to the operator and logged. Cameras are UVC devices plugge
 
 ## Target layout
 
+```mermaid
+flowchart LR
+    FC[Fill camera · USB UVC] --> CAP
+    TC[Tray camera · USB UVC] --> CAP
+    subgraph A["CSI GB10-A · decides"]
+        CAP[capture<br/>segments + frames.jsonl, GB10 clock] --> LR[Line runner + tray<br/>YOLO/U-Net on CUDA]
+        LR --> RULE[Rule RCA]
+        LR --> APP[Full-stack app<br/>API + React · Docker or native kit]
+        RULE --> APP
+    end
+    LR -. packets, only if CSI approves .-> API[(OpenAI Decisions<br/>or Jev API)]
+    API -.-> APP
+    LR -. finished-vial packets .-> B["CSI GB10-B · optional<br/>Cosmos / LoRA explainer, spare"]
+    APP --> OPR[Operator<br/>recommendations only<br/>no PLC, sorter or plant network]
 ```
-fill camera (USB, 640×480 MJPEG) ──┐
-                                   ├─► GB10-A  capture → line runner → tray → ledger/actions
-tray camera (USB, cap_seal view) ──┘           annotated video, rule RCA, operator page
-                                                    │  (copy finished vials' packets)
-                                                    ▼
-                                    GB10-B (optional)  Cosmos/Qwen RCA, spare for A
-```
+
+[SVG](assets/architecture-deploy-gb10.svg) · [PNG](assets/architecture-deploy-gb10.png)
+
+The online RCA APIs send evidence packets, and with images, vial crops, off site. They are
+used only if CSI approves. The rule baseline is the fallback.
 
 GB10-A and GB10-B are both CSI machines.
 

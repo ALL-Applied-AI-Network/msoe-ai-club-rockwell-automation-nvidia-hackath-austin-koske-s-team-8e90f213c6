@@ -6,7 +6,7 @@ The default runs on CPU. For the GB10 deployment target, use the [native GB10 pa
 
 ## Windows
 
-1. Check out `austin-work` and start Docker Desktop.
+1. Check out `main` and start Docker Desktop.
 2. Download `temporal-cnn-assets-v1.zip` from the
    [private model release](https://github.com/ALL-Applied-AI-Network/msoe-ai-club-rockwell-automation-nvidia-hackath-austin-koske-s-team-8e90f213c6/releases/tag/temporal-cnn-v1.0.0).
    You can keep the ZIP or extract it outside Git.

@@ -7,6 +7,7 @@ deleted. Ask the owner before deleting a branch.
 | Branch | Owner | Commits not in `main` | Recommendation |
 | --- | --- | --- | --- |
 | `austin-work` | Austin | 0 | Working branch; identical to `main` at this snapshot |
+| `austin/integration-dashboard-main` | Austin | 0 (2026-10-29) | LINE page, live cameras, line runner, RCA backends, carryover tooling; fast-forwarded into `main` and `austin-work` on 2026-10-29 |
 | `austin/demo-ui`, `austin/docs-cleanup`, `austin/recipe-aware-replay` | Austin | 0 | Merged; delete |
 | `austin/run5-recipe-check` | Austin | 1 (file content already identical in `main`) | Merged; delete |
 | `annotation-review` | Austin | 0 | Merged; delete |

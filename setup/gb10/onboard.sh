@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # One-command GB10 onboarding from a GitHub checkout:
 #
-#   git clone -b austin-work <repo-url> linewatch && cd linewatch
+#   git clone <repo-url> linewatch && cd linewatch    # main
 #   bash setup/gb10/onboard.sh                 # models from the GitHub release, Docker GPU
 #
 # Options: --assets ZIP|DIR (e.g. from USB)  --port N  --cpu (skip GPU)  --native (skip Docker)

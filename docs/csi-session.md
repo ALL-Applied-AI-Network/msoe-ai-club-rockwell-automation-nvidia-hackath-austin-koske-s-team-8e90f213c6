@@ -16,6 +16,38 @@ Full plan: [CSI visit guide](../team_handoff/integration/CSI-VISIT-20261027.md)
 New footage is evaluation-only. Do not connect to line equipment, stage defects or record
 approvals that did not happen.
 
+## Demo-day checklist
+
+The demo runs the LINE page (`/`) on the CSI GB10 with the station's two cameras. `main` and the
+`linewatch-v1.2.0` kit both carry it.
+
+**Before leaving**
+- [ ] USB (ext4 or exFAT preferred): `linewatch-gb10-v1.2.0.tar.gz` + `.sha256`,
+      `linewatch-gb10-offline.tar.gz` (wheels), `temporal-cnn-assets-v1.zip`, the `run5-vial0*.mp4`
+      clips and `linewatch-vial-flow-demo.mp4`.
+- [ ] Laptop fallback running: Docker app at http://localhost:8788 ([laptop demo](demo.md)), with
+      the LINE page playing Run 5 through *Cameras* → a recorded run.
+- [ ] `gh auth login` works on the laptop (to fetch anything missing on site).
+
+**On the GB10 (allow 20 minutes before presenting)**
+1. Close CSI's Linewatch recorder (one program per camera).
+2. Get and verify the kit ([Get the software](#get-the-software)), then
+   [set it up](#set-up-the-gb10): `--check`, `--selftest` (must pass), `bash START.sh`.
+3. In the `START.sh` output, every camera link must resolve to a `/dev/videoN`, not
+   `NOT FOUND`. If one is missing, check `ls /dev/v4l/by-id/` and the USB hub.
+4. Open http://127.0.0.1:8788. LINE → **Live** → *Cameras (live, models now)* →
+   *Station cameras* → **Start**. The vial region and tray slots drawn on the feeds must cover the
+   vial under the nozzle and the tray; re-aim the camera, not the overlay.
+5. Set the recipe order (MONITOR → recipe plan; LINE → **RECIPE ORDER**) before the first vial:
+   vial n takes recipe n, counted from **Start**.
+
+**If something fails:** no cameras → *Cameras* → a recorded run (Run 5 through the same input);
+kit fails → `--native` / `--docker` via `setup/gb10/onboard.sh`, or `linewatch-v1.1.0`; GB10
+unusable → laptop fallback.
+
+Not yet verified on the CSI GB10's own cameras, and the v1.2.0 kit has not been self-tested on GB10
+hardware (spark8 was unreachable): run step 2 first.
+
 ## Get the software
 
 The repository and its releases are private: the GB10 needs a GitHub login, or bring the files
@@ -106,6 +138,12 @@ browser's LIVE CAMERA cannot use it, and the reverse. Record first, then process
 | `~/linewatch-data/selftest-*/` | Self-test reports |
 
 ## Live test in the app
+
+**LINE page (main):** follow steps 4–5 of the [demo-day checklist](#demo-day-checklist). Each
+session records both feeds and the model samples and saves itself as a run; **Stop** links to it
+in Review. This does not replace the `ffmpeg` raw recording above when collecting data.
+
+**MONITOR page (`/monitor`, single vial):**
 
 1. Select the recipe (or **Custom amounts…**) and press **SET RECIPE**.
 2. **RECORDING** → drop the vial's clip. Its first frame becomes the empty-vial reference.

@@ -19,7 +19,7 @@ video + recipe schedule → YOLO11n + temporal U-Net + measurement QA → per-vi
 ## Run it
 
 - Laptop (Docker): [demo](docs/demo.md) · GB10: [deployment](setup/gb10/README.md)
-- Fastest on a GB10: download `linewatch-gb10-v1.1.0.tar.gz` from the
+- Fastest on a GB10: download `linewatch-gb10-v1.2.0.tar.gz` from the
   [latest release](https://github.com/ALL-Applied-AI-Network/msoe-ai-club-rockwell-automation-nvidia-hackath-austin-koske-s-team-8e90f213c6/releases/latest),
   then `bash START.sh --selftest` and `bash START.sh`.
 - [CSI session reference](docs/csi-session.md) for on-site recording.

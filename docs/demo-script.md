@@ -107,7 +107,7 @@ Camera-to-display latency from native camera timestamps hasn't been measured.
 ## Fallback
 
 If the live app fails, say so, then play `linewatch-vial-flow-demo.mp4` from the
-`linewatch-v1.1.0` release: the same recipe 5 → 6 → 6 sequence recorded on this app.
+`linewatch-v1.2.0` release: the same recipe 5 → 6 → 6 sequence recorded on this app.
 Still backups: the Recipe Check page screenshots and
 `C:/Users/Austin/ai-club-tools/results/run5-recipe-check-20261027/run5-recipe-evidence-board.png`.
 A recording is not a physical line validation; say that it is a recorded run of the same app.

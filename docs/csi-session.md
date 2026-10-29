@@ -19,16 +19,16 @@ approvals that did not happen.
 ## Get the software
 
 The repository and its releases are private: the GB10 needs a GitHub login, or bring the files
-on USB. Current release: `linewatch-v1.1.0`.
+on USB. Current release: `linewatch-v1.2.0`.
 
 **A. Release download with `gh`** (simplest when `gh` is installed):
 
 ```bash
 gh auth login        # GitHub.com → HTTPS → "Login with a web browser"; enter the code on any device
-cd ~ && gh release download linewatch-v1.1.0 \
+cd ~ && gh release download linewatch-v1.2.0 \
   -R ALL-Applied-AI-Network/msoe-ai-club-rockwell-automation-nvidia-hackath-austin-koske-s-team-8e90f213c6 \
-  -p 'linewatch-gb10-v1.1.0.tar.gz*' -p 'run5-vial0*.mp4'
-sha256sum -c linewatch-gb10-v1.1.0.tar.gz.sha256
+  -p 'linewatch-gb10-v1.2.0.tar.gz*' -p 'run5-vial0*.mp4'
+sha256sum -c linewatch-gb10-v1.2.0.tar.gz.sha256
 ```
 
 **B. Without `gh`:** use a fine-grained personal access token with read access to this
@@ -36,13 +36,13 @@ repository's contents (create it on a laptop, then `export GITHUB_TOKEN=...` on 
 
 ```bash
 REPO=ALL-Applied-AI-Network/msoe-ai-club-rockwell-automation-nvidia-hackath-austin-koske-s-team-8e90f213c6
-for name in linewatch-gb10-v1.1.0.tar.gz linewatch-gb10-v1.1.0.tar.gz.sha256; do
-  id=$(curl -fsSL -H "Authorization: Bearer $GITHUB_TOKEN" https://api.github.com/repos/$REPO/releases/tags/linewatch-v1.1.0 |
+for name in linewatch-gb10-v1.2.0.tar.gz linewatch-gb10-v1.2.0.tar.gz.sha256; do
+  id=$(curl -fsSL -H "Authorization: Bearer $GITHUB_TOKEN" https://api.github.com/repos/$REPO/releases/tags/linewatch-v1.2.0 |
        python3 -c "import json,sys; print(next(a['id'] for a in json.load(sys.stdin)['assets'] if a['name']==sys.argv[1]))" "$name")
   curl -fsSL -H "Authorization: Bearer $GITHUB_TOKEN" -H "Accept: application/octet-stream" \
     https://api.github.com/repos/$REPO/releases/assets/$id -o "$name"
 done
-sha256sum -c linewatch-gb10-v1.1.0.tar.gz.sha256
+sha256sum -c linewatch-gb10-v1.2.0.tar.gz.sha256
 ```
 
 Or download the same files from the release page in a logged-in browser and copy them over.
@@ -67,8 +67,8 @@ Copy the kit from the USB to the GB10's own disk and extract it there. A FAT32 s
 hold the bundled Python's symlinks and permissions, so do not run it from the USB.
 
 ```bash
-cp /media/$USER/<USB>/linewatch-gb10-v1.1.0.tar.gz ~ && cd ~
-tar -xzf linewatch-gb10-v1.1.0.tar.gz && cd linewatch-gb10
+cp /media/$USER/<USB>/linewatch-gb10-v1.2.0.tar.gz ~ && cd ~
+tar -xzf linewatch-gb10-v1.2.0.tar.gz && cd linewatch-gb10
 # No internet: copy wheels/ from linewatch-gb10-offline.tar.gz into this folder first.
 bash START.sh --check
 bash START.sh --selftest      # must print "Self-test PASSED: 40/40"

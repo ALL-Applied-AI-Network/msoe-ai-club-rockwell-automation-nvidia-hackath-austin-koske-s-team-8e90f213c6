@@ -70,7 +70,7 @@ A new camera requires its own camera profile; the app rejects geometry outside t
 
 ## GB10 deployment
 
-Fastest: download `linewatch-gb10-v1.1.0.tar.gz` from the `linewatch-v1.1.0` GitHub release,
+Fastest: download `linewatch-gb10-v1.2.0.tar.gz` from the `linewatch-v1.2.0` GitHub release,
 extract it and run `bash START.sh --selftest`, then `bash START.sh`.
 
 From a GitHub checkout on the GB10, `bash setup/gb10/onboard.sh` downloads

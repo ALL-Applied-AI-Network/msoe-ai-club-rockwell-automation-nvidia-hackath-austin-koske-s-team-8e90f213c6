@@ -37,7 +37,20 @@ held out as development families. Labels are the mixing parameters, not optical 
 Review sheets: `contact-rgb.png`, `contact-boxes.png`, `contact-masks.png` in the test output
 (`~/carryover-20261029/render-test` on spark8).
 
-On the Brev instance, after copying the repository and the supplied twin assets:
+**Brev, 2026-10-29:** the Isaac launchable (`env-35JP2ywERLgqtD0b0MIeK1HnF46`, g6e.4xlarge, one
+L40S, $3.61/h, stoppable) ships Isaac Sim 6.0.1 as the `nvcr.io/nvidia/isaac-sim:6.0.1` container,
+not on the host. `run-in-container.sh` runs the script below in it. Two things failed first: with
+`docker run --gpus all` the graphics capability is dropped and the path tracer returns a blank
+frame or hangs in `orchestrator.step` at 0% GPU; the nvidia runtime fixes it. The 24-case smoke
+then passed verification in 94 s including startup (about 2.2 s per render). `brev exec` kills
+background processes when it returns, so long runs go in `tmux`.
+
+```bash
+brev copy setup-and-assets.tgz linewatch-carryover:/home/ubuntu/   # setup/ and datasets/mixing_twin/...
+brev exec linewatch-carryover 'tmux new-session -d -s bulk "bash ~/linewatch/setup/brev/run-in-container.sh carryover-v1 400 8 400"'
+```
+
+Directly on a machine with Isaac installed, after copying the repository and the supplied twin assets:
 
 ```bash
 export OMNI_KIT_ACCEPT_EULA=YES                # after accepting the Omniverse license

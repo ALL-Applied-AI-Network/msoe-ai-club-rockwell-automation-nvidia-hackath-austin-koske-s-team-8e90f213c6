@@ -2,10 +2,15 @@
 
 Each scene family draws three random dyes (per-channel absorbance), so no CSI dye colour,
 recipe reference or Run 5 value is used. A family holds several previous -> next changeovers;
-each changeover is rendered three times under independent nuisances: the clean intended mix
-(reference), the clean previous mix (previous, the carryover direction the line rule compares
-against) and the actual vial, whose absorbance is
-(1 - f) * intended + f * previous with residue fraction f (0 for a third of vials).
+each changeover is rendered three times: the clean intended mix (reference), the clean previous
+mix (previous, the carryover direction the line rule compares against) and the actual vial,
+whose absorbance is (1 - f) * intended + f * previous with residue fraction f (0 for a third of
+vials). The three share the changeover's station lighting and end-of-fill level, with small
+per-render jitter, as references captured at the same station would. A labelled fifth of
+changeovers ("drift") light the vial 5-15% brighter or darker than its references, to measure
+the rule's sensitivity to a reference captured under different conditions. (The first version
+drew lighting independently per render, +-40%; that alone moved clean vials ~9 dE2000 from their
+reference and swamped the carryover signal.)
 Families are split train/dev as wholes. Labels are the mixing parameters, not optical truth.
 """
 import argparse
@@ -56,22 +61,24 @@ def make(families=48, changeovers=8, seed=29, dev_fraction=0.25):
             a_next, a_prev = mix(dyes, nxt), mix(dyes, prev)
             actual = [(1 - f) * n + f * p for n, p in zip(a_next, a_prev)]
             pair = f"f{fam:03d}-c{k:02d}"
+            light, level, roughness = rng.uniform(0.7, 1.3), rng.uniform(0.85, 0.96), rng.uniform(0.06, 0.30)
+            drift = rng.choice([-1, 1]) * rng.uniform(0.05, 0.15) if rng.random() < 0.2 else 0.0
             for role, absorbance, frac in [("reference", a_next, 0.0), ("previous", a_prev, 0.0), ("vial", actual, f)]:
                 rgb, opacity = colour(absorbance, path)
-                level = rng.uniform(0.70, 0.98) if rng.random() < 0.8 else rng.uniform(0.30, 0.70)
+                scale = light * rng.uniform(0.97, 1.03) * (1 + drift if role == "vial" else 1)
                 rows.append(dict(
-                    id=f"{pair}-{role[:4]}", level=level,
-                    stream="off" if rng.random() < 0.85 else "continuous",
-                    rgb=rgb, opacity=opacity, light_scale=rng.uniform(0.6, 1.4),
-                    roughness=rng.uniform(0.06, 0.30), stream_radius_m=rng.uniform(0.0008, 0.0023),
-                    kind="fill", family=fam, split="dev" if fam in dev else "train", pair=pair, role=role,
-                    carryover_fraction=frac, previous_ml=prev, next_ml=nxt))
+                    id=f"{pair}-{role[:4]}", level=level + rng.uniform(-0.02, 0.02), stream="off",
+                    rgb=rgb, opacity=opacity, light_scale=min(1.5, max(0.5, scale)),
+                    roughness=roughness, kind="fill", family=fam, split="dev" if fam in dev else "train",
+                    pair=pair, role=role, carryover_fraction=frac, light_drift=drift if role == "vial" else 0.0,
+                    previous_ml=prev, next_ml=nxt))
     base = json.loads(Path(__file__).with_name("box_fixture.json").read_text(encoding="utf-8"))
     result = dict(base, purpose="Synthetic carryover renders for the carryover estimator and detector retraining",
                   seed=seed, families=families, changeovers_per_family=changeovers,
                   dev_families=sorted(dev), real_data_inputs=[], recipe_or_camera_fitting=False,
-                  nuisance_policy="Fixed supplied FillCam; random dyes per family; vary level, light intensity, "
-                                  "roughness, stream; reference, previous and vial rendered with independent nuisances",
+                  nuisance_policy="Fixed supplied FillCam; random dyes per family; per changeover vary station light, "
+                                  "end-of-fill level and roughness, shared by its three renders with small jitter; "
+                                  "a fifth of vials get 5-15% light drift from their references",
                   cases=rows)
     validate_fixture(result)
     return result

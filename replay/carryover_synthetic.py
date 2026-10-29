@@ -40,7 +40,8 @@ def measure(batch):
             _, lab, _ = color(rgb[mask])
         rows.append(dict(id=record["sample_id"], pair=p["pair"], role=p["role"], split=p["split"],
                          family=p["family"], f=p["carryover_fraction"], level=p["level"],
-                         light_scale=p.get("light_scale", 1.0), pixels=pixels, lab=lab))
+                         light_scale=p.get("light_scale", 1.0), light_drift=p.get("light_drift", 0.0),
+                         pixels=pixels, lab=lab))
     return rows
 
 
@@ -57,7 +58,7 @@ def changeovers(rows):
         w = prev - ref
         residue = float(np.clip((vial - ref) @ w / (w @ w + 1e-9), 0, 1))
         out.append(dict(pair=pair, split=roles["vial"]["split"], family=roles["vial"]["family"],
-                        f=roles["vial"]["f"], de_intended=delta_e(vial, ref), de_change=delta_e(prev, ref),
+                        f=roles["vial"]["f"], light_drift=roles["vial"]["light_drift"], de_intended=delta_e(vial, ref), de_change=delta_e(prev, ref),
                         direction_cos=toward_previous(vial, ref, prev), residue_estimate=residue))
     return out
 
@@ -114,6 +115,9 @@ def main():
                           dev=summary(dev, line["band_de2000"], line["direction_cos"])),
         tuned_on_train=tuned and dict(band_de2000=tuned["band_de2000"], direction_cos=tuned["direction_cos"],
                                       train=tuned, dev=summary(dev, tuned["band_de2000"], tuned["direction_cos"])),
+        dev_by_light_drift={name: summary([c for c in dev if pick(c)], line["band_de2000"], line["direction_cos"])
+                            for name, pick in [("none", lambda c: c["light_drift"] == 0),
+                                               ("5-15%", lambda c: c["light_drift"] != 0)]},
         note="Synthetic renders, legacy opacity liquid; labels are mixing parameters, not optical truth. No Run 5.",
         changeover_rows=cs)
     args.out.write_text(json.dumps(result, indent=1), encoding="utf-8")

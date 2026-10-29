@@ -99,25 +99,38 @@ Keep environments, downloads and generated results outside Git.
 
 ## Compute and synthetic data used (as of 2026-10-29)
 
-**GPU hours: no measured total yet.** The figures below come from the result logs copied to
-the laptop (`~/ai-club-tools/results`). Neither Rosie's Slurm accounting nor the GB10 could be
-reached from off campus when this was written.
+**GPU hours: about 6.6 in total**, measured on 2026-10-29 over the campus VPN.
 
-| Where | What ran | Measured |
+| Where | What ran | GPU-hours |
 | --- | --- | --- |
-| Rosie (Slurm) | 25 jobs: detector/U-Net training, augmentation and early-liquid arrays, evaluations. Job IDs 280004–289027 appear in the result logs | Total wall time not in the copied logs; run the `sacct` command below on campus |
-| Rosie and GB10 | YOLO11n training, 9 runs with an Ultralytics timing line | 1.06 GPU-hours combined (0.001–0.29 h per run) |
-| GB10 (spark8) | Isaac renders, Cosmos transfer trial, Faster R-CNN synthetic iterations, VLM RCA (Cosmos-Reason1-7B, Qwen2.5-VL-7B) | Not logged: the shared GPU lock records no durations |
+| Rosie (Slurm, H100) | 22 GPU jobs on account `koskea`, 2026-10-16 to 10-20: GPU checks, Cosmos trial, detector bootstrap, liquid segmentation, real+synthetic and sim-only training, epoch sweep, liquid-specialist and early-liquid arrays. Plus 4 CPU-only jobs (CSI history, artifact read) | **2.65** (from `sacct`; 2.81 h wall time including CPU jobs) |
+| GB10 (spark8) | Isaac renders, Cosmos transfer, synthetic iterations, dataset1 render/train runs, station benchmark, VLM RCA, forger-prep training | **about 4** (3.95 h of merged job-log time, 2026-10-16 to 10-28) |
 | Laptop (RTX 4080 SUPER) | Inference, line-runner replays, live-camera tests (24 ms per model sample) | Not logged; minutes to tens of minutes per replay |
 
-The models themselves are small and quick to train; most GPU time went to rendering, Cosmos
-and VLM experiments rather than to the shipped models. To fill in the Rosie total on campus:
+How the numbers were taken:
+
+- **Rosie** is exact: Slurm elapsed time times allocated GPUs, for the hackathon jobs only. The
+  same account's unrelated jobs (`urcv-*`, `foxwatch-*`, `home-cleanup-*`) are excluded. Job IDs
+  found in the result logs that belong to other users are not counted; teammates' own Rosie
+  jobs, if any, are not included.
+- **GB10** is an estimate. GPU accounting is disabled there, so each job log's creation and last
+  write times are used as its start and end, overlapping logs are merged, and install, download
+  and long-lived daemon/Omniverse logs are left out. It is an upper bound on GPU-busy time
+  (a job is not on the GPU for all of its run) and misses jobs that wrote no log.
+- Of the 9 YOLO11n runs with an Ultralytics timing line, training took 1.06 GPU-hours combined;
+  those are inside the totals above.
+
+The models are small and quick to train; the time is split roughly evenly between training
+(mostly Rosie) and rendering, Cosmos and VLM experiments (the GB10). To recompute Rosie:
 
 ```bash
 sacct -X -u "$USER" -S 2026-10-01 -E now --format=JobID,JobName%30,Elapsed,AllocTRES%50,State -P
 sacct -X -u "$USER" -S 2026-10-01 -E now --format=ElapsedRaw,AllocTRES -P -n \
   | awk -F'|' '{ g = 0; if (match($2, /gres\/gpu=[0-9]+/)) g = substr($2, RSTART + 9, RLENGTH - 9); s += $1 * g } END { printf "%.1f GPU-hours\n", s / 3600 }'
 ```
+
+The second command counts every job on the account since the start date; the 2.65 above
+excludes the four `foxwatch-*` jobs (0.05 GPU-hours).
 
 **Synthetic data: not a large amount.** Several hundred unique renders, with experiments
 reusing them through seeded repeats and augmentation:

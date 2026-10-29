@@ -74,3 +74,21 @@ cd REPO && sbatch setup/vision/train-carryover-rosie.sbatch OUT_ROOT ~/carryover
 The first tests the FLUSH rule and the Lab-projection residue estimate (thresholds swept on train
 families, reported on dev families); the second trains three seeds of a learned estimator on
 Rosie for comparison with the projection.
+
+### Pre-bulk tests (2026-10-29)
+
+- **v1 fixture, first 400 renders:** clean vials (no residue) measured a median 8.9 dE2000 from
+  their own reference; 96% of that tracked the independently drawn +-40% lighting. The bulk run
+  was stopped at 449 renders and the fixture changed so a changeover's three renders share
+  lighting and fill, with a labelled 5-15% drift arm.
+- **v2 fixture, 480 renders (20 families, 160 changeovers, 0.27 L40S GPU-hours):** clean vials
+  0.68 dE2000 median (95th percentile 1.20) from their reference. Median dE2000 by residue:
+  1.2 at 5-10%, 1.8-2.2 at 10-20%, 2.8-4.5 at 20-30%. The current rule (band 5, cos 0.8)
+  flagged 17% of dev-family carryover vials with no false alarms; thresholds swept on train
+  families (band 2, cos 0.5) flagged 52% of dev carryover vials, still with no false alarms on 17
+  clean dev vials. The Lab-projection residue estimate: 0.074 mean absolute error on
+  carryover vials. A 30-epoch CPU run of the learned estimator on 120 train changeovers reached
+  0.084 dev MAE against 0.024 for the projection (dev MAE over all vials) — it learns, but needs
+  the bulk set. Synthetic renders only; renderer colour shifts are not optical truth, and the
+  small dev counts make these rates indicative.
+- Output folders: `~/ai-club-tools/results/carryover-v1-brev/test` (v1) and `.../test2` (v2).

@@ -22,7 +22,7 @@ from PIL import Image
 from replay.decide import DEFAULT_LINE, toward_previous
 from replay.measurement import color, delta_e
 
-BINS = [(0.0, 0.0), (0.0, 0.05), (0.05, 0.10), (0.10, 0.20), (0.20, 0.30)]
+BINS = [(0.0, 0.0), (0.0, 0.05), (0.05, 0.10), (0.10, 0.20), (0.20, 0.30), (0.30, 0.50), (0.50, 1.0)]
 MIN_PIXELS = 60   # the line's insufficient_final_liquid_pixels limit
 
 
@@ -75,7 +75,8 @@ def summary(cs, band, cos):
         bins.append(dict(f_range=[low, high], n=len(sel),
                          flagged=sum(flagged(c, band, cos) for c in sel),
                          out_of_band=sum(c["de_intended"] > band for c in sel),
-                         median_de=float(np.median([c["de_intended"] for c in sel])) if sel else None))
+                         median_de=float(np.median([c["de_intended"] for c in sel])) if sel else None,
+                         residue_mae=float(np.mean([abs(c["residue_estimate"] - c["f"]) for c in sel])) if sel else None))
     positive = [c for c in cs if c["f"] > 0]
     errors = [abs(c["residue_estimate"] - c["f"]) for c in cs]
     large = [abs(c["residue_estimate"] - c["f"]) for c in cs if c["de_change"] > 15]

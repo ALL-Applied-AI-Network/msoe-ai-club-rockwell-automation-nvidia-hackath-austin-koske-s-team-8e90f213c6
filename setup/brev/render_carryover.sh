@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Bulk carryover renders on a Brev Isaac Sim instance (see README.md, "Carryover bulk render").
 #   bash setup/brev/render_carryover.sh OUT ASSET_ROOT [FAMILIES=400] [CHANGEOVERS=8] [SHARD=400]
-# ISAAC_PY selects Isaac's Python (default /isaac-sim/python.sh). Shards run round-robin on every
+# ISAAC_PY selects Isaac's Python (default /isaac-sim/python.sh); FIXTURE_ARGS adds fixture options
+# (e.g. "--fractions full --first-family 400 --seed 31"). Shards run round-robin on every
 # visible GPU; each shard is a separate renderer launch with its own output folder, so a failed
 # shard is rerun alone. timing.jsonl records GPU, start and end per shard for GPU-hour accounting.
 set -euo pipefail
@@ -18,7 +19,7 @@ mkdir -p "$out"
 
 if [[ ! -f "$out/fixture.json" ]]; then
   (cd "$isaac_dir" && "$helper_py" make_carryover_fixture.py --out "$out/fixture.json" \
-    --families "$families" --changeovers "$changeovers")
+    --families "$families" --changeovers "$changeovers" ${FIXTURE_ARGS:-})
 fi
 # Split into shard fixtures once; reruns reuse them.
 "$helper_py" - "$out" "$shard" <<'EOF'

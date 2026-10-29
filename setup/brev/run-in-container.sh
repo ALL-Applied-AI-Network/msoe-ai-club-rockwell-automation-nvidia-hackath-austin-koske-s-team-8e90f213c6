@@ -3,9 +3,10 @@
 # container of the Brev Isaac launchable, with the repo setup/ and twin assets under ~/linewatch.
 # Use the nvidia runtime: "--gpus all" drops the graphics capability and the path tracer hangs.
 # Isaac caches persist in ~/isaac-cache so only the first launch compiles shaders.
+# FIXTURE_ARGS, if set, is passed to the fixture builder (see render_carryover.sh).
 out="$1"; shift
 mkdir -p /home/ubuntu/linewatch/$out /home/ubuntu/isaac-cache/{kit,ov,pip,glcache,compute,logs,data}
-docker run --rm --runtime=nvidia -e NVIDIA_VISIBLE_DEVICES=all -e NVIDIA_DRIVER_CAPABILITIES=all --network host -e OMNI_KIT_ACCEPT_EULA=YES -e ACCEPT_EULA=Y -e PRIVACY_CONSENT=Y \
+docker run --rm --runtime=nvidia -e NVIDIA_VISIBLE_DEVICES=all -e NVIDIA_DRIVER_CAPABILITIES=all --network host -e OMNI_KIT_ACCEPT_EULA=YES -e ACCEPT_EULA=Y -e PRIVACY_CONSENT=Y -e FIXTURE_ARGS="${FIXTURE_ARGS:-}" \
   -v /home/ubuntu/linewatch:/work -v /home/ubuntu/isaac-cache/kit:/isaac-sim/kit/cache:rw \
   -v /home/ubuntu/isaac-cache/ov:/root/.cache/ov:rw -v /home/ubuntu/isaac-cache/pip:/root/.cache/pip:rw \
   -v /home/ubuntu/isaac-cache/glcache:/root/.cache/nvidia/GLCache:rw -v /home/ubuntu/isaac-cache/compute:/root/.nv/ComputeCache:rw \

@@ -12,6 +12,11 @@ the rule's sensitivity to a reference captured under different conditions. (The 
 drew lighting independently per render, +-40%; that alone moved clean vials ~9 dE2000 from their
 reference and swamped the carryover signal.)
 Families are split train/dev as wholes. Labels are the mixing parameters, not optical truth.
+
+--fractions low (default, v2) draws f in 0.01-0.30. --fractions full keeps a third at 0 and splits
+the rest evenly between 0.01-0.30 and 0.30-1.0, so the estimator sees heavy residue up to a vial
+of the previous recipe without thinning the low range. --first-family numbers families from an
+offset so pair ids stay unique when batches are analysed together.
 """
 import argparse
 import json
@@ -44,11 +49,20 @@ def recipe(rng):
             return v
 
 
-def make(families=48, changeovers=8, seed=29, dev_fraction=0.25):
+def fraction(rng, fractions):
+    if rng.random() < 1 / 3:
+        return 0.0
+    if fractions == "full" and rng.random() < 0.5:
+        return rng.uniform(0.30, 1.0)
+    return rng.uniform(0.01, 0.30)
+
+
+def make(families=48, changeovers=8, seed=29, dev_fraction=0.25, fractions="low", first_family=0):
     rng = random.Random(seed)
-    dev = set(rng.sample(range(families), round(families * dev_fraction)))
+    ids = range(first_family, first_family + families)
+    dev = set(rng.sample(ids, round(families * dev_fraction)))
     rows = []
-    for fam in range(families):
+    for fam in ids:
         # Three dyes, each absorbing mostly in one or two channels, at a family-wide strength.
         dyes = []
         for _ in range(3):
@@ -57,7 +71,7 @@ def make(families=48, changeovers=8, seed=29, dev_fraction=0.25):
         path = rng.uniform(0.2, 0.9)
         for k in range(changeovers):
             prev, nxt = recipe(rng), recipe(rng)
-            f = 0.0 if rng.random() < 1 / 3 else rng.uniform(0.01, 0.30)
+            f = fraction(rng, fractions)
             a_next, a_prev = mix(dyes, nxt), mix(dyes, prev)
             actual = [(1 - f) * n + f * p for n, p in zip(a_next, a_prev)]
             pair = f"f{fam:03d}-c{k:02d}"
@@ -74,7 +88,7 @@ def make(families=48, changeovers=8, seed=29, dev_fraction=0.25):
                     previous_ml=prev, next_ml=nxt))
     base = json.loads(Path(__file__).with_name("box_fixture.json").read_text(encoding="utf-8"))
     result = dict(base, purpose="Synthetic carryover renders for the carryover estimator and detector retraining",
-                  seed=seed, families=families, changeovers_per_family=changeovers,
+                  seed=seed, families=families, first_family=first_family, fractions=fractions, changeovers_per_family=changeovers,
                   dev_families=sorted(dev), real_data_inputs=[], recipe_or_camera_fitting=False,
                   nuisance_policy="Fixed supplied FillCam; random dyes per family; per changeover vary station light, "
                                   "end-of-fill level and roughness, shared by its three renders with small jitter; "
@@ -90,10 +104,12 @@ if __name__ == "__main__":
     parser.add_argument("--families", type=int, default=48)
     parser.add_argument("--changeovers", type=int, default=8)
     parser.add_argument("--seed", type=int, default=29)
+    parser.add_argument("--fractions", choices=("low", "full"), default="low")
+    parser.add_argument("--first-family", type=int, default=0)
     args = parser.parse_args()
     if args.out.exists():
         parser.error("Use a fresh fixture path")
     args.out.parent.mkdir(parents=True, exist_ok=True)
-    fixture = make(args.families, args.changeovers, args.seed)
+    fixture = make(args.families, args.changeovers, args.seed, fractions=args.fractions, first_family=args.first_family)
     write_json(args.out, fixture)
     print(f"Prepared {len(fixture['cases'])} cases from {args.families} families; seed {args.seed}; no real input")

@@ -92,3 +92,17 @@ Rosie for comparison with the projection.
   the bulk set. Synthetic renders only; renderer colour shifts are not optical truth, and the
   small dev counts make these rates indicative.
 - Output folders: `~/ai-club-tools/results/carryover-v1-brev/test` (v1) and `.../test2` (v2).
+
+### Full-range residue batch (v3)
+
+v2 draws residue f in 0.01-0.30, so a model trained on it cannot read heavier residue. v3 keeps a
+third of vials at 0 and splits the rest evenly between 0.01-0.30 and 0.30-1.0 (a vial of the
+previous recipe), on new families 400-599 so pair ids stay unique next to v2. The range is the
+no-assumption choice, not set from Run 5. Queued on the instance after v2:
+
+    FIXTURE_ARGS="--fractions full --first-family 400 --seed 31" bash ~/brev-run.sh carryover-v3 200 8 400
+
+`replay.carryover_synthetic` and `train_carryover_estimator.py` report error per residue bin
+(0, 0-5%, 5-10%, 10-20%, 20-30%, 30-50%, 50-100%) so gains at heavy residue cannot hide losses at
+light residue. Above about 0.5 a vial is mostly the previous recipe; report that as a possible
+schedule or switching problem rather than a carryover percentage.

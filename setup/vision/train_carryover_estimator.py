@@ -21,7 +21,7 @@ from PIL import Image
 from torch import nn
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
-from replay.carryover_synthetic import changeovers, measure  # noqa: E402
+from replay.carryover_synthetic import BINS, changeovers, measure  # noqa: E402
 
 ROLES = ("reference", "previous", "vial")
 CROP = (32, 96)  # width, height
@@ -119,9 +119,23 @@ def main():
             torch.save(model.state_dict(), args.out / "best.pt")
         print(f"epoch {epoch} loss {float(loss):.4f} dev MAE {mae:.4f} (projection {projection_mae:.4f})", flush=True)
 
+    # Dev error per residue bin at the selected epoch, next to the projection on the same changeovers.
+    model.load_state_dict(torch.load(args.out / "best.pt", map_location=device))
+    model.eval()
+    with torch.no_grad():
+        predicted = model(xd).cpu().numpy()
+    truth_f = yd.cpu().numpy()
+    projection = np.array([truth[p]["residue_estimate"] for p, _ in data["dev"]])
+    by_bin = []
+    for low, high in BINS:
+        sel = truth_f == 0 if high == 0 else (truth_f > low) & (truth_f <= high)
+        if sel.any():
+            by_bin.append(dict(f_range=[low, high], n=int(sel.sum()),
+                               cnn_mae=float(np.abs(predicted[sel] - truth_f[sel]).mean()),
+                               projection_mae=float(np.abs(projection[sel] - truth_f[sel]).mean())))
     result = dict(train_changeovers=len(xt), dev_changeovers=len(xd), seed=args.seed, epochs=args.epochs,
                   device=torch.cuda.get_device_name() if device == "cuda" else "cpu",
-                  best=best, projection_dev_mae=projection_mae, seconds=time.time() - start,
+                  best=best, projection_dev_mae=projection_mae, dev_by_bin=by_bin, seconds=time.time() - start,
                   selection="epoch with the lowest dev-family MAE (synthetic)", real_data_inputs=[],
                   history=history)
     (args.out / "result.json").write_text(json.dumps(result, indent=1), encoding="utf-8")

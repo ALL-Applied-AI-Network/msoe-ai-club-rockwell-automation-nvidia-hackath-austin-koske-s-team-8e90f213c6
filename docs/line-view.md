@@ -30,7 +30,11 @@ reveals them as the playhead reaches each one.
 
 Run **Live cameras** (id `live`), source **Cameras (live, models now)**:
 - **Capture.** The fill and tray cameras are read as their frames arrive, on one clock
-  ([cameras.py](../replay/cameras.py)).
+  ([cameras.py](../replay/cameras.py)). They are opened the way CSI's Linewatch recorder
+  opens them: MJPG 640×480, 30 warm-up frames so auto-exposure and white balance settle,
+  and stable `/dev/v4l/by-id/` names resolved to the current `/dev/videoN` at every open.
+  A camera that drops off the USB hub is reopened for up to 5 s; the missed frames are a gap,
+  and the page counts reconnects.
 - **Models.** YOLO/U-Net and measurement QA run on the vial under the nozzle every 0.5 s
   while the carrier is stopped.
 - **Decisions.** Each vial is decided when the carrier moves it on.
@@ -58,22 +62,34 @@ person at the machine.
   640×480 is refused with an error.
 - **Start the live session before the first vial.** Vials are numbered from the start of the
   session, and vial n takes recipe n of the recipe order.
-- **Different cameras and lighting from CSI's.** Expect lower accuracy than on Run 5; the
-  models were not tuned for them.
+- **At CSI these are the Run 5 cameras.** The fill camera is the recorder's `vial_fill`
+  camera and the tray camera is its `cap_seal` camera, so if the mounts have not moved, the
+  framing matches Run 5. Check the overlays before the first vial anyway. Other cameras or
+  lighting (a laptop webcam, say) will be less accurate than on Run 5.
+- **Close the Linewatch recorder first.** A camera can be open in only one program. The live
+  session records both feeds itself (H.264, CRF 12 like the recorder), but not the
+  recorder's vial log; keep that by hand if it is needed. Recorded runs have the recorder's
+  timestamp burned in at the bottom left; live frames do not. It lies outside the vial region
+  and the tray slots.
 
-**Configure the station** with `APP__LINE_STATION=station.json`:
+**Configure the station** with `APP__LINE_STATION=station.json`. The CSI file is
+[setup/csi-station.json](../setup/csi-station.json), with the recorder's camera names:
 
 ```json
 {
-  "title": "CSI line",
-  "fill_camera": 0,
-  "tray_camera": 1,
-  "library": "/path/to/repo/client/public/data/run5/recipe-library.json"
+ "title": "CSI line",
+ "fill_camera": "/dev/v4l/by-id/usb-4K_USB_CAMERA_HD_USB_CAMERA_01.00.00-video-index0",
+ "tray_camera": "/dev/v4l/by-id/usb-USB_CAMERA_USB_CAMERA_240725172848-video-index0",
+ "library": "../client/public/data/run5/recipe-library.json"
 }
 ```
 
-- A camera is an OpenCV device index, or a device path such as `/dev/video0` on the GB10.
-  Leave `tray_camera` out if there is no tray camera.
+- A camera is an OpenCV device index (`0`, `1`, as on a Windows laptop) or a Linux device
+  path. Prefer the `/dev/v4l/by-id/` names: the kernel renumbers `/dev/videoN` when cameras
+  drop out and reconnect. If a name is missing, the camera re-enumerated under another name;
+  `ls -la /dev/v4l/by-id/` shows the current ones (the recorder's README has the same advice).
+- Leave `tray_camera` out if there is no tray camera. Relative paths are relative to the
+  station file.
 - The server also needs `APP__MODEL_ASSETS` (the extracted `temporal-cnn-assets-v1`) and
   `APP__DEVICE=cuda:0`.
 - Sessions are saved to `APP__LINE_RECORDINGS`; the default is `APP__DATA_DIR/line-recordings`.
@@ -90,7 +106,11 @@ person at the machine.
 - On Windows, OpenCV opens USB webcams directly; WSL and Docker on Windows cannot see them.
   Use a Python environment with torch (CUDA), OpenCV, ultralytics and scikit-image, plus
   `fastapi`, `uvicorn[standard]`, `pydantic-settings` and `imageio-ffmpeg`.
-- On the GB10 (Linux), the cameras are `/dev/video*`. The user needs the `video` group.
+- On the GB10 (Linux), `setup/run-line-live.sh` starts it with `setup/csi-station.json`. It uses
+  the kit environment that `setup/gb10/start.sh` builds (`.venv-gb10-cuda`, which has torch,
+  OpenCV, ultralytics, scikit-image and the API packages), adds `imageio-ffmpeg` in a side
+  folder, and prints where each camera name points. The user needs the `video` group. Not yet
+  run on the GB10.
 
 ## Recipe order
 

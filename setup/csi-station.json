@@ -1,0 +1,6 @@
+{
+ "title": "CSI line",
+ "fill_camera": "/dev/v4l/by-id/usb-4K_USB_CAMERA_HD_USB_CAMERA_01.00.00-video-index0",
+ "tray_camera": "/dev/v4l/by-id/usb-USB_CAMERA_USB_CAMERA_240725172848-video-index0",
+ "library": "../client/public/data/run5/recipe-library.json"
+}

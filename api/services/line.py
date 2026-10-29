@@ -304,7 +304,8 @@ def _encode(bgr):
 class _Recorder:
     """A camera feed written at a constant 30 fps from frame indices on that grid: a dropped
     slot repeats the previous frame, so video time equals line time. H.264 (browser playable)
-    through imageio-ffmpeg when installed, else OpenCV mp4v."""
+    through imageio-ffmpeg when installed (CRF 12, the Linewatch recorder's near-lossless
+    setting, since vial colour is the measurement), else OpenCV mp4v."""
 
     def __init__(self, path, fps):
         self.path, self.fps, self.next, self.last = path, fps, 0, None
@@ -313,7 +314,7 @@ class _Recorder:
             import imageio_ffmpeg
             self._ffmpeg = imageio_ffmpeg.write_frames(str(path), (640, 480), fps=fps, codec="libx264",
                                                        pix_fmt_in="bgr24", quality=None,
-                                                       output_params=["-preset", "ultrafast", "-crf", "23"])
+                                                       output_params=["-preset", "veryfast", "-crf", "12"])
             self._ffmpeg.send(None)
             self._cv = None
         except ImportError:

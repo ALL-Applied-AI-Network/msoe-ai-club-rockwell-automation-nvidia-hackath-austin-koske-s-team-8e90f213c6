@@ -173,7 +173,7 @@ export default function LinePage() {
             </span>
             <strong>{clock(view.t)}</strong>
             {live && status === "live" && <small>{lag > 0.5 ? `processing ${lag.toFixed(1)} s behind` : "keeping up"}</small>}
-            {camera && cameraStats && <small>{cameraStats.fill ?? 0} fill · {cameraStats.tray ?? 0} tray frames · {cameraStats.dropped} dropped</small>}
+            {camera && cameraStats && <small>{cameraStats.fill ?? 0} fill · {cameraStats.tray ?? 0} tray frames · {cameraStats.dropped} dropped{cameraStats.reconnects ? ` · ${cameraStats.reconnects} reconnects` : ""}</small>}
           </div>
         </section>
 

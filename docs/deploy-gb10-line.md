@@ -184,7 +184,7 @@ session is real data. It is evaluation only and is never used for tuning, like R
 | 4 | Line-runner modules in `api/Dockerfile` and `build-kit.sh`; `START.sh capture/line/selftest-line`; camera devices and results volume in compose; kit v1.2.0 | ½ day | Austin |
 | 5 | `selftest-line` plus gate 0 on the laptop, in both builds; online and offline kits on USB (exFAT) | 2 h | Austin |
 | 6 | App: API endpoints and React pages for runs. **Display done** (the [LINE page](line-view.md)); still to add: start/stop capture from the app and a run manifest per capture | ½ day left | Josiah + Austin |
-| 7 | Per-dwell `decide` (live mode) and a live ledger in the app. **Done** (`replay/live.py`, LINE page). Still to add: a camera source (`/dev/video*`) in place of a recording | ½ day left | Austin |
+| 7 | Per-dwell `decide` (live mode) and a live ledger in the app. **Done** (`replay/live.py`, LINE page), with live cameras (`replay/cameras.py`, by-id names, `setup/run-line-live.sh`). Tested with simulated cameras only; still to run on the GB10 | done | Austin |
 | 8 | Online RCA in the app: `decisions` backend with the key from the environment, rule fallback when offline or not approved | 2 h | Austin |
 | 9 | Cosmos env for GB10-B (lock, `explain.py --backend hf`), for the LoRA once Zoe and Jev have one | ½ day | Zoe/Jev |
 

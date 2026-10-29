@@ -6,7 +6,9 @@ A run is a JSON manifest in APP__LINE_RUNS (one file per run):
      "schedule": "...csv", "library": "...json",
      "fill_samples": "...frames.jsonl", "tray_samples": "...tray-samples.jsonl"}
 
-Relative paths resolve against the manifest's folder. Source "recorded" replays stored model
+Relative paths resolve against the manifest's folder. `schedule` is optional: a session can
+instead follow an inspection run's recipe plan (the order copied from CSI's machine), which
+is re-read while the session runs so newly ordered vials are picked up. Source "recorded" replays stored model
 and tray samples through the live engine at the video clock; source "video" decodes the
 recordings and runs the models as the frames arrive, as a camera would deliver them. Both
 emit the same events, and nothing is known before its time.
@@ -24,6 +26,7 @@ if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
 
 CLOCK_S = 0.2           # wall seconds between clock messages
+ORDER_S = 1.0           # wall seconds between re-reads of a followed recipe plan
 SPEEDS = (0.5, 1, 2, 4, 8, 16, 32)
 MAX_SESSIONS = 4
 
@@ -73,20 +76,32 @@ class LineRuns:
             raise KeyError(camera)
         return Path(path)
 
-    def engine(self, manifest, runtime=None):
+    def library(self, manifest):
+        return json.loads(Path(manifest["library"]).read_text())
+
+    def schedule(self, manifest, plan=None):
+        """Recipe ids in order: from a recipe plan (list of recipe dicts) if given, else the manifest."""
         from replay.line import load_schedule
+        from replay.recipes_order import schedule_from_plan
+        if plan is not None:
+            return schedule_from_plan(plan, self.library(manifest))
+        return load_schedule(manifest["schedule"]) if manifest.get("schedule") else []
+
+    def engine(self, manifest, runtime=None, schedule=None):
         from replay.live import LiveLine
-        return LiveLine(load_schedule(manifest["schedule"]), json.loads(Path(manifest["library"]).read_text()),
+        return LiveLine(self.schedule(manifest) if schedule is None else schedule, self.library(manifest),
                         manifest.get("line"), runtime)
 
-    def review(self, run_id: str):
+    def review(self, run_id: str, plan=None):
         """Every event of the recorded run, computed by the live engine without pacing."""
         manifest = self.manifest(run_id)
         if not manifest.get("fill_samples"):
             raise ValueError("Review needs stored samples (fill_samples) in the run manifest")
-        key = (run_id, max(Path(manifest[k]).stat().st_mtime for k in ("fill_samples", "schedule", "library")))
+        schedule = self.schedule(manifest, plan)
+        stamp = max(Path(manifest[k]).stat().st_mtime for k in ("fill_samples", "library"))
+        key = (run_id, stamp, tuple(schedule))
         if key not in self._review:
-            live = self.engine(manifest)
+            live = self.engine(manifest, schedule=schedule)
             items, feed = self.items(manifest, "recorded")
             events = [live.meta()]
             for _, camera, item in items:
@@ -115,13 +130,15 @@ class LineRuns:
             return video_frames(manifest["fill_video"], manifest.get("tray_video")), feed_frame
         raise ValueError(f"unknown source {source}")
 
-    def session(self, run_id, source, clock, send, stop: threading.Event):
+    def session(self, run_id, source, clock, send, stop: threading.Event, order=None):
         """Run one live session on this thread, paced by clock (a SessionClock the client can
-        pause or speed up). send(message) is called for every message."""
+        pause or speed up). send(message) is called for every message. order(), if given,
+        returns the followed recipe plan (list of recipe dicts) and is polled every ORDER_S."""
         manifest = self.manifest(run_id)
         runtime = self.runtime() if source == "video" else None
-        live = self.engine(manifest, runtime)
+        live = self.engine(manifest, runtime, self.schedule(manifest, order()) if order else None)
         send(live.meta())
+        last_order = time.monotonic()
         items, feed = self.items(manifest, source, runtime)
         start, pending, last_clock = clock.now(), [], 0.0
 
@@ -134,7 +151,11 @@ class LineRuns:
         for t, camera, item in items:
             if stop.is_set():
                 return
-            events = feed(live, camera, item)
+            events = []
+            if order and time.monotonic() - last_order >= ORDER_S:
+                last_order = time.monotonic()
+                events.extend(live.set_schedule(self.schedule(manifest, order()), t))
+            events.extend(feed(live, camera, item))
             if t < start:
                 # Catch up silently to the requested start, then pace from there.
                 pending.extend(events)

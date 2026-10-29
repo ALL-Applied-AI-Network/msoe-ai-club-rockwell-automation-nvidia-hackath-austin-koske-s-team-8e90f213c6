@@ -2,8 +2,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import PageChrome from "@/components/PageChrome";
 import { deltaE2000 } from "@/services/recipeCheck";
+import { Link } from "react-router-dom";
 import {
-  listLineRuns, liveSocket, reviewEvents, videoUrl,
+  listLineOrders, listLineRuns, liveSocket, reviewEvents, videoUrl,
   type LineEvent, type LiveMessage, type TrayArrival,
 } from "@/services/lineService";
 import { ACTION_TONE, VERDICT_TONE, clock, labToCss, phase, viewAt, type LineView } from "@/services/lineState";
@@ -19,6 +20,10 @@ interface ServerClock { t: number; at: number; speed: number; paused: boolean }
 export default function LinePage() {
   const runs = useQuery({ queryKey: ["line-runs"], queryFn: listLineRuns });
   const [runId, setRunId] = useState<string | null>(null);
+  // Recipe order: an inspection run's recipe plan (copied from CSI's machine), or "" for the run's file.
+  const orders = useQuery({ queryKey: ["line-orders"], queryFn: listLineOrders, refetchInterval: 5000 });
+  const [order, setOrder] = useState<string | null>(null);
+  useEffect(() => { if (order === null && orders.data) setOrder(orders.data[0]?.session_id ?? ""); }, [order, orders.data]);
   const [mode, setMode] = useState<Mode>("live");
   const [source, setSource] = useState<"recorded" | "video">("recorded");
   const [speed, setSpeed] = useState(8);
@@ -47,8 +52,8 @@ export default function LinePage() {
   useEffect(() => stop, [stop]);
 
   const review = useQuery({
-    queryKey: ["line-review", run?.id],
-    queryFn: () => reviewEvents(run!.id),
+    queryKey: ["line-review", run?.id, order],
+    queryFn: () => reviewEvents(run!.id, order),
     enabled: mode === "review" && !!run?.sources.includes("recorded"),
     staleTime: Infinity,
   });
@@ -68,7 +73,7 @@ export default function LinePage() {
     setError(null);
     setPaused(false);
     setStatus("connecting");
-    const ws = liveSocket(run.id, source, speed, source === "recorded" ? startMin * 60 : 0);
+    const ws = liveSocket(run.id, source, speed, source === "recorded" ? startMin * 60 : 0, order);
     socket.current = ws;
     ws.onmessage = (message) => {
       const data = JSON.parse(message.data) as LiveMessage;
@@ -156,6 +161,16 @@ export default function LinePage() {
               {runs.data?.map((r) => <option key={r.id} value={r.id}>{r.title}</option>)}
             </select>
           </label>
+          <label>Recipe order
+            <select value={order ?? ""} onChange={(e) => { stop(); setStatus("idle"); setOrder(e.target.value); }}>
+              {orders.data?.map((o) => (
+                <option key={o.session_id} value={o.session_id}>
+                  {o.run_name || `Run ${o.session_id.slice(0, 8)}`} · {o.vials} vial{o.vials === 1 ? "" : "s"}
+                </option>
+              ))}
+              <option value="">Run's schedule file</option>
+            </select>
+          </label>
           <div className="ln-seg" role="group" aria-label="Mode">
             <button className={live ? "active" : ""} onClick={() => setMode("live")}>Live</button>
             <button className={!live ? "active" : ""} onClick={() => { setMode("review"); }} disabled={!run?.sources.includes("recorded")}>Review</button>
@@ -185,6 +200,10 @@ export default function LinePage() {
           </div>
         </section>
 
+        <p className="ln-hint">
+          Enter each order from CSI's machine in the <Link to="/">Monitor</Link> recipe plan, same recipe and tank amounts, same
+          order. A live line run follows that plan as it changes.
+        </p>
         {runs.isError && <p className="ln-banner">Could not load line runs: {(runs.error as Error).message}</p>}
         {runs.data && !runs.data.length && (
           <p className="ln-banner">No line runs configured. Set APP__LINE_RUNS to a folder of run manifests (see docs/line-view.md).</p>
@@ -281,7 +300,8 @@ function arrivalNote(a: TrayArrival) {
 
 function Panel({ view }: { view: LineView }) {
   const meta = view.meta;
-  const n = meta?.scheduled_vials ?? 0;
+  const ordered = meta?.scheduled_vials ?? 0;
+  const n = Math.max(ordered, view.vials.length);
   const next = view.vials.length + 1;
   const recipe = meta?.schedule[next - 1] ?? null;
   const reference = recipe ? meta?.references[recipe] ?? null : null;
@@ -304,9 +324,9 @@ function Panel({ view }: { view: LineView }) {
         <>
           <div className="ln-block">
             <small>UNDER THE NOZZLE</small>
-            {view.dwell && next <= n ? (
+            {view.dwell ? (
               <>
-                <h2>Vial {next} / {n} <span>recipe {recipe}</span></h2>
+                <h2>Vial {next} / {ordered} <span>{recipe ? `recipe ${recipe}` : "not in the recipe order yet"}</span></h2>
                 <p className="ln-phase">{phase(view)}</p>
                 <div className="ln-bar" aria-label="Liquid area"><span style={{ width: `${Math.min(100, (100 * area) / typical)}%` }} /></div>
                 <div className="ln-swatches">
@@ -315,7 +335,7 @@ function Panel({ view }: { view: LineView }) {
                   <strong>{measured && reference ? `ΔE ${deltaE2000(measured, reference).toFixed(1)}` : "—"}</strong>
                 </div>
               </>
-            ) : <p className="ln-muted">{view.dwell ? "Station still · no vial expected" : "Carrier moving"}</p>}
+            ) : <p className="ln-muted">Carrier moving</p>}
           </div>
 
           <div className="ln-block">

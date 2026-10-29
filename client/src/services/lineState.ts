@@ -25,6 +25,9 @@ export function viewAt(events: LineEvent[], t: number): LineView {
       case "action": view.actions.push(event); break;
       case "tray_arrival": view.arrivals.push(event); break;
       case "tray_missed": view.missed.push(event.seq); break;
+      case "schedule":
+        if (view.meta) view.meta = { ...view.meta, schedule: event.schedule, scheduled_vials: event.scheduled_vials };
+        break;
     }
   }
   return view;

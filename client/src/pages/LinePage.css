@@ -98,3 +98,5 @@
 .ln-ledger td small { color: var(--muted); }
 .ln-chip-swatch { display: inline-block; width: 28px; height: 14px; border: 1px solid var(--line-bright); vertical-align: middle; }
 .ln-ledger .panel-heading div { display: grid; gap: 2px; }
+.ln-hint { margin: -4px 0 0; color: var(--muted); font-size: 12px; }
+.ln-hint a { color: var(--cyan); }

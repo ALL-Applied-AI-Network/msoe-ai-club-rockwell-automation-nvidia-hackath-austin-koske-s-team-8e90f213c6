@@ -30,7 +30,7 @@ ROI = (256, 240, 368, 432)          # x0, y0, x1, y1: the fill-station vial regi
 
 class LiveLine:
     def __init__(self, schedule, library, line=None, runtime=None, fps=30.0):
-        self.schedule, self.library = schedule, library
+        self.schedule, self.library = list(schedule), library
         self.line = {**DEFAULT_LINE, **(line or {})}
         self.fps = fps
         self.fill = FillTracker(runtime, fps)
@@ -43,6 +43,14 @@ class LiveLine:
         return {"type": "meta", "t": 0.0, "schedule": self.schedule, "scheduled_vials": len(self.schedule),
                 "references": references, "line": self.line, "roi": ROI, "good_slots": GOOD_SLOTS,
                 "trays": TRAYS, "transit_window_s": TRANSIT_WINDOW}
+
+    def set_schedule(self, schedule, t):
+        """Replace the recipe order (e.g. the operator added vials); returns a schedule event if it changed."""
+        schedule = [str(r) for r in schedule]
+        if schedule == self.schedule:
+            return []
+        self.schedule[:] = schedule
+        return [{"type": "schedule", "t": t, "schedule": list(schedule), "scheduled_vials": len(schedule)}]
 
     # Fill camera.
     def fill_frame(self, index, bgr):

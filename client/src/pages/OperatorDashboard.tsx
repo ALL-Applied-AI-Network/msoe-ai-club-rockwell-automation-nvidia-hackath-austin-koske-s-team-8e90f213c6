@@ -314,6 +314,15 @@ export default function OperatorDashboard() {
 
   useEffect(() => { sessionRef.current = session; }, [session]);
 
+  // While a run is active, keep its stored order current so the LINE view follows new vials.
+  useEffect(() => {
+    if (!session) return;
+    const timer = window.setTimeout(() => {
+      void replaceRecipePlan(session.session_id, normalizeRecipePlan(recipePlan)).catch(() => undefined);
+    }, 500);
+    return () => window.clearTimeout(timer);
+  }, [recipePlan, session]);
+
   useEffect(() => {
     if (!sessionId) return;
     const socket = new WebSocket(inspectionEventUrl(sessionId));

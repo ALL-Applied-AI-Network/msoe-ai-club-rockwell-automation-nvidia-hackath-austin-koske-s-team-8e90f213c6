@@ -26,6 +26,26 @@ reveals them as the playhead reaches each one.
   models**. Without the models, its frame decoding, dwell detection and tray scanning match the
   stored Run 5 results (below).
 
+## Recipe order
+
+The line runner needs the intended recipe of every vial, in order. At CSI we copy each order
+from their machine into the app: in the **Monitor** recipe plan (Josiah's ordering panel),
+enter the same recipe and tank amounts (T100–T400 mL, dispense order) in the same order.
+The LINE page's **Recipe order** picker then uses that inspection run's plan. The run's
+`schedule.csv` file is only a fallback.
+
+- **While a run is active, the Monitor saves the plan whenever it changes.** A live line
+  session re-reads it every second, so vials ordered mid-run are picked up. The panel shows
+  "not in the recipe order yet" for a vial beyond the end of the plan.
+- **Matching to the recipe library** ([recipes_order.py](../replay/recipes_order.py)), first
+  match wins:
+  1. the same id;
+  2. the same formula: tank volumes and dispense order;
+  3. the same recipe number (`recipe-07` → `7`).
+- **No match:** the vial keeps its own id and has no reference, so it is a HOLD
+  (`no_reference`) until a reference exists. The plan's "expected colour" is operator intent,
+  not a measured reference, and is not used for verdicts.
+
 ## What the page shows
 
 - **Fill camera:**
@@ -132,9 +152,10 @@ paths.
 | Route | Returns |
 | --- | --- |
 | `GET /api/v1/line/runs` | Runs with their available sources |
-| `GET /api/v1/line/runs/{id}/events` | Every event of the recorded run (Review) |
+| `GET /api/v1/line/runs/{id}/events?order=RUN` | Every event of the recorded run (Review), optionally with an inspection run's recipe plan |
 | `GET /api/v1/line/runs/{id}/video/{fill\|tray}` | The recording, with range requests |
-| `WS /api/v1/line/runs/{id}/live?source=recorded\|video&speed=N&start=S` | `meta`, then `events` and `clock` messages, then `end`. Send `{"speed": N}` or `{"paused": true}` |
+| `GET /api/v1/line/orders` | Inspection runs with a recipe plan, newest first |
+| `WS /api/v1/line/runs/{id}/live?source=recorded\|video&speed=N&start=S&order=RUN` | `meta`, then `events` and `clock` messages, then `end`. Send `{"speed": N}` or `{"paused": true}` |
 
 ## Not yet
 

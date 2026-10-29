@@ -78,7 +78,8 @@ export type LineEvent =
   | TrayArrival
   | { type: "dwell_start" | "dwell_end"; t: number; frame: number }
   | { type: "vial"; t: number; vial: LineVial }
-  | { type: "tray_missed"; t: number; seq: number; decision: string | null };
+  | { type: "tray_missed"; t: number; seq: number; decision: string | null }
+  | { type: "schedule"; t: number; schedule: string[]; scheduled_vials: number };
 
 export type LiveMessage =
   | LineMeta
@@ -94,22 +95,36 @@ export interface LineRun {
   has_tray: boolean;
 }
 
+/** An inspection run whose recipe plan (the order copied from CSI's machine) the line can follow. */
+export interface LineOrder {
+  session_id: string;
+  run_name: string;
+  created_at: string;
+  vials: number;
+  recipes: string[];
+}
+
+export async function listLineOrders(): Promise<LineOrder[]> {
+  return (await api.get<LineOrder[]>("/line/orders")).data;
+}
+
 export async function listLineRuns(): Promise<LineRun[]> {
   return (await api.get<LineRun[]>("/line/runs")).data;
 }
 
-export async function reviewEvents(runId: string): Promise<LineEvent[]> {
-  return (await api.get<{ events: LineEvent[] }>(`/line/runs/${encodeURIComponent(runId)}/events`)).data.events;
+export async function reviewEvents(runId: string, order?: string | null): Promise<LineEvent[]> {
+  const params = order ? { order } : undefined;
+  return (await api.get<{ events: LineEvent[] }>(`/line/runs/${encodeURIComponent(runId)}/events`, { params })).data.events;
 }
 
 export function videoUrl(runId: string, camera: "fill" | "tray"): string {
   return `${api.defaults.baseURL}/line/runs/${encodeURIComponent(runId)}/video/${camera}`;
 }
 
-export function liveSocket(runId: string, source: string, speed: number, start: number): WebSocket {
+export function liveSocket(runId: string, source: string, speed: number, start: number, order?: string | null): WebSocket {
   const base = new URL(api.defaults.baseURL ?? "/api/v1", window.location.href);
   base.protocol = base.protocol === "https:" ? "wss:" : "ws:";
   base.pathname = `${base.pathname.replace(/\/$/, "")}/line/runs/${encodeURIComponent(runId)}/live`;
-  base.search = new URLSearchParams({ source, speed: String(speed), start: String(start) }).toString();
+  base.search = new URLSearchParams({ source, speed: String(speed), start: String(start), ...(order ? { order } : {}) }).toString();
   return new WebSocket(base);
 }

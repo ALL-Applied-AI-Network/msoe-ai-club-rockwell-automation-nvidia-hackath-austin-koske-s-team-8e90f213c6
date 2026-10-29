@@ -170,6 +170,28 @@ verdicts are partly circular; there is no per-vial outcome truth, so these are d
 accuracy. Vial 1 starts mid-fill at frame 0, so its reference is not empty. Vial 30's fill window
 is truncated at the end of the video.
 
+## Run 5 evaluation protocol (from 2026-10-29)
+
+Run 5 is the only labelled run (30 vials, fill windows and recipe identity, no outcome or cause
+labels), so recipe references have to come from its own vials, as an operator would capture a
+known-good vial per recipe on the line. To keep that from scoring a vial against itself:
+
+1. Settings are frozen before scoring with `python -m replay.eval_freeze` (thresholds current or
+   tuned on synthetic train families by `replay.carryover_synthetic`, the recipe library by
+   SHA-256, the reference vials, the residue estimator). `replay.line --freeze F` refuses a
+   different library and takes the thresholds from the record.
+2. Reference vials (3, 6, 9, 18, 20, 24, 30; from each reference's `from` note) are listed and left
+   out of the verdict counts. The headline is the first vial after each recipe change.
+3. Each first vial is re-scored against every repeat vial of its recipe; `verdict_stable` says
+   whether the in/out-of-band verdict depends on which vial supplied the reference.
+4. Run 5 is scored once. Carryover detection and false-alarm rates come only from the synthetic
+   held-out families; Run 5 cannot measure them.
+
+Plumbing check: re-deriving the v1 run above from its saved samples (current thresholds, no
+models, nothing tuned) reproduces segmentation, alignment, actions and timeliness; with reference
+vials excluded the second / third vials are 3 / 1 IN SPEC, 3 / 0 OUT OF SPEC, 3 / 3 CAN'T VERIFY,
+and all 7 checkable first vials keep their verdict under every alternative reference.
+
 Annotated video: `python -m replay.annotate --video V --run DIR --library L --out annotated.mp4`
 redraws the run from its saved outputs (about 2 min for Run 5, no models): the vial region,
 fill phase, measured vs reference colour with live ΔE, the verdict, an action log with deadline

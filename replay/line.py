@@ -1,6 +1,7 @@
 """Line runner: video + recipe schedule -> per-vial verdict, action, deadline and evidence.
 
     python -m replay.line --video V --schedule S --library L --assets A --out DIR [--labels GT]
+                          [--freeze F]   # replay.eval_freeze record: frozen thresholds and references
 
 Stage 2 is causal over the stream: a vial dwell is a still period of the carrier (motion in a
 grey thumbnail, as validated in analysis/scripts/p9_unlabeled.py); the frame shortly after the
@@ -154,6 +155,12 @@ def run(args):
     out.mkdir(parents=True, exist_ok=False)
     schedule = load_schedule(args.schedule)
     library = json.loads(args.library.read_text())
+    if args.freeze:
+        from replay.eval_freeze import check
+        freeze = json.loads(args.freeze.read_text())
+        line = check(freeze, args.library)
+    else:
+        freeze, line = None, json.loads(args.line.read_text()) if args.line else None
 
     if args.samples:
         dwells = [json.loads(line) for line in args.samples.read_text().splitlines()]
@@ -181,11 +188,18 @@ def run(args):
     for current, nxt in zip(vials, vials[1:]):
         current["next_fill_start_s"] = nxt["fill_start_s"]
 
-    verdicts, actions = decide(vials, schedule, library, json.loads(args.line.read_text()) if args.line else None)
+    verdicts, actions = decide(vials, schedule, library, line)
     write_outputs(out, vials, verdicts, actions, schedule, dwells, args)
     if args.labels:
+        from replay.decide import DEFAULT_LINE
+        from replay.eval_freeze import reference_vials
         from replay.line_metrics import score
-        metrics = score(vials, verdicts, actions, args.labels, schedule)
+        refs = freeze["reference_vials"] if freeze else reference_vials(library)
+        metrics = score(vials, verdicts, actions, args.labels, schedule, refs.values(),
+                        {**DEFAULT_LINE, **(line or {})}["band_de2000"])
+        if freeze:
+            metrics["freeze"] = {"path": str(args.freeze), "frozen_at": freeze["frozen_at"], "commit": freeze["commit"],
+                                 "line": freeze["line"], "estimator": freeze["estimator"]["name"]}
         (out / "metrics.json").write_text(json.dumps(metrics, indent=1))
         print(json.dumps(metrics["summary"], indent=1))
 
@@ -253,11 +267,14 @@ def main():
     parser.add_argument("--library", type=Path, required=True, help="recipe-library/v1 JSON")
     parser.add_argument("--assets", type=Path, help="released temporal-cnn assets (not needed with --samples)")
     parser.add_argument("--line", type=Path, help="JSON overrides of replay.decide.DEFAULT_LINE")
+    parser.add_argument("--freeze", type=Path, help="replay.eval_freeze record (replaces --line)")
     parser.add_argument("--labels", type=Path, help="ground truth CSV (vial,recipe_id,start_frame,end_frame) for metrics")
     parser.add_argument("--samples", type=Path, help="frames.jsonl from an earlier run: skip the models")
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--device", default="cpu")
     args = parser.parse_args()
+    if args.freeze and args.line:
+        parser.error("--freeze carries the line settings; drop --line")
     if not args.samples and not args.assets:
         parser.error("--assets is required unless --samples is given")
     run(args)

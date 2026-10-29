@@ -2,8 +2,9 @@
 
 Each scene family draws three random dyes (per-channel absorbance), so no CSI dye colour,
 recipe reference or Run 5 value is used. A family holds several previous -> next changeovers;
-each changeover is rendered twice under independent nuisances: the clean intended mix
-(reference, carryover 0) and the actual vial, whose absorbance is
+each changeover is rendered three times under independent nuisances: the clean intended mix
+(reference), the clean previous mix (previous, the carryover direction the line rule compares
+against) and the actual vial, whose absorbance is
 (1 - f) * intended + f * previous with residue fraction f (0 for a third of vials).
 Families are split train/dev as wholes. Labels are the mixing parameters, not optical truth.
 """
@@ -55,11 +56,11 @@ def make(families=48, changeovers=8, seed=29, dev_fraction=0.25):
             a_next, a_prev = mix(dyes, nxt), mix(dyes, prev)
             actual = [(1 - f) * n + f * p for n, p in zip(a_next, a_prev)]
             pair = f"f{fam:03d}-c{k:02d}"
-            for role, absorbance, frac in [("reference", a_next, 0.0), ("vial", actual, f)]:
+            for role, absorbance, frac in [("reference", a_next, 0.0), ("previous", a_prev, 0.0), ("vial", actual, f)]:
                 rgb, opacity = colour(absorbance, path)
                 level = rng.uniform(0.70, 0.98) if rng.random() < 0.8 else rng.uniform(0.30, 0.70)
                 rows.append(dict(
-                    id=f"{pair}-{role[:3]}", level=level,
+                    id=f"{pair}-{role[:4]}", level=level,
                     stream="off" if rng.random() < 0.85 else "continuous",
                     rgb=rgb, opacity=opacity, light_scale=rng.uniform(0.6, 1.4),
                     roughness=rng.uniform(0.06, 0.30), stream_radius_m=rng.uniform(0.0008, 0.0023),
@@ -70,7 +71,7 @@ def make(families=48, changeovers=8, seed=29, dev_fraction=0.25):
                   seed=seed, families=families, changeovers_per_family=changeovers,
                   dev_families=sorted(dev), real_data_inputs=[], recipe_or_camera_fitting=False,
                   nuisance_policy="Fixed supplied FillCam; random dyes per family; vary level, light intensity, "
-                                  "roughness, stream; reference and vial rendered with independent nuisances",
+                                  "roughness, stream; reference, previous and vial rendered with independent nuisances",
                   cases=rows)
     validate_fixture(result)
     return result

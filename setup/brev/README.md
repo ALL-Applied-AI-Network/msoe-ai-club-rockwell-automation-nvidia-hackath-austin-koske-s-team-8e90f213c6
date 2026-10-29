@@ -27,8 +27,9 @@ Source: [official hackathon compute guide](https://github.com/MSOE-AI-Club/maic-
 `render_carryover.sh` renders the synthetic carryover set from
 `setup/isaac/make_carryover_fixture.py`. Each scene family draws three random dyes, so no CSI dye,
 recipe reference or Run 5 value is used. Each previous-to-next changeover is rendered twice under
-independent lighting and fill: the clean intended mix (`-ref`) and the vial with residue fraction
-0–30% of the previous recipe (`-via`, residue 0 for a third of them). A quarter of the families are
+independent lighting and fill: the clean intended mix (`-refe`), the clean previous mix (`-prev`,
+the direction the FLUSH rule compares against) and the vial with residue fraction 0–30% of the
+previous recipe (`-vial`, residue 0 for a third of them). The GB10 test below predates `-prev`. A quarter of the families are
 held out as development families. Labels are the mixing parameters, not optical truth.
 
 **GB10 test, 2026-10-29:** 24 cases from 3 families at 32 spp and 4 subframes rendered in 106 s
@@ -44,8 +45,19 @@ export ISAAC_PY=/isaac-sim/python.sh           # the launchable's Isaac Python, 
 bash setup/brev/render_carryover.sh ~/carryover-v1 /path/to/csi_digital_twin_v1 400 8 400
 ```
 
-The defaults (400 families, 8 changeovers) give 6,400 renders in 16 shards of 400; at the GB10
-rate that is about 6 GPU-hours. Shards are spread over every visible GPU. Rerunning the same
+The defaults (400 families, 8 changeovers) give 9,600 renders in 24 shards of 400; at the GB10
+rate that is about 9 GPU-hours. Shards are spread over every visible GPU. Rerunning the same
 command skips shards whose `verification.json` passed, so a stopped instance resumes. When it
 finishes it prints renders and GPU-hours from `timing.jsonl`; copy the output folder (including
 `timing.jsonl` and `logs/`) back, record the console cost, and stop the instance.
+
+Then, on the copied renders (`renders/shard-*` folders):
+
+```bash
+python -m replay.carryover_synthetic ~/carryover-v1/renders/shard-* --out carryover-eval.json
+cd REPO && sbatch setup/vision/train-carryover-rosie.sbatch OUT_ROOT ~/carryover-v1/renders/shard-*
+```
+
+The first tests the FLUSH rule and the Lab-projection residue estimate (thresholds swept on train
+families, reported on dev families); the second trains three seeds of a learned estimator on
+Rosie for comparison with the projection.

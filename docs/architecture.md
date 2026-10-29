@@ -10,8 +10,9 @@ existing line; the software does not command its PLC, sorter or valves.
 The per-frame perception and measurement feed two consumers. The operator app checks one
 vial at a time, and a person confirms each vial. The line runner processes a whole run from
 the recipe schedule. It adds actions with deadlines, finished-tray reconciliation and
-root-cause packets. The line runner is offline batch work on `austin/line-runner`. The dotted
-links into the app are planned, not built.
+root-cause packets. It runs as a batch command or live: `replay.live` emits each decision when
+the carrier moves the vial on, and the app's LINE page shows it as it happens
+([line view](line-view.md)). The dotted links are planned, not built.
 
 ```mermaid
 flowchart LR
@@ -20,11 +21,12 @@ flowchart LR
         Y[YOLO11n vial] --> Q[Measurement QA<br/>RGB/Lab sample or unavailable]
         U[Temporal U-Net liquid mask] --> Q
     end
-    subgraph APP["Operator app · existing"]
+    subgraph APP["Operator app"]
+        LV[LINE page · new<br/>live and review]
         OP[Recipe-first vial check<br/>operator confirms GOOD/SCRAP/HOLD] --> J[(History and<br/>operator responses)]
         INV[Investigation panel]
     end
-    subgraph LINE["Line runner · new, offline batch"]
+    subgraph LINE["Line runner · new, batch and live"]
         SCH[schedule.csv] --> LR[replay.line<br/>dwells, vials, decide]
         LR --> L[Ledger and actions<br/>with deadlines]
         LR --> P[RCA packets] --> X[replay.explain]
@@ -35,6 +37,8 @@ flowchart LR
     end
     Q --> OP
     Q --> LR
+    L --> LV
+    R --> LV
     L -. planned .-> OP
     X -. planned .-> INV
 ```
@@ -110,7 +114,7 @@ frames. Recording replay may instead import authoritative timestamped segments.
 | Shared model core | [model_pipeline.py](../integration/model_pipeline.py) | Srijan's consolidated integration: YOLO vial geometry → paired Temporal CNN liquid proposal → vial association → measurement QA → render/mask |
 | Asset-bundle adapter | [temporal.py](../api/pipelines/temporal.py) and [runtime](../integration/runtime.py) | Model mode when `APP__MODEL_ASSETS` is set (GB10 kit, Docker): the same models from the hash-checked release bundle |
 | Frame worker and operator loop | [InspectionService](../api/services/inspection.py), [Temporal CNN bridge](../api/pipelines/temporal_cnn_bridge.py) | Load-once model mode connects queued frames to the shared model core and stored render/mask artifacts |
-| Line runner | [line](../replay/line.py), [decide](../replay/decide.py), [explain](../replay/explain.py), [tray](../replay/tray.py), [annotate](../replay/annotate.py) | Offline: video + recipe schedule → vial ledger, actions with deadlines, RCA packets/explanations, finished-tray reconciliation, annotated video |
+| Line runner | [line](../replay/line.py), [decide](../replay/decide.py), [explain](../replay/explain.py), [tray](../replay/tray.py), [annotate](../replay/annotate.py), [live](../replay/live.py) | Video + recipe schedule → vial ledger, actions with deadlines, RCA packets/explanations, finished-tray reconciliation, annotated video. Batch, or live through the app's [LINE page](line-view.md) |
 | Recording ingestion | Browser-sampled decode, millisecond seek timestamps, original recording storage and recipe-segment import | Integrated with the frame queue; native PTS/time-base backend decoding and a full rehearsal remain pending |
 
 Model mode is opt-in and requires the released checkpoints plus an explicit
@@ -293,8 +297,11 @@ flowchart TB
 
 [SVG](assets/architecture-line-runner.svg) · [PNG](assets/architecture-line-runner.png)
 
-The runner decides each vial only after the run ends. Live use needs a per-dwell
-`decide` call. On-site deployment is in [deploy-gb10-line](deploy-gb10-line.md).
+`python -m replay.line` decides after the whole video. `replay.live` runs the same stages one
+frame or stored sample at a time and emits events as they become known. On Run 5 it gives the
+same 30 verdicts, the same 39 actions and the same 26 tray matches as the batch path; the
+differences are listed in [line view](line-view.md). On-site deployment is in
+[deploy-gb10-line](deploy-gb10-line.md).
 
 ## Investigation
 

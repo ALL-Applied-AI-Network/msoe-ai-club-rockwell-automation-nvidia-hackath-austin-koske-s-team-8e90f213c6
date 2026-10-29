@@ -34,6 +34,8 @@ class AppConfig(BaseSettings):
     temporal_reference_qualified: bool = False
     # Native (non-Docker) deployments serve the prebuilt React UI from this folder.
     client_dist: Path | None = None
+    # Folder of line-run manifests for the live line view (see services/line.py).
+    line_runs: Path | None = None
 
 
 config = AppConfig()

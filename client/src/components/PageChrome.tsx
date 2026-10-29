@@ -12,6 +12,7 @@ export default function PageChrome({ children }: { children: ReactNode }) {
         </Link>
         <nav className="main-nav">
           <Link className={location.pathname === "/" ? "active" : ""} to="/">MONITOR</Link>
+          <Link className={location.pathname === "/line" ? "active" : ""} to="/line">LINE</Link>
           <Link className={location.pathname === "/recipe-check" ? "active" : ""} to="/recipe-check">RECIPE CHECK</Link>
           <Link className={location.pathname.startsWith("/history") || location.pathname.startsWith("/runs") ? "active" : ""} to="/history">RUN HISTORY</Link>
         </nav>

@@ -8,6 +8,7 @@ from pipelines.temporal import TemporalInspectionPipeline
 from services.artifacts import ArtifactStore
 from services.event_broker import EventBroker
 from services.inspection import InspectionService
+from services.line import LineRuns
 from services.widget import WidgetService
 from settings import config
 
@@ -43,6 +44,8 @@ _inspection = InspectionService(
     worker_count=config.model_workers,
 )
 
+_line_runs = LineRuns(config.line_runs, config.model_assets, config.device)
+
 
 def get_widget_service() -> WidgetService:
     return _widgets
@@ -50,3 +53,7 @@ def get_widget_service() -> WidgetService:
 
 def get_inspection_service() -> InspectionService:
     return _inspection
+
+
+def get_line_runs() -> LineRuns:
+    return _line_runs

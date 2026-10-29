@@ -56,6 +56,25 @@ def toward_previous(lab, reference, previous):
     return float(u @ w / (np.linalg.norm(u) * np.linalg.norm(w) + 1e-9))
 
 
+def proactive_flush(seq, schedule, library, line, issued_s, deadline_s):
+    """FLUSH_RECOMMENDED before the first vial of a new recipe, if the change is large; else None."""
+    line = {**DEFAULT_LINE, **(line or {})}
+    if seq < 2 or seq > len(schedule) or schedule[seq - 2] == schedule[seq - 1]:
+        return None
+    recipe = schedule[seq - 1]
+    earlier = [r for r in schedule[:seq - 1] if r != recipe]
+    previous = earlier[-1] if earlier else None
+    ref, prev_ref = _reference(library, recipe), previous and _reference(library, previous)
+    if not (ref and prev_ref):
+        return None
+    gap = delta_e(prev_ref, ref)
+    if gap <= line["proactive_flush_de"]:
+        return None
+    return Action("FLUSH_RECOMMENDED", seq, issued_s, deadline_s,
+                  f"Changeover {previous}→{recipe}: references ΔE {gap:.1f}; flush (1 water vial) before filling",
+                  "ORDER_WATER_VIAL")
+
+
 def decide(vials, schedule, library, line=None):
     """vials: ordered dicts with seq, fill_end_s, decision_s, endpoint_lab (or None).
     schedule: ordered list of recipe ids, one per vial. Returns (verdicts, actions)."""
@@ -71,13 +90,9 @@ def decide(vials, schedule, library, line=None):
         v = Verdict(seq, recipe, previous, "CANT_VERIFY", "unmeasured", lab, None, None, None)
         t, deadline = vial["decision_s"], vial["fill_end_s"] + line["scrap_deadline_s"]
 
-        # Proactive flush: before the first vial of a new recipe, if the change is large.
-        if seq > 1 and schedule[seq - 2] != recipe and prev_ref and ref:
-            gap = delta_e(prev_ref, ref)
-            if gap > line["proactive_flush_de"]:
-                actions.append(Action("FLUSH_RECOMMENDED", seq, vial.get("arrival_s", t), vial.get("fill_start_s"),
-                                      f"Changeover {previous}→{recipe}: references ΔE {gap:.1f}; flush (1 water vial) before filling",
-                                      "ORDER_WATER_VIAL"))
+        flush = proactive_flush(seq, schedule, library, line, vial.get("arrival_s", t), vial.get("fill_start_s"))
+        if flush:
+            actions.append(flush)
 
         if lab is None:
             v.actions.append(Action("HOLD", seq, t, deadline, "No QA-valid colour in the endpoint window", "DIVERT_HOLD"))

@@ -7,6 +7,7 @@ from fastapi.responses import FileResponse
 from dependencies import get_inspection_service
 from routers.inspection import artifact_router, router as inspections
 from routers.investigation import router as investigation
+from routers.line import router as line
 from settings import config
 
 @asynccontextmanager
@@ -35,6 +36,7 @@ app.add_middleware(
 app.include_router(inspections, prefix="/api/v1")
 app.include_router(artifact_router, prefix="/api/v1")
 app.include_router(investigation, prefix="/api/v1")
+app.include_router(line, prefix="/api/v1")
 
 
 @app.get("/health")

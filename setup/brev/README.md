@@ -45,6 +45,12 @@ frame or hangs in `orchestrator.step` at 0% GPU; the nvidia runtime fixes it. Th
 then passed verification in 94 s including startup (about 2.2 s per render). `brev exec` kills
 background processes when it returns, so long runs go in `tmux`.
 
+A second instance (2026-10-29, ap-south-1) also returned "Invalid RGB capture" with the nvidia
+runtime: the launchable starts its web stack (`isaac-lab-nginx-1`, `vscode`, `web-viewer`) once
+the Isaac image is present. `docker stop isaac-lab-nginx-1 vscode web-viewer` before rendering
+fixed it. `brev exec` also hung intermittently; plain `ssh`/`scp` with the alias from
+`brev refresh` (~/.brev/ssh_config) worked throughout.
+
 ```bash
 brev copy setup-and-assets.tgz linewatch-carryover:/home/ubuntu/   # setup/ and datasets/mixing_twin/...
 brev exec linewatch-carryover 'tmux new-session -d -s bulk "bash ~/linewatch/setup/brev/run-in-container.sh carryover-v1 400 8 400"'

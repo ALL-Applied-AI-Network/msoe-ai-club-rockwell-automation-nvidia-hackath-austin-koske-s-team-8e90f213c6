@@ -1,0 +1,372 @@
+{
+  "settings": {
+    "source_fps": 30,
+    "stride": 6,
+    "station_x": 306.5,
+    "minimum_vial_height": 180,
+    "motion_threshold": 8.0,
+    "motion_confirm_s": 0.2,
+    "settle_s": 0.6,
+    "maximum_detection_gap_s": 0.6,
+    "match_iou": 0.65,
+    "confirm_samples": 3,
+    "containment_minimum": 0.9
+  },
+  "model_sha256": "89ed11f7046171e5340dc45a9d528010de1cefbba21e163b23b7098151e0880e",
+  "cache_sha256": "aff504002184d856ac06451f1730677eace2e840b89110c2cb6c0af39a8850d8",
+  "video_sha256": "6f87cec1aeec3b2bae6dac639a317c077a3f175f27abd5fc8430d6953d9d05b9",
+  "baseline_rows_sha256": "e19049077814f077a8cb460fa7b1eb6a4f1f481a23744ad319b71462ceb3477c",
+  "preserved_source_hashes": {
+    "replay\\config.py": "e24ba8fd3802a8afd436ebef859b648ddb2571b590e26eeac3c8109dc5166cd6",
+    "replay\\geometry.py": "f93dfdd71c199daaac4e46a3bd33ca9f2dc09f108534ad3e2c6323dfd31ac0dd",
+    "replay\\measurement.py": "e34cddf74e9b5bfa64a95fc549e20dc058d76b51e4a1a9e5ddc340797f2bf0af",
+    "replay\\pipeline.py": "f469c55fa93284d73a50740381c2ba6b97ce3e19dbd446f6918f86a7337ca4a2",
+    "replay\\detection.py": "fc8f54f154c46ca6c0e4e751e60477c1d5ce31c6f352e3eb17c70f765834b1fc",
+    "replay\\examples\\bootstrap-vision.json": "fde67a9978145e0629f6f10e6a005d9af6fddadd2c7b11fbf8f1477dc9602e78",
+    "replay\\models\\vial-bootstrap.onnx": "89ed11f7046171e5340dc45a9d528010de1cefbba21e163b23b7098151e0880e"
+  },
+  "tracking_implementation_sha256": "03101569d919beac9b4d2e3a0d69b5f147abc5884b9332eaabb4e222bc10928e",
+  "exporter_sha256": "4715e50cab7493fa82e3478fbe556a20c0b2b46b36b74893392b5d9d691f0a8c",
+  "annotations_used": false,
+  "calibration_annotations_used": false,
+  "measurement_pipeline_changed": false,
+  "containment_unchanged": 0.9,
+  "automatic_promotion": false,
+  "run_id": 5,
+  "source_frames": 50942,
+  "sampled_frames": 8491,
+  "old_unique_candidate_track_ids": 4,
+  "new_unique_candidate_station_ids": 30,
+  "counts": {
+    "state_tentative": 60,
+    "liquid_track_not_confirmed": 2,
+    "event_station_track_started": 30,
+    "state_confirmed": 8072,
+    "liquid_candidate_link": 3375,
+    "state_carrier_moving": 164,
+    "liquid_carrier_transition": 18,
+    "liquid_no_fresh_station_vial": 42,
+    "event_station_track_retired": 30,
+    "event_carrier_transition_confirmed": 32,
+    "state_carrier_settling": 64,
+    "liquid_outside_vial": 768,
+    "state_station_vial_missing": 131,
+    "liquid_multiple_liquid_candidates": 8
+  },
+  "changed_link_frames": 25,
+  "raw_boxes_and_confidences_unchanged_on_every_sample": true,
+  "source_rgb_hashes_verified_on_every_sample": true,
+  "prefix_samples_verified": 120,
+  "restart_samples_verified": 20,
+  "reviewed_tracking_accuracy": null,
+  "reviewed_association_accuracy": null,
+  "video_checks": [
+    {
+      "file": "run5-tracking-full.mp4",
+      "frames": 8491,
+      "fps": 5,
+      "sha256": "02c80804993a783321de5ddb3aaa2efe708ddf6da377944b6f05f24f48375acc"
+    },
+    {
+      "file": "run5-early-pours.mp4",
+      "frames": 248,
+      "fps": 5,
+      "sha256": "1c530adedc6e0737504dfa03a69ec400de4d0027239e59a12a6a60720aae95d7"
+    },
+    {
+      "file": "run5-carrier-transitions.mp4",
+      "frames": 273,
+      "fps": 5,
+      "sha256": "6e4ed59522c6318e9ecd33dbda24664f577e667c882bf7bbe582b690fb29de04"
+    }
+  ],
+  "stills": [
+    {
+      "frame_index": 840,
+      "mp4_s": 28.0,
+      "image": "stills/frame000840.png",
+      "source_rgb_sha256": "305a536a0d0d5347b4d7a84c2be0313fd7a924550f597eef10a5d4dcb870f01d"
+    },
+    {
+      "frame_index": 852,
+      "mp4_s": 28.4,
+      "image": "stills/frame000852.png",
+      "source_rgb_sha256": "55533c0f52ae58bca2a49d7018b30d67bd254000ba824b53f71d5765cd012e46"
+    },
+    {
+      "frame_index": 882,
+      "mp4_s": 29.4,
+      "image": "stills/frame000882.png",
+      "source_rgb_sha256": "4ca1e095c58b6bcef6b8ee22a75b0cc5fd6890e774e24939ba2c3742fe7da82d"
+    },
+    {
+      "frame_index": 1410,
+      "mp4_s": 47.0,
+      "image": "stills/frame001410.png",
+      "source_rgb_sha256": "2b372822838bdc1ec00a57defc25d873a39eecff2aff870610e4e970144b7051"
+    },
+    {
+      "frame_index": 2796,
+      "mp4_s": 93.2,
+      "image": "stills/frame002796.png",
+      "source_rgb_sha256": "7b2ed43710d1fc505d2944897716932b981f19e5c80f9d728e7d84fd4ba17936"
+    },
+    {
+      "frame_index": 6120,
+      "mp4_s": 204.0,
+      "image": "stills/frame006120.png",
+      "source_rgb_sha256": "c68906d61db721d769849945db38825c9c204cc016fc5b1231899751b4fe38cb"
+    },
+    {
+      "frame_index": 6132,
+      "mp4_s": 204.4,
+      "image": "stills/frame006132.png",
+      "source_rgb_sha256": "dd44c41dfb80476a9a0a28dabbcc2f34fd5a13fb71490a7fa19645889d924991"
+    },
+    {
+      "frame_index": 6162,
+      "mp4_s": 205.4,
+      "image": "stills/frame006162.png",
+      "source_rgb_sha256": "524938b63275ed05e9679147fff4f1b9b90d5f8724bbc4a3aa2a2abd0de344c9"
+    },
+    {
+      "frame_index": 10872,
+      "mp4_s": 362.4,
+      "image": "stills/frame010872.png",
+      "source_rgb_sha256": "8e926a9b15069f523a16a089f254fa5342a78b190d0533c97de86285abb042c0"
+    },
+    {
+      "frame_index": 10884,
+      "mp4_s": 362.8,
+      "image": "stills/frame010884.png",
+      "source_rgb_sha256": "b84c3edfd423ee521ef04f99c4c89d1ee1c946f6c22187ce0e96974e6e4b2605"
+    },
+    {
+      "frame_index": 10914,
+      "mp4_s": 363.8,
+      "image": "stills/frame010914.png",
+      "source_rgb_sha256": "19ba293f5ba2d5b4a5f5f1921dfab5445046e7bc79c051c84feca046ae8d5e7b"
+    },
+    {
+      "frame_index": 25470,
+      "mp4_s": 849.0,
+      "image": "stills/frame025470.png",
+      "source_rgb_sha256": "ad8d17c0865aa3973d5094d1bf61a56165acb211240acd4280b1e9812a39232d"
+    },
+    {
+      "frame_index": 50940,
+      "mp4_s": 1698.0,
+      "image": "stills/frame050940.png",
+      "source_rgb_sha256": "6927304796fd888e097a95d0cebb1a4f7618afb06082cdd87466aaed0a17d9f5"
+    }
+  ],
+  "early_windows": [
+    {
+      "anchor": 1374,
+      "start": 1344,
+      "end": 1524,
+      "basis": "Fixed prior image-estimated neighborhood; not reviewed physical onset"
+    },
+    {
+      "anchor": 2760,
+      "start": 2730,
+      "end": 2910,
+      "basis": "Fixed prior image-estimated neighborhood; not reviewed physical onset"
+    },
+    {
+      "anchor": 4152,
+      "start": 4122,
+      "end": 4302,
+      "basis": "Fixed prior image-estimated neighborhood; not reviewed physical onset"
+    },
+    {
+      "anchor": 5400,
+      "start": 5370,
+      "end": 5550,
+      "basis": "Fixed prior image-estimated neighborhood; not reviewed physical onset"
+    },
+    {
+      "anchor": 6660,
+      "start": 6630,
+      "end": 6810,
+      "basis": "Fixed prior image-estimated neighborhood; not reviewed physical onset"
+    },
+    {
+      "anchor": 8550,
+      "start": 8520,
+      "end": 8700,
+      "basis": "Fixed prior image-estimated neighborhood; not reviewed physical onset"
+    },
+    {
+      "anchor": 10152,
+      "start": 10122,
+      "end": 10302,
+      "basis": "Fixed prior image-estimated neighborhood; not reviewed physical onset"
+    },
+    {
+      "anchor": 11754,
+      "start": 11724,
+      "end": 11904,
+      "basis": "Fixed prior image-estimated neighborhood; not reviewed physical onset"
+    }
+  ],
+  "transition_windows": [
+    {
+      "anchor": 852,
+      "start": 792,
+      "end": 1002,
+      "basis": "New tracker image-motion confirmation; diagnostic selection only"
+    },
+    {
+      "anchor": 6132,
+      "start": 6072,
+      "end": 6282,
+      "basis": "New tracker image-motion confirmation; diagnostic selection only"
+    },
+    {
+      "anchor": 10884,
+      "start": 10824,
+      "end": 11034,
+      "basis": "New tracker image-motion confirmation; diagnostic selection only"
+    },
+    {
+      "anchor": 19776,
+      "start": 19716,
+      "end": 19926,
+      "basis": "New tracker image-motion confirmation; diagnostic selection only"
+    },
+    {
+      "anchor": 27480,
+      "start": 27420,
+      "end": 27630,
+      "basis": "New tracker image-motion confirmation; diagnostic selection only"
+    },
+    {
+      "anchor": 36708,
+      "start": 36648,
+      "end": 36858,
+      "basis": "New tracker image-motion confirmation; diagnostic selection only"
+    },
+    {
+      "anchor": 42852,
+      "start": 42792,
+      "end": 43002,
+      "basis": "New tracker image-motion confirmation; diagnostic selection only"
+    },
+    {
+      "anchor": 50880,
+      "start": 50820,
+      "end": 50940,
+      "basis": "New tracker image-motion confirmation; diagnostic selection only"
+    }
+  ],
+  "limitations": [
+    "Station IDs are provisional; count is not number of verified physical vials.",
+    "Same 5 fps cached detections; not native-30-fps tracker validation.",
+    "Motion/settling settings are reused from existing image-only detector; lighting can also trigger motion.",
+    "No boxes for missing detections; same-position undetected swaps can still escape this tracker.",
+    "Legacy liquid may contain stream/body; link does not verify scope, pixels, color or release.",
+    "Stricter association trades availability for explicit uncertainty; counts are not accuracy.",
+    "Run 5 repeatedly inspected; no independent test claim.",
+    "Opt-in tracking diagnostic; production measurement/QA tracking unchanged."
+  ],
+  "calibration_intake": {
+    "source": "C:\\Users\\Austin\\Downloads\\aleyna-visible-boxes-v1-f29fdb0db46b-Austi-calibration-2026-10-20T00-35-34-617Z.json",
+    "source_sha256": "7f1b9ebef60833c4ad1f8462e7a92c3027cd7ab594996a4b0f42117e3fa79584",
+    "pack_id": "aleyna-visible-boxes-v1-f29fdb0db46b",
+    "manifest_sha256": "894e9b1611f71adcc00873f9e7e8e006369fa8f07cea9fa482662befa4683183",
+    "validated": true,
+    "reviewer": "Austi",
+    "review_status_counts": {
+      "draft": 12,
+      "unreviewed": 198
+    },
+    "edited_frames": 12,
+    "all_edited_frames_are_shared_calibration": true,
+    "class_counts": {
+      "vial": {
+        "present": 12
+      },
+      "liquid_body": {
+        "absent": 7,
+        "present": 5
+      },
+      "stream": {
+        "absent": 6,
+        "present": 6
+      }
+    },
+    "all_edited_classes_decided": true,
+    "source_annotations_unchanged": true,
+    "automatically_submitted": false,
+    "used_for_tracking": false,
+    "used_for_training": false,
+    "adjudication_owner": "Aleyna"
+  },
+  "association_review": {
+    "schema_version": 1,
+    "kind": "changed_candidate_link_review_not_ground_truth",
+    "tracking_jsonl_sha256": "eeda8d10126751166ef88cde8123960dca3af5c266067a7ca21db8c6d503916c",
+    "comparison_sha256": "46cb67ab95f60d40407eb501e7f44c487569c52ecc2d1bb814bc0e2c0d4be42c",
+    "source_video_sha256": "6f87cec1aeec3b2bae6dac639a317c077a3f175f27abd5fc8430d6953d9d05b9",
+    "cache_sha256": "aff504002184d856ac06451f1730677eace2e840b89110c2cb6c0af39a8850d8",
+    "changed_frames": 25,
+    "changed_proposals": 30,
+    "removed_links": 30,
+    "added_links": 0,
+    "new_reasons": {
+      "track_not_confirmed": 2,
+      "carrier_transition": 13,
+      "no_fresh_station_vial": 7,
+      "multiple_liquid_candidates": 8
+    },
+    "snapshots": [
+      {
+        "frame_index": 0,
+        "image": "stills/association-frame000000.png"
+      },
+      {
+        "frame_index": 846,
+        "image": "stills/association-frame000846.png"
+      },
+      {
+        "frame_index": 3636,
+        "image": "stills/association-frame003636.png"
+      },
+      {
+        "frame_index": 14112,
+        "image": "stills/association-frame014112.png"
+      }
+    ],
+    "video": {
+      "file": "run5-association-review.mp4",
+      "frames": 241,
+      "fps": 5,
+      "sha256": "c8df4e7716b739093fda84376c31600b7a11bcb999cbb22d1b666396dccc825e"
+    },
+    "annotations_modified": false,
+    "reviewed_accuracy": null
+  },
+  "old_liquid_unique_vial_statuses": 3408,
+  "old_liquid_links_with_track_id": 3405,
+  "unit_tests_passed": 31,
+  "tracking_tests_passed": 8,
+  "review_output_directory": "C:\\Users\\Austin\\ai-club-tools\\results\\station-tracking-review-20261020",
+  "output_sha256": {
+    "comparison.json": "46cb67ab95f60d40407eb501e7f44c487569c52ecc2d1bb814bc0e2c0d4be42c",
+    "plan.json": "a332bf135ecd5cdcb17f80919a28a48a5d629b02427e49430b42fd8d5d1b9bbd",
+    "tracking.jsonl": "eeda8d10126751166ef88cde8123960dca3af5c266067a7ca21db8c6d503916c",
+    "association-review.json": "93d7628b802141727bdce010e7d6f29d317955bea7993ec06aaba4ae0c9f12a7",
+    "calibration-intake.json": "232ef636634fc9c3629a9e31c67cb1f1986ec53f4d7a87ca38695fb5d7adcae6"
+  },
+  "human_labels_automatically_modified": false,
+  "application_measurement_tracking_changed": false,
+  "runtime": {
+    "python": "3.12.12",
+    "opencv": "5.0.0",
+    "numpy": "2.5.4",
+    "av": "19.0.1"
+  },
+  "decoded_video_start_middle_end_visually_reviewed": true,
+  "decoded_video_review_sha256": "ee0d2673e1e2b202d71d83d6feaebc8f5c9e34357e69f2a1def8d540bbae286b"
+}

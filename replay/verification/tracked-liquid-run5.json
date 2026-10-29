@@ -1,0 +1,1539 @@
+{
+  "schema_version": 1,
+  "validated_processing_commit": "b0e3fd876c628f49d853c4f39cd1e5bdc11b3820",
+  "date": "2026-10-19",
+  "source": {
+    "run_id": 5,
+    "video_sha256": "6f87cec1aeec3b2bae6dac639a317c077a3f175f27abd5fc8430d6953d9d05b9",
+    "decoded_frames": 50942,
+    "samples": 8491
+  },
+  "config_id": "dbcafaa8986d8bcb",
+  "measurement_profile_id": "94bd134a0dc09dacbfe5",
+  "model_sha256": "89ed11f7046171e5340dc45a9d528010de1cefbba21e163b23b7098151e0880e",
+  "runtime": {
+    "python": "3.12.12",
+    "architecture": "AMD64",
+    "numpy": "2.5.4",
+    "av": "19.0.1",
+    "opencv": "5.0.0",
+    "skimage": "0.26.0"
+  },
+  "processing": {
+    "analysis_seconds": 587.1590133999707,
+    "processing_p95_ms": 80.57034999364987,
+    "backend": "OpenCV DNN CPU, up to 4 threads"
+  },
+  "event_detection": {
+    "validation_available": true,
+    "labeled_fills": 30,
+    "detected_fills": 30,
+    "matched_fills": 30,
+    "missed_fills": 0,
+    "extra_detections": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "start_error": {
+      "count": 29,
+      "signed_median_frames": 18.0,
+      "absolute_median_frames": 18.0,
+      "absolute_p95_frames": 35.39999999999999,
+      "absolute_max_frames": 47,
+      "absolute_median_mp4_s": 0.6,
+      "absolute_p95_mp4_s": 1.1799999999999997
+    },
+    "end_error": {
+      "count": 30,
+      "signed_median_frames": -20.0,
+      "absolute_median_frames": 20.0,
+      "absolute_p95_frames": 66.1,
+      "absolute_max_frames": 72,
+      "absolute_median_mp4_s": 0.6666666666666666,
+      "absolute_p95_mp4_s": 2.203333333333333
+    },
+    "confirmation_delay": {
+      "count": 30,
+      "signed_median_frames": 71.5,
+      "absolute_median_frames": 71.5,
+      "absolute_p95_frames": 136.14999999999998,
+      "absolute_max_frames": 163,
+      "absolute_median_mp4_s": 2.3833333333333333,
+      "absolute_p95_mp4_s": 4.538333333333332
+    }
+  },
+  "measurement_coverage": {
+    "total": 30,
+    "heuristic_qa_valid": 13,
+    "rejected": 17,
+    "rejection_reason_counts": {
+      "insufficient_valid_post_fill_samples": 17,
+      "motion_during_measurement_window": 11,
+      "vial_track_not_stable": 11,
+      "liquid_missing_or_ambiguous_inside_vial": 11
+    }
+  },
+  "recipe_comparison": {
+    "trusted_status_counts": {
+      "unavailable": 30
+    },
+    "diagnostic_example": {
+      "detection_id": "run5-fill2",
+      "vial_id": 2,
+      "start_frame": 1374,
+      "start_available_frame": 1386,
+      "partial_start_possible": false,
+      "stream_samples": 32,
+      "peak_stream_contrast": 39.77777777777778,
+      "episodes": [
+        {
+          "start_frame": 1374,
+          "start_available_frame": 1386,
+          "end_frame": 1494,
+          "end_available_frame": 1506
+        },
+        {
+          "start_frame": 1812,
+          "start_available_frame": 1824,
+          "end_frame": 1884,
+          "end_available_frame": 1896
+        },
+        {
+          "start_frame": 2100,
+          "start_available_frame": 2112,
+          "end_frame": 2142,
+          "end_available_frame": 2154
+        }
+      ],
+      "quality_flags": [],
+      "last_stream_frame": 2136,
+      "last_stream_off_frame": 2142,
+      "departure_frame": 2238,
+      "confirmed_frame": 2244,
+      "end_frame": 2142,
+      "measurement_evidence": [
+        {
+          "frame_index": 2220,
+          "video_s": 74.0,
+          "accepted": true,
+          "rgb": [
+            11.0,
+            20.0,
+            16.0
+          ],
+          "lab": [
+            5.499698199531437,
+            -3.9746794392326033,
+            1.1540069408857268
+          ],
+          "quality_flags": [],
+          "geometry": {
+            "model_sha256": "89ed11f7046171e5340dc45a9d528010de1cefbba21e163b23b7098151e0880e",
+            "proposals": [
+              {
+                "class_id": 0,
+                "box": [
+                  273,
+                  54,
+                  338,
+                  417
+                ],
+                "confidence": 0.9052897691726685
+              },
+              {
+                "class_id": 1,
+                "box": [
+                  282,
+                  334,
+                  335,
+                  412
+                ],
+                "confidence": 0.7867592573165894
+              }
+            ],
+            "vial_box": [
+              273,
+              54,
+              338,
+              417
+            ],
+            "liquid_box": [
+              282,
+              334,
+              335,
+              412
+            ],
+            "track_id": 6,
+            "track_age": 224,
+            "mask": {
+              "origin": [
+                286,
+                338
+              ],
+              "size": [
+                39,
+                53
+              ],
+              "runs": [
+                [
+                  11,
+                  6
+                ],
+                [
+                  37,
+                  2
+                ],
+                [
+                  50,
+                  6
+                ],
+                [
+                  76,
+                  2
+                ],
+                [
+                  89,
+                  6
+                ],
+                [
+                  115,
+                  2
+                ],
+                [
+                  132,
+                  2
+                ],
+                [
+                  154,
+                  2
+                ],
+                [
+                  171,
+                  2
+                ],
+                [
+                  193,
+                  2
+                ],
+                [
+                  210,
+                  2
+                ],
+                [
+                  232,
+                  3
+                ],
+                [
+                  249,
+                  2
+                ],
+                [
+                  271,
+                  3
+                ],
+                [
+                  288,
+                  2
+                ],
+                [
+                  308,
+                  5
+                ],
+                [
+                  327,
+                  2
+                ],
+                [
+                  347,
+                  5
+                ],
+                [
+                  357,
+                  1
+                ],
+                [
+                  366,
+                  2
+                ],
+                [
+                  386,
+                  5
+                ],
+                [
+                  396,
+                  2
+                ],
+                [
+                  404,
+                  3
+                ],
+                [
+                  425,
+                  5
+                ],
+                [
+                  435,
+                  2
+                ],
+                [
+                  442,
+                  2
+                ],
+                [
+                  464,
+                  5
+                ],
+                [
+                  474,
+                  2
+                ],
+                [
+                  480,
+                  3
+                ],
+                [
+                  503,
+                  5
+                ],
+                [
+                  513,
+                  9
+                ],
+                [
+                  526,
+                  20
+                ],
+                [
+                  552,
+                  10
+                ],
+                [
+                  565,
+                  21
+                ],
+                [
+                  591,
+                  21
+                ],
+                [
+                  613,
+                  13
+                ],
+                [
+                  628,
+                  37
+                ],
+                [
+                  667,
+                  36
+                ],
+                [
+                  706,
+                  37
+                ],
+                [
+                  745,
+                  23
+                ],
+                [
+                  769,
+                  2
+                ],
+                [
+                  772,
+                  10
+                ],
+                [
+                  784,
+                  26
+                ],
+                [
+                  811,
+                  10
+                ],
+                [
+                  823,
+                  26
+                ],
+                [
+                  850,
+                  10
+                ],
+                [
+                  862,
+                  26
+                ],
+                [
+                  889,
+                  10
+                ],
+                [
+                  901,
+                  26
+                ],
+                [
+                  928,
+                  9
+                ],
+                [
+                  939,
+                  27
+                ],
+                [
+                  967,
+                  9
+                ],
+                [
+                  978,
+                  27
+                ],
+                [
+                  1006,
+                  8
+                ],
+                [
+                  1015,
+                  1
+                ],
+                [
+                  1018,
+                  35
+                ],
+                [
+                  1057,
+                  35
+                ],
+                [
+                  1096,
+                  35
+                ],
+                [
+                  1135,
+                  35
+                ],
+                [
+                  1174,
+                  35
+                ],
+                [
+                  1214,
+                  34
+                ],
+                [
+                  1253,
+                  34
+                ],
+                [
+                  1291,
+                  35
+                ],
+                [
+                  1334,
+                  31
+                ],
+                [
+                  1373,
+                  31
+                ],
+                [
+                  1412,
+                  31
+                ],
+                [
+                  1451,
+                  31
+                ],
+                [
+                  1490,
+                  31
+                ],
+                [
+                  1530,
+                  30
+                ],
+                [
+                  1569,
+                  30
+                ],
+                [
+                  1608,
+                  30
+                ],
+                [
+                  1647,
+                  30
+                ],
+                [
+                  1687,
+                  29
+                ],
+                [
+                  1726,
+                  29
+                ],
+                [
+                  1765,
+                  29
+                ],
+                [
+                  1804,
+                  29
+                ],
+                [
+                  1844,
+                  28
+                ],
+                [
+                  1883,
+                  28
+                ],
+                [
+                  1922,
+                  28
+                ],
+                [
+                  1961,
+                  28
+                ],
+                [
+                  2000,
+                  28
+                ],
+                [
+                  2039,
+                  28
+                ]
+              ]
+            },
+            "mask_pixels": 1384,
+            "verification_status": "experimental_weak_supervision",
+            "quality_flags": []
+          }
+        },
+        {
+          "frame_index": 2226,
+          "video_s": 74.2,
+          "accepted": true,
+          "rgb": [
+            11.0,
+            20.0,
+            16.0
+          ],
+          "lab": [
+            5.499698199531437,
+            -3.9746794392326033,
+            1.1540069408857268
+          ],
+          "quality_flags": [],
+          "geometry": {
+            "model_sha256": "89ed11f7046171e5340dc45a9d528010de1cefbba21e163b23b7098151e0880e",
+            "proposals": [
+              {
+                "class_id": 0,
+                "box": [
+                  273,
+                  54,
+                  338,
+                  417
+                ],
+                "confidence": 0.9045692682266235
+              },
+              {
+                "class_id": 1,
+                "box": [
+                  282,
+                  334,
+                  335,
+                  412
+                ],
+                "confidence": 0.7867426872253418
+              }
+            ],
+            "vial_box": [
+              273,
+              54,
+              338,
+              417
+            ],
+            "liquid_box": [
+              282,
+              334,
+              335,
+              412
+            ],
+            "track_id": 6,
+            "track_age": 225,
+            "mask": {
+              "origin": [
+                286,
+                338
+              ],
+              "size": [
+                39,
+                53
+              ],
+              "runs": [
+                [
+                  11,
+                  6
+                ],
+                [
+                  37,
+                  2
+                ],
+                [
+                  50,
+                  6
+                ],
+                [
+                  76,
+                  2
+                ],
+                [
+                  89,
+                  6
+                ],
+                [
+                  115,
+                  2
+                ],
+                [
+                  132,
+                  2
+                ],
+                [
+                  154,
+                  2
+                ],
+                [
+                  171,
+                  2
+                ],
+                [
+                  193,
+                  2
+                ],
+                [
+                  210,
+                  2
+                ],
+                [
+                  232,
+                  3
+                ],
+                [
+                  249,
+                  2
+                ],
+                [
+                  271,
+                  3
+                ],
+                [
+                  288,
+                  2
+                ],
+                [
+                  308,
+                  5
+                ],
+                [
+                  327,
+                  2
+                ],
+                [
+                  347,
+                  5
+                ],
+                [
+                  357,
+                  1
+                ],
+                [
+                  366,
+                  2
+                ],
+                [
+                  386,
+                  5
+                ],
+                [
+                  396,
+                  2
+                ],
+                [
+                  404,
+                  3
+                ],
+                [
+                  425,
+                  5
+                ],
+                [
+                  435,
+                  2
+                ],
+                [
+                  442,
+                  2
+                ],
+                [
+                  464,
+                  5
+                ],
+                [
+                  474,
+                  2
+                ],
+                [
+                  480,
+                  3
+                ],
+                [
+                  503,
+                  5
+                ],
+                [
+                  513,
+                  9
+                ],
+                [
+                  526,
+                  20
+                ],
+                [
+                  552,
+                  10
+                ],
+                [
+                  565,
+                  21
+                ],
+                [
+                  591,
+                  21
+                ],
+                [
+                  613,
+                  13
+                ],
+                [
+                  628,
+                  37
+                ],
+                [
+                  667,
+                  36
+                ],
+                [
+                  706,
+                  37
+                ],
+                [
+                  745,
+                  23
+                ],
+                [
+                  769,
+                  2
+                ],
+                [
+                  772,
+                  10
+                ],
+                [
+                  784,
+                  26
+                ],
+                [
+                  811,
+                  10
+                ],
+                [
+                  823,
+                  26
+                ],
+                [
+                  850,
+                  10
+                ],
+                [
+                  862,
+                  26
+                ],
+                [
+                  889,
+                  10
+                ],
+                [
+                  901,
+                  26
+                ],
+                [
+                  928,
+                  9
+                ],
+                [
+                  939,
+                  27
+                ],
+                [
+                  967,
+                  9
+                ],
+                [
+                  978,
+                  27
+                ],
+                [
+                  1006,
+                  8
+                ],
+                [
+                  1015,
+                  1
+                ],
+                [
+                  1018,
+                  35
+                ],
+                [
+                  1057,
+                  35
+                ],
+                [
+                  1097,
+                  34
+                ],
+                [
+                  1136,
+                  34
+                ],
+                [
+                  1175,
+                  34
+                ],
+                [
+                  1214,
+                  34
+                ],
+                [
+                  1253,
+                  34
+                ],
+                [
+                  1292,
+                  34
+                ],
+                [
+                  1334,
+                  31
+                ],
+                [
+                  1373,
+                  31
+                ],
+                [
+                  1413,
+                  30
+                ],
+                [
+                  1452,
+                  30
+                ],
+                [
+                  1491,
+                  30
+                ],
+                [
+                  1530,
+                  30
+                ],
+                [
+                  1569,
+                  30
+                ],
+                [
+                  1608,
+                  30
+                ],
+                [
+                  1647,
+                  30
+                ],
+                [
+                  1687,
+                  29
+                ],
+                [
+                  1726,
+                  29
+                ],
+                [
+                  1765,
+                  29
+                ],
+                [
+                  1804,
+                  29
+                ],
+                [
+                  1844,
+                  28
+                ],
+                [
+                  1883,
+                  28
+                ],
+                [
+                  1922,
+                  28
+                ],
+                [
+                  1961,
+                  28
+                ],
+                [
+                  2000,
+                  28
+                ],
+                [
+                  2039,
+                  28
+                ]
+              ]
+            },
+            "mask_pixels": 1377,
+            "verification_status": "experimental_weak_supervision",
+            "quality_flags": []
+          }
+        },
+        {
+          "frame_index": 2232,
+          "video_s": 74.4,
+          "accepted": true,
+          "rgb": [
+            11.0,
+            20.0,
+            16.0
+          ],
+          "lab": [
+            5.499698199531437,
+            -3.9746794392326033,
+            1.1540069408857268
+          ],
+          "quality_flags": [],
+          "geometry": {
+            "model_sha256": "89ed11f7046171e5340dc45a9d528010de1cefbba21e163b23b7098151e0880e",
+            "proposals": [
+              {
+                "class_id": 0,
+                "box": [
+                  273,
+                  54,
+                  338,
+                  417
+                ],
+                "confidence": 0.9048948884010315
+              },
+              {
+                "class_id": 1,
+                "box": [
+                  282,
+                  334,
+                  335,
+                  412
+                ],
+                "confidence": 0.7842515110969543
+              }
+            ],
+            "vial_box": [
+              273,
+              54,
+              338,
+              417
+            ],
+            "liquid_box": [
+              282,
+              334,
+              335,
+              412
+            ],
+            "track_id": 6,
+            "track_age": 226,
+            "mask": {
+              "origin": [
+                286,
+                338
+              ],
+              "size": [
+                39,
+                53
+              ],
+              "runs": [
+                [
+                  11,
+                  12
+                ],
+                [
+                  37,
+                  2
+                ],
+                [
+                  50,
+                  12
+                ],
+                [
+                  76,
+                  2
+                ],
+                [
+                  89,
+                  12
+                ],
+                [
+                  115,
+                  2
+                ],
+                [
+                  132,
+                  8
+                ],
+                [
+                  154,
+                  2
+                ],
+                [
+                  171,
+                  8
+                ],
+                [
+                  193,
+                  3
+                ],
+                [
+                  210,
+                  2
+                ],
+                [
+                  232,
+                  3
+                ],
+                [
+                  249,
+                  2
+                ],
+                [
+                  271,
+                  3
+                ],
+                [
+                  288,
+                  2
+                ],
+                [
+                  308,
+                  5
+                ],
+                [
+                  327,
+                  2
+                ],
+                [
+                  347,
+                  5
+                ],
+                [
+                  357,
+                  1
+                ],
+                [
+                  366,
+                  2
+                ],
+                [
+                  386,
+                  5
+                ],
+                [
+                  396,
+                  2
+                ],
+                [
+                  404,
+                  3
+                ],
+                [
+                  425,
+                  5
+                ],
+                [
+                  435,
+                  2
+                ],
+                [
+                  442,
+                  2
+                ],
+                [
+                  464,
+                  5
+                ],
+                [
+                  474,
+                  2
+                ],
+                [
+                  480,
+                  3
+                ],
+                [
+                  503,
+                  5
+                ],
+                [
+                  513,
+                  9
+                ],
+                [
+                  526,
+                  20
+                ],
+                [
+                  552,
+                  10
+                ],
+                [
+                  565,
+                  21
+                ],
+                [
+                  591,
+                  21
+                ],
+                [
+                  613,
+                  13
+                ],
+                [
+                  628,
+                  37
+                ],
+                [
+                  667,
+                  36
+                ],
+                [
+                  706,
+                  37
+                ],
+                [
+                  745,
+                  23
+                ],
+                [
+                  769,
+                  2
+                ],
+                [
+                  772,
+                  10
+                ],
+                [
+                  784,
+                  26
+                ],
+                [
+                  811,
+                  10
+                ],
+                [
+                  823,
+                  26
+                ],
+                [
+                  850,
+                  10
+                ],
+                [
+                  862,
+                  26
+                ],
+                [
+                  889,
+                  10
+                ],
+                [
+                  901,
+                  26
+                ],
+                [
+                  928,
+                  9
+                ],
+                [
+                  939,
+                  27
+                ],
+                [
+                  967,
+                  9
+                ],
+                [
+                  978,
+                  27
+                ],
+                [
+                  1006,
+                  8
+                ],
+                [
+                  1015,
+                  1
+                ],
+                [
+                  1018,
+                  35
+                ],
+                [
+                  1057,
+                  35
+                ],
+                [
+                  1096,
+                  35
+                ],
+                [
+                  1136,
+                  34
+                ],
+                [
+                  1175,
+                  34
+                ],
+                [
+                  1212,
+                  1
+                ],
+                [
+                  1214,
+                  34
+                ],
+                [
+                  1251,
+                  1
+                ],
+                [
+                  1253,
+                  34
+                ],
+                [
+                  1292,
+                  34
+                ],
+                [
+                  1334,
+                  31
+                ],
+                [
+                  1373,
+                  31
+                ],
+                [
+                  1413,
+                  30
+                ],
+                [
+                  1452,
+                  30
+                ],
+                [
+                  1491,
+                  30
+                ],
+                [
+                  1530,
+                  30
+                ],
+                [
+                  1569,
+                  30
+                ],
+                [
+                  1608,
+                  30
+                ],
+                [
+                  1647,
+                  30
+                ],
+                [
+                  1687,
+                  29
+                ],
+                [
+                  1726,
+                  29
+                ],
+                [
+                  1765,
+                  29
+                ],
+                [
+                  1804,
+                  29
+                ],
+                [
+                  1844,
+                  28
+                ],
+                [
+                  1883,
+                  28
+                ],
+                [
+                  1922,
+                  28
+                ],
+                [
+                  1961,
+                  28
+                ],
+                [
+                  2000,
+                  28
+                ],
+                [
+                  2039,
+                  28
+                ]
+              ]
+            },
+            "mask_pixels": 1411,
+            "verification_status": "experimental_weak_supervision",
+            "quality_flags": []
+          }
+        }
+      ],
+      "geometry_review_status": "unreviewed_model_proposals",
+      "measurement_kind": "tracked_colored_liquid_mask_camera_srgb_d65_lab",
+      "event_id": "run5-fill2",
+      "run_id": 5,
+      "recipe_id": "5",
+      "volumes_ml": {
+        "T100": 10.0,
+        "T200": 10.0,
+        "T400": 10.0
+      },
+      "dispense_order": "T200>T400>T100",
+      "position_in_batch": null,
+      "previous_recipe_id": null,
+      "baseline_hold_first": null,
+      "baseline_hold_first_two": null,
+      "available_frame": 2244,
+      "available_video_s": 74.8,
+      "sample_frames": [
+        2220,
+        2226,
+        2232
+      ],
+      "accepted_sample_frames": [
+        2220,
+        2226,
+        2232
+      ],
+      "lab": [
+        5.499698199531437,
+        -3.9746794392326033,
+        1.1540069408857268
+      ],
+      "rgb": [
+        11.0,
+        20.0,
+        16.0
+      ],
+      "temporal_spread_de2000": 0.0,
+      "measurement_valid": true,
+      "measurement_config_id": "dbcafaa8986d8bcb",
+      "event_source": "image_fill_detector",
+      "source_video_sha256": "6f87cec1aeec3b2bae6dac639a317c077a3f175f27abd5fc8430d6953d9d05b9",
+      "source_annotation_sha256": null,
+      "measurement_profile_id": "94bd134a0dc09dacbfe5",
+      "session_id": "replay-6f87cec1aeec3b2b",
+      "recipe_definition_id": "cd18eda2af4423d43049833230da38880fd67832b4b950afad5f2f61052d9f60",
+      "recipe_context": {
+        "selection_id": "demo-recipe-5",
+        "run_id": 5,
+        "source_video_sha256": "6f87cec1aeec3b2bae6dac639a317c077a3f175f27abd5fc8430d6953d9d05b9",
+        "available_frame": 0,
+        "active_from_frame": 0,
+        "recipe_id": "5",
+        "volumes_ml": {
+          "T100": 10.0,
+          "T200": 10.0,
+          "T400": 10.0
+        },
+        "dispense_order": "T200>T400>T100",
+        "recorded_by": "Codex; illustrative inputs authorized by Austin",
+        "recorded_at_utc": "2026-10-19T16:16:45.155151+00:00",
+        "provenance": {
+          "kind": "illustrative_demo",
+          "description": "Assumed preloaded demo selection; activation is not a reviewed historical changeover timestamp. No supplied vial IDs are assigned."
+        },
+        "plan_id": "run5-illustrative-operator-plan-v1"
+      },
+      "context_quality_flags": [],
+      "assessment": {
+        "status": "unavailable",
+        "delta_e2000": 7.419652838145554,
+        "reference_id": "dev-060b2827a999",
+        "expected_lab": [
+          12.057363924113691,
+          -9.63117923185773,
+          4.613126810140534
+        ],
+        "threshold_de2000": 5.0,
+        "threshold_status": "engineering_default_unvalidated",
+        "explanation": "Diagnostic color deviation only: vial/liquid geometry is an unreviewed model proposal. Review the actual source frames and sampling masks before trusting this comparison.",
+        "review_is_advisory": true,
+        "reference_rejections": [],
+        "reference_available_frame": 900,
+        "reference_source_description": "Manually selected observed example; not certified clean product",
+        "experimental_status": "review"
+      }
+    },
+    "reference": {
+      "reference_id": "dev-060b2827a999",
+      "recipe_id": "5",
+      "lab": [
+        12.057363924113691,
+        -9.63117923185773,
+        4.613126810140534
+      ],
+      "rgb": [
+        19.0,
+        35.0,
+        25.0
+      ],
+      "scope": "same_run_development",
+      "measurement_config_id": "dbcafaa8986d8bcb",
+      "source_run_id": 5,
+      "measurement_profile_id": "94bd134a0dc09dacbfe5",
+      "source_video_sha256": "6f87cec1aeec3b2bae6dac639a317c077a3f175f27abd5fc8430d6953d9d05b9",
+      "source_annotation_sha256": null,
+      "source_event_id": "run5-fill1",
+      "available_frame": 900,
+      "source_measurement_available_frame": 852,
+      "recipe_definition_id": "cd18eda2af4423d43049833230da38880fd67832b4b950afad5f2f61052d9f60",
+      "source_recipe_context": {
+        "selection_id": "demo-recipe-5",
+        "run_id": 5,
+        "source_video_sha256": "6f87cec1aeec3b2bae6dac639a317c077a3f175f27abd5fc8430d6953d9d05b9",
+        "available_frame": 0,
+        "active_from_frame": 0,
+        "recipe_id": "5",
+        "volumes_ml": {
+          "T100": 10.0,
+          "T200": 10.0,
+          "T400": 10.0
+        },
+        "dispense_order": "T200>T400>T100",
+        "recorded_by": "Codex; illustrative inputs authorized by Austin",
+        "recorded_at_utc": "2026-10-19T16:16:45.155151+00:00",
+        "provenance": {
+          "kind": "illustrative_demo",
+          "description": "Assumed preloaded demo selection; activation is not a reviewed historical changeover timestamp. No supplied vial IDs are assigned."
+        },
+        "plan_id": "run5-illustrative-operator-plan-v1"
+      },
+      "recorded_at_utc": "2026-10-19T17:03:41.783399+00:00",
+      "source_description": "Manually selected observed example; not certified clean product",
+      "certifies_clean_product": false
+    }
+  },
+  "review_export": {
+    "location": "C:\\Users\\Austin\\ai-club-tools\\results\\tracked-liquid-20261019\\run5\\qa-review\\manifest.json",
+    "schema": "replay/review-manifest.schema.json",
+    "schema_version": 2,
+    "audit": {
+      "schema_version": 1,
+      "cases": 30,
+      "measurement_samples": 90,
+      "representative_frames": 120,
+      "exported_pngs": 360,
+      "all_source_pixel_hashes_match": true,
+      "all_file_hashes_match": true,
+      "all_masks_match_rle": true,
+      "all_sample_colors_match_masked_pixels": true,
+      "all_aggregates_match_samples": true,
+      "all_window_samples_precede_departure": true,
+      "accepted_pixel_count": 183446,
+      "independent_segmentation_accuracy": null,
+      "review_manifest_sha256": "87d18ad322371cfec6a7b133da5eef7de4c872f76900ea757d9af3a986e57708",
+      "json_schema_valid": true,
+      "json_schema_sha256": "1319fcb91af9b804c806b29a144e52d1e41d800b46ddd8617afb488d881eb9a6",
+      "jsonschema_version": "4.26.0"
+    }
+  },
+  "teacher_box_agreement": {
+    "schema_version": 1,
+    "kind": "held_out_student_teacher_box_agreement",
+    "run_id": 5,
+    "metrics": {
+      "metrics/precision(B)": 0.9696883952620683,
+      "metrics/recall(B)": 0.8744293791017204,
+      "metrics/mAP50(B)": 0.9379940295168903,
+      "metrics/mAP50-95(B)": 0.6564088969680029,
+      "fitness": 0.6564088969680029
+    },
+    "class_ap50": [
+      0.9937495073831707,
+      0.8822385516506099
+    ],
+    "class_ap50_95": [
+      0.813859858162669,
+      0.49895793577333664
+    ],
+    "limits": [
+      "Unreviewed Jev boxes are provisional scoring targets, not independent human truth.",
+      "Empty/manual cases excluded: this does not measure absent-vial false positives.",
+      "Run 5 excluded from student fitting/checkpoint selection; teacher previously saw Run 5.",
+      "No liquid mask IoU, color accuracy, or defect metric follows from these box scores."
+    ],
+    "included_count": 816,
+    "excluded_unknown_count": 29,
+    "model_sha256": "89ed11f7046171e5340dc45a9d528010de1cefbba21e163b23b7098151e0880e",
+    "backend": "ONNX Runtime 1.31.0 CPU; Ultralytics evaluation",
+    "counts_are_not_mask_accuracy": true
+  },
+  "bootstrap_candidates": {
+    "count": 104,
+    "by_run": {
+      "1": 40,
+      "2": 40,
+      "3": 24
+    },
+    "location": "C:\\Users\\Austin\\ai-club-tools\\results\\vial-bootstrap-20261019\\bootstrap-candidates.zip",
+    "status": "unreviewed_model_proposals; no automatic retraining"
+  },
+  "published_source_checks": {
+    "git_archive": "b0e3fd876c628f49d853c4f39cd1e5bdc11b3820",
+    "model_loaded_with_data_environment": true,
+    "replay_tests_passed": 38,
+    "bootstrap_tests_passed": 1,
+    "documented_launcher_started": true,
+    "cached_run5_loaded": true,
+    "browser_checked_exact_source_frame": 2226,
+    "browser_checked_sampled_pixels": 1377,
+    "source_evidence_png": "measurement-evidence.png",
+    "test_note": "One first-pass invalid-Origin localhost test had a transient connection reset; focused retry and the complete 38-test rerun passed."
+  },
+  "limitations": [
+    "No independently reviewed vial/liquid masks; segmentation accuracy is unmeasured.",
+    "Provisional teacher boxes were explicitly authorized for bootstrap training; the teacher previously saw all runs.",
+    "Tracking is short-lived at the fill position and drops missing/moving/ambiguous geometry; it does not identify physical vials across stations.",
+    "Masks select a conservative colored interior; clear/neutral liquid is unavailable and colored reflections remain a risk.",
+    "All geometry is unreviewed; diagnostic deviations never become trusted recipe decisions.",
+    "No reviewed-geometry import/unlocking path is implemented yet.",
+    "No physical fluid rendering or synthetic scene calibration was performed."
+  ]
+}

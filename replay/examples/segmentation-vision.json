@@ -1,0 +1,6 @@
+{
+  "vision_model_path": "replay/models/vial-bootstrap.onnx",
+  "vision_model_sha256": "89ed11f7046171e5340dc45a9d528010de1cefbba21e163b23b7098151e0880e",
+  "liquid_segmentation_model_path": "replay/models/sampling-segmenter.onnx",
+  "liquid_segmentation_model_sha256": "98245db83649176c47978ef07bd510740fde7185b08aad269cf024bee345f430"
+}

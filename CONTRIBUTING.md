@@ -9,8 +9,9 @@ coordinates and reference state. Reuse the existing measurement QA. Model
 confidence must not bypass sample or recipe qualification. Changes to those
 boundaries need corresponding examples and evaluation.
 
-New CSI-domain training and model selection use synthetic data. Real data is
-for evaluation; Run5 stays outside fitting, tuning and sampling decisions.
+Train on synthetic data only; Runs 1–4 are real development data and Run5 is the
+ground truth ([data splits](docs/plan.md#data-splits)). Run5 stays outside fitting,
+tuning and sampling decisions.
 Preserve labels, reviewer histories, scene assets and frozen experiment helpers.
 Publish new weights/data as versioned release assets with checksums.
 

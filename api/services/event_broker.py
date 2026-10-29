@@ -31,7 +31,7 @@ class EventBroker:
         stale: list[WebSocket] = []
         for client in clients:
             try:
-                await client.send_json(event.model_dump(mode="json"))
+                await asyncio.wait_for(client.send_json(event.model_dump(mode="json")), timeout=1)
             except Exception:
                 stale.append(client)
         for client in stale:

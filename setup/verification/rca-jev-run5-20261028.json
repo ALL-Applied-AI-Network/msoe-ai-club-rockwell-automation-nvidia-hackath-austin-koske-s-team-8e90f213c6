@@ -1,0 +1,74 @@
+{
+ "record": "rca-jev-run5-20261028",
+ "date": "2026-10-28",
+ "input": "Same 20 Run 5 evidence packets and keyframe crops as rca-explainers-run5-20261028",
+ "host": "local WSL client; TypeSafe hosted API https://api.typesafe.ai/v1/systemone",
+ "model": "jev-1.14.0, zero-shot; cause as a choice question over CAUSE_CRITERIA in replay/explain.py",
+ "tuning": "None. Cause descriptions written before the run; Run 5 not used to change them.",
+ "failed_attempts": {
+  "rca-jev-images-failed-dims": "HTTP 400 Invalid image dimensions (224 px crops; minimum side 280)",
+  "rca-jev-text-failed-format": "HTTP 400 Invalid request (text-only sent as multipart; JSON body required)"
+ },
+ "metrics": {
+  "jev-images": {
+   "packets": 20,
+   "schema_valid": 0,
+   "grounded": 20,
+   "causes": {
+    "dose_error": 1,
+    "carryover": 8,
+    "no_reference": 5,
+    "occlusion": 6
+   },
+   "agrees_with_stage4_pattern": "10/10",
+   "latency_s_median": 0.238,
+   "stage4_rule_causes": {
+    "unknown": 15,
+    "carryover": 5
+   },
+   "consistent_with_packet": 17,
+   "contradictions": {
+    "vial 16": [
+     "carryover_without_colour_comparison"
+    ],
+    "vial 29": [
+     "carryover_without_colour_comparison"
+    ],
+    "vial 30": [
+     "carryover_without_colour_comparison"
+    ]
+   }
+  },
+  "jev-text": {
+   "packets": 20,
+   "schema_valid": 0,
+   "grounded": 20,
+   "causes": {
+    "dose_error": 1,
+    "carryover": 8,
+    "no_reference": 5,
+    "short_fill": 3,
+    "occlusion": 3
+   },
+   "agrees_with_stage4_pattern": "10/10",
+   "latency_s_median": 0.188,
+   "stage4_rule_causes": {
+    "unknown": 15,
+    "carryover": 5
+   },
+   "consistent_with_packet": 17,
+   "contradictions": {
+    "vial 16": [
+     "carryover_without_colour_comparison"
+    ],
+    "vial 29": [
+     "carryover_without_colour_comparison"
+    ],
+    "vial 30": [
+     "carryover_without_colour_comparison"
+    ]
+   }
+  }
+ },
+ "outputs": "/mnt/c/Users/Austin/ai-club-tools/results/line-runner-20261027/run5-v3"
+}

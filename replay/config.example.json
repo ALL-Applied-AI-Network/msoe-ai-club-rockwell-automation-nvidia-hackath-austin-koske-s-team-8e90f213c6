@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "sample_stride": 6,
+  "image_size": [
+    640,
+    480
+  ],
+  "color_roi": [
+    293,
+    345,
+    325,
+    385
+  ],
+  "holder_roi": [
+    264,
+    231,
+    338,
+    253
+  ],
+  "nozzle_roi": [
+    298,
+    70,
+    314,
+    135
+  ],
+  "valid_fraction_min": 0.6,
+  "holder_dark_fraction_min": 0.35,
+  "max_motion": 3.0,
+  "max_roi_sensitivity_de2000": 8.0,
+  "max_temporal_de2000": 5.0,
+  "review_threshold_de2000": 5.0,
+  "window_start_after_end_s": 0.5,
+  "window_end_after_end_s": 1.0,
+  "minimum_window_samples": 3,
+  "stream_center_roi": [
+    302,
+    75,
+    311,
+    130
+  ],
+  "stream_left_roi": [
+    290,
+    75,
+    298,
+    130
+  ],
+  "stream_right_roi": [
+    316,
+    75,
+    324,
+    130
+  ],
+  "stream_on_contrast": 3.0,
+  "stream_off_contrast": 2.5,
+  "stream_peak_min": 6.0,
+  "stream_confirm_s": 0.4,
+  "minimum_stream_s": 0.6,
+  "departure_motion": 8.0,
+  "departure_confirm_s": 0.2,
+  "carrier_settle_s": 0.6
+}

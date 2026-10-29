@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "status": "Historical preparation snapshot; superseded by real-synthetic-execution.json",
+  "planned_synthetic_images": 768,
+  "prepared_real_counts": {
+    "train": 1442,
+    "val": 157
+  },
+  "prepared_real_only_control_counts": {
+    "train": 2210,
+    "val": 157
+  },
+  "experiment_plan_sha256": "ae99e3732be15f1b4c782291c9bec5f98350f29527f82ef302cec5945d7f40ea",
+  "fixture_sha256": "eff8a5dbb7e93eeef9c2b254db97111709f41cf79738c458fbcf2d7272d343df",
+  "local_preflight_run": {
+    "schema_version": 1,
+    "complete": true,
+    "captured": 24,
+    "requested": 24,
+    "seconds": 41.54700000002049,
+    "host": "AUSTIN-DESKTOP",
+    "isaac_version": "6.1.0.rc.26",
+    "renderer": "PathTracing",
+    "gpu": "NVIDIA GeForce RTX 4080 SUPER, 610.88",
+    "resolution": [
+      640,
+      480
+    ],
+    "instance_annotator": "semantic_segmentation",
+    "path_tracing_spp": 32,
+    "path_tracing_total_spp": 32,
+    "subframes": 1,
+    "label_pass_rgb_saved": false,
+    "annotation_encoding": "unique-object-semantic-tags-v1",
+    "fixture_sha256": "eff8a5dbb7e93eeef9c2b254db97111709f41cf79738c458fbcf2d7272d343df",
+    "source_assets": {
+      "cameras\\FillCam.json": "11966571ffa71a979297a0c6c730c739f33d86a0578fe0b4b890dd4a7ce1c936",
+      "ORIGINAL_README.md": "6a4114d4978a3266fc1e09eea75790ea2a18552d943a8cf4f0df57001bff9b06",
+      "stations\\fill_station\\fill_station.usda": "5f58540c187ac16c4426bffb3ebbe559e62d6d63ff359afdb08867fc24b60af9",
+      "stations\\fill_station\\geometry\\fill_station.usdc": "57f578fd047d3a5f2ee25712d841f836272fc745a89c5dfbcc301f0c199191db",
+      "stations\\fill_station\\geometry\\textures\\color_B7C6CE.exr": "7b3ff7cc6c709d4b5ae34c40b60277db472b1c7d483a744cf0990ab7023d61cc"
+    },
+    "script_sha256": "e23733b0fd17b41554f70a2dfb41287ac293590dd9145f470588fc40b8df27b1",
+    "annotation_helper_sha256": "d91c3ad5d3e199af23e8faa813776df61959bd1155f8a0221c4053dcbfce9680",
+    "source_assets_unchanged": true,
+    "camera_parameters_unchanged": true,
+    "station_frame": 686,
+    "frozen_attributes": 221,
+    "training_eligible": false,
+    "run5_used": false
+  },
+  "local_preflight_verification": {
+    "passed": true,
+    "samples": 24,
+    "unique_rgb_images": 24,
+    "visible_boxes": {
+      "vial": 72,
+      "liquid": 21,
+      "stream": 15
+    },
+    "present_but_unavailable": [],
+    "mask_source": "Replicator semantic_segmentation from documented label passes",
+    "appearance_checks": [
+      {
+        "cases": [
+          "07-mid-blue",
+          "08-mid-pale"
+        ],
+        "shared_liquid_pixels": 3897,
+        "mean_absolute_rgb_difference": 56.40561115387905,
+        "minimum_required": 3,
+        "scope": "stale/material-change capture check, not optical calibration"
+      }
+    ],
+    "synchronization_retries": [],
+    "checks": [
+      "RGB/mask SHA256",
+      "native image dimensions",
+      "binary mask equals saved renderer IDs",
+      "box equals mask bounds",
+      "box within independent camera projection +/- 2px",
+      "YOLO rows equal manifest",
+      "absent object has no mask",
+      "RGB captures unique",
+      "source/camera preservation",
+      "empty case",
+      "stream-only case",
+      "liquid height progression"
+    ],
+    "optical_accuracy_validated": false,
+    "real_detection_accuracy_measured": false,
+    "training_eligible": false
+  },
+  "data_guard_tests_passed": 4,
+  "isaac_tests_passed": 9,
+  "gb10_scaled_batch_executed": false,
+  "rosie_jobs_submitted": [
+    {
+      "job_id": 285766,
+      "arm": "real-only",
+      "last_observed_status": "RUNNING; first epoch training",
+      "remote_output": "~/ai-club-tools/results/real-synthetic-detector-20261019"
+    }
+  ],
+  "models_trained": false,
+  "run5_results_available": false,
+  "videos_available": false,
+  "current_detector_unchanged": true,
+  "prepared_experiment": "C:\\Users\\Austin\\ai-club-tools\\results\\real-synthetic-detector-20261019",
+  "gb10_preflight_run": {
+    "schema_version": 1,
+    "complete": true,
+    "captured": 24,
+    "requested": 24,
+    "seconds": 96.51041856600204,
+    "host": "spark8",
+    "isaac_version": "6.0.0.1",
+    "renderer": "PathTracing",
+    "gpu": "NVIDIA GB10, 580.178.04",
+    "resolution": [
+      640,
+      480
+    ],
+    "instance_annotator": "semantic_segmentation",
+    "path_tracing_spp": 32,
+    "path_tracing_total_spp": 32,
+    "subframes": 1,
+    "label_pass_rgb_saved": false,
+    "annotation_encoding": "unique-object-semantic-tags-v1",
+    "fixture_sha256": "eff8a5dbb7e93eeef9c2b254db97111709f41cf79738c458fbcf2d7272d343df",
+    "source_assets": {
+      "ORIGINAL_README.md": "6a4114d4978a3266fc1e09eea75790ea2a18552d943a8cf4f0df57001bff9b06",
+      "cameras/FillCam.json": "11966571ffa71a979297a0c6c730c739f33d86a0578fe0b4b890dd4a7ce1c936",
+      "stations/fill_station/fill_station.usda": "5f58540c187ac16c4426bffb3ebbe559e62d6d63ff359afdb08867fc24b60af9",
+      "stations/fill_station/geometry/fill_station.usdc": "57f578fd047d3a5f2ee25712d841f836272fc745a89c5dfbcc301f0c199191db",
+      "stations/fill_station/geometry/textures/color_B7C6CE.exr": "7b3ff7cc6c709d4b5ae34c40b60277db472b1c7d483a744cf0990ab7023d61cc"
+    },
+    "script_sha256": "e23733b0fd17b41554f70a2dfb41287ac293590dd9145f470588fc40b8df27b1",
+    "annotation_helper_sha256": "d91c3ad5d3e199af23e8faa813776df61959bd1155f8a0221c4053dcbfce9680",
+    "source_assets_unchanged": true,
+    "camera_parameters_unchanged": true,
+    "station_frame": 686,
+    "frozen_attributes": 221,
+    "training_eligible": false,
+    "run5_used": false
+  },
+  "gb10_preflight_verification": {
+    "passed": true,
+    "samples": 24,
+    "unique_rgb_images": 24,
+    "visible_boxes": {
+      "vial": 72,
+      "liquid": 21,
+      "stream": 15
+    },
+    "present_but_unavailable": [],
+    "mask_source": "Replicator semantic_segmentation from documented label passes",
+    "appearance_checks": [
+      {
+        "cases": [
+          "07-mid-blue",
+          "08-mid-pale"
+        ],
+        "shared_liquid_pixels": 3897,
+        "mean_absolute_rgb_difference": 56.43623299974339,
+        "minimum_required": 3,
+        "scope": "stale/material-change capture check, not optical calibration"
+      }
+    ],
+    "synchronization_retries": [],
+    "checks": [
+      "RGB/mask SHA256",
+      "native image dimensions",
+      "binary mask equals saved renderer IDs",
+      "box equals mask bounds",
+      "box within independent camera projection +/- 2px",
+      "YOLO rows equal manifest",
+      "absent object has no mask",
+      "RGB captures unique",
+      "source/camera preservation",
+      "empty case",
+      "stream-only case",
+      "liquid height progression"
+    ],
+    "optical_accuracy_validated": false,
+    "real_detection_accuracy_measured": false,
+    "training_eligible": false
+  },
+  "gb10_scaled_batch_launched": true,
+  "gb10_scaled_batch_complete_verified": false,
+  "gb10_detached_pid": 2173124,
+  "gb10_remote_output": "~/ai-club-tools/results/austin/real-synthetic-768-20261019",
+  "gb10_last_observed_completed_rows": 25,
+  "mixed_job_submitted": false,
+  "evaluation_matching_tests_passed": 1,
+  "superseded_by": "real-synthetic-execution.json"
+}

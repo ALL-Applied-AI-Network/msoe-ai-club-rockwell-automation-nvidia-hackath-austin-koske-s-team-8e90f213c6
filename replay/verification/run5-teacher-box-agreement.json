@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "kind": "held_out_student_teacher_box_agreement",
+  "run_id": 5,
+  "metrics": {
+    "metrics/precision(B)": 0.9696883952620683,
+    "metrics/recall(B)": 0.8744293791017204,
+    "metrics/mAP50(B)": 0.9379940295168903,
+    "metrics/mAP50-95(B)": 0.6564088969680029,
+    "fitness": 0.6564088969680029
+  },
+  "class_ap50": [
+    0.9937495073831707,
+    0.8822385516506099
+  ],
+  "class_ap50_95": [
+    0.813859858162669,
+    0.49895793577333664
+  ],
+  "limits": [
+    "Unreviewed Jev boxes are provisional scoring targets, not independent human truth.",
+    "Empty/manual cases excluded: this does not measure absent-vial false positives.",
+    "Run 5 excluded from student fitting/checkpoint selection; teacher previously saw Run 5.",
+    "No liquid mask IoU, color accuracy, or defect metric follows from these box scores."
+  ],
+  "included_count": 816,
+  "excluded_unknown_count": 29,
+  "model_sha256": "89ed11f7046171e5340dc45a9d528010de1cefbba21e163b23b7098151e0880e",
+  "backend": "ONNX Runtime 1.31.0 CPU; Ultralytics evaluation",
+  "counts_are_not_mask_accuracy": true
+}

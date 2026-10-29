@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "status": "experimental_weak_supervision",
+  "architecture": "yolo11n_detect",
+  "classes": [
+    "vial",
+    "colored_liquid"
+  ],
+  "model_sha256": "89ed11f7046171e5340dc45a9d528010de1cefbba21e163b23b7098151e0880e",
+  "source_provenance_sha256": "a7756db7360e4cbf142edc38d7584810e290fcb032401add5bd1bea8e35d3b9e",
+  "train_runs": [
+    1,
+    2,
+    3
+  ],
+  "development_runs": [
+    4
+  ],
+  "held_out_runs": [
+    5
+  ],
+  "epochs": 12,
+  "torch": "2.8.0a0+5228986c39.nv25.05",
+  "ultralytics": "8.4.182",
+  "trained_on_reviewed_masks": false,
+  "note": "Box model only; mask extraction is separate. Development agreement with Jev is not segmentation accuracy."
+}

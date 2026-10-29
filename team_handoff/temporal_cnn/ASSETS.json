@@ -1,0 +1,35 @@
+{
+  "schema": "temporal-cnn-release/v1",
+  "release_tag": "temporal-cnn-v1.0.0",
+  "assets": [
+    {
+      "name": "temporal-cnn-assets-v1.zip",
+      "bytes": 11087468,
+      "sha256": "71d29bf439c7c8bd0e3290e3e8629c69098e3be7fd3e08a1ae63e37637cd3f62"
+    },
+    {
+      "name": "temporal-cnn-training-v1.zip",
+      "bytes": 40458878,
+      "sha256": "44205afaa0aded8e3c2201a41097bec63d9eddd22a1f8b6a77be12e2634f9d64"
+    },
+    {
+      "name": "Temporal-CNN-Architecture.pdf",
+      "bytes": 28240,
+      "sha256": "6ed3f75286800250496ea5975bf90294ae0666826a786e018e32e42f146032be"
+    },
+    {
+      "name": "CSI-Tuesday-Visit-Guide.pdf",
+      "bytes": 56564,
+      "sha256": "65725beaf002ff570ec3a32fcaebbbc7112a8c1d9ca4737426f30a8567ea4204"
+    },
+    {
+      "name": "guide-v3.zip",
+      "bytes": 60403,
+      "sha256": "17451e4c3324f12314505093c0adc03fa4bce998fa63790fe413462e353e55bb"
+    }
+  ],
+  "liquid_checkpoint_sha256": "6714fe32191d8eba230aa87246f38a25c2906c619d60d7ba30c9e60205352eef",
+  "vial_checkpoint_sha256": "0bfac07a256eaf190416b632ad1f094a6b534309df1bb11a8c175e9d811b56bc",
+  "new_training": false,
+  "real_accuracy": null
+}

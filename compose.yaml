@@ -1,0 +1,32 @@
+name: linewatch-demo
+services:
+  api:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    environment:
+      APP__PIPELINE_MODE: model
+      APP__MODEL_ASSETS: /models
+      APP__REFERENCE_IMAGE: ${LINEWATCH_REFERENCE_IMAGE:-/models/examples/run4-fill1-f000264.png}
+      APP__DEVICE: cpu
+    volumes:
+      - type: bind
+        source: ${LINEWATCH_ASSETS_DIR:-./models/temporal-cnn-assets-v1}
+        target: /models
+        read_only: true
+        bind:
+          create_host_path: false
+      - inspection-data:/data
+    restart: unless-stopped
+  client:
+    build:
+      context: .
+      dockerfile: client/Dockerfile
+    depends_on:
+      api:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:${LINEWATCH_PORT:-8788}:80"
+    restart: unless-stopped
+volumes:
+  inspection-data:

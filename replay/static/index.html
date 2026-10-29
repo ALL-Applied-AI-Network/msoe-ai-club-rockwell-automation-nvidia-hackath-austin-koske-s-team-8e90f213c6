@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>First Vial · Recording replay</title>
+    <link rel="stylesheet" href="/style.css" />
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <main>
+      <header>
+        <div>
+          <p class="eyebrow">AI CLUB / CSI FLUID MIXING</p>
+          <h1>First Vial <span>Recording replay</span></h1>
+        </div>
+        <div class="mode">
+          <span id="mode-label">● IMAGE FILL DETECTION</span>
+          <small>Advisory experiment</small>
+        </div>
+      </header>
+      <div class="toolbar">
+        <label
+          >Recording
+          <select id="run" aria-label="Recording"></select></label
+        ><button id="play">Play</button><button id="restart">Restart</button
+        ><label
+          >Speed
+          <select id="speed" aria-label="Playback speed">
+            <option value=".25">¼×</option>
+            <option selected value="1">1×</option>
+            <option value="2">2×</option>
+            <option value="4">4×</option>
+            <option value="8">8×</option>
+          </select></label
+        ><label class="jump"
+          >Jump to fill
+          <select id="vial" aria-label="Jump to vial">
+            <option value="">Choose a vial</option>
+          </select></label
+        ><button id="completed-jump" disabled>Jump to completed check</button
+        ><label class="toggle"
+          ><input id="overlays" type="checkbox" checked /> Show measurement
+          vial proposals</label
+        >
+        <label class="toggle"><input id="tracking-toggle" type="checkbox" /> Show station tracking</label>
+      </div>
+      <p id="message" role="status" class="message">Loading recordings…</p>
+      <div class="workspace">
+        <section class="camera-main panel">
+          <div class="panel-label">
+            <span>01 / VIAL FILL</span><span id="frame">FRAME —</span>
+          </div>
+          <div class="camera-wrap">
+            <video
+              id="primary"
+              preload="metadata"
+              muted
+              playsinline
+              controls
+            ></video
+            ><canvas
+              id="overlay"
+              width="640"
+              height="480"
+              aria-label="Current detected vial and liquid proposals"
+            ></canvas>
+          </div>
+          <div class="camera-foot">
+            <span id="clock">MP4 00:00.00</span
+            ><span id="wall">Wall time unavailable</span>
+          </div>
+          <section id="tracking-panel" class="tracking-review" hidden aria-label="Optional station tracking evidence">
+            <p class="eyebrow">STATION TRACKING / SOURCE-FRAME REVIEW</p>
+            <p id="tracking-status" role="status">Tracking is off.</p>
+            <p class="subtle">Cyan: vial · green: candidate liquid link · amber: withheld. IDs are provisional station segments. This view does not change measurement QA.</p>
+            <div class="tracking-image-wrap">
+              <img id="tracking-source" alt="Original source frame for the optional station tracking overlay" hidden />
+              <canvas id="tracking-canvas" width="640" height="480" aria-label="Station segment IDs and liquid association on the matching source frame"></canvas>
+            </div>
+            <p id="tracking-detail" class="subtle"></p>
+            <div class="tracking-controls"><button id="tracking-prev" disabled>Previous sample</button><button id="tracking-next" disabled>Next sample</button></div>
+            <p class="subtle">The source-frame view stays visible between samples. Live-video boxes appear only on an exact matching frame. Missing liquid remains missing.</p>
+          </section>
+        </section>
+        <aside>
+          <section class="panel recipe">
+            <p class="eyebrow">FILL / RECIPE CONTEXT</p>
+            <h2 id="recipe">Waiting for context</h2>
+            <p id="phase" class="subtle">—</p>
+            <div id="volumes" class="volumes"></div>
+            <p id="order" class="subtle">Dispense order unavailable</p>
+            <p id="hold" class="hold">Baseline policy awaiting context</p>
+            <p id="recipe-source" class="subtle"></p>
+            <details>
+              <summary>Set intended recipe</summary>
+              <form id="recipe-form">
+                <label>Recipe ID <input id="recipe-id" required /></label>
+                <label>T100 mL <input id="tank100" type="number" min="0" step="any" value="0" required /></label>
+                <label>T200 mL <input id="tank200" type="number" min="0" step="any" value="0" required /></label>
+                <label>T400 mL <input id="tank400" type="number" min="0" step="any" value="0" required /></label>
+                <label>Dispense order <input id="recipe-order" placeholder="T200>T400>T100" required /></label>
+                <label>Your name <input id="operator-name" required /></label>
+                <label>Source / reason <input id="recipe-note" required /></label>
+                <p class="subtle">Activates at the paused playhead. Set context before the next fill starts. A change during a fill makes its comparison unavailable.</p>
+                <button type="submit">Record recipe selection</button>
+                <button id="recipe-clear" type="button">Mark recipe unknown</button>
+              </form>
+            </details>
+            <a href="/api/recipe-plan">Download intended-recipe plan</a>
+          </section>
+          <section id="decision-card" class="panel decision unavailable">
+            <p class="eyebrow">COMPLETED-VIAL CHECK</p>
+            <h2 id="decision">Awaiting measurement</h2>
+            <p id="explanation">
+              A finished-recipe reference is compared only after filling and the
+              sampling window end.
+            </p>
+            <div class="colors">
+              <div>
+                <span id="observed-swatch" class="swatch"></span
+                ><small>Observed</small><strong id="observed-lab">—</strong>
+              </div>
+              <div>
+                <span id="expected-swatch" class="swatch"></span
+                ><small>Reference</small><strong id="expected-lab">—</strong>
+              </div>
+              <div>
+                <small>ΔE2000</small><strong id="delta">—</strong
+                ><small id="threshold">Experimental band</small>
+              </div>
+            </div>
+            <p id="qa" class="subtle">Measurement QA pending</p>
+            <p id="completed-context" class="subtle"></p>
+            <p id="reference-identity" class="subtle">No eligible reference</p>
+            <button id="reference" disabled>
+              Use completed vial as development reference</button
+            ><small class="reference-note"
+              >Manual choice, not certified clean product. Eligible only for
+              fills starting after this choice.</small
+            ><a id="reference-download" href="/api/references"
+              >Download reference bank</a
+            >
+          </section>
+        </aside>
+      </div>
+      <section class="panel evidence-panel">
+        <p class="eyebrow">ACTUAL COMPLETED MEASUREMENT · FROZEN SOURCE EVIDENCE</p>
+        <h2>Pixels behind the color</h2>
+        <p id="evidence-note" class="subtle">No completed measurement yet. Live video above is separate.</p>
+        <label>Measurement sample <select id="evidence-sample" aria-label="Measurement sample"></select></label>
+        <div class="evidence-images">
+          <figure><figcaption>Exact source frame</figcaption><img id="evidence-source" alt="Exact decoded measurement source frame" hidden /></figure>
+          <figure><figcaption>Vial proposal + sampled pixels</figcaption><img id="evidence-overlay" alt="Vial and liquid proposals with sampled pixels highlighted" hidden /></figure>
+          <figure><figcaption>Actual sampling mask · white pixels only</figcaption><img id="evidence-mask" alt="Binary mask of pixels actually used for this sample" hidden /></figure>
+        </div>
+        <p id="evidence-detail" class="subtle"></p>
+      </section>
+      <div class="supporting">
+        <section class="panel">
+          <div class="panel-label">
+            02 / TANK LEVEL <span class="subtle">Container-time alignment</span>
+          </div>
+          <video id="tank_level" preload="metadata" muted playsinline></video>
+        </section>
+        <section class="panel">
+          <div class="panel-label">
+            03 / CAP &amp; SEAL
+            <span class="subtle">Container-time alignment</span>
+          </div>
+          <video id="cap_seal" preload="metadata" muted playsinline></video>
+        </section>
+        <section class="panel live">
+          <div class="panel-label">CURRENT LIQUID CANDIDATE · CAMERA LAB</div>
+          <p id="live-lab">—</p>
+          <p id="live-quality" class="subtle">—</p>
+          <p id="motion" class="subtle">Carrier motion —</p>
+          <p id="nozzle" class="subtle">Nozzle change —</p>
+          <p id="latency" class="subtle">Processing —</p>
+          <div id="coverage" class="coverage">0 available observations</div>
+        </section>
+      </div>
+      <section class="panel ledger">
+        <div class="ledger-head">
+          <div>
+            <p class="eyebrow">AVAILABLE THROUGH THE PLAYHEAD</p>
+            <h2>Completed-vial ledger</h2>
+          </div>
+          <div class="downloads">
+            <a id="events" href="#">Export events JSONL</a
+            ><a id="observations" href="#">Export observations CSV</a>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Vial / recipe</th>
+                <th>Available at MP4</th>
+                <th>QA</th>
+                <th>Color</th>
+                <th>ΔE2000</th>
+                <th>Assessment</th>
+                <th>Reference</th>
+              </tr>
+            </thead>
+            <tbody id="ledger">
+              <tr>
+                <td colspan="7">
+                  Play or seek past a completed-vial sampling window.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <footer>
+        <p>
+          Image mode detects visible stream episodes and confirms each completed
+          fill at carrier departure. Ingredient pauses remain in the same fill.
+          Intended recipes come from explicit manual selections or an operator plan. Supplied boundaries
+          are used only by the optional annotation baseline and offline validation.
+          Stage-aware early alerts and defect ground truth are still pending.
+        </p>
+        <p>
+          Camera Lab assumes sRGB/D65. Vial proposals use provisional box supervision;
+          liquid sampling masks use experimental proposals and need review. Thresholds are unvalidated.
+          Clear or uncertain liquid is unavailable. Cross-camera synchronization remains unverified.
+          Raw recordings and labels are read-only.
+        </p>
+        <p id="provenance"></p>
+      </footer>
+    </main>
+  </body>
+</html>

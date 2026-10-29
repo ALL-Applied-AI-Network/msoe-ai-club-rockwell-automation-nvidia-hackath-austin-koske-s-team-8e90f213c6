@@ -2,16 +2,19 @@
 
 | Document | Contents |
 | --- | --- |
-| [Architecture](architecture.md) | Components, model inputs, measurement QA and operator decisions |
-| [Development](development.md) | Run inference, start the app skeleton and run checks |
-| [Data and models](data.md) | Downloads, checksums, training splits and annotation formats |
-| [Evaluation](evaluation.md) | Measured results, comparison limits and remaining tests |
-| [Operations](operations.md) | Compute, reference setup and the supervised CSI test |
-| [Contributing](../CONTRIBUTING.md) | Branches, component ownership and change boundaries |
+| [**Plan**](plan.md) | **The pipeline to submission: inputs, stages, actions, RCA, metrics, schedule, owners** |
+| [Architecture](architecture.md) | Components, model inputs, measurement QA and the recipe-first vial check |
+| [Evaluation](evaluation.md) | Measured results and their limits (GB10, Run 5 retrospective, diagnosis pilot) |
+| [Data and models](data.md) | Downloads, checksums, splits and the training/evaluation policy |
+| [Development](development.md) | Run inference, the app and the checks |
+| [Demo](demo.md) · [script](demo-script.md) | Laptop/GB10 operator app and rehearsal |
+| [CSI session](csi-session.md) | On-site setup, recording and data handling |
+| [Line runner on GB10](deploy-gb10-line.md) | Plan: capture, line runner, tray and RCA on CSI GB10s |
+| [Handoff 2026-10-28](handoff-20261028.md) | What is new on the line-runner branch and what each person needs |
+| [Operations](operations.md) · [Compute](compute.md) | Reference setup, supervised test, compute hosts |
+| [Investigation](investigation.md) | Rule-based sequence diagnosis panel (RCA baseline) |
+| [Branches](branches.md) | What each branch holds and what to do with it |
+| [Contributing](../CONTRIBUTING.md) | Branches, ownership and change boundaries |
 
-The architecture describes the target system and identifies which components
-are implemented. Development commands run the components present on this branch.
-The API and client currently contain a widgets example; they do not run inference.
-
-[Original briefs](archive/README.md) are retained for reference. Their earlier
-R-CNN/SAM design and real-data training instructions are superseded.
+[Archive](archive/README.md): original briefs and the October 20 handoff. Their R-CNN/SAM design
+and real-data training instructions are superseded.

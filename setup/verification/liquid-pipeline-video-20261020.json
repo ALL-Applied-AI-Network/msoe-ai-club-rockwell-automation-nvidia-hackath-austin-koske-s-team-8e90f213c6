@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "kind": "offline_detector_sam_sampling_video_verification",
+  "artifact_root": "C:/Users/Austin/ai-club-tools/results/liquid-pipeline-demo-20261020/render-v1",
+  "source_pixels_and_native_pts_rechecked": 300,
+  "fully_decoded_output_frames": 300,
+  "output_duration_s": 60,
+  "artifact_hashes_verified": 9,
+  "fresh_frame_guard_tests_passed": 3,
+  "manifest_sha256": "d53e0d36e26bd125339b65fba18cccbeea71ae6ece83ce42d872757e4213ab4c",
+  "video_sha256": "0e589f1b6e300f32226bc593458342f490e53b5fd3c9b2582db298734f4be2a9",
+  "storyboard_sha256": "46b33fc52835d0c9fe585ad474900c9375be3ddf39af15e923f6982502968aeb",
+  "first_detector_proposal_s": 10.8,
+  "first_proposal_is_not_reviewed_physical_onset": true,
+  "counts": {
+    "frames": 300,
+    "liquid_detection_frames": 103,
+    "prompted_frames": 89,
+    "raw_masks": 109,
+    "final_mask_frames": 68,
+    "per_frame_sampling_passes": 49
+  },
+  "flag_counts": {
+    "vial_track_not_stable": 10,
+    "liquid_missing_or_ambiguous_inside_vial": 228,
+    "insufficient_final_liquid_pixels": 232,
+    "insufficient_unclipped_pixels": 232,
+    "no_prior_frame_for_motion_check": 1,
+    "carrier_motion": 9,
+    "liquid_interior_too_small": 1,
+    "insufficient_coherent_colored_liquid": 18,
+    "vial_not_detected": 3,
+    "holder_geometry_not_confirmed": 2
+  },
+  "models": {
+    "vial": "10856c18a8a5c485e832adcc6b841b739e726a969dc043fe8db64c49163bb361",
+    "liquid": "9479fb13ed9c7ebd815c314e8219ba3b86c3ffa267f758f714a3058f9ac3a343",
+    "sam": "7402e0d864fa82708a20fbd15bc84245c2f26dff0eb43a4b5b93452deb34be69"
+  },
+  "limits": [
+    "Run 4 development demonstration; no reviewed onset or pixel-mask truth.",
+    "SAM masks condition on current liquid detections and cannot recover a missing detector prompt.",
+    "Existing per-frame sampling gates run through an offline SAM adapter; no window/recipe/product QA.",
+    "No reference bank reused, labels changed, detector promoted or app defaults changed.",
+    "Integer box conversion is confined to the existing geometry adapter; raw detector boxes retained.",
+    "Station segments are causal geometry IDs, not organizer or physical vial identities."
+  ],
+  "source_run": 4,
+  "run5_used": false,
+  "labels_changed": false,
+  "app_defaults_changed": false,
+  "measurement_qa_rules_changed": false,
+  "detector_promoted": false,
+  "inspected_source_frames": [
+    0,
+    300,
+    420,
+    540,
+    600,
+    900
+  ]
+}

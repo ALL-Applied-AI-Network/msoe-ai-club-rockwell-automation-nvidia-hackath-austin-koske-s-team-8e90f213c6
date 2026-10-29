@@ -6,7 +6,14 @@ run history, model work queues, and operator-in-the-loop results.
 The service stores metadata in SQLite and source/rendered/mask/recording files
 under `api/data/`. The React client in `../client/` consumes these endpoints.
 
-## Run locally
+With `APP__PIPELINE_MODE=model` and `APP__MODEL_ASSETS` pointing at the extracted
+`temporal-cnn-assets-v1` release, the API uses `pipelines/temporal.py` instead of the
+checkpoint bridge: the same YOLO → paired temporal U-Net → measurement QA, loaded from
+the hash-checked release bundle. The GB10 kit, `compose.yaml` and `onboard.sh` use this
+mode. `APP__REFERENCE_IMAGE` is an optional preview reference; a run can instead upload
+one through `/reference`.
+
+## Contracts
 
 From the repository root:
 
@@ -69,3 +76,33 @@ uv run pytest
 The bridge tests use a fake inference backend, so API contract and safety-state
 tests do not require GPU packages or checkpoints. Actual model execution still
 requires the configured assets and vision environment.
+
+## Endpoints
+
+- `/api/v1/sessions`: create/list runs with explicit source mode and operator context.
+- `/sessions/{id}/frames`: raw PNG/JPEG/WebP and frame metadata. Recording timestamps
+  are browser seek positions, live timestamps are browser elapsed time, and stills
+  have no inferred time. Model input must be original 640×480 RGB; never resize/mirror.
+- `/sessions/{id}/reference`: retain an earlier aligned image and reset run QA state.
+  An upload stays unreviewed; it cannot certify emptiness, alignment or recipe quality.
+- `/sessions/{id}/recordings`: retain the original recording. Sampling is currently
+  performed by the browser, not a native-PTS video worker.
+- `/sessions/{id}/recipe-segments/import`: atomically replace the timeline using
+  `recipe_id,start_s,end_s,vial` (or `start_ms,end_ms`). Half-open intervals; missing,
+  overlapping or inverted times are rejected. Frame-index CSV needs an explicit clock
+  mapping before import. Gaps stay unmatched.
+- `/sessions/{id}/events`: newest first; `limit`, `before_frame`, `review_only` support
+  complete evidence review and an outstanding review queue.
+- `/sessions/{id}/events/{event_id}/acknowledgement`: persist reviewer, response and note.
+- `/artifacts/{id}`: original source, rendered overlay, transparent proposal mask,
+  reference and original recording bytes, each with a stored hash.
+
+Events include actual measurement QA, reasons, sampling-mask RLE, model/reference
+identities, source hashes and separate proposal/sample counts. A valid color sample
+still does not establish recipe agreement. The demo has no independently qualified
+recipe endpoint/completion/identity inputs, so it never approves product or issues
+hardware commands. Progress/confidence are not fabricated for the model adapter.
+
+Run one API process. The model adapter serializes inference, the queue is bounded,
+and slow/disconnected WebSockets cannot indefinitely block a model result.
+`cd api && uv run --no-sync pytest` runs the API contract/regression checks.

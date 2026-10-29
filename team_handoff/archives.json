@@ -1,0 +1,61 @@
+{
+  "dataset_version": "liquid-team-data-v1-20261020",
+  "archives": [
+    {
+      "file": "00-team-guide.zip",
+      "bytes": 1690912,
+      "sha256": "5f026ba09301476937edcddb3cb9e9240c4d61f9aea839201beaf7fc237d0084",
+      "files": 17,
+      "verified": true
+    },
+    {
+      "file": "01-detector-starter.zip",
+      "bytes": 121033824,
+      "sha256": "30f56bb6a46d575e6751253d58b7fdb2a33681223ef6ab868fe0c0a93ace5325",
+      "files": 4812,
+      "verified": true
+    },
+    {
+      "file": "02-vial-source-runs1-4.zip",
+      "bytes": 92558691,
+      "sha256": "0d7fa4c3653d9e3bd7c09274700a7be81a9922519debfa5454fdfebb616bdb97",
+      "files": 1776,
+      "verified": true
+    },
+    {
+      "file": "03-sam-frames-run4-development.zip",
+      "bytes": 65981365,
+      "sha256": "e697c85f8294b01eacfb93b1434887df83e634aaa5fc8833b8a3956aec26efc0",
+      "files": 301,
+      "verified": true
+    },
+    {
+      "file": "04-other-cameras-runs1-4.zip",
+      "bytes": 245518787,
+      "sha256": "5de98de2c2ee047b9b9156e3582165f827bb3f08cb881714ac000f837d7243fa",
+      "files": 2461,
+      "verified": true
+    },
+    {
+      "file": "05-run5-diagnostic-only.zip",
+      "bytes": 391153816,
+      "sha256": "4c6c01304cb62e399af436dabb408834d1110cfb5bbced17348b88f34fe1031f",
+      "files": 5070,
+      "verified": true
+    },
+    {
+      "file": "Team-Core-Data.zip",
+      "bytes": 281264726,
+      "sha256": "3499e99ec971f38100abc36bb4db76812f64d2c8b69deeb0393b42339c7c4284",
+      "files": 6906,
+      "verified": true,
+      "includes_components": [
+        "00",
+        "01",
+        "02",
+        "03"
+      ],
+      "run5_assets_included": false
+    }
+  ]
+}

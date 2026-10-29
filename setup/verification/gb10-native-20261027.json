@@ -1,0 +1,132 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-27",
+  "status": "passed",
+  "kind": "gb10_native_deployment_validation",
+  "branch": "austin-work",
+  "base_commit": "4a429ff",
+  "working_tree": "uncommitted GB10 launcher, lock files, self-test and display-only UI changes",
+  "pushed": false,
+  "host": {
+    "name": "spark8 (msoe-spark)",
+    "gpu": "NVIDIA GB10",
+    "driver": "580.178.04",
+    "arch": "aarch64",
+    "os": "Ubuntu 24.04.5 LTS",
+    "docker_usable_by_team_account": false,
+    "camera_devices": 0,
+    "note": "Validation host; the event GB10 is a different machine and must rerun --selftest"
+  },
+  "runtime": {
+    "python": "bundled python-build-standalone 20261009 CPython 3.12.15 (sha256 b342ccfb\u2026)",
+    "torch_cuda": "2.14.1+cu130",
+    "torch_cpu": "2.14.1+cpu",
+    "locks": {
+      "setup/gb10/lock-cuda.txt": "54fa774ce76e128bde0e66b7e7b612a095949e04e4ec3c9ff65323eba54631c0",
+      "setup/gb10/lock-cpu.txt": "ef17bcfc4f20bc5c44e91f65ea66a2b79242757fb259747d0b10df2486d568c0"
+    },
+    "selftest_expected": "eca144216d59e20aefb9cd6338b12555071d9e4a1fdcb25ac145a0997f3a7988",
+    "models": {
+      "vial_sha256": "0bfac07a256eaf190416b632ad1f094a6b534309df1bb11a8c175e9d811b56bc",
+      "liquid_sha256": "6714fe32191d8eba230aa87246f38a25c2906c619d60d7ba30c9e60205352eef"
+    }
+  },
+  "results": {
+    "sequential_api_40_frames": {
+      "x86_cpu_docker_ms": 297,
+      "gb10_cuda_cold_ms": [
+        145,
+        138
+      ],
+      "gb10_cuda_warm_ms": 86,
+      "gb10_cpu_ms": [
+        205,
+        169
+      ],
+      "counts_all_paths": {
+        "frames": 40,
+        "proposals": 28,
+        "qa_available": 14
+      },
+      "gb10_cuda_vs_x86_cpu": {
+        "proposal_agree": "40/40",
+        "qa_agree": "40/40",
+        "max_proposal_pixel_delta": 1,
+        "max_lab_delta": 0.5906
+      },
+      "gb10_cpu_vs_x86_cpu": {
+        "proposal_agree": "40/40",
+        "qa_agree": "40/40",
+        "max_proposal_pixel_delta": 0,
+        "max_lab_delta": 6e-14
+      },
+      "gb10_repeat_passes": "identical"
+    },
+    "fresh_extract_selftest": {
+      "cuda": {
+        "passed": true,
+        "frames_agreeing": "40/40",
+        "max_lab_delta": 0.5906,
+        "median_ms": 90,
+        "wall_s_including_install": 65.6,
+        "note": "pip download cache was warm"
+      },
+      "cpu": {
+        "passed": true,
+        "frames_agreeing": "40/40",
+        "max_lab_delta": 5.7e-14,
+        "median_ms": 171
+      }
+    },
+    "offline_wheelhouse_install": {
+      "cuda": "installed with network blocked; CUDA True",
+      "cpu": "installed with network blocked"
+    },
+    "browser_on_gb10": {
+      "browser": "headless Chromium 156 on the GB10",
+      "app_rehearsal": {
+        "frames": 41,
+        "proposals": 29,
+        "qa_available": 14,
+        "operator_response": "persisted",
+        "reset_stale_offline": "passed",
+        "page_errors": 0
+      },
+      "investigation_rehearsal": {
+        "passed": true,
+        "real_run_completed_vials": 0,
+        "synthetic_import": "rejected"
+      }
+    },
+    "github_onboarding_fresh_clone": {
+      "host": "x86 laptop, RTX 4080 SUPER, Docker with NVIDIA runtime",
+      "commit": "abecb8a",
+      "model_release": "downloaded via gh, SHA256SUMS and checkpoint pins verified",
+      "mode": "docker-gpu",
+      "container_cuda": true,
+      "selftest": {
+        "passed": true,
+        "frames_agreeing": "40/40",
+        "max_lab_delta": 0.5906,
+        "median_ms": 115
+      },
+      "report": "C:/Users/Austin/ai-club-tools/results/demo-rehearsal-20261027-v1/github-onboarding-test/"
+    }
+  },
+  "local_evidence": {
+    "root": "C:/Users/Austin/ai-club-tools/results/demo-rehearsal-20261027-v1",
+    "gb10": "C:/Users/Austin/ai-club-tools/results/demo-rehearsal-20261027-v1/gb10",
+    "offline": "C:/Users/Austin/ai-club-tools/results/demo-rehearsal-20261027-v1/gb10/offline",
+    "reproducible_kits": "C:/Users/Austin/ai-club-tools/results/demo-rehearsal-20261027-v1/gb10-repro",
+    "gb10_video": "C:/Users/Austin/ai-club-tools/results/demo-rehearsal-20261027-v1/gb10/linewatch-gb10-demo.mp4"
+  },
+  "limits": [
+    "Times are sequential HTTP round trips including decode, inference, QA, rendering and persistence; not camera-to-display latency",
+    "Agreement shows device reproducibility against frozen outputs, not segmentation or recipe accuracy",
+    "Run4 excerpt frames are evaluation-only; no fitting, tuning or Run5 data",
+    "No physical camera, industrial connection or event GB10 was tested",
+    "The temporal reference remains the unreviewed Run4 example",
+    "aarch64 Docker GPU image not built (no Docker access on spark8, no arm64 emulation locally); onboarding falls back to Docker CPU, then native"
+  ],
+  "spark8_cleanup": "All validation files, processes and Playwright browsers removed from spark8 after testing"
+}

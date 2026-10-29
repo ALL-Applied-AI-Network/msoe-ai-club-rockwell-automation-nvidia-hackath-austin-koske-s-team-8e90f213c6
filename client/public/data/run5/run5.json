@@ -1,0 +1,826 @@
+{
+ "schema": "run5-recipe-check/v1",
+ "source": "Organizer video 5 vial_fill (640x480, 30 fps) and video5_vial_recipes.csv labels",
+ "policy": {
+  "endpoint_rule": "C_last_6s_of_fill (selected on videos 1-4 only)",
+  "band_dE2000": 5.0,
+  "direction_cos": 0.8,
+  "reference_policy": "recipe's 3rd vial endpoint; 2nd vial fallback; proxy, not certified",
+  "models": "Released YOLO11n + temporal U-Net + unchanged MeasurementQA; nothing fitted or tuned on Run 5"
+ },
+ "summary": {
+  "vials_with_endpoint": 20,
+  "vials": 30,
+  "recipes_with_reference": 7,
+  "recipes": 10,
+  "first_vials_comparable": 5,
+  "first_vials_total": 10,
+  "first_vials_diverging": 5,
+  "second_vials_comparable": 6,
+  "second_vials_within_band": 4
+ },
+ "recipes": [
+  {
+   "recipe": 5,
+   "t100_ml": "10",
+   "t200_ml": "10",
+   "t400_ml": "10",
+   "total_ml": "30",
+   "dispense_order": "T200>T400>T100",
+   "note": "mixed - low even (swapped in)",
+   "reference": "vial3"
+  },
+  {
+   "recipe": 6,
+   "t100_ml": "30",
+   "t200_ml": "10",
+   "t400_ml": null,
+   "total_ml": "40",
+   "dispense_order": "T200>T100",
+   "note": "pale orange (fresh ratio)",
+   "reference": "vial3"
+  },
+  {
+   "recipe": 7,
+   "t100_ml": "20",
+   "t200_ml": null,
+   "t400_ml": "50",
+   "total_ml": "70",
+   "dispense_order": "T400>T100",
+   "note": "pale blue (fresh ratio)",
+   "reference": "vial3"
+  },
+  {
+   "recipe": 8,
+   "t100_ml": "20",
+   "t200_ml": "20",
+   "t400_ml": "20",
+   "total_ml": "60",
+   "dispense_order": "T200>T400>T100",
+   "note": "even (links to Cfg D)",
+   "reference": null
+  },
+  {
+   "recipe": 9,
+   "t100_ml": "10",
+   "t200_ml": "35",
+   "t400_ml": "35",
+   "total_ml": "80",
+   "dispense_order": "T200>T400>T100",
+   "note": "dark saturated (low clear)",
+   "reference": null
+  },
+  {
+   "recipe": 10,
+   "t100_ml": "45",
+   "t200_ml": "15",
+   "t400_ml": "15",
+   "total_ml": "75",
+   "dispense_order": "T200>T400>T100",
+   "note": "pale wash (high clear)",
+   "reference": "vial3"
+  },
+  {
+   "recipe": 11,
+   "t100_ml": "10",
+   "t200_ml": "10",
+   "t400_ml": "50",
+   "total_ml": "70",
+   "dispense_order": "T200>T400>T100",
+   "note": null,
+   "reference": "vial2_fallback"
+  },
+  {
+   "recipe": 12,
+   "t100_ml": "10",
+   "t200_ml": "50",
+   "t400_ml": "10",
+   "total_ml": "70",
+   "dispense_order": "T200>T400>T100",
+   "note": null,
+   "reference": "vial3"
+  },
+  {
+   "recipe": 13,
+   "t100_ml": null,
+   "t200_ml": "50",
+   "t400_ml": "20",
+   "total_ml": "70",
+   "dispense_order": "T200>T400",
+   "note": null,
+   "reference": null
+  },
+  {
+   "recipe": 14,
+   "t100_ml": "60",
+   "t200_ml": null,
+   "t400_ml": "10",
+   "total_ml": "70",
+   "dispense_order": "T400>T100",
+   "note": null,
+   "reference": "vial3"
+  }
+ ],
+ "vials": [
+  {
+   "vial": 1,
+   "recipe": 5,
+   "position": 1,
+   "endpoint_frames": 1,
+   "endpoint_frame": 795,
+   "frame_has_valid_endpoint": true,
+   "lab": [
+    11.669915107247736,
+    -12.067098664891349,
+    5.503808103551683
+   ],
+   "swatch_rgb": [
+    14,
+    35,
+    23
+   ],
+   "dE_to_recipe": 7.82,
+   "dE_to_previous": null,
+   "toward_previous_cos": null,
+   "diverges": true,
+   "reference_role": "compared",
+   "reason": null,
+   "crop": "vial-01.jpg",
+   "label_vial_id": "1"
+  },
+  {
+   "vial": 2,
+   "recipe": 5,
+   "position": 2,
+   "endpoint_frames": 5,
+   "endpoint_frame": 2061,
+   "frame_has_valid_endpoint": true,
+   "lab": [
+    11.121746960055468,
+    -6.122473040689289,
+    2.636344320399769
+   ],
+   "swatch_rgb": [
+    22,
+    32,
+    26
+   ],
+   "dE_to_recipe": 2.84,
+   "dE_to_previous": null,
+   "toward_previous_cos": null,
+   "diverges": false,
+   "reference_role": "compared",
+   "reason": null,
+   "crop": "vial-02.jpg",
+   "label_vial_id": "2"
+  },
+  {
+   "vial": 3,
+   "recipe": 5,
+   "position": 3,
+   "endpoint_frames": 8,
+   "endpoint_frame": 3562,
+   "frame_has_valid_endpoint": true,
+   "lab": [
+    9.483490983758605,
+    -4.087321231125554,
+    3.94755580053969
+   ],
+   "swatch_rgb": [
+    23,
+    28,
+    21
+   ],
+   "dE_to_recipe": null,
+   "dE_to_previous": null,
+   "toward_previous_cos": null,
+   "diverges": null,
+   "reference_role": "reference",
+   "reason": null,
+   "crop": "vial-03.jpg",
+   "label_vial_id": "3"
+  },
+  {
+   "vial": 4,
+   "recipe": 6,
+   "position": 1,
+   "endpoint_frames": 6,
+   "endpoint_frame": 4733,
+   "frame_has_valid_endpoint": true,
+   "lab": [
+    8.764545204988211,
+    -3.404783910278861,
+    5.416623697500294
+   ],
+   "swatch_rgb": [
+    24,
+    26,
+    17
+   ],
+   "dE_to_recipe": 24.52,
+   "dE_to_previous": 1.61,
+   "toward_previous_cos": 1.0,
+   "diverges": true,
+   "reference_role": "compared",
+   "reason": null,
+   "crop": "vial-04.jpg",
+   "label_vial_id": "4"
+  },
+  {
+   "vial": 5,
+   "recipe": 6,
+   "position": 2,
+   "endpoint_frames": 7,
+   "endpoint_frame": 6033,
+   "frame_has_valid_endpoint": true,
+   "lab": [
+    14.92130992699634,
+    6.5848645778463775,
+    15.271549671261136
+   ],
+   "swatch_rgb": [
+    52,
+    34,
+    16
+   ],
+   "dE_to_recipe": 10.14,
+   "dE_to_previous": 16.01,
+   "toward_previous_cos": 1.0,
+   "diverges": true,
+   "reference_role": "compared",
+   "reason": null,
+   "crop": "vial-05.jpg",
+   "label_vial_id": "5"
+  },
+  {
+   "vial": 6,
+   "recipe": 6,
+   "position": 3,
+   "endpoint_frames": 9,
+   "endpoint_frame": 7320,
+   "frame_has_valid_endpoint": true,
+   "lab": [
+    20.35372155048975,
+    19.59049460213577,
+    25.33955023649812
+   ],
+   "swatch_rgb": [
+    82,
+    36,
+    11
+   ],
+   "dE_to_recipe": null,
+   "dE_to_previous": null,
+   "toward_previous_cos": null,
+   "diverges": null,
+   "reference_role": "reference",
+   "reason": null,
+   "crop": "vial-06.jpg",
+   "label_vial_id": "6"
+  },
+  {
+   "vial": 7,
+   "recipe": 7,
+   "position": 1,
+   "endpoint_frames": 2,
+   "endpoint_frame": 9140,
+   "frame_has_valid_endpoint": true,
+   "lab": [
+    7.940532670311519,
+    -4.596832659154053,
+    5.331575126491705
+   ],
+   "swatch_rgb": [
+    20,
+    25,
+    15
+   ],
+   "dE_to_recipe": 17.08,
+   "dE_to_previous": 26.17,
+   "toward_previous_cos": 0.78,
+   "diverges": true,
+   "reference_role": "compared",
+   "reason": null,
+   "crop": "vial-07.jpg",
+   "label_vial_id": "7"
+  },
+  {
+   "vial": 8,
+   "recipe": 7,
+   "position": 2,
+   "endpoint_frames": 12,
+   "endpoint_frame": 10750,
+   "frame_has_valid_endpoint": true,
+   "lab": [
+    15.800177345053292,
+    -6.186037389039445,
+    -14.675324638673011
+   ],
+   "swatch_rgb": [
+    3,
+    43,
+    60
+   ],
+   "dE_to_recipe": 0.23,
+   "dE_to_previous": 33.61,
+   "toward_previous_cos": -0.52,
+   "diverges": false,
+   "reference_role": "compared",
+   "reason": null,
+   "crop": "vial-08.jpg",
+   "label_vial_id": "8"
+  },
+  {
+   "vial": 9,
+   "recipe": 7,
+   "position": 3,
+   "endpoint_frames": 12,
+   "endpoint_frame": 12340,
+   "frame_has_valid_endpoint": true,
+   "lab": [
+    16.096400548085022,
+    -6.065532382290906,
+    -14.57842169175212
+   ],
+   "swatch_rgb": [
+    4,
+    43,
+    60
+   ],
+   "dE_to_recipe": null,
+   "dE_to_previous": null,
+   "toward_previous_cos": null,
+   "diverges": null,
+   "reference_role": "reference",
+   "reason": null,
+   "crop": "vial-09.jpg",
+   "label_vial_id": "9"
+  },
+  {
+   "vial": 10,
+   "recipe": 8,
+   "position": 1,
+   "endpoint_frames": 5,
+   "endpoint_frame": 14033,
+   "frame_has_valid_endpoint": true,
+   "lab": [
+    16.90460965290346,
+    -6.072730754607042,
+    -13.776994146624332
+   ],
+   "swatch_rgb": [
+    9,
+    45,
+    61
+   ],
+   "dE_to_recipe": null,
+   "dE_to_previous": null,
+   "toward_previous_cos": null,
+   "diverges": null,
+   "reference_role": "no_reference",
+   "reason": null,
+   "crop": "vial-10.jpg",
+   "label_vial_id": "10"
+  },
+  {
+   "vial": 11,
+   "recipe": 8,
+   "position": 2,
+   "endpoint_frames": 0,
+   "endpoint_frame": 15818,
+   "frame_has_valid_endpoint": false,
+   "lab": null,
+   "swatch_rgb": null,
+   "dE_to_recipe": null,
+   "dE_to_previous": null,
+   "toward_previous_cos": null,
+   "diverges": null,
+   "reference_role": "not_measurable",
+   "reason": "insufficient final liquid pixels",
+   "crop": "vial-11.jpg",
+   "label_vial_id": "11"
+  },
+  {
+   "vial": 12,
+   "recipe": 8,
+   "position": 3,
+   "endpoint_frames": 0,
+   "endpoint_frame": 17566,
+   "frame_has_valid_endpoint": false,
+   "lab": null,
+   "swatch_rgb": null,
+   "dE_to_recipe": null,
+   "dE_to_previous": null,
+   "toward_previous_cos": null,
+   "diverges": null,
+   "reference_role": "not_measurable",
+   "reason": "insufficient final liquid pixels",
+   "crop": "vial-12.jpg",
+   "label_vial_id": "12"
+  },
+  {
+   "vial": 13,
+   "recipe": 9,
+   "position": 1,
+   "endpoint_frames": 0,
+   "endpoint_frame": 19661,
+   "frame_has_valid_endpoint": false,
+   "lab": null,
+   "swatch_rgb": null,
+   "dE_to_recipe": null,
+   "dE_to_previous": null,
+   "toward_previous_cos": null,
+   "diverges": null,
+   "reference_role": "not_measurable",
+   "reason": "insufficient final liquid pixels",
+   "crop": "vial-13.jpg",
+   "label_vial_id": "13"
+  },
+  {
+   "vial": 14,
+   "recipe": 9,
+   "position": 2,
+   "endpoint_frames": 0,
+   "endpoint_frame": 21749,
+   "frame_has_valid_endpoint": false,
+   "lab": null,
+   "swatch_rgb": null,
+   "dE_to_recipe": null,
+   "dE_to_previous": null,
+   "toward_previous_cos": null,
+   "diverges": null,
+   "reference_role": "not_measurable",
+   "reason": "insufficient final liquid pixels",
+   "crop": "vial-14.jpg",
+   "label_vial_id": "14"
+  },
+  {
+   "vial": 15,
+   "recipe": 9,
+   "position": 3,
+   "endpoint_frames": 0,
+   "endpoint_frame": 23895,
+   "frame_has_valid_endpoint": false,
+   "lab": null,
+   "swatch_rgb": null,
+   "dE_to_recipe": null,
+   "dE_to_previous": null,
+   "toward_previous_cos": null,
+   "diverges": null,
+   "reference_role": "not_measurable",
+   "reason": "insufficient final liquid pixels",
+   "crop": "vial-15.jpg",
+   "label_vial_id": "15"
+  },
+  {
+   "vial": 16,
+   "recipe": 10,
+   "position": 1,
+   "endpoint_frames": 3,
+   "endpoint_frame": 25520,
+   "frame_has_valid_endpoint": true,
+   "lab": [
+    7.095734113573542,
+    -5.45099451526436,
+    0.3819357685772351
+   ],
+   "swatch_rgb": [
+    12,
+    24,
+    21
+   ],
+   "dE_to_recipe": 13.12,
+   "dE_to_previous": null,
+   "toward_previous_cos": null,
+   "diverges": true,
+   "reference_role": "compared",
+   "reason": null,
+   "crop": "vial-16.jpg",
+   "label_vial_id": "16"
+  },
+  {
+   "vial": 17,
+   "recipe": 10,
+   "position": 2,
+   "endpoint_frames": 6,
+   "endpoint_frame": 27287,
+   "frame_has_valid_endpoint": true,
+   "lab": [
+    15.501728757529515,
+    -2.593595761596623,
+    13.314847724321538
+   ],
+   "swatch_rgb": [
+    42,
+    39,
+    20
+   ],
+   "dE_to_recipe": 1.45,
+   "dE_to_previous": null,
+   "toward_previous_cos": null,
+   "diverges": false,
+   "reference_role": "compared",
+   "reason": null,
+   "crop": "vial-17.jpg",
+   "label_vial_id": "17"
+  },
+  {
+   "vial": 18,
+   "recipe": 10,
+   "position": 3,
+   "endpoint_frames": 4,
+   "endpoint_frame": 28948,
+   "frame_has_valid_endpoint": true,
+   "lab": [
+    17.34965700636727,
+    -2.836994896235734,
+    14.53981777326622
+   ],
+   "swatch_rgb": [
+    46,
+    43,
+    21
+   ],
+   "dE_to_recipe": null,
+   "dE_to_previous": null,
+   "toward_previous_cos": null,
+   "diverges": null,
+   "reference_role": "reference",
+   "reason": null,
+   "crop": "vial-18.jpg",
+   "label_vial_id": "18"
+  },
+  {
+   "vial": 19,
+   "recipe": 11,
+   "position": 1,
+   "endpoint_frames": 12,
+   "endpoint_frame": 30840,
+   "frame_has_valid_endpoint": true,
+   "lab": [
+    11.962896975013486,
+    -10.031068057284473,
+    4.511843838644985
+   ],
+   "swatch_rgb": [
+    18,
+    35,
+    25
+   ],
+   "dE_to_recipe": 5.96,
+   "dE_to_previous": 11.66,
+   "toward_previous_cos": 0.85,
+   "diverges": true,
+   "reference_role": "compared",
+   "reason": null,
+   "crop": "vial-19.jpg",
+   "label_vial_id": "19"
+  },
+  {
+   "vial": 20,
+   "recipe": 11,
+   "position": 2,
+   "endpoint_frames": 9,
+   "endpoint_frame": 32681,
+   "frame_has_valid_endpoint": true,
+   "lab": [
+    8.160704045370732,
+    -7.896213150252115,
+    -1.792839525201545
+   ],
+   "swatch_rgb": [
+    7,
+    27,
+    26
+   ],
+   "dE_to_recipe": null,
+   "dE_to_previous": null,
+   "toward_previous_cos": null,
+   "diverges": null,
+   "reference_role": "reference",
+   "reason": null,
+   "crop": "vial-20.jpg",
+   "label_vial_id": "20"
+  },
+  {
+   "vial": 21,
+   "recipe": 11,
+   "position": 3,
+   "endpoint_frames": 0,
+   "endpoint_frame": 34569,
+   "frame_has_valid_endpoint": false,
+   "lab": null,
+   "swatch_rgb": null,
+   "dE_to_recipe": null,
+   "dE_to_previous": null,
+   "toward_previous_cos": null,
+   "diverges": null,
+   "reference_role": "not_measurable",
+   "reason": "insufficient final liquid pixels",
+   "crop": "vial-21.jpg",
+   "label_vial_id": "21"
+  },
+  {
+   "vial": 22,
+   "recipe": 12,
+   "position": 1,
+   "endpoint_frames": 0,
+   "endpoint_frame": 36588,
+   "frame_has_valid_endpoint": false,
+   "lab": null,
+   "swatch_rgb": null,
+   "dE_to_recipe": null,
+   "dE_to_previous": null,
+   "toward_previous_cos": null,
+   "diverges": null,
+   "reference_role": "not_measurable",
+   "reason": "insufficient final liquid pixels",
+   "crop": "vial-22.jpg",
+   "label_vial_id": "22"
+  },
+  {
+   "vial": 23,
+   "recipe": 12,
+   "position": 2,
+   "endpoint_frames": 12,
+   "endpoint_frame": 38607,
+   "frame_has_valid_endpoint": true,
+   "lab": [
+    11.249601190527827,
+    6.840690165928101,
+    12.81250640728453
+   ],
+   "swatch_rgb": [
+    44,
+    26,
+    10
+   ],
+   "dE_to_recipe": 2.69,
+   "dE_to_previous": 21.17,
+   "toward_previous_cos": 0.97,
+   "diverges": false,
+   "reference_role": "compared",
+   "reason": null,
+   "crop": "vial-23.jpg",
+   "label_vial_id": "23"
+  },
+  {
+   "vial": 24,
+   "recipe": 12,
+   "position": 3,
+   "endpoint_frames": 9,
+   "endpoint_frame": 40725,
+   "frame_has_valid_endpoint": true,
+   "lab": [
+    12.962261737236908,
+    9.306001367849689,
+    15.327770474999912
+   ],
+   "swatch_rgb": [
+    51,
+    28,
+    10
+   ],
+   "dE_to_recipe": null,
+   "dE_to_previous": null,
+   "toward_previous_cos": null,
+   "diverges": null,
+   "reference_role": "reference",
+   "reason": null,
+   "crop": "vial-24.jpg",
+   "label_vial_id": "24"
+  },
+  {
+   "vial": 25,
+   "recipe": 13,
+   "position": 1,
+   "endpoint_frames": 1,
+   "endpoint_frame": 42674,
+   "frame_has_valid_endpoint": true,
+   "lab": [
+    10.76836653440596,
+    8.704898494713772,
+    12.982643635580498
+   ],
+   "swatch_rgb": [
+    45,
+    24,
+    8
+   ],
+   "dE_to_recipe": null,
+   "dE_to_previous": null,
+   "toward_previous_cos": null,
+   "diverges": null,
+   "reference_role": "no_reference",
+   "reason": null,
+   "crop": "vial-25.jpg",
+   "label_vial_id": "25"
+  },
+  {
+   "vial": 26,
+   "recipe": 13,
+   "position": 2,
+   "endpoint_frames": 0,
+   "endpoint_frame": 44589,
+   "frame_has_valid_endpoint": false,
+   "lab": null,
+   "swatch_rgb": null,
+   "dE_to_recipe": null,
+   "dE_to_previous": null,
+   "toward_previous_cos": null,
+   "diverges": null,
+   "reference_role": "not_measurable",
+   "reason": "insufficient final liquid pixels",
+   "crop": "vial-26.jpg",
+   "label_vial_id": "26"
+  },
+  {
+   "vial": 27,
+   "recipe": 13,
+   "position": 3,
+   "endpoint_frames": 0,
+   "endpoint_frame": 46517,
+   "frame_has_valid_endpoint": false,
+   "lab": null,
+   "swatch_rgb": null,
+   "dE_to_recipe": null,
+   "dE_to_previous": null,
+   "toward_previous_cos": null,
+   "diverges": null,
+   "reference_role": "not_measurable",
+   "reason": "insufficient final liquid pixels",
+   "crop": "vial-27.jpg",
+   "label_vial_id": "27"
+  },
+  {
+   "vial": 28,
+   "recipe": 14,
+   "position": 1,
+   "endpoint_frames": 0,
+   "endpoint_frame": 48004,
+   "frame_has_valid_endpoint": false,
+   "lab": null,
+   "swatch_rgb": null,
+   "dE_to_recipe": null,
+   "dE_to_previous": null,
+   "toward_previous_cos": null,
+   "diverges": null,
+   "reference_role": "not_measurable",
+   "reason": "insufficient final liquid pixels",
+   "crop": "vial-28.jpg",
+   "label_vial_id": "28"
+  },
+  {
+   "vial": 29,
+   "recipe": 14,
+   "position": 2,
+   "endpoint_frames": 6,
+   "endpoint_frame": 49366,
+   "frame_has_valid_endpoint": true,
+   "lab": [
+    18.8632598077251,
+    -8.37708743769769,
+    8.026712217373227
+   ],
+   "swatch_rgb": [
+    38,
+    49,
+    34
+   ],
+   "dE_to_recipe": 8.43,
+   "dE_to_previous": null,
+   "toward_previous_cos": null,
+   "diverges": true,
+   "reference_role": "compared",
+   "reason": null,
+   "crop": "vial-29.jpg",
+   "label_vial_id": "29"
+  },
+  {
+   "vial": 30,
+   "recipe": 14,
+   "position": 3,
+   "endpoint_frames": 12,
+   "endpoint_frame": 50738,
+   "frame_has_valid_endpoint": true,
+   "lab": [
+    27.121713175638348,
+    -13.400795406317807,
+    3.2699714663807278
+   ],
+   "swatch_rgb": [
+    42,
+    70,
+    59
+   ],
+   "dE_to_recipe": null,
+   "dE_to_previous": null,
+   "toward_previous_cos": null,
+   "diverges": null,
+   "reference_role": "reference",
+   "reason": null,
+   "crop": "vial-30.jpg",
+   "label_vial_id": "30"
+  }
+ ]
+}

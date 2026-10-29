@@ -1,0 +1,69 @@
+{
+  "full_run5": true,
+  "sampled_frames": 8491,
+  "all_overlay_rows_match_published_video_tracker": true,
+  "payload_unchanged": true,
+  "default_overlay_not_started": true,
+  "api_hashes_before": {
+    "/api/state?run=5&frame=25470": "566eeab43610ecb6ccbad29fc380baa5516d5b47b9a4de92c24dfd0cfa451d0e",
+    "/api/state?run=5&frame=50941": "1e27fb6fa6da00b4ef0e666a89919c5458779d684796419431fa91c51113b502",
+    "/api/events.jsonl?run=5&frame=50941": "4d42674f103d128079f84455fd7c4f07f8050407b9ba6d7e2a133f87a30f6626",
+    "/api/observations.csv?run=5&frame=50941": "3ec764248e908c19f0dd6485059689a496eead73f89003661f5634c1f757ecee",
+    "/api/manifest?run=5": "ed5aacd5586b0287b4fd9fc36b83fc7c15c3160ba4c832403541c1408b01584b",
+    "/api/references": "32cc786f470d631663d9115b1a0f49221bb6ae1fd0e7d22d7d2ccde746fbbb6b",
+    "/api/recipe-plan": "bb99f74dc24e0ea6fb583f20d124e5dd0a073d92649d5eff12b10cb39d389252"
+  },
+  "api_hashes_after": {
+    "/api/state?run=5&frame=25470": "566eeab43610ecb6ccbad29fc380baa5516d5b47b9a4de92c24dfd0cfa451d0e",
+    "/api/state?run=5&frame=50941": "1e27fb6fa6da00b4ef0e666a89919c5458779d684796419431fa91c51113b502",
+    "/api/events.jsonl?run=5&frame=50941": "4d42674f103d128079f84455fd7c4f07f8050407b9ba6d7e2a133f87a30f6626",
+    "/api/observations.csv?run=5&frame=50941": "3ec764248e908c19f0dd6485059689a496eead73f89003661f5634c1f757ecee",
+    "/api/manifest?run=5": "ed5aacd5586b0287b4fd9fc36b83fc7c15c3160ba4c832403541c1408b01584b",
+    "/api/references": "32cc786f470d631663d9115b1a0f49221bb6ae1fd0e7d22d7d2ccde746fbbb6b",
+    "/api/recipe-plan": "bb99f74dc24e0ea6fb583f20d124e5dd0a073d92649d5eff12b10cb39d389252"
+  },
+  "backward_seek_and_between_sample_checks": true,
+  "overlay_cache_restart_matches": true,
+  "prior_analysis_source_sha256": "aff504002184d856ac06451f1730677eace2e840b89110c2cb6c0af39a8850d8",
+  "analysis_source": "Frozen existing measurement analysis loaded into HTTP test harness; detector not recomputed",
+  "overlay_source": "Original Run 5 decoded; all sampled RGB hashes and raw boxes verified",
+  "ui": {
+    "default_off_no_requests": true,
+    "qa_card_unchanged": true,
+    "exact_source_image_review": true,
+    "between_sample_live_canvas_empty": true,
+    "sample_step_forward_backward": true,
+    "carrier_links_withheld": true,
+    "missing_liquid_not_inferred": true,
+    "restart_state_tentative": true,
+    "late_response_after_disable_ignored": true,
+    "run_reload_clears_tracking": true,
+    "late_response_after_seek_ignored": true,
+    "unavailable_overlay_isolated": true,
+    "browser_errors": []
+  },
+  "related_unit_tests_passed": 38,
+  "js_syntax_check_passed": true,
+  "default_detector_and_qa_source_unchanged": true,
+  "output_directory": "C:\\Users\\Austin\\ai-club-tools\\results\\tracking-overlay-app-20261020-final",
+  "screenshots_visually_reviewed": true,
+  "implementation_sha256": {
+    "replay\\tracking_overlay.py": "bde3e4a75f3a076c833968a22fdc22287356da84cb9551e5f724713f987470d8",
+    "replay\\server.py": "16e91ced860b976d0edce57004359956e09341da39baa153e57b4bb4189289b5",
+    "replay\\static\\app.js": "be72cfb27b057dc54bcb72e9012b50e828f115d80c87051148e6b8a9ff3a49a3",
+    "replay\\static\\index.html": "9a1362d516796fcae72383cbea8dbd8b974e8d52bbe55efef40a7f7133436649",
+    "replay\\static\\style.css": "3d81c88be132ecbaa0a748489a94950e158885f2fc9bdfbbf01443755a8b7e9e"
+  },
+  "preserved_source_sha256": {
+    "replay\\models\\vial-bootstrap.onnx": "89ed11f7046171e5340dc45a9d528010de1cefbba21e163b23b7098151e0880e",
+    "replay\\config.py": "e24ba8fd3802a8afd436ebef859b648ddb2571b590e26eeac3c8109dc5166cd6",
+    "replay\\geometry.py": "f93dfdd71c199daaac4e46a3bd33ca9f2dc09f108534ad3e2c6323dfd31ac0dd",
+    "replay\\measurement.py": "e34cddf74e9b5bfa64a95fc549e20dc058d76b51e4a1a9e5ddc340797f2bf0af",
+    "replay\\pipeline.py": "f469c55fa93284d73a50740381c2ba6b97ce3e19dbd446f6918f86a7337ca4a2",
+    "replay\\monitor.py": "74d373f91b5fa75dccb60ab7aa5edbfb867b9e6f9fc29deb5362f911394efd23",
+    "replay\\detection.py": "fc8f54f154c46ca6c0e4e751e60477c1d5ce31c6f352e3eb17c70f765834b1fc",
+    "replay\\observations.py": "eb709e28c30dc4f856430acde9b632afdc505ca5b4ba94c9da58a29209e16d26",
+    "replay\\references.py": "36927bea5fb95ce142b1a8bfca208f051abe5686892129eba55e4f41b4ff8ddd",
+    "replay\\recipes.py": "b7f1e7b47319fa5644d59f12c7c516abcc3ac180b3ab2f698eb8a47bbcd2860e"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "kind": "liquid_model_visual_review",
+  "artifact_root": "C:/Users/Austin/ai-club-tools/results/liquid-specialists-20261020",
+  "images": {
+    "evaluation/problem-frame-comparison.png": "e128e108045dc46b97f9b009033ba5561086f1b3cbd0f49607cc8bc2078986ee",
+    "evaluation/liquid-precision-recall.png": "523762865166264fe736889b8311be1d20cdaa564777d4c0ec876bf812babdfe",
+    "evaluation/dinov3-all/early-contact-sheet.png": "c9370bf6d47b524ba1c4f345caf6681055d56a37212943888325e301809cee22",
+    "evaluation/decoded-video-review.png": "812627a1147f592d1d91da503798ffeed41fc50a231198e32a7b8ae4ff8bdd06",
+    "development-run4/cases/vial_fill_20260923_191348_785299.png": "9118409d04e69f1f65678136885104efdd83bf54b96c0b98f236feb52b1f9372"
+  },
+  "observations": [
+    "All four specialists have no liquid box at the existing inspected source frames 1320 and 2706 at confidence .35.",
+    "At the existing inspected frames 3162 and 3306, specialists localize the lower colored region while the deployed baseline has no liquid box.",
+    "DINO early contact sheets show small lower-vial predictions together with additional tall proposals in several cases.",
+    "Run 4 source vial_fill_20260923_191348_785299 has a tall provisional target while all models localize a lower region; this illustrates the existing body/stream scope ambiguity without adjudicating it."
+  ],
+  "limits": [
+    "Visual observations are diagnostic and do not approve boxes, empty labels or physical first-liquid timestamps.",
+    "Source frames were fixed by the earlier protocol; they were not selected to tune training.",
+    "New training choices use Runs 1-4 only."
+  ]
+}

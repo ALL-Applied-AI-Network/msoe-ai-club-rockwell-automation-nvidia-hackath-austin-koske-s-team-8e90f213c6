@@ -1,0 +1,52 @@
+{
+ "record": "rca-openai-decisions-run5-20261028",
+ "date": "2026-10-28",
+ "input": "Same 20 Run 5 evidence packets and keyframe crops as rca-explainers-run5-20261028",
+ "host": "local WSL client; OpenAI API POST https://api.openai.com/v1/decisions (format from the openai 3.40.0 SDK types)",
+ "model": "gpt-6-luna, zero-shot; cause as a choice question over CAUSE_CRITERIA in replay/explain.py (same descriptions as the Jev run)",
+ "tuning": "None. Run 5 not used to change prompt or cause descriptions.",
+ "refusals_or_failed_requests": 0,
+ "metrics": {
+  "decisions-images": {
+   "packets": 20,
+   "schema_valid": 0,
+   "grounded": 20,
+   "causes": {
+    "unknown": 4,
+    "carryover": 5,
+    "no_reference": 5,
+    "occlusion": 1,
+    "dose_error": 3,
+    "bubbles": 2
+   },
+   "agrees_with_stage4_pattern": "10/10",
+   "latency_s_median": 0.34,
+   "stage4_rule_causes": {
+    "unknown": 15,
+    "carryover": 5
+   },
+   "consistent_with_packet": 20,
+   "contradictions": {}
+  },
+  "decisions-text": {
+   "packets": 20,
+   "schema_valid": 0,
+   "grounded": 20,
+   "causes": {
+    "unknown": 7,
+    "carryover": 5,
+    "no_reference": 5,
+    "occlusion": 3
+   },
+   "agrees_with_stage4_pattern": "10/10",
+   "latency_s_median": 0.262,
+   "stage4_rule_causes": {
+    "unknown": 15,
+    "carryover": 5
+   },
+   "consistent_with_packet": 20,
+   "contradictions": {}
+  }
+ },
+ "outputs": "/mnt/c/Users/Austin/ai-club-tools/results/line-runner-20261027/run5-v3"
+}

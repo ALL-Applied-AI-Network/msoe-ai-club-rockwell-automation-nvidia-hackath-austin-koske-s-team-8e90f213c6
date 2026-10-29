@@ -1,0 +1,992 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-20",
+  "kind": "epoch_augmentation_completed_run5_diagnostics",
+  "branch": "austin/recipe-aware-replay",
+  "slurm_array": "286232",
+  "scheduler_status": [
+    "286232_0|COMPLETED|0:0|00:04:10|dh-dgxh100-2",
+    "286232_1|COMPLETED|0:0|00:08:39|dh-dgxh100-2",
+    "286232_2|COMPLETED|0:0|00:15:15|dh-dgxh100-1"
+  ],
+  "frozen_preparation": {
+    "train_epoch_augmentation.py": "a791a6bed64b602d3a05d66af963a61475d3df57faa3635f8b8f0e0b7c4e9d06",
+    "detector_photometric.py": "fbff2bce9d1573581c1ab98a996376db0f899339c1d54c0fa74e6cf80b0d725b",
+    "train_mixed_detector.py": "1ee6a72c0ef1c7989c87d2dbb0a3efbe01173cec32b6ae84a55f37b981a04e18",
+    "train-epoch-augmentation-rosie.sbatch": "79a76175892b80b33ef6042e1cc856e766c737b336f2824152cf1b7cf97ee293",
+    "experiment-plan.json": "3432c9a952f6073ac311341d821809a181e2885be11229674f8366aee9380a1d"
+  },
+  "plan": {
+    "schema_version": 1,
+    "kind": "controlled_real_epoch_photometric_trial",
+    "arms": {
+      "plain12": {
+        "epochs": 12,
+        "patience": 12,
+        "extra_augmentation": false
+      },
+      "plain50": {
+        "epochs": 50,
+        "patience": 10,
+        "extra_augmentation": false
+      },
+      "augmented50": {
+        "epochs": 50,
+        "patience": 10,
+        "extra_augmentation": true
+      }
+    },
+    "seed": 19,
+    "architecture": "yolo11n_detect",
+    "pretrained_sha256": "0ebbc80d4a7680d14987a577cd21342b65ecfd94632bd9a8da63ae6417644ee1",
+    "real_provenance_sha256": "81851cba53c05a1811e81c32bc8328c4f4d5236e4f26bf6510505eae029b260c",
+    "baseline_onnx_sha256": "89ed11f7046171e5340dc45a9d528010de1cefbba21e163b23b7098151e0880e",
+    "train_runs": [
+      1,
+      2,
+      3
+    ],
+    "development_runs": [
+      4
+    ],
+    "excluded_from_fit_and_selection": [
+      5
+    ],
+    "train_samples": 1442,
+    "unique_train_originals": 721,
+    "development_samples": 157,
+    "labels": "Unchanged provisional teacher boxes; human review drafts excluded",
+    "checkpoint_selection": "Run 4 combined class AP50-95 only; never Run 5",
+    "common": {
+      "imgsz": 640,
+      "batch": 16,
+      "amp": false,
+      "workers": 0,
+      "deterministic": true,
+      "hsv_h": 0,
+      "hsv_s": 0,
+      "hsv_v": 0.1,
+      "degrees": 2,
+      "translate": 0.04,
+      "scale": 0.1,
+      "fliplr": 0,
+      "flipud": 0,
+      "mosaic": 0,
+      "mixup": 0,
+      "copy_paste": 0,
+      "close_mosaic": 0
+    },
+    "extra_photometric": {
+      "contrast": {
+        "probability": 0.5,
+        "factor": [
+          0.85,
+          1.15
+        ],
+        "center": 127.5
+      },
+      "blur": {
+        "probability": 0.15,
+        "kernel": 3,
+        "sigma": [
+          0.2,
+          0.7
+        ]
+      },
+      "noise": {
+        "probability": 0.25,
+        "sigma_8bit": [
+          1.0,
+          4.0
+        ]
+      },
+      "order": [
+        "contrast",
+        "blur",
+        "noise"
+      ],
+      "hue_shift": false,
+      "geometric_change": false
+    },
+    "photo_rng": "Independent NumPy Generator seed190021; does not consume geometry RNG",
+    "preprocessing": "Original full-frame RGB; ordinary YOLO letterbox; no inference enhancement/crop",
+    "epochs_comparison_scope": "Training budget incl. standard learning-rate horizon; not a fixed-LR update-count ablation",
+    "automatic_promotion": false,
+    "measurement_qa_changed": false,
+    "limits": [
+      "Run 5 repeatedly inspected; diagnostic, not blind final test.",
+      "Development/scoring targets are unreviewed teacher proposals, not human accuracy.",
+      "Historical deployed detector is an anchor; fresh12 is the matched runtime/FP32 control.",
+      "Fifty epochs is a maximum budget; patience10 can stop earlier.",
+      "No real labels, synthetic renderers, reviewed-label assignments or operator workflows changed."
+    ]
+  },
+  "executed_helpers_retained_at": "C:\\Users\\Austin\\ai-club-tools\\results\\epoch-augmentation-20261020",
+  "source_note": "Training helper hashes identify executed bytes before Git line-ending normalization; freeze fresh bytes for retraining.",
+  "published_source_working_tree_hashes": {
+    "detector_photometric.py": "fbff2bce9d1573581c1ab98a996376db0f899339c1d54c0fa74e6cf80b0d725b",
+    "train_epoch_augmentation.py": "a791a6bed64b602d3a05d66af963a61475d3df57faa3635f8b8f0e0b7c4e9d06",
+    "train-epoch-augmentation-rosie.sbatch": "79a76175892b80b33ef6042e1cc856e766c737b336f2824152cf1b7cf97ee293",
+    "collect-epoch-artifacts-rosie.sh": "aad7e2e0e84e6710c82713cc756f001707518f28c7e2361302a876284e377415",
+    "evaluate_epoch_augmentation.py": "55a64d71f70df897ed71c0df25f65f9d7c9836cea18c68b7e28f4cb4194da34e",
+    "collect_epoch_comparison.py": "13727b7930536a63fb579bf66a5980611869a874328a9a2b4174dd049f3257d5",
+    "test_epoch_augmentation.py": "a24f4017929195ecfd5424a4041f7410a1fd6ff93f0b354e4d1fcd3ccc25e34c"
+  },
+  "bundle": {
+    "file": "C:\\Users\\Austin\\ai-club-tools\\results\\epoch-augmentation-20261020\\completed-artifacts.tar.gz",
+    "sha256": "3654e9f7271351541ea836dff2e8542893e206f6800e9f1b0178f73cbaeb74ad",
+    "verified_against_remote": true
+  },
+  "comparison": {
+    "file": "C:\\Users\\Austin\\ai-club-tools\\results\\epoch-augmentation-20261020\\evaluation\\comparison.json",
+    "sha256": "edefe735732f13f809fb946dbebd56833f5fa73e694b9de5dbd6e3d2bd213467"
+  },
+  "training_runtime": [
+    "2.8.0a0+5228986c39.nv25.05",
+    "8.4.182",
+    "NVIDIA H100 80GB HBM3"
+  ],
+  "arms": {
+    "plain12": {
+      "model": {
+        "schema_version": 1,
+        "arm": "plain12",
+        "checkpoint_sha256": "bbbe99061fa11e5a61caf012595f7a4c4ee9bda17036761a5f80b43c4b9aa344",
+        "model_sha256": "3bebe8bc3e80a2350e4d4fbe133ae89483ac357cf7363d431cda1b8bbcc5ea6a",
+        "pretrained_sha256": "0ebbc80d4a7680d14987a577cd21342b65ecfd94632bd9a8da63ae6417644ee1",
+        "experiment_plan_sha256": "3432c9a952f6073ac311341d821809a181e2885be11229674f8366aee9380a1d",
+        "data_provenance_sha256": "81851cba53c05a1811e81c32bc8328c4f4d5236e4f26bf6510505eae029b260c",
+        "trainer_sha256": "a791a6bed64b602d3a05d66af963a61475d3df57faa3635f8b8f0e0b7c4e9d06",
+        "photo_sha256": "fbff2bce9d1573581c1ab98a996376db0f899339c1d54c0fa74e6cf80b0d725b",
+        "torch": "2.8.0a0+5228986c39.nv25.05",
+        "ultralytics": "8.4.182",
+        "python": "3.12.3",
+        "cuda": "12.9",
+        "gpu": "NVIDIA H100 80GB HBM3",
+        "epochs_completed": 12,
+        "epoch_budget": 12,
+        "patience": 12,
+        "seed": 19,
+        "train_runs": [
+          1,
+          2,
+          3
+        ],
+        "development_runs": [
+          4
+        ],
+        "excluded_runs": [
+          5
+        ],
+        "extra_augmentation": false,
+        "automatic_promotion": false,
+        "measurement_qa_changed": false
+      },
+      "training": {
+        "epochs_completed": 12,
+        "epoch_budget": 12,
+        "best_run4_epoch": 12,
+        "best_run4_map50_95": 0.69551,
+        "augmentation": {
+          "spec": {
+            "contrast": {
+              "probability": 0.5,
+              "factor": [
+                0.85,
+                1.15
+              ],
+              "center": 127.5
+            },
+            "blur": {
+              "probability": 0.15,
+              "kernel": 3,
+              "sigma": [
+                0.2,
+                0.7
+              ]
+            },
+            "noise": {
+              "probability": 0.25,
+              "sigma_8bit": [
+                1.0,
+                4.0
+              ]
+            },
+            "order": [
+              "contrast",
+              "blur",
+              "noise"
+            ],
+            "hue_shift": false,
+            "geometric_change": false
+          },
+          "counts": {},
+          "examples": [],
+          "label_geometry_changed": false,
+          "validation_augmented": false
+        },
+        "training_csv_sha256": "6cc0366b5a1a9f5e711cb17a3409009a309c6d1cda1c073405a183a03d8e5395",
+        "training_args_sha256": "01268165f48f7d0cd8e209c9c16b5c9c0bf287d0996f50c451296186bfc86430"
+      },
+      "parity": {
+        "passed": true,
+        "run": 4,
+        "frames": 16,
+        "boxes": 23,
+        "max_pixel_error": 6.103515625e-05,
+        "max_score_error": 4.470348358154297e-07,
+        "checkpoint_sha256": "bbbe99061fa11e5a61caf012595f7a4c4ee9bda17036761a5f80b43c4b9aa344",
+        "onnx_sha256": "3bebe8bc3e80a2350e4d4fbe133ae89483ac357cf7363d431cda1b8bbcc5ea6a",
+        "scope": "Post-selection CPU export consistency only"
+      },
+      "teacher_agreement": {
+        "kind": "paired_teacher_box_agreement",
+        "frames": 816,
+        "excluded_unknown_frames": 29,
+        "gt_boxes_outside_candidate_crop": 0,
+        "ground_truth_boxes_clipped_or_dropped": 0,
+        "confidence_for_ap": 0.001,
+        "nms_iou": 0.45,
+        "baseline": {
+          "map50": 0.9430060777829511,
+          "map50_95": 0.6528232953194986,
+          "per_class": [
+            {
+              "class_id": 0,
+              "targets": 814,
+              "ap50": 0.9937549407114624,
+              "ap50_95": 0.8138566541156799,
+              "precision_at_035": 0.996319018404908,
+              "recall_at_035": 0.9975429975429976,
+              "tp_at_035": 812,
+              "fp_at_035": 3,
+              "fn_at_035": 2
+            },
+            {
+              "class_id": 1,
+              "targets": 541,
+              "ap50": 0.8922572148544398,
+              "ap50_95": 0.4917899365233172,
+              "precision_at_035": 0.9679802955665024,
+              "recall_at_035": 0.7264325323475046,
+              "tp_at_035": 393,
+              "fp_at_035": 13,
+              "fn_at_035": 148
+            }
+          ]
+        },
+        "candidate": {
+          "map50": 0.9012842471861677,
+          "map50_95": 0.6571725036019397,
+          "per_class": [
+            {
+              "class_id": 0,
+              "targets": 814,
+              "ap50": 0.9932444837310112,
+              "ap50_95": 0.835854454994627,
+              "precision_at_035": 0.9950980392156863,
+              "recall_at_035": 0.9975429975429976,
+              "tp_at_035": 812,
+              "fp_at_035": 4,
+              "fn_at_035": 2
+            },
+            {
+              "class_id": 1,
+              "targets": 541,
+              "ap50": 0.8093240106413244,
+              "ap50_95": 0.4784905522092525,
+              "precision_at_035": 0.9585365853658536,
+              "recall_at_035": 0.7264325323475046,
+              "tp_at_035": 393,
+              "fp_at_035": 17,
+              "fn_at_035": 148
+            }
+          ]
+        },
+        "limitations": [
+          "Unreviewed teacher boxes; not independent human accuracy.",
+          "Unknown/manual/empty records excluded, so not an absent-vial false-positive benchmark.",
+          "Both models use the same PyTorch backend, inference settings and full-source-coordinate matcher.",
+          "Run 5 excluded from fitting/checkpoint selection but already inspected previously."
+        ]
+      },
+      "video": {
+        "source_video_sha256": "6f87cec1aeec3b2bae6dac639a317c077a3f175f27abd5fc8430d6953d9d05b9",
+        "source_frames_decoded": 50942,
+        "source_samples_verified": 8491,
+        "full_video_frames": 8491,
+        "full_video_fps": 5,
+        "early_video_frames": 968,
+        "early_video_fps": 30,
+        "early_image_estimated_starts": [
+          1374,
+          2760,
+          4152,
+          5400,
+          6660,
+          8550,
+          10152,
+          11754
+        ],
+        "unique_source_frames_inferred": 9299,
+        "baseline_presence": {
+          "samples_with_vial": 8282,
+          "samples_with_liquid": 4207
+        },
+        "candidate_presence": {
+          "samples_with_vial": 8320,
+          "samples_with_liquid": 4098
+        },
+        "presence_is_not_accuracy": true,
+        "early_starts_are_not_reviewed_flow_onsets": true,
+        "raw_source_pixels_preserved": true,
+        "no_recipe_color_qa_or_tracking_claim": true
+      },
+      "decoded_videos": [
+        {
+          "file": "run5-full-comparison.mp4",
+          "frames": 8491,
+          "sha256": "2c13c271caea74fd6660e11bddaf75bf12e732a04c9db263c181591e509f9dfc"
+        },
+        {
+          "file": "run5-early-pours.mp4",
+          "frames": 968,
+          "sha256": "6efd8e07ddea7cca80b5f916c96a5d6003a12aeb9c3fce460aba6668939c65c8"
+        },
+        {
+          "file": "run5-two-fills.mp4",
+          "frames": 364,
+          "sha256": "38b8ed878599edf6777188171f5f33c66df824b5d39dfd4afca1db65259b8d43"
+        }
+      ],
+      "full_fill_video": {
+        "file": "run5-two-fills.mp4",
+        "frames": 364,
+        "fps": 5,
+        "windows": [
+          [
+            1284,
+            2364
+          ],
+          [
+            2670,
+            3762
+          ]
+        ],
+        "sha256": "38b8ed878599edf6777188171f5f33c66df824b5d39dfd4afca1db65259b8d43"
+      }
+    },
+    "plain50": {
+      "model": {
+        "schema_version": 1,
+        "arm": "plain50",
+        "checkpoint_sha256": "e2106e857293aed6868a03c34bd6438fc8652d1b437fd3caca68fe7c63363815",
+        "model_sha256": "384502f2a7d39a112a81ffd25ed4230bb999b1728affe97ca6b78ebd2d85fac3",
+        "pretrained_sha256": "0ebbc80d4a7680d14987a577cd21342b65ecfd94632bd9a8da63ae6417644ee1",
+        "experiment_plan_sha256": "3432c9a952f6073ac311341d821809a181e2885be11229674f8366aee9380a1d",
+        "data_provenance_sha256": "81851cba53c05a1811e81c32bc8328c4f4d5236e4f26bf6510505eae029b260c",
+        "trainer_sha256": "a791a6bed64b602d3a05d66af963a61475d3df57faa3635f8b8f0e0b7c4e9d06",
+        "photo_sha256": "fbff2bce9d1573581c1ab98a996376db0f899339c1d54c0fa74e6cf80b0d725b",
+        "torch": "2.8.0a0+5228986c39.nv25.05",
+        "ultralytics": "8.4.182",
+        "python": "3.12.3",
+        "cuda": "12.9",
+        "gpu": "NVIDIA H100 80GB HBM3",
+        "epochs_completed": 31,
+        "epoch_budget": 50,
+        "patience": 10,
+        "seed": 19,
+        "train_runs": [
+          1,
+          2,
+          3
+        ],
+        "development_runs": [
+          4
+        ],
+        "excluded_runs": [
+          5
+        ],
+        "extra_augmentation": false,
+        "automatic_promotion": false,
+        "measurement_qa_changed": false
+      },
+      "training": {
+        "epochs_completed": 31,
+        "epoch_budget": 50,
+        "best_run4_epoch": 21,
+        "best_run4_map50_95": 0.69692,
+        "augmentation": {
+          "spec": {
+            "contrast": {
+              "probability": 0.5,
+              "factor": [
+                0.85,
+                1.15
+              ],
+              "center": 127.5
+            },
+            "blur": {
+              "probability": 0.15,
+              "kernel": 3,
+              "sigma": [
+                0.2,
+                0.7
+              ]
+            },
+            "noise": {
+              "probability": 0.25,
+              "sigma_8bit": [
+                1.0,
+                4.0
+              ]
+            },
+            "order": [
+              "contrast",
+              "blur",
+              "noise"
+            ],
+            "hue_shift": false,
+            "geometric_change": false
+          },
+          "counts": {},
+          "examples": [],
+          "label_geometry_changed": false,
+          "validation_augmented": false
+        },
+        "training_csv_sha256": "85c15a36032e861e1f6ec10a01cf751cbb6e758237a4dab3939898f75dc3efd1",
+        "training_args_sha256": "666419a5259c48e3e53e01b1355faa0bcee862302e0601374a9df543a984d87c"
+      },
+      "parity": {
+        "passed": true,
+        "run": 4,
+        "frames": 16,
+        "boxes": 22,
+        "max_pixel_error": 6.103515625e-05,
+        "max_score_error": 2.384185791015625e-07,
+        "checkpoint_sha256": "e2106e857293aed6868a03c34bd6438fc8652d1b437fd3caca68fe7c63363815",
+        "onnx_sha256": "384502f2a7d39a112a81ffd25ed4230bb999b1728affe97ca6b78ebd2d85fac3",
+        "scope": "Post-selection CPU export consistency only"
+      },
+      "teacher_agreement": {
+        "kind": "paired_teacher_box_agreement",
+        "frames": 816,
+        "excluded_unknown_frames": 29,
+        "gt_boxes_outside_candidate_crop": 0,
+        "ground_truth_boxes_clipped_or_dropped": 0,
+        "confidence_for_ap": 0.001,
+        "nms_iou": 0.45,
+        "baseline": {
+          "map50": 0.9430060777829511,
+          "map50_95": 0.6528232953194986,
+          "per_class": [
+            {
+              "class_id": 0,
+              "targets": 814,
+              "ap50": 0.9937549407114624,
+              "ap50_95": 0.8138566541156799,
+              "precision_at_035": 0.996319018404908,
+              "recall_at_035": 0.9975429975429976,
+              "tp_at_035": 812,
+              "fp_at_035": 3,
+              "fn_at_035": 2
+            },
+            {
+              "class_id": 1,
+              "targets": 541,
+              "ap50": 0.8922572148544398,
+              "ap50_95": 0.4917899365233172,
+              "precision_at_035": 0.9679802955665024,
+              "recall_at_035": 0.7264325323475046,
+              "tp_at_035": 393,
+              "fp_at_035": 13,
+              "fn_at_035": 148
+            }
+          ]
+        },
+        "candidate": {
+          "map50": 0.9330269618508946,
+          "map50_95": 0.6422737444144451,
+          "per_class": [
+            {
+              "class_id": 0,
+              "targets": 814,
+              "ap50": 0.9932599847617777,
+              "ap50_95": 0.7960528704234343,
+              "precision_at_035": 0.9950980392156863,
+              "recall_at_035": 0.9975429975429976,
+              "tp_at_035": 812,
+              "fp_at_035": 4,
+              "fn_at_035": 2
+            },
+            {
+              "class_id": 1,
+              "targets": 541,
+              "ap50": 0.8727939389400116,
+              "ap50_95": 0.48849461840545594,
+              "precision_at_035": 0.963963963963964,
+              "recall_at_035": 0.7911275415896488,
+              "tp_at_035": 428,
+              "fp_at_035": 16,
+              "fn_at_035": 113
+            }
+          ]
+        },
+        "limitations": [
+          "Unreviewed teacher boxes; not independent human accuracy.",
+          "Unknown/manual/empty records excluded, so not an absent-vial false-positive benchmark.",
+          "Both models use the same PyTorch backend, inference settings and full-source-coordinate matcher.",
+          "Run 5 excluded from fitting/checkpoint selection but already inspected previously."
+        ]
+      },
+      "video": {
+        "source_video_sha256": "6f87cec1aeec3b2bae6dac639a317c077a3f175f27abd5fc8430d6953d9d05b9",
+        "source_frames_decoded": 50942,
+        "source_samples_verified": 8491,
+        "full_video_frames": 8491,
+        "full_video_fps": 5,
+        "early_video_frames": 968,
+        "early_video_fps": 30,
+        "early_image_estimated_starts": [
+          1374,
+          2760,
+          4152,
+          5400,
+          6660,
+          8550,
+          10152,
+          11754
+        ],
+        "unique_source_frames_inferred": 9299,
+        "baseline_presence": {
+          "samples_with_vial": 8282,
+          "samples_with_liquid": 4207
+        },
+        "candidate_presence": {
+          "samples_with_vial": 8312,
+          "samples_with_liquid": 4497
+        },
+        "presence_is_not_accuracy": true,
+        "early_starts_are_not_reviewed_flow_onsets": true,
+        "raw_source_pixels_preserved": true,
+        "no_recipe_color_qa_or_tracking_claim": true
+      },
+      "decoded_videos": [
+        {
+          "file": "run5-full-comparison.mp4",
+          "frames": 8491,
+          "sha256": "bda562ee0b2152042def3978552802c0d167c138810e2b718dfa32d309b47f5a"
+        },
+        {
+          "file": "run5-early-pours.mp4",
+          "frames": 968,
+          "sha256": "d5af57291508ef4c04365b6e288e400143669d05edba6aa920a672f985d729f9"
+        },
+        {
+          "file": "run5-two-fills.mp4",
+          "frames": 364,
+          "sha256": "1e2e86982de0cb62208ba634ac22ae1843a69c1398889a5911c02ea2412e1f18"
+        }
+      ],
+      "full_fill_video": {
+        "file": "run5-two-fills.mp4",
+        "frames": 364,
+        "fps": 5,
+        "windows": [
+          [
+            1284,
+            2364
+          ],
+          [
+            2670,
+            3762
+          ]
+        ],
+        "sha256": "1e2e86982de0cb62208ba634ac22ae1843a69c1398889a5911c02ea2412e1f18"
+      }
+    },
+    "augmented50": {
+      "model": {
+        "schema_version": 1,
+        "arm": "augmented50",
+        "checkpoint_sha256": "c540dc3aca87b5282c8af82e9aa7a85c8642366a55d3098838207dcc81b2f7c7",
+        "model_sha256": "c4b4f4a76367ed86a596ed7223e522384b55b6efd789267fd2780a72927986ee",
+        "pretrained_sha256": "0ebbc80d4a7680d14987a577cd21342b65ecfd94632bd9a8da63ae6417644ee1",
+        "experiment_plan_sha256": "3432c9a952f6073ac311341d821809a181e2885be11229674f8366aee9380a1d",
+        "data_provenance_sha256": "81851cba53c05a1811e81c32bc8328c4f4d5236e4f26bf6510505eae029b260c",
+        "trainer_sha256": "a791a6bed64b602d3a05d66af963a61475d3df57faa3635f8b8f0e0b7c4e9d06",
+        "photo_sha256": "fbff2bce9d1573581c1ab98a996376db0f899339c1d54c0fa74e6cf80b0d725b",
+        "torch": "2.8.0a0+5228986c39.nv25.05",
+        "ultralytics": "8.4.182",
+        "python": "3.12.3",
+        "cuda": "12.9",
+        "gpu": "NVIDIA H100 80GB HBM3",
+        "epochs_completed": 42,
+        "epoch_budget": 50,
+        "patience": 10,
+        "seed": 19,
+        "train_runs": [
+          1,
+          2,
+          3
+        ],
+        "development_runs": [
+          4
+        ],
+        "excluded_runs": [
+          5
+        ],
+        "extra_augmentation": true,
+        "automatic_promotion": false,
+        "measurement_qa_changed": false
+      },
+      "training": {
+        "epochs_completed": 42,
+        "epoch_budget": 50,
+        "best_run4_epoch": 32,
+        "best_run4_map50_95": 0.70693,
+        "augmentation": {
+          "spec": {
+            "contrast": {
+              "probability": 0.5,
+              "factor": [
+                0.85,
+                1.15
+              ],
+              "center": 127.5
+            },
+            "blur": {
+              "probability": 0.15,
+              "kernel": 3,
+              "sigma": [
+                0.2,
+                0.7
+              ]
+            },
+            "noise": {
+              "probability": 0.25,
+              "sigma_8bit": [
+                1.0,
+                4.0
+              ]
+            },
+            "order": [
+              "contrast",
+              "blur",
+              "noise"
+            ],
+            "hue_shift": false,
+            "geometric_change": false
+          },
+          "counts": {
+            "calls": 60564,
+            "contrast_factor": 30155,
+            "changed_images": 40600,
+            "noise_sigma_8bit": 15247,
+            "blur_sigma": 8937
+          },
+          "examples": [
+            {
+              "index": 0,
+              "source_image": "/home/ad.msoe.edu/koskea/ai-club-tools/results/epoch-augmentation-20261020/models/augmented50/data/images/train/vial_fill_20260922_192633_265636.jpg",
+              "parameters": {
+                "contrast_factor": 0.9533425807436007
+              },
+              "original_pixels_sha256": "b5f82dd027867a5e3e365c13b26918abf41754bea290e45a73eb39e34f1b0537",
+              "augmented_pixels_sha256": "a84013243216378da6b3079fe8b033d506be6dd787279a9b851d8b2ad42f8762"
+            },
+            {
+              "index": 1,
+              "source_image": "/home/ad.msoe.edu/koskea/ai-club-tools/results/epoch-augmentation-20261020/models/augmented50/data/images/train/vial_fill_20260922_192743_674452.jpg",
+              "parameters": {
+                "noise_sigma_8bit": 2.9452676153327433
+              },
+              "original_pixels_sha256": "6124d77277cb65581de58449f28228e63787a0a2aa2227b064ad71008a6a339c",
+              "augmented_pixels_sha256": "f6934a417d4b05b59fa2dc0fae5d25e33f0b559bcfd4af4fbc9d27205c7e9f17"
+            },
+            {
+              "index": 2,
+              "source_image": "/home/ad.msoe.edu/koskea/ai-club-tools/results/epoch-augmentation-20261020/models/augmented50/data/images/train/vial_fill_20260922_170727_101879-shift.jpg",
+              "parameters": {
+                "contrast_factor": 0.9564457845133985,
+                "noise_sigma_8bit": 2.769160243419423
+              },
+              "original_pixels_sha256": "002d7f7517106709cf7e7175cd91439a6130eecbde9a264f2cd7faabec2da584",
+              "augmented_pixels_sha256": "222263edfc3e0b76d75412103414088cb37effc10c6012e389bdf46ea0523051"
+            },
+            {
+              "index": 3,
+              "source_image": "/home/ad.msoe.edu/koskea/ai-club-tools/results/epoch-augmentation-20261020/models/augmented50/data/images/train/vial_fill_20260922_171647_439058-shift.jpg",
+              "parameters": {
+                "contrast_factor": 1.1100008563108774
+              },
+              "original_pixels_sha256": "8d1779296d4ee374e09256a9389a884fc42377a6f4bd2174271f0d64a4ace2e7",
+              "augmented_pixels_sha256": "1450852d4d59170dadc60ea385ceaace06618802459b846dcf526e84e4df8f4a"
+            },
+            {
+              "index": 4,
+              "source_image": "/home/ad.msoe.edu/koskea/ai-club-tools/results/epoch-augmentation-20261020/models/augmented50/data/images/train/vial_fill_20260922_170440_404202-shift.jpg",
+              "parameters": {
+                "noise_sigma_8bit": 1.1401377567519628
+              },
+              "original_pixels_sha256": "af6832eb673f6cbc11a906cd18c88caf27bb5c4c43794fb1206a770133cf6663",
+              "augmented_pixels_sha256": "581a662a5f6aed1e4d8087fa8a23fe945fe8de75b1710acb6cfa9dd6878cfab1"
+            },
+            {
+              "index": 5,
+              "source_image": "/home/ad.msoe.edu/koskea/ai-club-tools/results/epoch-augmentation-20261020/models/augmented50/data/images/train/vial_fill_20260922_171336_621234.jpg",
+              "parameters": {
+                "contrast_factor": 0.8809179865922491
+              },
+              "original_pixels_sha256": "d213c056610ddb3ff455a380f0cfbe23eef6d4d17b7b363e995ec545f354d60e",
+              "augmented_pixels_sha256": "4ba3d65496be5a0dd7719cb7e8c3a4b9a9ddaf75762d49df15429193c83d8958"
+            },
+            {
+              "index": 6,
+              "source_image": "/home/ad.msoe.edu/koskea/ai-club-tools/results/epoch-augmentation-20261020/models/augmented50/data/images/train/vial_fill_20260922_170642_929731-shift.jpg",
+              "parameters": {
+                "contrast_factor": 0.9266270026310376,
+                "noise_sigma_8bit": 1.760765830486811
+              },
+              "original_pixels_sha256": "31243db6779665a23ae8bb2ab724f22912b449dcf4d19611b1ef39d3ba8a6860",
+              "augmented_pixels_sha256": "41f4ca88cb104023ee0e1a9e6625b89c3059109f281a8b7541f6b78c054b0f4e"
+            },
+            {
+              "index": 7,
+              "source_image": "/home/ad.msoe.edu/koskea/ai-club-tools/results/epoch-augmentation-20261020/models/augmented50/data/images/train/vial_fill_20260922_170811_264365.jpg",
+              "parameters": {
+                "contrast_factor": 0.9607477238992478
+              },
+              "original_pixels_sha256": "c90543feb9af219badc63e487a21d49aa1cd4d3574693a03c56824270c3ed1c3",
+              "augmented_pixels_sha256": "39d0916cd466d49caf0a1c6a32767928e02381a42838c15a2a950dbd293bd35d"
+            },
+            {
+              "index": 8,
+              "source_image": "/home/ad.msoe.edu/koskea/ai-club-tools/results/epoch-augmentation-20261020/models/augmented50/data/images/train/vial_fill_20260922_170536_665149.jpg",
+              "parameters": {
+                "contrast_factor": 1.1017394249685182
+              },
+              "original_pixels_sha256": "fd83433ba1adcc8ea3bede56230ca34c5318b538304f9149619e14f31acb1cb6",
+              "augmented_pixels_sha256": "b87b4edfff29d29a0bf8cd08096067bda8d7beff772c3bb8f28d247337ba1ef0"
+            },
+            {
+              "index": 9,
+              "source_image": "/home/ad.msoe.edu/koskea/ai-club-tools/results/epoch-augmentation-20261020/models/augmented50/data/images/train/vial_fill_20260922_171414_741090.jpg",
+              "parameters": {
+                "contrast_factor": 1.0490366388006163
+              },
+              "original_pixels_sha256": "c523750c6dd9e1ab493d13a7b1ab02833b6789082a3c2127d212b21413abd11f",
+              "augmented_pixels_sha256": "79f1cc7282c87ff9d02366574180ab5452fcd7909f19fa01357e1652cfd6dd23"
+            },
+            {
+              "index": 10,
+              "source_image": "/home/ad.msoe.edu/koskea/ai-club-tools/results/epoch-augmentation-20261020/models/augmented50/data/images/train/vial_fill_20260922_170552_723785.jpg",
+              "parameters": {
+                "noise_sigma_8bit": 3.2303572179576627
+              },
+              "original_pixels_sha256": "e44ef83aa52dac7332e2d0c7c3cd5ecbad8e0ef7af2507f11aa4a602007c0218",
+              "augmented_pixels_sha256": "ec36b148c1205fd4dbd08363ee99f76afae1b3b39844c0bba1f338cad5cb9af7"
+            },
+            {
+              "index": 11,
+              "source_image": "/home/ad.msoe.edu/koskea/ai-club-tools/results/epoch-augmentation-20261020/models/augmented50/data/images/train/vial_fill_20260922_171037_924350.jpg",
+              "parameters": {
+                "contrast_factor": 0.8937220505384372
+              },
+              "original_pixels_sha256": "c22ad5c92437121e0a6384aecbb57d9b0fd49db0c30acc62c3d08c24399393f0",
+              "augmented_pixels_sha256": "9e6291c2dce8fba14ba15cf886721086c566c99177c4829278c4bc098451b3af"
+            }
+          ],
+          "label_geometry_changed": false,
+          "validation_augmented": false
+        },
+        "training_csv_sha256": "1d4528c1936128bf3b45a3a40cab3ab38a022a1387b7af8d27c5275949a8eb15",
+        "training_args_sha256": "7ea2b3be2178a708ddb4dba43c486be745b2eae29f300c78374314582f583194"
+      },
+      "parity": {
+        "passed": true,
+        "run": 4,
+        "frames": 16,
+        "boxes": 28,
+        "max_pixel_error": 6.103515625e-05,
+        "max_score_error": 7.152557373046875e-07,
+        "checkpoint_sha256": "c540dc3aca87b5282c8af82e9aa7a85c8642366a55d3098838207dcc81b2f7c7",
+        "onnx_sha256": "c4b4f4a76367ed86a596ed7223e522384b55b6efd789267fd2780a72927986ee",
+        "scope": "Post-selection CPU export consistency only"
+      },
+      "teacher_agreement": {
+        "kind": "paired_teacher_box_agreement",
+        "frames": 816,
+        "excluded_unknown_frames": 29,
+        "gt_boxes_outside_candidate_crop": 0,
+        "ground_truth_boxes_clipped_or_dropped": 0,
+        "confidence_for_ap": 0.001,
+        "nms_iou": 0.45,
+        "baseline": {
+          "map50": 0.9430060777829511,
+          "map50_95": 0.6528232953194986,
+          "per_class": [
+            {
+              "class_id": 0,
+              "targets": 814,
+              "ap50": 0.9937549407114624,
+              "ap50_95": 0.8138566541156799,
+              "precision_at_035": 0.996319018404908,
+              "recall_at_035": 0.9975429975429976,
+              "tp_at_035": 812,
+              "fp_at_035": 3,
+              "fn_at_035": 2
+            },
+            {
+              "class_id": 1,
+              "targets": 541,
+              "ap50": 0.8922572148544398,
+              "ap50_95": 0.4917899365233172,
+              "precision_at_035": 0.9679802955665024,
+              "recall_at_035": 0.7264325323475046,
+              "tp_at_035": 393,
+              "fp_at_035": 13,
+              "fn_at_035": 148
+            }
+          ]
+        },
+        "candidate": {
+          "map50": 0.8905960144617708,
+          "map50_95": 0.6381429373422509,
+          "per_class": [
+            {
+              "class_id": 0,
+              "targets": 814,
+              "ap50": 0.9932480933117876,
+              "ap50_95": 0.8386162219049297,
+              "precision_at_035": 0.9950980392156863,
+              "recall_at_035": 0.9975429975429976,
+              "tp_at_035": 812,
+              "fp_at_035": 4,
+              "fn_at_035": 2
+            },
+            {
+              "class_id": 1,
+              "targets": 541,
+              "ap50": 0.787943935611754,
+              "ap50_95": 0.43766965277957215,
+              "precision_at_035": 0.7808219178082192,
+              "recall_at_035": 0.7375231053604436,
+              "tp_at_035": 399,
+              "fp_at_035": 112,
+              "fn_at_035": 142
+            }
+          ]
+        },
+        "limitations": [
+          "Unreviewed teacher boxes; not independent human accuracy.",
+          "Unknown/manual/empty records excluded, so not an absent-vial false-positive benchmark.",
+          "Both models use the same PyTorch backend, inference settings and full-source-coordinate matcher.",
+          "Run 5 excluded from fitting/checkpoint selection but already inspected previously."
+        ]
+      },
+      "video": {
+        "source_video_sha256": "6f87cec1aeec3b2bae6dac639a317c077a3f175f27abd5fc8430d6953d9d05b9",
+        "source_frames_decoded": 50942,
+        "source_samples_verified": 8491,
+        "full_video_frames": 8491,
+        "full_video_fps": 5,
+        "early_video_frames": 968,
+        "early_video_fps": 30,
+        "early_image_estimated_starts": [
+          1374,
+          2760,
+          4152,
+          5400,
+          6660,
+          8550,
+          10152,
+          11754
+        ],
+        "unique_source_frames_inferred": 9299,
+        "baseline_presence": {
+          "samples_with_vial": 8282,
+          "samples_with_liquid": 4207
+        },
+        "candidate_presence": {
+          "samples_with_vial": 8312,
+          "samples_with_liquid": 4615
+        },
+        "presence_is_not_accuracy": true,
+        "early_starts_are_not_reviewed_flow_onsets": true,
+        "raw_source_pixels_preserved": true,
+        "no_recipe_color_qa_or_tracking_claim": true
+      },
+      "decoded_videos": [
+        {
+          "file": "run5-full-comparison.mp4",
+          "frames": 8491,
+          "sha256": "6bc341b03e48776afad2dcb6eff2f260b24ff25b61ab70f013f002518b1ea991"
+        },
+        {
+          "file": "run5-early-pours.mp4",
+          "frames": 968,
+          "sha256": "0c82fe66429f83c4fb04001e085f582cb16185b7c21fa84aff0bf8d8c1390ec6"
+        },
+        {
+          "file": "run5-two-fills.mp4",
+          "frames": 364,
+          "sha256": "eb4c81423421fc4feaaf43793fa511dd171dff20dcf509eec848c27298c322e7"
+        }
+      ],
+      "full_fill_video": {
+        "file": "run5-two-fills.mp4",
+        "frames": 364,
+        "fps": 5,
+        "windows": [
+          [
+            1284,
+            2364
+          ],
+          [
+            2670,
+            3762
+          ]
+        ],
+        "sha256": "eb4c81423421fc4feaaf43793fa511dd171dff20dcf509eec848c27298c322e7"
+      }
+    }
+  },
+  "baseline_onnx_sha256": "89ed11f7046171e5340dc45a9d528010de1cefbba21e163b23b7098151e0880e",
+  "baseline_export_parity": {
+    "passed": true,
+    "run": 4,
+    "frames": 16,
+    "boxes": 23,
+    "max_pixel_error": 9.1552734375e-05,
+    "max_score_error": 5.960464477539062e-07,
+    "checkpoint_sha256": "10856c18a8a5c485e832adcc6b841b739e726a969dc043fe8db64c49163bb361",
+    "onnx_sha256": "89ed11f7046171e5340dc45a9d528010de1cefbba21e163b23b7098151e0880e",
+    "scope": "Post-selection CPU export consistency only"
+  },
+  "extra_images": {
+    "augmentation-contact-sheet.png": "183fe28787f47ff80213358080b7e27b9a421a277c2d905aaccde68f70d0250e",
+    "augmentation-failure-examples.png": "1bbd88c4d30861b5c6603d8b6b727446bf1057b6b3c575407b298b213c5f6fdd",
+    "augmentation-failure-examples.json": "ecd05690a8f4bffd6a87e43565dd2769e935dbf04e6a8615ed95bcbacba47146",
+    "evaluation/selected-frame-comparison.png": "4654b389b30559e66a30d33cc819c0e5e7d95ca47699197ea144610cbd5ef0cc"
+  },
+  "tests": {
+    "command": "python -m unittest discover -s setup/vision -p test_epoch_augmentation.py -v",
+    "passed": 4,
+    "failed": 0
+  },
+  "delivered_videos_fully_decoded": 9,
+  "all_arms_same_scoring_sources": true,
+  "detector_promoted": false,
+  "measurement_qa_changed": false,
+  "labels_changed": false,
+  "run5_fit_or_selection": false,
+  "interpretation": "Provisional teacher-box agreement only. Longer plain improves recall; this photometric recipe worsens agreement and creates extra near-whole-vial liquid boxes. No independent human accuracy claim.",
+  "limits": [
+    "Run 5 repeatedly inspected; diagnostic, not blind final test.",
+    "Development/scoring targets are unreviewed teacher proposals, not human accuracy.",
+    "Historical deployed detector is an anchor; fresh12 is the matched runtime/FP32 control.",
+    "Fifty epochs is a maximum budget; patience10 can stop earlier.",
+    "No real labels, synthetic renderers, reviewed-label assignments or operator workflows changed."
+  ]
+}

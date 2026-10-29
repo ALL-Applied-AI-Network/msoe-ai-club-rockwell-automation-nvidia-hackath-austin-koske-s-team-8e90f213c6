@@ -1,0 +1,9 @@
+{
+  "status": "passed",
+  "still_images": 4647,
+  "case_frames": 84,
+  "organizer_files": 3,
+  "source_videos": 1,
+  "all_machine_suggestions_remain_unreviewed": true,
+  "claim": "Coverage/integrity only; this does not measure annotation accuracy or approve timing."
+}

@@ -1,0 +1,58 @@
+{
+  "pack_id": "aleyna-visible-boxes-v1-f29fdb0db46b",
+  "manifest_sha256": "894e9b1611f71adcc00873f9e7e8e006369fa8f07cea9fa482662befa4683183",
+  "frames": 210,
+  "per_run": {
+    "1": 60,
+    "2": 60,
+    "3": 60,
+    "4": 30
+  },
+  "per_reviewer": {
+    "Aleyna": 70,
+    "Zoe": 70,
+    "Reagan": 70
+  },
+  "cues": {
+    "no_liquid_proposal_review_not_verified_negative": 15,
+    "early_or_transition_context_candidate": 105,
+    "pale_low_contrast_candidate": 38,
+    "small_pool_candidate": 12,
+    "body_stream_scope_review": 18,
+    "recording_coverage": 22
+  },
+  "sequence_groups": 21,
+  "calibration_frames": 12,
+  "original_sources_unchanged": true,
+  "all_review_decisions_unreviewed": true,
+  "proposal_boxes_copied_into_review": 0,
+  "run5_frames": 0,
+  "training_export_created": false,
+  "pack_directory": "C:\\Users\\Austin\\ai-club-tools\\results\\aleyna-label-review-20261019-final",
+  "archive": "C:\\Users\\Austin\\ai-club-tools\\results\\aleyna-label-review-20261019-final.zip",
+  "archive_bytes": 22661060,
+  "archive_sha256": "c129bc7ca5920b5a7266422ee181eb91199a89b87881d9d739bd2e3cf28e84c5",
+  "all_210_archived_images_decoded": true,
+  "all_archived_image_and_legacy_label_hashes_match": true,
+  "all_34_legacy_scope_flags_included": true,
+  "unit_tests_passed": 4,
+  "offline_editor_checks": {
+    "offline_file_editor": true,
+    "queue_counts": [
+      70,
+      70,
+      70
+    ],
+    "calibration": 12,
+    "blank_review_has_no_boxes": true,
+    "proposals_hidden": true,
+    "manual_draw_submit_save_reload": true,
+    "uncertain_requires_notes": true,
+    "cross_pack_import_rejected": true,
+    "browser_errors": [],
+    "test_annotations_are_not_ground_truth": true
+  },
+  "ui_test_annotations_outside_pack": true,
+  "review_contract_sha256": "72defdcbde8008f3cdac7edab25550a42a7abb9d9e61ae542065439710643643",
+  "schema_sha256": "51adeccd853ad6d6d4da9c83144a38776cf8796b870079caa5142af0a7b8483d"
+}

@@ -1,0 +1,298 @@
+{
+  "schema_version": 1,
+  "kind": "gb10_pale_early_review_only",
+  "date": "2026-10-19",
+  "local_output": "C:\\Users\\Austin\\ai-club-tools\\results\\pale-early-render-20261019\\gb10-review-final",
+  "remote_output": "~/ai-club-tools/results/austin/pale-early-v2-review-final-20261019",
+  "archive_sha256": "7a1b26f7eb2df09b0e102f4b29f16dc569334dcd10c562374626b1448e274329",
+  "run": {
+    "schema_version": 1,
+    "complete": true,
+    "captured": 18,
+    "requested": 18,
+    "seconds": 87.92487212404376,
+    "host": "spark8",
+    "isaac_version": "6.0.0.1",
+    "renderer": "PathTracing",
+    "gpu": "NVIDIA GB10, 580.178.04",
+    "resolution": [
+      640,
+      480
+    ],
+    "instance_annotator": "semantic_segmentation",
+    "path_tracing_spp": 32,
+    "path_tracing_total_spp": 32,
+    "subframes": 4,
+    "label_pass_rgb_saved": true,
+    "annotation_encoding": "unique-object-semantic-tags-v1",
+    "fixture_sha256": "b484fe80247f6185d684637a2330faebb84f112962f6bb000a5d80d9bebd0413",
+    "source_assets": {
+      "ORIGINAL_README.md": "6a4114d4978a3266fc1e09eea75790ea2a18552d943a8cf4f0df57001bff9b06",
+      "cameras/FillCam.json": "11966571ffa71a979297a0c6c730c739f33d86a0578fe0b4b890dd4a7ce1c936",
+      "stations/fill_station/fill_station.usda": "5f58540c187ac16c4426bffb3ebbe559e62d6d63ff359afdb08867fc24b60af9",
+      "stations/fill_station/geometry/fill_station.usdc": "57f578fd047d3a5f2ee25712d841f836272fc745a89c5dfbcc301f0c199191db",
+      "stations/fill_station/geometry/textures/color_B7C6CE.exr": "7b3ff7cc6c709d4b5ae34c40b60277db472b1c7d483a744cf0990ab7023d61cc"
+    },
+    "renderer_profile": "meniscus-transmission-v2",
+    "geometry_helper_sha256": "30e2e7b26a21793b0c29b50f4b2dd621d2853055b4fdc77e495b7a29ab5ad724",
+    "appearance_references": [
+      {
+        "source_id": "vial_fill_20260922_170544_697177",
+        "source_run": 1,
+        "image_sha256": "b4128eb04fcaf42a9588b13e1de7660040468c2433274a993aef91900005e1ee",
+        "file": "references/vial_fill_20260922_170544_697177.jpg",
+        "use": "Qualitative RGB only; no teacher boxes or timing labels"
+      },
+      {
+        "source_id": "vial_fill_20260922_170548_711253",
+        "source_run": 1,
+        "image_sha256": "7c6a326ad2185bd1f9428fa5586d73e656eec4dbfb114a374b91e6d410c49cf1",
+        "file": "references/vial_fill_20260922_170548_711253.jpg",
+        "use": "Qualitative RGB only; no teacher boxes or timing labels"
+      },
+      {
+        "source_id": "vial_fill_20260922_170600_743982",
+        "source_run": 1,
+        "image_sha256": "43d10f01fe29fe71ae28f916c22fc5dbcf2ea00e8537e4b8b5ae028308d37359",
+        "file": "references/vial_fill_20260922_170600_743982.jpg",
+        "use": "Qualitative RGB only; no teacher boxes or timing labels"
+      },
+      {
+        "source_id": "vial_fill_20260922_192633_265636",
+        "source_run": 2,
+        "image_sha256": "ec1c4de37736f7addaec789b918bf1111664f171f0a2d7f0bb841be230445382",
+        "file": "references/vial_fill_20260922_192633_265636.jpg",
+        "use": "Qualitative RGB only; no teacher boxes or timing labels"
+      },
+      {
+        "source_id": "vial_fill_20260922_192639_295513",
+        "source_run": 2,
+        "image_sha256": "60fe512b0f6f5859b5aa3ab2dc5e88f935bed75a5b3cb7d5b71342c111728fbe",
+        "file": "references/vial_fill_20260922_192639_295513.jpg",
+        "use": "Qualitative RGB only; no teacher boxes or timing labels"
+      },
+      {
+        "source_id": "vial_fill_20260922_192651_356125",
+        "source_run": 2,
+        "image_sha256": "a705eee6cac7cf1b1f4830cbd453fe2e59dbb1e8e67807fe45215d9d3975c64b",
+        "file": "references/vial_fill_20260922_192651_356125.jpg",
+        "use": "Qualitative RGB only; no teacher boxes or timing labels"
+      },
+      {
+        "source_id": "vial_fill_20260923_184720_822117",
+        "source_run": 3,
+        "image_sha256": "7a2b40f75dd1194255eef8ac95ea8e88795a3f6251ee5369259693613272a648",
+        "file": "references/vial_fill_20260923_184720_822117.jpg",
+        "use": "Qualitative RGB only; no teacher boxes or timing labels"
+      },
+      {
+        "source_id": "vial_fill_20260923_184726_838430",
+        "source_run": 3,
+        "image_sha256": "28af4459b7266113487f6aeb60cd674d120148403488a81c28d3fbc34ee35f0c",
+        "file": "references/vial_fill_20260923_184726_838430.jpg",
+        "use": "Qualitative RGB only; no teacher boxes or timing labels"
+      },
+      {
+        "source_id": "vial_fill_20260923_184809_074191",
+        "source_run": 3,
+        "image_sha256": "901b790ad98c2a0a7367bbd37aa33942859bb92a0a830f3ad3cef2e6f2c927e1",
+        "file": "references/vial_fill_20260923_184809_074191.jpg",
+        "use": "Qualitative RGB only; no teacher boxes or timing labels"
+      }
+    ],
+    "liquid_material": {
+      "model": "OmniSurfaceBase MDL",
+      "mdl_source": "@/home/hackathon8/ai-club-tools/envs/isaac-6.0.0.1/lib/python3.12/site-packages/isaacsim/kit/mdl/core/mdl/OmniSurface/OmniSurfaceBase.mdl@",
+      "mdl_sha256": "290866532e153774d01bd51a8cdc6c4cb1f42b7992a994d498cfe572cc6f3f11",
+      "diffuse_weight": 0,
+      "transmission_weight": 1,
+      "ior": 1.333,
+      "geometry_opacity": 1,
+      "thin_walled": false,
+      "depth_units": "meters converted by metersPerUnit",
+      "max_bounces": 12,
+      "max_specular_transmission_bounces": 12
+    },
+    "script_sha256": "d4e207acc197ee34f5c99fc5846a9a5829308afea6e5bf060da2e378405b4074",
+    "annotation_helper_sha256": "4bee613b103104cb6ab173e2743a17b7ba59f519d974fdd9e90e3c38e2030d84",
+    "source_assets_unchanged": true,
+    "camera_parameters_unchanged": true,
+    "station_frame": 686,
+    "frozen_attributes": 221,
+    "training_eligible": false,
+    "run5_used": false
+  },
+  "verification": {
+    "passed": true,
+    "samples": 18,
+    "unique_rgb_images": 18,
+    "visible_boxes": {
+      "vial": 54,
+      "liquid": 14,
+      "stream": 13
+    },
+    "present_but_unavailable": [],
+    "mask_source": "Replicator semantic_segmentation from documented label passes",
+    "appearance_checks": [
+      {
+        "cases": [
+          "v2-07-low-pale",
+          "v2-12-low-blue"
+        ],
+        "shared_liquid_pixels": 1378,
+        "mean_absolute_rgb_difference": 17.78301886792453,
+        "minimum_required": 3,
+        "scope": "stale/material-response check; not optical calibration"
+      }
+    ],
+    "synchronization_retries": [],
+    "checks": [
+      "RGB/mask SHA256",
+      "native image dimensions",
+      "binary mask equals saved renderer IDs",
+      "box equals mask bounds",
+      "box within independent camera projection +/- 2px",
+      "YOLO rows equal manifest",
+      "absent object has no mask",
+      "RGB captures unique",
+      "source/camera preservation",
+      "revised pre-pool/body boundary and pool footprint progression"
+    ],
+    "optical_accuracy_validated": false,
+    "real_detection_accuracy_measured": false,
+    "training_eligible": false
+  },
+  "references": [
+    {
+      "source_id": "vial_fill_20260922_170544_697177",
+      "source_run": 1,
+      "image_sha256": "b4128eb04fcaf42a9588b13e1de7660040468c2433274a993aef91900005e1ee",
+      "file": "references/vial_fill_20260922_170544_697177.jpg",
+      "use": "Qualitative RGB only; no teacher boxes or timing labels"
+    },
+    {
+      "source_id": "vial_fill_20260922_170548_711253",
+      "source_run": 1,
+      "image_sha256": "7c6a326ad2185bd1f9428fa5586d73e656eec4dbfb114a374b91e6d410c49cf1",
+      "file": "references/vial_fill_20260922_170548_711253.jpg",
+      "use": "Qualitative RGB only; no teacher boxes or timing labels"
+    },
+    {
+      "source_id": "vial_fill_20260922_170600_743982",
+      "source_run": 1,
+      "image_sha256": "43d10f01fe29fe71ae28f916c22fc5dbcf2ea00e8537e4b8b5ae028308d37359",
+      "file": "references/vial_fill_20260922_170600_743982.jpg",
+      "use": "Qualitative RGB only; no teacher boxes or timing labels"
+    },
+    {
+      "source_id": "vial_fill_20260922_192633_265636",
+      "source_run": 2,
+      "image_sha256": "ec1c4de37736f7addaec789b918bf1111664f171f0a2d7f0bb841be230445382",
+      "file": "references/vial_fill_20260922_192633_265636.jpg",
+      "use": "Qualitative RGB only; no teacher boxes or timing labels"
+    },
+    {
+      "source_id": "vial_fill_20260922_192639_295513",
+      "source_run": 2,
+      "image_sha256": "60fe512b0f6f5859b5aa3ab2dc5e88f935bed75a5b3cb7d5b71342c111728fbe",
+      "file": "references/vial_fill_20260922_192639_295513.jpg",
+      "use": "Qualitative RGB only; no teacher boxes or timing labels"
+    },
+    {
+      "source_id": "vial_fill_20260922_192651_356125",
+      "source_run": 2,
+      "image_sha256": "a705eee6cac7cf1b1f4830cbd453fe2e59dbb1e8e67807fe45215d9d3975c64b",
+      "file": "references/vial_fill_20260922_192651_356125.jpg",
+      "use": "Qualitative RGB only; no teacher boxes or timing labels"
+    },
+    {
+      "source_id": "vial_fill_20260923_184720_822117",
+      "source_run": 3,
+      "image_sha256": "7a2b40f75dd1194255eef8ac95ea8e88795a3f6251ee5369259693613272a648",
+      "file": "references/vial_fill_20260923_184720_822117.jpg",
+      "use": "Qualitative RGB only; no teacher boxes or timing labels"
+    },
+    {
+      "source_id": "vial_fill_20260923_184726_838430",
+      "source_run": 3,
+      "image_sha256": "28af4459b7266113487f6aeb60cd674d120148403488a81c28d3fbc34ee35f0c",
+      "file": "references/vial_fill_20260923_184726_838430.jpg",
+      "use": "Qualitative RGB only; no teacher boxes or timing labels"
+    },
+    {
+      "source_id": "vial_fill_20260923_184809_074191",
+      "source_run": 3,
+      "image_sha256": "901b790ad98c2a0a7367bbd37aa33942859bb92a0a830f3ad3cef2e6f2c927e1",
+      "file": "references/vial_fill_20260923_184809_074191.jpg",
+      "use": "Qualitative RGB only; no teacher boxes or timing labels"
+    }
+  ],
+  "no_training": true,
+  "no_replay_or_qa_changes": true,
+  "human_appearance_approved": false,
+  "tests": {
+    "local_passed": 11,
+    "checks": [
+      "closed oriented body/stream topology",
+      "early footprint and meniscus",
+      "reference and optical-parameter rejection",
+      "no NumPy before Kit",
+      "legacy/native annotation contract"
+    ]
+  },
+  "caveats": [
+    "Opaque geometric masks do not certify refracted RGB segmentation.",
+    "First pale pools/thin jets remain faint; highlight/texture gaps remain. Review before training.",
+    "Procedural static states, not CFD, optical calibration, reviewed labels or a temporal benchmark."
+  ],
+  "outputs": [
+    {
+      "path": "C:\\Users\\Austin\\ai-club-tools\\results\\pale-early-render-20261019\\gb10-review-final\\pale-before-after.png",
+      "sha256": "6a71b6c2e639370d58235345b89181b02c3f22e49985feeb7dc0fdb42f84be09"
+    },
+    {
+      "path": "C:\\Users\\Austin\\ai-club-tools\\results\\pale-early-render-20261019\\gb10-review-final\\early-pour-rgb.png",
+      "sha256": "f2763b417b877cceba0ae1b13c7bb33143b66d96dd455ce33725cf807da382d4"
+    },
+    {
+      "path": "C:\\Users\\Austin\\ai-club-tools\\results\\pale-early-render-20261019\\gb10-review-final\\early-pour-boxes.png",
+      "sha256": "9c7c6664fcc68199b4fe8c275ee9dc21bd0f9cd50031173b967ccbeaba6ba77e"
+    },
+    {
+      "path": "C:\\Users\\Austin\\ai-club-tools\\results\\pale-early-render-20261019\\gb10-review-final\\clear-geometry-review.png",
+      "sha256": "9f7bf0ca1ce4e055e4b9fe7c024a2e723eaa12e88088c4f5965548ed364dd992"
+    },
+    {
+      "path": "C:\\Users\\Austin\\ai-club-tools\\results\\pale-early-render-20261019\\gb10-review-final\\runs123-reference-cues.png",
+      "sha256": "676b7d2227759ea200b888d3c3246a3150f8525373ccf47c748304b658d42742"
+    },
+    {
+      "path": "C:\\Users\\Austin\\ai-club-tools\\results\\pale-early-render-20261019\\gb10-review-final\\contact-rgb.png",
+      "sha256": "0c695fed13580ed19c836161cc54debb24748dccf3da9a0d2573badd3faef9a9"
+    },
+    {
+      "path": "C:\\Users\\Austin\\ai-club-tools\\results\\pale-early-render-20261019\\gb10-review-final\\contact-boxes.png",
+      "sha256": "4fad3dd11ec08ff29873887613b55a7e849f1f903e71194e1698702ba3cb8c2d"
+    },
+    {
+      "path": "C:\\Users\\Austin\\ai-club-tools\\results\\pale-early-render-20261019\\gb10-review-final\\contact-masks.png",
+      "sha256": "7a3f0181d1c2aef3ad5a8701833a8ef5efd85381b983a84a691a6f66fb7f5413"
+    },
+    {
+      "path": "C:\\Users\\Austin\\ai-club-tools\\results\\pale-early-render-20261019\\gb10-review-final\\appearance-review.json",
+      "sha256": "7074a079b43572c5aa12e281d75db9131233e1ec969a8481c32925f9a08edee4"
+    },
+    {
+      "path": "C:\\Users\\Austin\\ai-club-tools\\results\\pale-early-render-20261019\\gb10-review-final\\manifest.jsonl",
+      "sha256": "451e7ee5019b265101e736a48cb1f01462f05e9e671e058fdcca5b153a4d34c0"
+    },
+    {
+      "path": "C:\\Users\\Austin\\ai-club-tools\\results\\pale-early-render-20261019\\gb10-review-final\\run.json",
+      "sha256": "49e9fd1fb786d5bc72b0a67890cafdb6dbdb5c32552edca0079a6f2f6cca3ddc"
+    },
+    {
+      "path": "C:\\Users\\Austin\\ai-club-tools\\results\\pale-early-render-20261019\\gb10-review-final\\verification.json",
+      "sha256": "75c3bd98504727df495a80cd9e4391d912edcf07bbf3cd4c6376918ae4fa97d8"
+    }
+  ]
+}

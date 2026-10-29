@@ -5,7 +5,7 @@ from enum import Enum
 from typing import Literal
 from uuid import UUID
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 
 class OperatorStatus(str, Enum):
@@ -41,9 +41,15 @@ SourceMode = Literal["live_camera", "images", "recording"]
 
 
 class RecipeSegmentCreate(BaseModel):
-    start_ms: int = Field(default=0, ge=0)
+    start_ms: int = Field(ge=0)
     end_ms: int | None = Field(default=None, ge=0)
     recipe: RecipeContext
+
+    @model_validator(mode="after")
+    def valid_interval(self):
+        if self.end_ms is not None and self.end_ms <= self.start_ms:
+            raise ValueError("Recipe end must be after start; intervals are [start, end)")
+        return self
 
 
 class RecipeSegment(RecipeSegmentCreate):
@@ -96,7 +102,7 @@ class FrameImage(BaseModel):
     height: int = Field(gt=0)
 
 
-ArtifactKind = Literal["source", "rendered", "mask", "recording"]
+ArtifactKind = Literal["source", "rendered", "mask", "recording", "reference"]
 
 
 class ArtifactRecord(BaseModel):
@@ -134,10 +140,17 @@ class OperatorDecision(BaseModel):
     headline: str
     detail: str
     recommended_action: str
-    recipe_progress_percent: int = Field(ge=0, le=100)
+    recipe_progress_percent: int | None = Field(default=None, ge=0, le=100)
     model_state: str
     confidence: float | None = Field(default=None, ge=0, le=1)
     measurements: list[PipelineMeasurement] = Field(default_factory=list)
+    evidence: dict = Field(default_factory=dict)
+
+
+class AcknowledgeEventRequest(BaseModel):
+    reviewer: str = Field(min_length=1, max_length=100)
+    action: Literal["reviewed", "hold_for_review", "request_reference", "investigate"] = "reviewed"
+    note: str = Field(default="", max_length=2000)
 
 
 class InspectionEvent(BaseModel):
@@ -155,9 +168,11 @@ class InspectionEvent(BaseModel):
     visuals: PipelineVisuals = Field(default_factory=PipelineVisuals)
     decision: OperatorDecision
     acknowledged_at: datetime | None = None
+    acknowledgement: AcknowledgeEventRequest | None = None
 
 
 class AcknowledgeEventResponse(BaseModel):
     event_id: UUID
     acknowledged_at: datetime
+    acknowledgement: AcknowledgeEventRequest | None = None
 

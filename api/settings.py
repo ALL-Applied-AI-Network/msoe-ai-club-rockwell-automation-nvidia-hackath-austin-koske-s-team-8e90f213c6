@@ -18,7 +18,12 @@ class AppConfig(BaseSettings):
     environment: EnvironmentConfig = Field(default_factory=EnvironmentConfig)
     data_dir: Path = Field(default=Path(__file__).parent / "data")
     model_workers: int = Field(default=1, ge=1, le=8)
+    # "model" uses the released asset bundle (APP__MODEL_ASSETS, as the GB10 kit and Docker
+    # set it) or, without one, the checkpoint paths below. Mock remains the safe default.
     pipeline_mode: Literal["mock", "model"] = "mock"
+    model_assets: Path | None = None
+    reference_image: Path | None = None
+    device: str = "cpu"
     yolo_checkpoint: Path = Field(
         default=Path(__file__).parent.parent / "integration" / "models" / "yolo_best.pt"
     )
@@ -27,6 +32,8 @@ class AppConfig(BaseSettings):
     )
     temporal_reference_image: Path | None = None
     temporal_reference_qualified: bool = False
+    # Native (non-Docker) deployments serve the prebuilt React UI from this folder.
+    client_dist: Path | None = None
 
 
 config = AppConfig()

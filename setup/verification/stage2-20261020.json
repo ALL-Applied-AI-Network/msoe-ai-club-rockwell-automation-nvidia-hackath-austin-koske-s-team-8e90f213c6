@@ -1,0 +1,512 @@
+{
+  "schema_version": 1,
+  "kind": "stage2_experiments_verified",
+  "root": "C:\\Users\\Austin\\ai-club-tools\\results\\stage2-20261020",
+  "source_run": 4,
+  "run5_used": false,
+  "new_training_jobs": 0,
+  "hardware_actions": 0,
+  "real_video": {
+    "decoded_frames": 9482,
+    "samples": 1581,
+    "fill_candidates": 6,
+    "sample_qa_pass_within_fills": 849,
+    "samples_within_fills": 931,
+    "completed_departure_window_qa_pass": 4,
+    "phase_checkpoints": 9,
+    "final_episode_checkpoint_opportunities": 6,
+    "lead_before_departure_s": [
+      3.6000000000000014,
+      3.6000000000000085,
+      3.6000000000000085,
+      4.0,
+      3.8000000000000114,
+      3.8000000000000114
+    ],
+    "final_episode_match_is_retrospective": true,
+    "recipe_decisions_available": 0,
+    "processing_ms": {
+      "detector_ms": {
+        "p50": 26.29410004010424,
+        "p95": 33.90990499174222
+      },
+      "sam_ms": {
+        "p50": 36.79934999672696,
+        "p95": 42.174209939548746
+      },
+      "total_sample_ms": {
+        "p50": 87.50560000771657,
+        "p95": 99.42147008841857
+      }
+    },
+    "real_policy_status_counts": {
+      "unavailable": 1581
+    }
+  },
+  "simulation": {
+    "episodes": 624,
+    "policy_evaluations": 3744,
+    "metrics": {
+      "ideal": {
+        "completed_fill_only": {
+          "episodes": 312,
+          "clean_episodes": 24,
+          "injected_episodes": 288,
+          "clean_false_holds": 0,
+          "clean_false_hold_fraction": 0.0,
+          "injected_cases_warned": 65,
+          "injected_warning_fraction": 0.22569444444444445,
+          "median_injected_warning_latency_s": 15.700000000000003,
+          "median_warning_lead_s": 0.9333333333333336,
+          "fully_unassessable_episodes": 0,
+          "by_hold_up_ml": {
+            "0.5": {
+              "episodes": 72,
+              "warned": 0
+            },
+            "1.0": {
+              "episodes": 72,
+              "warned": 0
+            },
+            "2.0": {
+              "episodes": 72,
+              "warned": 14
+            },
+            "5.0": {
+              "episodes": 72,
+              "warned": 51
+            }
+          }
+        },
+        "final_reference_every_frame": {
+          "episodes": 312,
+          "clean_episodes": 24,
+          "injected_episodes": 288,
+          "clean_false_holds": 24,
+          "clean_false_hold_fraction": 1.0,
+          "injected_cases_warned": 288,
+          "injected_warning_fraction": 1.0,
+          "median_injected_warning_latency_s": 0.5000000000000002,
+          "median_warning_lead_s": 17.5,
+          "fully_unassessable_episodes": 0,
+          "by_hold_up_ml": {
+            "0.5": {
+              "episodes": 72,
+              "warned": 72
+            },
+            "1.0": {
+              "episodes": 72,
+              "warned": 72
+            },
+            "2.0": {
+              "episodes": 72,
+              "warned": 72
+            },
+            "5.0": {
+              "episodes": 72,
+              "warned": 72
+            }
+          }
+        },
+        "phase_reference_3_frames": {
+          "episodes": 312,
+          "clean_episodes": 24,
+          "injected_episodes": 288,
+          "clean_false_holds": 0,
+          "clean_false_hold_fraction": 0.0,
+          "injected_cases_warned": 262,
+          "injected_warning_fraction": 0.9097222222222222,
+          "median_injected_warning_latency_s": 0.5000000000000002,
+          "median_warning_lead_s": 19.46666666666667,
+          "fully_unassessable_episodes": 0,
+          "by_hold_up_ml": {
+            "0.5": {
+              "episodes": 72,
+              "warned": 48
+            },
+            "1.0": {
+              "episodes": 72,
+              "warned": 70
+            },
+            "2.0": {
+              "episodes": 72,
+              "warned": 72
+            },
+            "5.0": {
+              "episodes": 72,
+              "warned": 72
+            }
+          }
+        },
+        "phase_reference_single_frame": {
+          "episodes": 312,
+          "clean_episodes": 24,
+          "injected_episodes": 288,
+          "clean_false_holds": 7,
+          "clean_false_hold_fraction": 0.2916666666666667,
+          "injected_cases_warned": 288,
+          "injected_warning_fraction": 1.0,
+          "median_injected_warning_latency_s": 0.10000000000000009,
+          "median_warning_lead_s": 18.200000000000003,
+          "fully_unassessable_episodes": 0,
+          "by_hold_up_ml": {
+            "0.5": {
+              "episodes": 72,
+              "warned": 72
+            },
+            "1.0": {
+              "episodes": 72,
+              "warned": 72
+            },
+            "2.0": {
+              "episodes": 72,
+              "warned": 72
+            },
+            "5.0": {
+              "episodes": 72,
+              "warned": 72
+            }
+          }
+        },
+        "phase_reference_threshold10": {
+          "episodes": 312,
+          "clean_episodes": 24,
+          "injected_episodes": 288,
+          "clean_false_holds": 0,
+          "clean_false_hold_fraction": 0.0,
+          "injected_cases_warned": 196,
+          "injected_warning_fraction": 0.6805555555555556,
+          "median_injected_warning_latency_s": 0.5000000000000002,
+          "median_warning_lead_s": 17.800000000000004,
+          "fully_unassessable_episodes": 0,
+          "by_hold_up_ml": {
+            "0.5": {
+              "episodes": 72,
+              "warned": 20
+            },
+            "1.0": {
+              "episodes": 72,
+              "warned": 48
+            },
+            "2.0": {
+              "episodes": 72,
+              "warned": 64
+            },
+            "5.0": {
+              "episodes": 72,
+              "warned": 64
+            }
+          }
+        },
+        "phase_reference_threshold15": {
+          "episodes": 312,
+          "clean_episodes": 24,
+          "injected_episodes": 288,
+          "clean_false_holds": 0,
+          "clean_false_hold_fraction": 0.0,
+          "injected_cases_warned": 142,
+          "injected_warning_fraction": 0.4930555555555556,
+          "median_injected_warning_latency_s": 0.5000000000000002,
+          "median_warning_lead_s": 17.800000000000004,
+          "fully_unassessable_episodes": 0,
+          "by_hold_up_ml": {
+            "0.5": {
+              "episodes": 72,
+              "warned": 6
+            },
+            "1.0": {
+              "episodes": 72,
+              "warned": 40
+            },
+            "2.0": {
+              "episodes": 72,
+              "warned": 48
+            },
+            "5.0": {
+              "episodes": 72,
+              "warned": 48
+            }
+          }
+        }
+      },
+      "run4_availability": {
+        "completed_fill_only": {
+          "episodes": 312,
+          "clean_episodes": 24,
+          "injected_episodes": 288,
+          "clean_false_holds": 0,
+          "clean_false_hold_fraction": 0.0,
+          "injected_cases_warned": 64,
+          "injected_warning_fraction": 0.2222222222222222,
+          "median_injected_warning_latency_s": 15.700000000000003,
+          "median_warning_lead_s": 0.9333333333333336,
+          "fully_unassessable_episodes": 0,
+          "by_hold_up_ml": {
+            "0.5": {
+              "episodes": 72,
+              "warned": 0
+            },
+            "1.0": {
+              "episodes": 72,
+              "warned": 0
+            },
+            "2.0": {
+              "episodes": 72,
+              "warned": 13
+            },
+            "5.0": {
+              "episodes": 72,
+              "warned": 51
+            }
+          }
+        },
+        "final_reference_every_frame": {
+          "episodes": 312,
+          "clean_episodes": 24,
+          "injected_episodes": 288,
+          "clean_false_holds": 24,
+          "clean_false_hold_fraction": 1.0,
+          "injected_cases_warned": 288,
+          "injected_warning_fraction": 1.0,
+          "median_injected_warning_latency_s": 0.5000000000000002,
+          "median_warning_lead_s": 17.0,
+          "fully_unassessable_episodes": 0,
+          "by_hold_up_ml": {
+            "0.5": {
+              "episodes": 72,
+              "warned": 72
+            },
+            "1.0": {
+              "episodes": 72,
+              "warned": 72
+            },
+            "2.0": {
+              "episodes": 72,
+              "warned": 72
+            },
+            "5.0": {
+              "episodes": 72,
+              "warned": 72
+            }
+          }
+        },
+        "phase_reference_3_frames": {
+          "episodes": 312,
+          "clean_episodes": 24,
+          "injected_episodes": 288,
+          "clean_false_holds": 0,
+          "clean_false_hold_fraction": 0.0,
+          "injected_cases_warned": 254,
+          "injected_warning_fraction": 0.8819444444444444,
+          "median_injected_warning_latency_s": 0.5000000000000002,
+          "median_warning_lead_s": 19.46666666666667,
+          "fully_unassessable_episodes": 0,
+          "by_hold_up_ml": {
+            "0.5": {
+              "episodes": 72,
+              "warned": 44
+            },
+            "1.0": {
+              "episodes": 72,
+              "warned": 68
+            },
+            "2.0": {
+              "episodes": 72,
+              "warned": 70
+            },
+            "5.0": {
+              "episodes": 72,
+              "warned": 72
+            }
+          }
+        },
+        "phase_reference_single_frame": {
+          "episodes": 312,
+          "clean_episodes": 24,
+          "injected_episodes": 288,
+          "clean_false_holds": 7,
+          "clean_false_hold_fraction": 0.2916666666666667,
+          "injected_cases_warned": 288,
+          "injected_warning_fraction": 1.0,
+          "median_injected_warning_latency_s": 0.10000000000000009,
+          "median_warning_lead_s": 18.200000000000003,
+          "fully_unassessable_episodes": 0,
+          "by_hold_up_ml": {
+            "0.5": {
+              "episodes": 72,
+              "warned": 72
+            },
+            "1.0": {
+              "episodes": 72,
+              "warned": 72
+            },
+            "2.0": {
+              "episodes": 72,
+              "warned": 72
+            },
+            "5.0": {
+              "episodes": 72,
+              "warned": 72
+            }
+          }
+        },
+        "phase_reference_threshold10": {
+          "episodes": 312,
+          "clean_episodes": 24,
+          "injected_episodes": 288,
+          "clean_false_holds": 0,
+          "clean_false_hold_fraction": 0.0,
+          "injected_cases_warned": 188,
+          "injected_warning_fraction": 0.6527777777777778,
+          "median_injected_warning_latency_s": 0.5000000000000002,
+          "median_warning_lead_s": 19.46666666666667,
+          "fully_unassessable_episodes": 0,
+          "by_hold_up_ml": {
+            "0.5": {
+              "episodes": 72,
+              "warned": 16
+            },
+            "1.0": {
+              "episodes": 72,
+              "warned": 44
+            },
+            "2.0": {
+              "episodes": 72,
+              "warned": 64
+            },
+            "5.0": {
+              "episodes": 72,
+              "warned": 64
+            }
+          }
+        },
+        "phase_reference_threshold15": {
+          "episodes": 312,
+          "clean_episodes": 24,
+          "injected_episodes": 288,
+          "clean_false_holds": 0,
+          "clean_false_hold_fraction": 0.0,
+          "injected_cases_warned": 135,
+          "injected_warning_fraction": 0.46875,
+          "median_injected_warning_latency_s": 0.5000000000000002,
+          "median_warning_lead_s": 19.46666666666667,
+          "fully_unassessable_episodes": 0,
+          "by_hold_up_ml": {
+            "0.5": {
+              "episodes": 72,
+              "warned": 5
+            },
+            "1.0": {
+              "episodes": 72,
+              "warned": 36
+            },
+            "2.0": {
+              "episodes": 72,
+              "warned": 46
+            },
+            "5.0": {
+              "episodes": 72,
+              "warned": 48
+            }
+          }
+        }
+      }
+    },
+    "invalid_input_conditions": 13,
+    "guarded_frames": 65,
+    "guarded_warnings": 0,
+    "real_defect_accuracy": null
+  },
+  "reference_stress": {
+    "nominal": {
+      "clean_episodes": 24,
+      "clean_false_holds": 0,
+      "injected_episodes": 24,
+      "injected_warned": 24
+    },
+    "reference_clock_plus_1s": {
+      "clean_episodes": 24,
+      "clean_false_holds": 24,
+      "injected_episodes": 24,
+      "injected_warned": 24
+    },
+    "unreported_green_gain_10pct": {
+      "clean_episodes": 24,
+      "clean_false_holds": 24,
+      "injected_episodes": 24,
+      "injected_warned": 24
+    },
+    "unreported_optical_density_plus_10pct": {
+      "clean_episodes": 24,
+      "clean_false_holds": 0,
+      "injected_episodes": 24,
+      "injected_warned": 24
+    }
+  },
+  "action_sequence": [
+    "hold_review_requested",
+    "flush_recommended",
+    "flush_acknowledged_verify_next_fills",
+    "verify_next_fill",
+    "resume_recommended"
+  ],
+  "media": {
+    "schema_version": 1,
+    "real": {
+      "source_pixels_and_native_pts_verified": 1581,
+      "full_decoded_frames": 1581,
+      "highlight_decoded_frames": 115
+    },
+    "simulation": {
+      "fully_decoded_frames": 220,
+      "derived_actions": [
+        "hold_review_requested",
+        "flush_recommended",
+        "flush_acknowledged_verify_next_fills",
+        "verify_next_fill",
+        "resume_recommended"
+      ]
+    },
+    "script_sha256": "50e9742f156ca903d6811c10c858d35a1a0db68fe42624550563b56f12da611a",
+    "artifacts": {
+      "derived-action-loop.json": "aecadd26f0f416674c53d0474c7c6fb1175a81755a2e59c740711d1bf9759d62",
+      "run4-checkpoint-highlight.mp4": "9bc2e56b6719831290a274caf874fc4f5a8a824a74cadd80f15175c307ec6a59",
+      "run4-evidence.mp4": "534fdd5c7259a61fc90eec7837506e26979006f7103646b33bc2d7fb75d7342e",
+      "run4-frame-00720.png": "c6eb7ef6a018354192bfc8a5b337d202c5b8df79c9b5027fb93ed915e90eb3f7",
+      "run4-frame-02094.png": "26b3e1430602eb482aa74c4c22930444d58224752ab85745285dd76d83ddbe79",
+      "run4-frame-02196.png": "bc22316b6276c1268ec22749ccb545dc6b732ada61a03abdfb86ac8949de07d6",
+      "run4-highlight-decoded.png": "1231faf518af5cd20d511831fe118c75bb457f837bac52c220163f60e3411a69",
+      "simulated-action-final.png": "3d1ecbe556ff4d5cd41d82ca7ed48c6db50077c06d25519ddd82faed72abce9c",
+      "simulated-action-loop.mp4": "bcc65a9f7eec496a6c1046906b3aebac526373e3358ec0c2e77e90f988c523b5",
+      "simulation-decoded.png": "c75cf77d4cb5d942596b9ba04fc3a55145a9ea6257ff132946b63adbf8689954"
+    },
+    "hardware_actions": 0,
+    "run5_used": false
+  },
+  "verified_frozen_artifacts": 31,
+  "checkpoint_prefix_cuts_verified": 7,
+  "focused_contract_tests_passed": 10,
+  "evidence_report_sha256": "5e095933cac5ffd8af230d5c1530f6a4b1722cf9476272e622e9789e266afd14",
+  "real_policy_trace_sha256": "d52ac81770186055210dc66db74150044ac3b5f000a895a972e22876c2c7d14b",
+  "completion_sha256": {
+    "full-run4-v1": "cdedf7bceb0aca84b6e9295532dce2d1ac2c1355a0b1a0a368b3dabb57a2ba56",
+    "policy-simulation-v2": "5e80ede536d8bd3f2b12448293d087e9fc8e794b6e0d0f880726d69b62a6c4d9",
+    "reference-stress-v1": "b5490db640e0089e2138193ee944eb06c1b5f4e52d4e98bbb3d9151931766bdd",
+    "demo-v1": "71ba2eb9d714469df1fa61c8ac2866e7c0594e3cb59adc4255efc84fb5ae7ce3"
+  },
+  "script_sha256": {
+    "analyze_stage2_evidence.py": "b03df369bd78166dd6d4c0d55ace4b947331601c2d75d03a2495116395dd1183",
+    "collect_stage2_run4.py": "38c3b1b7676b8eaf278011374159f4ed22f50e0fad79f7fefdfa961d7d5401f9",
+    "experiment_stage2_policy.py": "76a8c3f88166ca982e1054953509e3b96819c4a78c555b9e0dffee08edd8daaf",
+    "render_stage2_demos.py": "50e9742f156ca903d6811c10c858d35a1a0db68fe42624550563b56f12da611a",
+    "stage2_policy.py": "84802f3ee8d27248d4562fb666da1171f64349648d5e0590c2b5600c50bb56df",
+    "stress_stage2_policy.py": "e0d3bb9c844f02453ecd581714ffd524eb1cf6197cdf5f02d54bc25fa81bfd6a",
+    "test_stage2_policy.py": "c4e94b77e4ba5398c45434788c9a7ad80ecf4e33ff4592a6607c43770a224a7d",
+    "verify_stage2_experiments.py": "a751b10579df82a7362836ca6a5b107faf928cd8bbf78882ba0f4748df42e0b1"
+  },
+  "limits": [
+    "Real masks, identities, recipes and quality outcomes remain unreviewed or unavailable.",
+    "Analytic simulation is not real product-defect accuracy or measured flush effectiveness.",
+    "Trusted process progression and photometric health integration remain prerequisites."
+  ]
+}

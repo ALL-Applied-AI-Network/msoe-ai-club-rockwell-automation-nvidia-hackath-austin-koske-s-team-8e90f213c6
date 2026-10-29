@@ -32,8 +32,9 @@ Use `cuda:0` only on the approved GPU host; CPU is the local default.
 
 ## Operator app
 
-Requirements: Python 3.11+, `uv`, and Node 22.12+ or a supported newer LTS.
-Use two terminals from the repository root.
+For a laptop, use [the Docker demo](demo.md). It runs the built React client, Nginx,
+FastAPI, the selected models and persisted inspection history. Mock controls need
+explicit mock mode; the default never substitutes simulated success for inference.
 
 ```bash
 cd api
@@ -109,6 +110,12 @@ a separate copy of the inference algorithm. The FastAPI bridge imports the same
 core directly.
 `API_PROXY_TARGET` changes Vite's local proxy; `VITE_API_BASE_URL` selects a
 separately hosted API at build time. Defaults need no credentials or database.
+
+To run with the released asset bundle instead of individual checkpoints, install the
+model dependencies from `api/requirements-model.txt` into the API environment and set
+`APP__PIPELINE_MODE=model` and `APP__MODEL_ASSETS` (and optionally `APP__REFERENCE_IMAGE`)
+to the extracted release paths. Do not run `uv sync` without the model dependencies just
+before a demo; synchronization removes packages outside the base API lock.
 
 ## Checks
 

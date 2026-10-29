@@ -1,10 +1,12 @@
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 
 from dependencies import get_inspection_service
 from routers.inspection import artifact_router, router as inspections
+from routers.investigation import router as investigation
 from settings import config
 
 @asynccontextmanager
@@ -32,11 +34,11 @@ app.add_middleware(
 )
 app.include_router(inspections, prefix="/api/v1")
 app.include_router(artifact_router, prefix="/api/v1")
+app.include_router(investigation, prefix="/api/v1")
 
 
 @app.get("/health")
-async def health_check():
-    service = get_inspection_service()
+async def health_check(service=Depends(get_inspection_service)):
     return {
         "status": "healthy",
         "service": "linewatch-inspection-api",
@@ -46,3 +48,19 @@ async def health_check():
         "queue_depth": service.queue_depth,
         "persistence": "sqlite+filesystem",
     }
+
+
+if config.client_dist is not None:
+    # Same-origin UI for native GB10 runs; Docker uses Nginx instead.
+    client_root = config.client_dist.resolve()
+    if not (client_root / "index.html").is_file():
+        raise RuntimeError(f"APP__CLIENT_DIST has no index.html: {client_root}")
+
+    @app.get("/{path:path}", include_in_schema=False)
+    async def client_app(path: str):
+        if path.startswith("api/"):
+            raise HTTPException(404, "Not Found")
+        candidate = (client_root / path).resolve()
+        if path and candidate.is_relative_to(client_root) and candidate.is_file():
+            return FileResponse(candidate)
+        return FileResponse(client_root / "index.html")

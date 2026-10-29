@@ -4,6 +4,7 @@ from databridge.memory_widgets import MemoryWidgetBridge
 from databridge.sqlite_inspections import SQLiteInspectionBridge
 from pipelines.base import InspectionPipeline
 from pipelines.mock import MockInspectionPipeline
+from pipelines.temporal import TemporalInspectionPipeline
 from services.artifacts import ArtifactStore
 from services.event_broker import EventBroker
 from services.inspection import InspectionService
@@ -20,6 +21,8 @@ _data_dir = (
 
 
 def build_inspection_pipeline() -> InspectionPipeline:
+    if config.pipeline_mode == "model" and config.model_assets is not None:
+        return TemporalInspectionPipeline(config.model_assets, config.reference_image, config.device)
     if config.pipeline_mode == "model":
         from pipelines.temporal_cnn_bridge import TemporalCnnInspectionBridge
 

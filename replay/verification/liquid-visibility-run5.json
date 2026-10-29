@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "kind": "posthoc_visibility_pilot_checks",
+  "output_root": "C:/Users/Austin/ai-club-tools/results/liquid-visibility-clahe-20261019",
+  "cases": 8,
+  "diagnostic_frames": 48,
+  "source_and_reference_png_rgb_hashes_verified": 56,
+  "only_earlier_references": true,
+  "video_frames": 968,
+  "video_fps": 30,
+  "fresh_raw_inference_matches_cached_exactly_on_frames": 48,
+  "frozen_model_liquid_proposal_presence": {
+    "raw_frames": 9,
+    "clahe_frames": 14,
+    "gained": 5,
+    "lost": 0,
+    "note": "Presence at confidence >= 0.35 is not recall or accuracy; no reviewed labels used."
+  },
+  "first_0_to_0_2_seconds_raw_and_clahe_both_without_liquid_proposals": true,
+  "trained_weights_changed": false,
+  "replay_QA_changed": false,
+  "color_measurement_changed": false,
+  "setup_tests_passed": 6,
+  "script_sha256": "fb2a7988c72edb41daaa6c8810154b1b160cb5b0db44c71fb3c6ac2e2b34bdc7",
+  "file_sha256": {
+    "manifest.json": "4c588158e7d38b1c5a971082084b5e0b9a71a33352e6854dd7cb63b91c64954e",
+    "visibility-comparison.mp4": "730c7e8e54a97ca505d5d16addd062201b67e35ded14280f204513a772d1aa07",
+    "pale-start-examples.png": "de5d0cd6373f51420a21da76c832a465bb3ea6c8b607aff71d0117ea0e54cfab"
+  }
+}

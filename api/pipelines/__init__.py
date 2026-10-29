@@ -1,7 +1,9 @@
 """Long-lived frame pipeline adapters.
 
-MockInspectionPipeline keeps UI/API development deterministic. The configured
-TemporalCnnInspectionBridge loads the shared batch pipeline models once and
-preserves measurement-QA state independently for each inspection run.
+MockInspectionPipeline keeps UI/API development deterministic. In model mode,
+TemporalInspectionPipeline runs the released asset bundle (YOLO vial geometry, paired
+temporal U-Net, measurement QA); without a bundle, TemporalCnnInspectionBridge loads the
+configured checkpoints through the shared batch pipeline. Both keep measurement-QA state
+per inspection run.
 """
 

@@ -1,0 +1,870 @@
+{
+  "checked_date": "2026-10-19",
+  "scope": "Illustrative recipe-context and development-reference replay; no defect accuracy or certified-clean claim",
+  "initial_published_handoff_commit": "0782b26",
+  "branch": "austin/recipe-aware-replay",
+  "source_manifest": {
+    "run_id": 5,
+    "schema_version": 1,
+    "implementation_id": "3d1b4c86c4b2850a",
+    "runtime": {
+      "python": "3.12.12",
+      "architecture": "AMD64",
+      "numpy": "2.5.4",
+      "av": "19.0.1",
+      "opencv": "5.0.0",
+      "skimage": "0.26.0"
+    },
+    "video_sha256": "6f87cec1aeec3b2bae6dac639a317c077a3f175f27abd5fc8430d6953d9d05b9",
+    "annotation_sha256": null,
+    "clock_sha256": null,
+    "config_id": "c4feec54d72a7ede",
+    "fill_source": "image",
+    "config": {
+      "schema_version": 1,
+      "sample_stride": 6,
+      "image_size": [
+        640,
+        480
+      ],
+      "color_roi": [
+        293,
+        345,
+        325,
+        385
+      ],
+      "holder_roi": [
+        264,
+        231,
+        338,
+        253
+      ],
+      "nozzle_roi": [
+        298,
+        70,
+        314,
+        135
+      ],
+      "valid_fraction_min": 0.6,
+      "holder_dark_fraction_min": 0.35,
+      "max_motion": 3.0,
+      "max_roi_sensitivity_de2000": 8.0,
+      "max_temporal_de2000": 5.0,
+      "review_threshold_de2000": 5.0,
+      "window_start_after_end_s": 0.5,
+      "window_end_after_end_s": 1.0,
+      "minimum_window_samples": 3,
+      "stream_center_roi": [
+        302,
+        75,
+        311,
+        130
+      ],
+      "stream_left_roi": [
+        290,
+        75,
+        298,
+        130
+      ],
+      "stream_right_roi": [
+        316,
+        75,
+        324,
+        130
+      ],
+      "stream_on_contrast": 3.0,
+      "stream_off_contrast": 2.5,
+      "stream_peak_min": 6.0,
+      "stream_confirm_s": 0.4,
+      "minimum_stream_s": 0.6,
+      "departure_motion": 8.0,
+      "departure_confirm_s": 0.2,
+      "carrier_settle_s": 0.6
+    },
+    "source_cameras": {
+      "vial_fill": {
+        "path": "C:\\git\\FDS-Dark\\ALL-Applied-AI-Network\\msoe-ai-club-rockwell-automation-nvidia-hackath-austin-koske-s-team-8e90f213c6\\datasets\\dataset2\\csi-vial-fill-dataset\\vial_fill\\videos\\vial_fill_video_5.mp4",
+        "fps": 30.0,
+        "frames": 50942,
+        "width": 640,
+        "height": 480,
+        "duration_s": 1698.0666666666666,
+        "start_pts_s": 0.0,
+        "codec": "h264",
+        "sha256": "6f87cec1aeec3b2bae6dac639a317c077a3f175f27abd5fc8430d6953d9d05b9"
+      },
+      "tank_level": {
+        "path": "C:\\git\\FDS-Dark\\ALL-Applied-AI-Network\\msoe-ai-club-rockwell-automation-nvidia-hackath-austin-koske-s-team-8e90f213c6\\datasets\\dataset2\\csi-vial-fill-dataset\\tank_level\\videos\\tank_level_video_5.mp4",
+        "fps": 30.0,
+        "frames": 50942,
+        "width": 640,
+        "height": 480,
+        "duration_s": 1698.0666666666666,
+        "start_pts_s": 0.0,
+        "codec": "h264",
+        "sha256": "26edbab91befcb39247c88860da78ae7170cc09bc11424f0462a78ffe53bff84"
+      },
+      "cap_seal": {
+        "path": "C:\\git\\FDS-Dark\\ALL-Applied-AI-Network\\msoe-ai-club-rockwell-automation-nvidia-hackath-austin-koske-s-team-8e90f213c6\\datasets\\dataset2\\csi-vial-fill-dataset\\cap_seal\\videos\\cap_seal_video_5.mp4",
+        "fps": 30.0,
+        "frames": 50942,
+        "width": 640,
+        "height": 480,
+        "duration_s": 1698.0666666666666,
+        "start_pts_s": 0.0,
+        "codec": "h264",
+        "sha256": "54e1cf3a45dd97750be77909ea1bc0a4234437a126aba76efd5e29bccc9f1a67"
+      }
+    },
+    "annotation_path": null,
+    "fps": 30.0,
+    "frame_count": 50942,
+    "sample_count": 8491,
+    "missing_pts_sample_count": 0,
+    "annotation_count": 0,
+    "analysis_seconds": 21.156693500000983,
+    "processing_p95_ms": 2.642800012836233,
+    "measurement_kind": "fixed_roi_camera_srgb_d65_lab",
+    "measurement_profile_id": "421724d6c398e92d2749",
+    "input_kind": "existing_recording",
+    "session_id": "replay-6f87cec1aeec3b2b",
+    "clock_status": "wall clock unavailable",
+    "mode": "independent_image_fill_replay",
+    "detection_count": 30,
+    "recipe_context_source": "separate_explicit_recipe_plan",
+    "open_fill_at_eof": null,
+    "limitations": [
+      "no stage-aware early alert",
+      "image mode requires separate recipe context",
+      "completion waits for carrier departure",
+      "visible stream boundary is not a pump signal",
+      "no defect ground truth",
+      "fixed pilot ROI",
+      "unvalidated thresholds"
+    ]
+  },
+  "recipe_plan_sha256": "aeea616183fe639396eee5c16dd9c3b797cbe5c2cf5c2a6950c9967f2ed34f44",
+  "reference_bank": [
+    {
+      "reference_id": "dev-a6b933846f11",
+      "recipe_id": "5",
+      "lab": [
+        10.092282984553556,
+        -13.215040259802288,
+        6.0107975901555815
+      ],
+      "rgb": [
+        9.0,
+        32.0,
+        19.0
+      ],
+      "scope": "same_run_development",
+      "measurement_config_id": "c4feec54d72a7ede",
+      "source_run_id": 5,
+      "measurement_profile_id": "421724d6c398e92d2749",
+      "source_video_sha256": "6f87cec1aeec3b2bae6dac639a317c077a3f175f27abd5fc8430d6953d9d05b9",
+      "source_annotation_sha256": null,
+      "source_event_id": "run5-fill1",
+      "available_frame": 900,
+      "source_measurement_available_frame": 852,
+      "recipe_definition_id": "cd18eda2af4423d43049833230da38880fd67832b4b950afad5f2f61052d9f60",
+      "source_recipe_context": {
+        "selection_id": "demo-recipe-5",
+        "run_id": 5,
+        "source_video_sha256": "6f87cec1aeec3b2bae6dac639a317c077a3f175f27abd5fc8430d6953d9d05b9",
+        "available_frame": 0,
+        "active_from_frame": 0,
+        "recipe_id": "5",
+        "volumes_ml": {
+          "T100": 10.0,
+          "T200": 10.0,
+          "T400": 10.0
+        },
+        "dispense_order": "T200>T400>T100",
+        "recorded_by": "Codex; illustrative inputs authorized by Austin",
+        "recorded_at_utc": "2026-10-19T16:16:45.155151+00:00",
+        "provenance": {
+          "kind": "illustrative_demo",
+          "description": "Assumed preloaded demo selection; activation is not a reviewed historical changeover timestamp. No supplied vial IDs are assigned."
+        },
+        "plan_id": "run5-illustrative-operator-plan-v1"
+      },
+      "recorded_at_utc": "2026-10-19T16:27:50.909851+00:00",
+      "source_description": "Illustrative manually selected development example; not certified clean product",
+      "certifies_clean_product": false
+    }
+  ],
+  "demonstrated_comparison": {
+    "detection_id": "run5-fill2",
+    "vial_id": 2,
+    "start_frame": 1374,
+    "start_available_frame": 1386,
+    "partial_start_possible": false,
+    "stream_samples": 32,
+    "peak_stream_contrast": 39.77777777777778,
+    "episodes": [
+      {
+        "start_frame": 1374,
+        "start_available_frame": 1386,
+        "end_frame": 1494,
+        "end_available_frame": 1506
+      },
+      {
+        "start_frame": 1812,
+        "start_available_frame": 1824,
+        "end_frame": 1884,
+        "end_available_frame": 1896
+      },
+      {
+        "start_frame": 2100,
+        "start_available_frame": 2112,
+        "end_frame": 2142,
+        "end_available_frame": 2154
+      }
+    ],
+    "quality_flags": [],
+    "last_stream_frame": 2136,
+    "last_stream_off_frame": 2142,
+    "departure_frame": 2238,
+    "confirmed_frame": 2244,
+    "end_frame": 2142,
+    "event_id": "run5-fill2",
+    "run_id": 5,
+    "recipe_id": "5",
+    "volumes_ml": {
+      "T100": 10.0,
+      "T200": 10.0,
+      "T400": 10.0
+    },
+    "dispense_order": "T200>T400>T100",
+    "position_in_batch": null,
+    "previous_recipe_id": null,
+    "baseline_hold_first": null,
+    "baseline_hold_first_two": null,
+    "available_frame": 2244,
+    "available_video_s": 74.8,
+    "sample_frames": [
+      2220,
+      2226,
+      2232
+    ],
+    "accepted_sample_frames": [
+      2220,
+      2226,
+      2232
+    ],
+    "lab": [
+      5.499698199531437,
+      -3.9746794392326033,
+      1.1540069408857268
+    ],
+    "rgb": [
+      11.0,
+      20.0,
+      16.0
+    ],
+    "temporal_spread_de2000": 0.0,
+    "measurement_valid": true,
+    "measurement_config_id": "c4feec54d72a7ede",
+    "event_source": "image_fill_detector",
+    "source_video_sha256": "6f87cec1aeec3b2bae6dac639a317c077a3f175f27abd5fc8430d6953d9d05b9",
+    "source_annotation_sha256": null,
+    "measurement_profile_id": "421724d6c398e92d2749",
+    "session_id": "replay-6f87cec1aeec3b2b",
+    "recipe_definition_id": "cd18eda2af4423d43049833230da38880fd67832b4b950afad5f2f61052d9f60",
+    "recipe_context": {
+      "selection_id": "demo-recipe-5",
+      "run_id": 5,
+      "source_video_sha256": "6f87cec1aeec3b2bae6dac639a317c077a3f175f27abd5fc8430d6953d9d05b9",
+      "available_frame": 0,
+      "active_from_frame": 0,
+      "recipe_id": "5",
+      "volumes_ml": {
+        "T100": 10.0,
+        "T200": 10.0,
+        "T400": 10.0
+      },
+      "dispense_order": "T200>T400>T100",
+      "recorded_by": "Codex; illustrative inputs authorized by Austin",
+      "recorded_at_utc": "2026-10-19T16:16:45.155151+00:00",
+      "provenance": {
+        "kind": "illustrative_demo",
+        "description": "Assumed preloaded demo selection; activation is not a reviewed historical changeover timestamp. No supplied vial IDs are assigned."
+      },
+      "plan_id": "run5-illustrative-operator-plan-v1"
+    },
+    "context_quality_flags": [],
+    "assessment": {
+      "status": "review",
+      "delta_e2000": 9.555655512173352,
+      "reference_id": "dev-a6b933846f11",
+      "expected_lab": [
+        10.092282984553556,
+        -13.215040259802288,
+        6.0107975901555815
+      ],
+      "threshold_de2000": 5.0,
+      "threshold_status": "engineering_default_unvalidated",
+      "explanation": "Appearance differs from the selected recipe reference; operator review requested.",
+      "review_is_advisory": true,
+      "reference_rejections": [],
+      "reference_available_frame": 900,
+      "reference_source_description": "Illustrative manually selected development example; not certified clean product"
+    }
+  },
+  "summary": {
+    "event_detection": {
+      "accepted_fills": 30,
+      "evaluation": "separate detection-validation.json only"
+    },
+    "measurement_coverage": {
+      "total": 30,
+      "qa_valid": 19
+    },
+    "recipe_comparison": {
+      "unavailable": 29,
+      "review": 1
+    }
+  },
+  "detection_evaluation": {
+    "validation_available": true,
+    "labeled_fills": 30,
+    "detected_fills": 30,
+    "matched_fills": 30,
+    "missed_fills": 0,
+    "extra_detections": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "start_error": {
+      "count": 29,
+      "signed_median_frames": 18.0,
+      "absolute_median_frames": 18.0,
+      "absolute_p95_frames": 35.39999999999999,
+      "absolute_max_frames": 47,
+      "absolute_median_mp4_s": 0.6,
+      "absolute_p95_mp4_s": 1.1799999999999997
+    },
+    "end_error": {
+      "count": 30,
+      "signed_median_frames": -20.0,
+      "absolute_median_frames": 20.0,
+      "absolute_p95_frames": 66.1,
+      "absolute_max_frames": 72,
+      "absolute_median_mp4_s": 0.6666666666666666,
+      "absolute_p95_mp4_s": 2.203333333333333
+    },
+    "confirmation_delay": {
+      "count": 30,
+      "signed_median_frames": 71.5,
+      "absolute_median_frames": 71.5,
+      "absolute_p95_frames": 136.14999999999998,
+      "absolute_max_frames": 163,
+      "absolute_median_mp4_s": 2.3833333333333333,
+      "absolute_p95_mp4_s": 4.538333333333332
+    }
+  },
+  "checks": {
+    "regression_tests_passed": 33,
+    "annotations_present_vs_disabled_identical": true,
+    "frozen_detection_and_measurement_qa_exactly_preserved": true,
+    "diagnostic_image_hashes_verified": true,
+    "published_source_verification": {
+      "source_tree": "713694898dc2dad2c607760c349a7d84b3aa9de9",
+      "passed": true,
+      "regression_tests": 33,
+      "launch": "setup/run-replay.ps1 with external dataset, illustrative recipe plan and explicit reference bank",
+      "detected_fills": 30,
+      "qa_valid": 19,
+      "review_decisions": 1,
+      "delta_e2000": 9.555655512173352,
+      "qa_review_cases": 30,
+      "qa_rejected_cases": 11,
+      "measurement_profile_id": "421724d6c398e92d2749"
+    },
+    "browser_manual_recipe_entry_verified": true
+  },
+  "qa_review": {
+    "manifest_location": "C:\\Users\\Austin\\ai-club-tools\\results\\recipe-aware-demo-20261019-handoff\\run5\\qa-review\\manifest.json",
+    "schema": "replay/review-manifest.schema.json",
+    "counts": {
+      "detected": 30,
+      "measurement_available": 19,
+      "rejected": 11
+    },
+    "representative_jpegs": 44,
+    "cases": [
+      {
+        "detection_id": "run5-fill1",
+        "measurement_available": true,
+        "rejection_reasons": [],
+        "sample_frames": [
+          828,
+          834,
+          840
+        ],
+        "accepted_sample_frames": [
+          828,
+          834,
+          840
+        ]
+      },
+      {
+        "detection_id": "run5-fill2",
+        "measurement_available": true,
+        "rejection_reasons": [],
+        "sample_frames": [
+          2220,
+          2226,
+          2232
+        ],
+        "accepted_sample_frames": [
+          2220,
+          2226,
+          2232
+        ]
+      },
+      {
+        "detection_id": "run5-fill3",
+        "measurement_available": false,
+        "rejection_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "motion_during_measurement_window"
+        ],
+        "sample_frames": [
+          3618,
+          3624,
+          3630
+        ],
+        "accepted_sample_frames": [
+          3618,
+          3624
+        ]
+      },
+      {
+        "detection_id": "run5-fill4",
+        "measurement_available": true,
+        "rejection_reasons": [],
+        "sample_frames": [
+          4848,
+          4854,
+          4860
+        ],
+        "accepted_sample_frames": [
+          4848,
+          4854,
+          4860
+        ]
+      },
+      {
+        "detection_id": "run5-fill5",
+        "measurement_available": true,
+        "rejection_reasons": [],
+        "sample_frames": [
+          6108,
+          6114,
+          6120
+        ],
+        "accepted_sample_frames": [
+          6108,
+          6114,
+          6120
+        ]
+      },
+      {
+        "detection_id": "run5-fill6",
+        "measurement_available": true,
+        "rejection_reasons": [],
+        "sample_frames": [
+          7392,
+          7398,
+          7404
+        ],
+        "accepted_sample_frames": [
+          7392,
+          7398,
+          7404
+        ]
+      },
+      {
+        "detection_id": "run5-fill7",
+        "measurement_available": false,
+        "rejection_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "motion_during_measurement_window"
+        ],
+        "sample_frames": [
+          9270,
+          9276,
+          9282
+        ],
+        "accepted_sample_frames": [
+          9270,
+          9276
+        ]
+      },
+      {
+        "detection_id": "run5-fill8",
+        "measurement_available": true,
+        "rejection_reasons": [],
+        "sample_frames": [
+          10860,
+          10866,
+          10872
+        ],
+        "accepted_sample_frames": [
+          10860,
+          10866,
+          10872
+        ]
+      },
+      {
+        "detection_id": "run5-fill9",
+        "measurement_available": true,
+        "rejection_reasons": [],
+        "sample_frames": [
+          12474,
+          12480,
+          12486
+        ],
+        "accepted_sample_frames": [
+          12474,
+          12480,
+          12486
+        ]
+      },
+      {
+        "detection_id": "run5-fill10",
+        "measurement_available": true,
+        "rejection_reasons": [],
+        "sample_frames": [
+          14178,
+          14184,
+          14190
+        ],
+        "accepted_sample_frames": [
+          14178,
+          14184,
+          14190
+        ]
+      },
+      {
+        "detection_id": "run5-fill11",
+        "measurement_available": false,
+        "rejection_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "motion_during_measurement_window"
+        ],
+        "sample_frames": [
+          15882,
+          15888,
+          15894
+        ],
+        "accepted_sample_frames": [
+          15882,
+          15888
+        ]
+      },
+      {
+        "detection_id": "run5-fill12",
+        "measurement_available": true,
+        "rejection_reasons": [],
+        "sample_frames": [
+          17646,
+          17652,
+          17658
+        ],
+        "accepted_sample_frames": [
+          17646,
+          17652,
+          17658
+        ]
+      },
+      {
+        "detection_id": "run5-fill13",
+        "measurement_available": true,
+        "rejection_reasons": [],
+        "sample_frames": [
+          19752,
+          19758,
+          19764
+        ],
+        "accepted_sample_frames": [
+          19752,
+          19758,
+          19764
+        ]
+      },
+      {
+        "detection_id": "run5-fill14",
+        "measurement_available": true,
+        "rejection_reasons": [],
+        "sample_frames": [
+          21828,
+          21834,
+          21840
+        ],
+        "accepted_sample_frames": [
+          21828,
+          21834,
+          21840
+        ]
+      },
+      {
+        "detection_id": "run5-fill15",
+        "measurement_available": false,
+        "rejection_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "motion_during_measurement_window"
+        ],
+        "sample_frames": [
+          23976,
+          23982,
+          23988
+        ],
+        "accepted_sample_frames": [
+          23976,
+          23982
+        ]
+      },
+      {
+        "detection_id": "run5-fill16",
+        "measurement_available": false,
+        "rejection_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "motion_during_measurement_window"
+        ],
+        "sample_frames": [
+          25740,
+          25746,
+          25752
+        ],
+        "accepted_sample_frames": [
+          25740,
+          25746
+        ]
+      },
+      {
+        "detection_id": "run5-fill17",
+        "measurement_available": false,
+        "rejection_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "motion_during_measurement_window"
+        ],
+        "sample_frames": [
+          27456,
+          27462,
+          27468
+        ],
+        "accepted_sample_frames": [
+          27456,
+          27462
+        ]
+      },
+      {
+        "detection_id": "run5-fill18",
+        "measurement_available": true,
+        "rejection_reasons": [],
+        "sample_frames": [
+          29154,
+          29160,
+          29166
+        ],
+        "accepted_sample_frames": [
+          29154,
+          29160,
+          29166
+        ]
+      },
+      {
+        "detection_id": "run5-fill19",
+        "measurement_available": false,
+        "rejection_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "motion_during_measurement_window"
+        ],
+        "sample_frames": [
+          30984,
+          30990,
+          30996
+        ],
+        "accepted_sample_frames": [
+          30984,
+          30990
+        ]
+      },
+      {
+        "detection_id": "run5-fill20",
+        "measurement_available": true,
+        "rejection_reasons": [],
+        "sample_frames": [
+          32808,
+          32814,
+          32820
+        ],
+        "accepted_sample_frames": [
+          32808,
+          32814,
+          32820
+        ]
+      },
+      {
+        "detection_id": "run5-fill21",
+        "measurement_available": true,
+        "rejection_reasons": [],
+        "sample_frames": [
+          34644,
+          34650,
+          34656
+        ],
+        "accepted_sample_frames": [
+          34644,
+          34650,
+          34656
+        ]
+      },
+      {
+        "detection_id": "run5-fill22",
+        "measurement_available": false,
+        "rejection_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "motion_during_measurement_window"
+        ],
+        "sample_frames": [
+          36684,
+          36690,
+          36696
+        ],
+        "accepted_sample_frames": [
+          36684,
+          36690
+        ]
+      },
+      {
+        "detection_id": "run5-fill23",
+        "measurement_available": true,
+        "rejection_reasons": [],
+        "sample_frames": [
+          38754,
+          38760,
+          38766
+        ],
+        "accepted_sample_frames": [
+          38754,
+          38760,
+          38766
+        ]
+      },
+      {
+        "detection_id": "run5-fill24",
+        "measurement_available": false,
+        "rejection_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "motion_during_measurement_window"
+        ],
+        "sample_frames": [
+          40830,
+          40836,
+          40842
+        ],
+        "accepted_sample_frames": [
+          40830,
+          40836
+        ]
+      },
+      {
+        "detection_id": "run5-fill25",
+        "measurement_available": false,
+        "rejection_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "motion_during_measurement_window"
+        ],
+        "sample_frames": [
+          42828,
+          42834,
+          42840
+        ],
+        "accepted_sample_frames": [
+          42828,
+          42834
+        ]
+      },
+      {
+        "detection_id": "run5-fill26",
+        "measurement_available": true,
+        "rejection_reasons": [],
+        "sample_frames": [
+          44724,
+          44730,
+          44736
+        ],
+        "accepted_sample_frames": [
+          44724,
+          44730,
+          44736
+        ]
+      },
+      {
+        "detection_id": "run5-fill27",
+        "measurement_available": true,
+        "rejection_reasons": [],
+        "sample_frames": [
+          46686,
+          46692,
+          46698
+        ],
+        "accepted_sample_frames": [
+          46686,
+          46692,
+          46698
+        ]
+      },
+      {
+        "detection_id": "run5-fill28",
+        "measurement_available": false,
+        "rejection_reasons": [
+          "insufficient_valid_post_fill_samples",
+          "motion_during_measurement_window"
+        ],
+        "sample_frames": [
+          48084,
+          48090,
+          48096
+        ],
+        "accepted_sample_frames": [
+          48084,
+          48090
+        ]
+      },
+      {
+        "detection_id": "run5-fill29",
+        "measurement_available": true,
+        "rejection_reasons": [],
+        "sample_frames": [
+          49464,
+          49470,
+          49476
+        ],
+        "accepted_sample_frames": [
+          49464,
+          49470,
+          49476
+        ]
+      },
+      {
+        "detection_id": "run5-fill30",
+        "measurement_available": true,
+        "rejection_reasons": [],
+        "sample_frames": [
+          50856,
+          50862,
+          50868
+        ],
+        "accepted_sample_frames": [
+          50856,
+          50862,
+          50868
+        ]
+      }
+    ]
+  }
+}

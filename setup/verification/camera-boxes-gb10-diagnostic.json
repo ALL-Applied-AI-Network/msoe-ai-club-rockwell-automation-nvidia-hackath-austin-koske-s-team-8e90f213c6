@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "complete": false,
+  "requested_target": "GB10",
+  "gb10_execution": "RGB produced; fast-annotator instance mapping invalid; retry interrupted by VPN",
+  "source_remote": "~/ai-club-tools/results/austin/camera-boxes-gb10-20261019-r2",
+  "source_runtime": "Isaac 6.0.0.1 / GB10",
+  "case": "02-tiny-blue",
+  "instance_mapping": {
+    "0": "BACKGROUND",
+    "1": "UNLABELLED",
+    "2": "",
+    "3": "/SyntheticReview/Stream"
+  },
+  "native_id_2_pixels": 1158,
+  "guard_rejects": true,
+  "guard_error": "Renderer instance pixels have an empty prim-path mapping or invalid/missing path; reject ambiguous labels",
+  "numpy_import_order_fix": "Observed startup recovered after deferring NumPy until SimulationApp initialized",
+  "standard_annotator_local_smoke": {
+    "passed": true,
+    "samples": 3,
+    "unique_rgb_images": 3,
+    "visible_boxes": {
+      "vial": 9,
+      "liquid": 1,
+      "stream": 2
+    },
+    "present_but_unavailable": [],
+    "mask_source": "Replicator instance_segmentation from documented label passes",
+    "appearance_checks": [],
+    "checks": [
+      "RGB/mask SHA256",
+      "native image dimensions",
+      "binary mask equals saved renderer IDs",
+      "box equals mask bounds",
+      "box within independent camera projection +/- 2px",
+      "YOLO rows equal manifest",
+      "absent object has no mask",
+      "RGB captures unique",
+      "source/camera preservation",
+      "empty case",
+      "stream-only case"
+    ],
+    "optical_accuracy_validated": false,
+    "real_detection_accuracy_measured": false,
+    "training_eligible": false
+  },
+  "current_local_tests_passed": 8,
+  "gb10_standard_annotator_validated": false,
+  "training_eligible": false,
+  "local_diagnostic_output": "C:\\Users\\Austin\\ai-club-tools\\results\\isaac-camera-boxes-20261019\\gb10-diagnostics",
+  "files": {
+    "02-tiny-blue-content-labels-ids.npy": "81e256474ed571999ac5d0ea178635afaff7aeace6ac758568f9667f757a0152",
+    "02-tiny-blue-content-labels-mapping.json": "e47476667c88569242d0b003314455cb095c43e0e123c0391d23e8fcb0c4344f",
+    "02-tiny-blue-content-labels.png": "ad09a965cf2b6c87b8d448c7e6893b3d28ff5aaabfe25f61f60c493701d9e3b6",
+    "02-tiny-blue.png": "ce6a37bc64593cdd9259a2d69f1e78d10a83a97ce6c118c66408cd64d3a6dbe4"
+  },
+  "status": "superseded diagnostic; never eligible for training",
+  "resolution": "Use explicit unique semantic tags on persistent object Xforms; final 12-image GB10 batch passed with no retries.",
+  "resolved_evidence": "camera-boxes-gb10.json"
+}

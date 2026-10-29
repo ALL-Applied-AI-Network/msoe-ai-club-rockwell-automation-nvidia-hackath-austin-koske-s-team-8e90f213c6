@@ -104,12 +104,33 @@ export interface InspectionEvent {
     headline: string;
     detail: string;
     recommended_action: string;
-    recipe_progress_percent: number;
+    recipe_progress_percent: number | null;
     model_state: string;
     confidence: number | null;
     measurements: PipelineMeasurement[];
+    evidence?: {
+      measurement_valid?: boolean;
+      quality_flags?: string[];
+      rgb?: number[] | null;
+      lab?: number[] | null;
+      blocked_reasons?: string[];
+      presence?: number;
+      proposal_pixels?: number;
+      sampling_pixels?: number;
+      processing_ms?: number;
+      reference?: { status: string; sha256: string };
+      recipe_context_matched?: boolean;
+      [key: string]: unknown;
+    };
   };
   acknowledged_at?: string | null;
+  acknowledgement?: OperatorResponse | null;
+}
+
+export interface OperatorResponse {
+  reviewer: string;
+  action: "reviewed" | "hold_for_review" | "request_reference" | "investigate";
+  note: string;
 }
 
 export interface HealthStatus {
@@ -125,7 +146,7 @@ export interface HealthStatus {
 export interface ArtifactRecord {
   artifact_id: string;
   session_id: string;
-  kind: "source" | "rendered" | "mask" | "recording";
+  kind: "source" | "rendered" | "mask" | "recording" | "reference";
   url: string;
   mime_type: string;
   original_filename?: string | null;

@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self' file: data:; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'none'">
+<title>Vial / body / stream — local human review</title>
+<style>
+body{font:16px system-ui,sans-serif;margin:20px;background:#15202b;color:#f0f4f8}button,select,input,textarea{font:inherit;padding:7px;border:1px solid #778a9c;border-radius:4px;margin:4px;background:#233545;color:white}button{cursor:pointer}button:hover{background:#37536a}a{color:#81def2}header{max-width:1450px}main{display:flex;gap:20px;align-items:flex-start}.imagearea{overflow:auto;max-width:calc(100vw - 480px)}canvas{width:960px;height:720px;touch-action:none;cursor:crosshair;background:#000}aside{min-width:360px;width:400px}fieldset{margin-bottom:12px;border-radius:6px}textarea{width:92%;min-height:45px}.warn{color:#ffd16b}.muted{color:#adc0cf}.state{color:#83e4b6}#message{min-height:26px;white-space:pre-wrap}label{display:inline-block}small{display:block}.boxrow{font-size:13px;padding:6px;border-bottom:1px solid #486072}.boxrow button{font-size:13px}.tools{margin:12px 0}#frameInfo{overflow-wrap:anywhere}#frameNotes{width:95%}#queueInfo{font-weight:bold}#saved{font-size:13px}select{max-width:360px}
+</style></head><body>
+<header><h1>Vial / liquid body / stream</h1>
+<p>Human annotations only. Raw RGB first; legacy proposals hidden. This tool saves separate review JSONs and never changes source labels.</p>
+<p><a href="LABEL-CONTRACT.md" target="_blank">Read the label contract</a> · <a href="calibration.jpg" target="_blank">12 shared calibration images</a> · <a href="START-HERE.txt" target="_blank">Instructions</a></p>
+<div><label>Your name <input id="reviewer" placeholder="Enter reviewer name"></label>
+<label>Queue <select id="queue"><option value="all">All 210</option><option value="calibration">Shared calibration (12)</option><option>Aleyna</option><option>Zoe</option><option>Reagan</option></select></label>
+<button id="save">Save progress JSON</button><label>Load saved JSON <input id="load" type="file" accept=".json"></label></div>
+<div id="saved" class="warn">Save frequently. Browser recovery is best effort; no source files are written.</div>
+<div class="tools"><button id="prev">← Previous</button><button id="next">Next →</button><button id="unfinished">Next unfinished</button>
+<select id="jump" aria-label="Jump to frame"></select> <span id="queueInfo"></span></div>
+<div id="message" role="status" class="warn"></div></header>
+<main><section class="imagearea"><div id="frameInfo"></div>
+<div class="tools"><label>Draw <select id="drawClass"><option value="vial">0 — vial (cyan)</option><option value="liquid_body">1 — liquid body (yellow)</option><option value="stream">2 — stream (pink)</option></select></label>
+<label><input id="proposals" type="checkbox">Show unchanged legacy proposals</label>
+<label>Display <select id="zoom"><option value="1.5">150%</option><option value="1">100%</option><option value="2">200%</option></select></label></div>
+<canvas id="canvas" width="640" height="480" aria-label="Original RGB; drag to draw a reviewed box"></canvas>
+<p class="muted">Drag to draw. Drawing is your manual present decision. Remove and redraw to adjust. Bounds stay in original pixels.</p>
+<div id="context"></div></section>
+<aside><p id="reviewState" class="state"></p><div id="decisions"></div>
+<label>Frame notes<textarea id="frameNotes" placeholder="Boundary disagreements, glare, ambiguity…"></textarea></label>
+<button id="submit">Submit frame for adjudication</button>
+<p class="warn">Submission is a completed review pass, not training approval. Unknown/uncertain is never a negative label. Save JSON after submitting.</p>
+<p>No real vial IDs, recipe IDs, MP4 positions or flow-onset labels are inferred here.</p></aside></main>
+<script>
+'use strict';
+const PACK = /*PACK_DATA*/null;
+const M=PACK.manifest, names=['vial','liquid_body','stream'];
+const colors={vial:'#54dcff',liquid_body:'#ffc34a',stream:'#f18cff'};
+const $=id=>document.getElementById(id), ctx=$('canvas').getContext('2d');
+let review=structuredClone(PACK.review), active=0, filtered=[], image=new Image(), drag=null, dirty=false;
+const storageKey='visible-box-review:'+M.pack_id;
+function fail(message){throw Error(message)}
+function validate(doc){
+ if(doc.schema_version!==1||doc.annotation_contract!==M.annotation_contract||doc.pack_id!==M.pack_id||doc.manifest_sha256!==PACK.review.manifest_sha256)fail('Different pack or contract.');
+ if(doc.training_eligible!==false)fail('This review cannot approve training.');
+ if(!Array.isArray(doc.records)||doc.records.length!==M.samples.length||new Set(doc.records.map(r=>r.sample_id)).size!==M.samples.length)fail('Missing or duplicate records.');
+ const byId=new Map(M.samples.map(s=>[s.sample_id,s]));
+ for(const r of doc.records){const s=byId.get(r.sample_id);if(!s||['image_sha256','source_run','split_role'].some(k=>r[k]!==s[k]))fail('Changed source identity or split.');
+ if(!['unreviewed','draft','submitted_for_adjudication'].includes(r.review_status))fail('Unknown review status.');
+ const submitted=r.review_status==='submitted_for_adjudication';
+ if(submitted&&(!(r.reviewed_by||'').trim()||!r.reviewed_at||!Number.isFinite(Date.parse(r.reviewed_at))))fail('Submission needs reviewer/time.');
+ if(Object.keys(r.decisions).sort().join()!==[...names].sort().join())fail('Missing or unknown class.');
+ for(const n of names){const d=r.decisions[n];if(!['unreviewed','present','absent','uncertain'].includes(d.status))fail('Unknown decision.');
+ if(submitted&&(d.status==='unreviewed'||(d.status==='uncertain'&&!(d.notes||'').trim())))fail('Finish all decisions and explain uncertainty.');
+ if(!Array.isArray(d.boxes)||(d.status==='present'?d.boxes.length<1:d.boxes.length!==0))fail('Present needs boxes; other decisions must have none.');
+ if(n!=='stream'&&d.boxes.length>1)fail('Only one active vial and body.');
+ for(const b of d.boxes){const a=b.xyxy;if(!Array.isArray(a)||a.length!==4||!a.every(x=>typeof x==='number'&&Number.isFinite(x))||!(0<=a[0]&&a[0]<a[2]&&a[2]<=s.width&&0<=a[1]&&a[1]<a[3]&&a[3]<=s.height))fail('Invalid/outside box.');
+ if(!b.flags||Object.keys(b.flags).sort().join()!=='low_contrast,occluded,truncated'||!Object.values(b.flags).every(x=>typeof x==='boolean'))fail('Invalid box flags.');}}
+ }return doc;
+}
+function row(){return review.records.find(r=>r.sample_id===M.samples[active].sample_id)}
+function message(t){$('message').textContent=t}
+function recover(){try{const cache=localStorage.getItem(storageKey);if(cache){review=validate(JSON.parse(cache));message('Recovered local progress. Save a named JSON; save before changing reviewers.');}}catch(e){message('Local recovery unavailable. Save/load JSON files for progress.');}}
+function persist(){dirty=true;review.reviewer=$('reviewer').value.trim();review.saved_at=new Date().toISOString();try{localStorage.setItem(storageKey,JSON.stringify(review));$('saved').textContent='Local recovery updated. Still save a JSON before closing, changing reviewers or handing off.';}catch(e){$('saved').textContent='Local recovery unavailable — save your JSON now.';}}
+function edit(){row().review_status='draft';row().reviewed_at=null;row().reviewed_by=null;persist();$('reviewState').textContent='draft — not submitted';paint();}
+function filter(){const q=$('queue').value;filtered=M.samples.map((s,i)=>({s,i})).filter(({s})=>q==='all'||(q==='calibration'?s.calibration:s.assigned_reviewer===q)).map(x=>x.i);if(!filtered.includes(active))active=filtered[0];$('jump').replaceChildren();for(const i of filtered){const o=document.createElement('option');o.value=i;o.textContent=`${M.samples[i].queue_index} — Run ${M.samples[i].source_run} — ${M.samples[i].sample_id.slice(-13)}`;$('jump').append(o);}show();}
+function show(){drag=null;const s=M.samples[active],r=row();$('jump').value=active;
+ $('queueInfo').textContent=`${filtered.indexOf(active)+1} / ${filtered.length}; ${filtered.filter(i=>review.records.find(r=>r.sample_id===M.samples[i].sample_id).review_status==='submitted_for_adjudication').length} submitted`;
+ $('frameInfo').textContent=`#${s.queue_index} · ${s.sample_id} · Run ${s.source_run} · ${s.split_role} · assigned ${s.assigned_reviewer}${s.calibration?' · SHARED CALIBRATION':''}`;
+ $('reviewState').textContent=r.review_status+(r.reviewed_by?' — '+r.reviewed_by:'');$('frameNotes').value=r.notes;
+ $('proposals').checked=false;image=new Image();const thisImage=image;image.onload=()=>{if(image===thisImage)paint()};image.onerror=()=>message('Image missing. Extract the whole ZIP, including images/, then reopen review.html.');image.src=s.image;
+ $('context').replaceChildren();const cue=document.createElement('p');cue.className='muted';cue.textContent='Sampling cues only: '+s.selection_cues.join(', ')+'. Timestamp '+s.supplied_image_timestamp+' is unverified wall time, not MP4 time.';$('context').append(cue);
+ for(const g of M.sequence_groups.filter(g=>g.sample_ids.includes(s.sample_id))){const p=document.createElement('p');const a=document.createElement('a');a.href='sequences/'+g.group_id+'.jpg';a.target='_blank';a.textContent='Open chronological context: '+g.group_id;p.append(a);for(const id of g.sample_ids){const b=document.createElement('button');b.textContent='#'+M.samples.find(s=>s.sample_id===id).queue_index;b.onclick=()=>{active=M.samples.findIndex(s=>s.sample_id===id);if(!filtered.includes(active)){$('queue').value='all';filter()}else show()};p.append(b)}$('context').append(p)}
+ cards();paint();
+}
+function cards(){const r=row();$('decisions').replaceChildren();for(const n of names){const d=r.decisions[n],field=document.createElement('fieldset'),legend=document.createElement('legend');legend.textContent=n;legend.style.color=colors[n];field.append(legend);
+ const status=document.createElement('select');status.setAttribute('aria-label',n+' decision');for(const v of ['unreviewed','present','absent','uncertain']){const o=document.createElement('option');o.value=v;o.textContent=v;status.append(o)}status.value=d.status;status.onchange=()=>{if(status.value==='present'&&!d.boxes.length){message('Draw the visible box first.');status.value=d.status;return}if(status.value!=='present'&&d.boxes.length&&!confirm('Remove your boxes for '+n+'?')){status.value=d.status;return}d.status=status.value;if(d.status!=='present')d.boxes=[];edit();cards()};field.append(status);
+ const notes=document.createElement('textarea');notes.placeholder='Explain uncertainty or disputed bounds';notes.value=d.notes;notes.setAttribute('aria-label',n+' notes');notes.oninput=()=>{d.notes=notes.value;edit()};field.append(notes);
+ d.boxes.forEach((b,i)=>{const div=document.createElement('div');div.className='boxrow';const text=document.createElement('span');text.textContent=`Box ${i+1}: [${b.xyxy.map(x=>x.toFixed(1)).join(', ')}] `;div.append(text);const remove=document.createElement('button');remove.textContent='Remove';remove.onclick=()=>{d.boxes.splice(i,1);if(!d.boxes.length)d.status='unreviewed';edit();cards()};div.append(remove);for(const flag of ['occluded','truncated','low_contrast']){const lab=document.createElement('label'),check=document.createElement('input');check.type='checkbox';check.checked=b.flags[flag];check.onchange=()=>{b.flags[flag]=check.checked;edit()};lab.append(check,document.createTextNode(flag+' '));div.append(lab)}field.append(div)});$('decisions').append(field)} }
+function rectangle(b,color,label,dashed=false){ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=2;ctx.setLineDash(dashed?[5,3]:[]);ctx.strokeRect(b[0],b[1],b[2]-b[0],b[3]-b[1]);ctx.setLineDash([]);ctx.font='13px sans-serif';ctx.fillText(label,Math.min(b[0],500),Math.max(14,b[1]-4));}
+function paint(){ctx.clearRect(0,0,640,480);if(image.complete&&image.naturalWidth)ctx.drawImage(image,0,0);if($('proposals').checked)for(const p of M.samples[active].proposals)rectangle(p.xyxy,'#ff794d','LEGACY '+(p.legacy_class_id===0?'vial':'liquid scope UNKNOWN'),true);for(const n of names)for(const b of row().decisions[n].boxes)rectangle(b.xyxy,colors[n],n);if(drag)rectangle([Math.min(drag.x,drag.toX),Math.min(drag.y,drag.toY),Math.max(drag.x,drag.toX),Math.max(drag.y,drag.toY)],colors[drag.name],drag.name);}
+function point(e){const r=$('canvas').getBoundingClientRect();return {x:Math.max(0,Math.min(640,(e.clientX-r.left)*640/r.width)),y:Math.max(0,Math.min(480,(e.clientY-r.top)*480/r.height))}}
+$('canvas').onpointerdown=e=>{if(e.button!==0||!image.complete)return;const p=point(e);drag={...p,toX:p.x,toY:p.y,name:$('drawClass').value};$('canvas').setPointerCapture(e.pointerId);};
+$('canvas').onpointermove=e=>{if(!drag)return;const p=point(e);drag.toX=p.x;drag.toY=p.y;paint()};
+$('canvas').onpointerup=e=>{if(!drag)return;const p=point(e),a=[Math.min(drag.x,p.x),Math.min(drag.y,p.y),Math.max(drag.x,p.x),Math.max(drag.y,p.y)],n=drag.name;drag=null;if(a[2]-a[0]<1||a[3]-a[1]<1){message('Box too small; draw at least one source pixel.');paint();return}const d=row().decisions[n];if(n!=='stream'&&d.boxes.length){message('Remove the old '+n+' box before drawing its replacement.');paint();return}d.boxes.push({xyxy:a,flags:{occluded:false,truncated:false,low_contrast:false}});d.status='present';edit();cards();message('Manual '+n+' box added.');};
+$('canvas').onpointercancel=()=>{drag=null;paint()};
+$('queue').onchange=filter;$('jump').onchange=()=>{active=Number($('jump').value);show()};
+function move(delta){const i=filtered.indexOf(active);active=filtered[(i+delta+filtered.length)%filtered.length];show()}
+$('prev').onclick=()=>move(-1);$('next').onclick=()=>move(1);$('unfinished').onclick=()=>{const start=filtered.indexOf(active);for(let n=1;n<=filtered.length;n++){const i=filtered[(start+n)%filtered.length];if(review.records.find(r=>r.sample_id===M.samples[i].sample_id).review_status!=='submitted_for_adjudication'){active=i;show();return}}message('All frames in this queue are submitted.');};
+$('proposals').onchange=paint;$('zoom').onchange=()=>{const z=Number($('zoom').value);$('canvas').style.width=640*z+'px';$('canvas').style.height=480*z+'px'};
+$('frameNotes').oninput=()=>{row().notes=$('frameNotes').value;edit()};$('reviewer').oninput=persist;
+$('submit').onclick=()=>{const name=$('reviewer').value.trim();if(!name){message('Enter your reviewer name.');return}const r=row(),old={status:r.review_status,by:r.reviewed_by,at:r.reviewed_at};r.review_status='submitted_for_adjudication';r.reviewed_by=name;r.reviewed_at=new Date().toISOString();try{validate(review);persist();show();message('Submitted for adjudication. Save your JSON.');}catch(e){r.review_status=old.status;r.reviewed_by=old.by;r.reviewed_at=old.at;message(e.message)}};
+$('save').onclick=()=>{try{persist();validate(review);const blob=new Blob([JSON.stringify(review,null,2)+'\n'],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=M.pack_id+'-'+(review.reviewer||'unnamed').replace(/[^a-zA-Z0-9_-]/g,'_')+'-'+$('queue').value+'-'+new Date().toISOString().replace(/[:.]/g,'-')+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);dirty=false;message('JSON download requested. Check your Downloads folder; source labels were not changed.');}catch(e){message(e.message)}};
+$('load').onchange=async()=>{try{const f=$('load').files[0];if(!f)return;const next=validate(JSON.parse(await f.text()));if(dirty&&!confirm('Replace this editor session? Save current progress first if needed.'))return;review=next;$('reviewer').value=review.reviewer||'';persist();show();message('Loaded progress. No merging and no source changes.');}catch(e){message('Load rejected: '+e.message)}};
+window.addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue='Save your review JSON before closing.'}});
+recover();$('reviewer').value=review.reviewer||'';filter();
+</script></body></html>

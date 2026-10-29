@@ -1,0 +1,232 @@
+{
+  "schema_version": 1,
+  "kind": "trained_crop_contrast_run5_comparison",
+  "date": "2026-10-19",
+  "result": "not_promoted_keep_current_detector",
+  "output_root": "C:/Users/Austin/ai-club-tools/results/crop-clahe-detector-20261019",
+  "rosie": {
+    "job_id": 285702,
+    "state": "COMPLETED",
+    "exit_code": 0,
+    "elapsed": "00:03:49",
+    "gpu": "H100",
+    "singularity": "3.10.0",
+    "container": "/data/containers/msoe-pytorch-25.05-py3.sif"
+  },
+  "candidate": {
+    "schema_version": 1,
+    "architecture": "yolo11n_detect",
+    "model_sha256": "a2c1877c87318d8cc4072ad90d2ce5f2e040c00ca862964d6517e91e8a00dc73",
+    "checkpoint_sha256": "19d3354a29c2732065094942f82ddd6af46cd5e4039861e8cbd2d66e908ed341",
+    "pretrained_sha256": "0ebbc80d4a7680d14987a577cd21342b65ecfd94632bd9a8da63ae6417644ee1",
+    "data_provenance_sha256": "d3e2fd717ca1759fd706eaae85ec6b3929545c691f2f517844d0e0a31530060c",
+    "experiment_plan_sha256": "84aea47a487df2796975bbf8125e3bfa6108fd8b5abd0b485bbfc848692dcffc",
+    "preprocessing": {
+      "schema_version": 1,
+      "source_shape": [
+        480,
+        640
+      ],
+      "roi": [
+        227,
+        22,
+        414,
+        454
+      ],
+      "roi_derivation": "All fitting-box bounds plus 24px horizontal/16px vertical context; no development/test data",
+      "crop_before_clahe": true,
+      "clahe": {
+        "color_space": "OpenCV LAB",
+        "channel": "L",
+        "clip_limit": 2.0,
+        "tile_grid": [
+          8,
+          8
+        ]
+      },
+      "opencv": "5.0.0",
+      "crop_coordinates": "source xyxy with exclusive upper bounds"
+    },
+    "epochs": 12,
+    "seed": 19,
+    "train_runs": [
+      1,
+      2,
+      3
+    ],
+    "development_runs": [
+      4
+    ],
+    "excluded_runs": [
+      5
+    ],
+    "torch": "2.8.0a0+5228986c39.nv25.05",
+    "ultralytics": "8.4.182",
+    "trainer_sha256": "2492f4de46091787d2f18c44ce001113a53f1c95be52dfd130129e5b21e855fa",
+    "transform_sha256": "ee2ae81b9a63b9761bde0c904e0ca1ca0707a0e50099eafa522363a8b8936a6c"
+  },
+  "training_counts": {
+    "train": 1442,
+    "val": 157
+  },
+  "original_training_frames": 721,
+  "training_preprocessing_parity": {
+    "samples": 1599,
+    "prepared_opencv": "5.0.0",
+    "runtime_opencv": "5.0.0",
+    "all_processed_training_and_dev_pixels_identical": true
+  },
+  "onnx_export_parity": {
+    "frames": 16,
+    "boxes": 25,
+    "same_classes_and_counts": true,
+    "max_coordinate_difference_crop_pixels": 1.0000839233398438,
+    "max_confidence_error": 1.7881393432617188e-07,
+    "comparison_backend": "PyTorch CPU float32 vs OpenCV CPU float32; source coordinate difference includes integer truncation",
+    "runtime_torch_fp16": false,
+    "onnx_sha256": "a2c1877c87318d8cc4072ad90d2ce5f2e040c00ca862964d6517e91e8a00dc73",
+    "gpu_cpu_numeric_note": "GPU convolution versus CPU produced a 0.000137 score difference; CPU-to-CPU checks export fidelity separately from paired GPU video inference."
+  },
+  "teacher_agreement": {
+    "kind": "paired_teacher_box_agreement",
+    "frames": 816,
+    "excluded_unknown_frames": 29,
+    "gt_boxes_outside_candidate_crop": 1,
+    "ground_truth_boxes_clipped_or_dropped": 0,
+    "confidence_for_ap": 0.001,
+    "nms_iou": 0.45,
+    "baseline": {
+      "map50": 0.9430060777829511,
+      "map50_95": 0.6528232953194986,
+      "per_class": [
+        {
+          "class_id": 0,
+          "targets": 814,
+          "ap50": 0.9937549407114624,
+          "ap50_95": 0.8138566541156799,
+          "precision_at_035": 0.996319018404908,
+          "recall_at_035": 0.9975429975429976,
+          "tp_at_035": 812,
+          "fp_at_035": 3,
+          "fn_at_035": 2
+        },
+        {
+          "class_id": 1,
+          "targets": 541,
+          "ap50": 0.8922572148544398,
+          "ap50_95": 0.4917899365233172,
+          "precision_at_035": 0.9679802955665024,
+          "recall_at_035": 0.7264325323475046,
+          "tp_at_035": 393,
+          "fp_at_035": 13,
+          "fn_at_035": 148
+        }
+      ]
+    },
+    "candidate": {
+      "map50": 0.9063495025556794,
+      "map50_95": 0.6213983327299221,
+      "per_class": [
+        {
+          "class_id": 0,
+          "targets": 814,
+          "ap50": 0.9945747934381518,
+          "ap50_95": 0.7779805117175467,
+          "precision_at_035": 0.9950920245398773,
+          "recall_at_035": 0.9963144963144963,
+          "tp_at_035": 811,
+          "fp_at_035": 4,
+          "fn_at_035": 3
+        },
+        {
+          "class_id": 1,
+          "targets": 541,
+          "ap50": 0.8181242116732068,
+          "ap50_95": 0.4648161537422972,
+          "precision_at_035": 0.9497607655502392,
+          "recall_at_035": 0.7338262476894639,
+          "tp_at_035": 397,
+          "fp_at_035": 21,
+          "fn_at_035": 144
+        }
+      ]
+    },
+    "limitations": [
+      "Unreviewed teacher boxes; not independent human accuracy.",
+      "Unknown/manual/empty records excluded, so not an absent-vial false-positive benchmark.",
+      "Both models use the same PyTorch backend, inference settings and full-source-coordinate matcher.",
+      "Run 5 excluded from fitting/checkpoint selection but already inspected previously."
+    ]
+  },
+  "videos": [
+    {
+      "path": "C:/Users/Austin/ai-club-tools/results/crop-clahe-detector-20261019/evaluation/run5-full-comparison.mp4",
+      "frames": 8491,
+      "fps": 5,
+      "duration_s": 1698.2,
+      "megabytes": 50.58,
+      "start_middle_end_decoded": true
+    },
+    {
+      "path": "C:/Users/Austin/ai-club-tools/results/crop-clahe-detector-20261019/evaluation/run5-early-pours.mp4",
+      "frames": 968,
+      "fps": 30,
+      "duration_s": 32.266666666666666,
+      "megabytes": 1.93,
+      "start_middle_end_decoded": true
+    }
+  ],
+  "video_source_checks": {
+    "source_video_sha256": "6f87cec1aeec3b2bae6dac639a317c077a3f175f27abd5fc8430d6953d9d05b9",
+    "source_frames_decoded": 50942,
+    "source_samples_verified": 8491,
+    "full_video_frames": 8491,
+    "full_video_fps": 5,
+    "early_video_frames": 968,
+    "early_video_fps": 30,
+    "early_image_estimated_starts": [
+      1374,
+      2760,
+      4152,
+      5400,
+      6660,
+      8550,
+      10152,
+      11754
+    ],
+    "unique_source_frames_inferred": 9299,
+    "baseline_presence": {
+      "samples_with_vial": 8282,
+      "samples_with_liquid": 4207
+    },
+    "candidate_presence": {
+      "samples_with_vial": 8296,
+      "samples_with_liquid": 4232
+    },
+    "presence_is_not_accuracy": true,
+    "early_starts_are_not_reviewed_flow_onsets": true,
+    "raw_source_pixels_preserved": true,
+    "no_recipe_color_qa_or_tracking_claim": true
+  },
+  "coordinate_export_checks": {
+    "unique_frames": 9299,
+    "candidate_boxes_inside_source_crop": true
+  },
+  "setup_tests_passed": 9,
+  "source_files_sha256": {
+    "crop_contrast.py": "ee2ae81b9a63b9761bde0c904e0ca1ca0707a0e50099eafa522363a8b8936a6c",
+    "train_crop_contrast.py": "2492f4de46091787d2f18c44ce001113a53f1c95be52dfd130129e5b21e855fa",
+    "evaluate_crop_contrast.py": "a1f2b48d4cd7f03c5c2556ca048a149269493a298bd898506b3159b54b9deaa8",
+    "train-crop-contrast-rosie.sbatch": "5295388e77b3891da22ef62d16999bb911b1ef7e9c71806180df106f3b5d949b"
+  },
+  "current_detector_unchanged": true,
+  "measurement_QA_unchanged": true,
+  "run5_excluded_from_fitting_and_checkpoint_selection": true,
+  "output_sha256": {
+    "run5-full-comparison.mp4": "46e7b1826ada22a47eff8b5cd6087176d3ab6499e39b05dc23266e5e83c54953",
+    "run5-early-pours.mp4": "947e1cf7a9ee69763b1545c915fe196e696d04756a04e718abe0503d72383d9e",
+    "video-predictions.jsonl": "67275196a84c6e7be6cc033c6235934df31b79d18b9531c6887f08d7ecb51327"
+  },
+  "baseline_checkpoint_sha256": "10856c18a8a5c485e832adcc6b841b739e726a969dc043fe8db64c49163bb361",
+  "baseline_onnx_sha256": "89ed11f7046171e5340dc45a9d528010de1cefbba21e163b23b7098151e0880e"
+}

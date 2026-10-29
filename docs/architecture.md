@@ -5,6 +5,42 @@ liquid, extracts a color sample when the image supports one, and presents
 recipe-related evidence to an operator. Camera observations supplement the
 existing line; the software does not command its PLC, sorter or valves.
 
+## System overview
+
+The per-frame perception and measurement feed two consumers. The operator app checks one
+vial at a time, and a person confirms each vial. The line runner processes a whole run from
+the recipe schedule. It adds actions with deadlines, finished-tray reconciliation and
+root-cause packets. The line runner is offline batch work on `austin/line-runner`. The dotted
+links into the app are planned, not built.
+
+```mermaid
+flowchart LR
+    FC[Fill camera video] --> PER
+    subgraph PER["Per-frame perception · unchanged"]
+        Y[YOLO11n vial] --> Q[Measurement QA<br/>RGB/Lab sample or unavailable]
+        U[Temporal U-Net liquid mask] --> Q
+    end
+    subgraph APP["Operator app · existing"]
+        OP[Recipe-first vial check<br/>operator confirms GOOD/SCRAP/HOLD] --> J[(History and<br/>operator responses)]
+        INV[Investigation panel]
+    end
+    subgraph LINE["Line runner · new, offline batch"]
+        SCH[schedule.csv] --> LR[replay.line<br/>dwells, vials, decide]
+        LR --> L[Ledger and actions<br/>with deadlines]
+        LR --> P[RCA packets] --> X[replay.explain]
+        TC[Tray camera video] --> T[replay.tray]
+        L --> T --> R[Tray reconciliation]
+        L --> AN[replay.annotate MP4]
+        R --> AN
+    end
+    Q --> OP
+    Q --> LR
+    L -. planned .-> OP
+    X -. planned .-> INV
+```
+
+[SVG](assets/architecture-system.svg) · [PNG](assets/architecture-system.png)
+
 ## Processing path
 
 ```mermaid
@@ -24,8 +60,9 @@ flowchart LR
 
 [Downloadable diagram](assets/architecture.svg) · [PNG](assets/architecture.png)
 
-GPU inference runs YOLO and U-Net. CPU work handles source decoding, reference
-management, geometry, measurement QA and application state. The API carries
+YOLO and U-Net can run on the approved GPU host; the portable Docker demo uses
+CPU inference. CPU work also handles source decoding, reference management,
+geometry, measurement QA and application state. The API carries
 observations and operator responses; it is not a model stage.
 
 ## Application/runtime flow
@@ -71,7 +108,9 @@ frames. Recording replay may instead import authoritative timestamped segments.
 | Human evaluation | [Mask review and scorers](../annotation_review/README.md) | Explicit presence, mask and onset review |
 | HTTP and UI | [FastAPI](../api/main.py), [React](../client/src/App.tsx) | Persistent inspection sessions, image/recording intake, run history, frame review and operator acknowledgement |
 | Shared model core | [model_pipeline.py](../integration/model_pipeline.py) | Srijan's consolidated integration: YOLO vial geometry → paired Temporal CNN liquid proposal → vial association → measurement QA → render/mask |
+| Asset-bundle adapter | [temporal.py](../api/pipelines/temporal.py) and [runtime](../integration/runtime.py) | Model mode when `APP__MODEL_ASSETS` is set (GB10 kit, Docker): the same models from the hash-checked release bundle |
 | Frame worker and operator loop | [InspectionService](../api/services/inspection.py), [Temporal CNN bridge](../api/pipelines/temporal_cnn_bridge.py) | Load-once model mode connects queued frames to the shared model core and stored render/mask artifacts |
+| Line runner | [line](../replay/line.py), [decide](../replay/decide.py), [explain](../replay/explain.py), [tray](../replay/tray.py), [annotate](../replay/annotate.py) | Offline: video + recipe schedule → vial ledger, actions with deadlines, RCA packets/explanations, finished-tray reconciliation, annotated video |
 | Recording ingestion | Browser-sampled decode, millisecond seek timestamps, original recording storage and recipe-segment import | Integrated with the frame queue; native PTS/time-base backend decoding and a full rehearsal remain pending |
 
 Model mode is opt-in and requires the released checkpoints plus an explicit
@@ -172,3 +211,96 @@ evidence must not become an automatic “good” result.
 See [development](development.md) for the runnable model example,
 [evaluation](evaluation.md) for results, and [operations](operations.md) for
 the integration rehearsal.
+
+## Laptop runtime
+
+[Docker Compose](../compose.yaml) starts a CPU model API and the built React UI
+behind Nginx. Source and rendered artifacts are stored separately. Per-run model
+state resets on reference/source changes, rewinds and independent stills. Model
+inference is serialized off the HTTP event loop; queue capacity is 32 frames.
+A run-generation boundary rejects obsolete HTTP/WebSocket updates after reset.
+Live stopped, offline and stale states take precedence over the last measurement.
+
+On the GB10, [the native launcher](../setup/gb10/README.md) runs the same API in one
+uvicorn process on CUDA or CPU. With `APP__CLIENT_DIST` set, it serves the prebuilt React UI
+from the same origin instead of Nginx. Model, QA and storage code are identical.
+
+The adapter retains actual QA and reference/source/model identities. Model proposals
+and sampling masks remain separate; uploaded/configured references stay explicitly
+unreviewed. The app can demonstrate visual evidence without inventing an eligible
+recipe comparison or product approval. [Run the demo](demo.md).
+
+## Recipe-first vial check
+
+The monitor asks the operator for the next vial's recipe before filling, standing in for a
+future recipe feed. When a vial finishes (end of a one-vial recording, or FINISH VIAL on the
+camera), the UI takes the median Lab of QA-valid samples in its last 6 s and computes CIEDE2000
+to the recipe's reference colour and to the last different recipe
+([recipeCheck.ts](../client/src/services/recipeCheck.ts)). Band 5 and direction cosine 0.8
+are research settings. The result maps to a simulated GOOD/SCRAP/HOLD action that the operator
+confirms or overrides; the decision is stored as an attributed acknowledgement. No line
+equipment is contacted. References come from the Run5 retrospective proxies or from vials the
+operator accepts (browser-local). Model inference and measurement QA are unchanged.
+
+## Line runner
+
+`python -m replay.line` takes one fill video, a `schedule.csv` (`seq,recipe_id`) and the recipe
+library:
+
+1. **Vial dwells.** It finds them from carrier motion.
+2. **Reference.** The frame just after the carrier settles is the empty-vial reference.
+3. **Sampling.** It runs the unchanged YOLO/U-Net/QA path every 15 frames.
+4. **Endpoint.** It takes the endpoint Lab for each vial. The n-th filled vial is schedule
+   row n.
+5. **Decision.** `decide` compares the endpoint against the intended recipe and the previous
+   recipe (ΔE2000). It issues simulated actions with deadlines.
+
+`--samples` reruns stages 4 and 5 from an earlier `frames.jsonl` without the models.
+
+`replay.tray` reads the cap/seal camera on the same clock. It matches arrivals in the finished
+tray to departures in the ledger, then reports routing, escapes, vials in transit and missing
+caps. Its slot grid and thresholds are pixel constants from the Run 5 view. They still need
+checking on other data.
+
+`replay.explain` scores RCA backends on the evidence packets. The rule baseline is the
+default and works offline. See [evaluation](evaluation.md) for the comparison.
+
+```mermaid
+flowchart TB
+    V[Fill video] --> M[Carrier motion<br/>vial dwells]
+    M --> REF[Settled frame<br/>empty-vial reference]
+    REF --> S[YOLO + U-Net every 15 frames<br/>measurement QA]
+    SM[(frames.jsonl<br/>--samples reuse)] -.-> S
+    S --> FIN[Fill end and endpoint Lab per vial]
+    SCH[schedule.csv<br/>seq, recipe_id] --> D
+    LIB[Recipe library references] --> D
+    FIN --> D[decide<br/>ΔE2000 to intended and previous recipe]
+    D --> LED[ledger.csv / .json]
+    D --> ACT[actions.jsonl<br/>PASS, SCRAP, FLUSH, HOLD,<br/>STOP_CHECK_DOSING, deadline]
+    D --> PK[rca/vial-NN.json<br/>evidence packets]
+    GT[labels.csv, optional] -.-> MET[metrics.json]
+    LED -.-> MET
+    PK --> EX{explain backend}
+    EX --> RB[Rule · default, offline]
+    EX --> DA[OpenAI Decisions or Jev · online]
+    EX --> VLM[Cosmos or Qwen · vLLM or HF]
+    TV[Tray camera video] --> TS[Slot occupancy and cap colour]
+    TS --> TM[Arrival matching DP]
+    LED --> TM --> REC[reconciliation.json<br/>routed, escaped, in transit, missing cap]
+    LED --> AN[annotate<br/>line-and-tray MP4]
+    REC --> AN
+```
+
+[SVG](assets/architecture-line-runner.svg) · [PNG](assets/architecture-line-runner.png)
+
+The runner decides each vial only after the run ends. Live use needs a per-dwell
+`decide` call. On-site deployment is in [deploy-gb10-line](deploy-gb10-line.md).
+
+## Investigation
+
+The [Investigation panel](investigation.md) consumes separately imported,
+source-bound completed-vial endpoints after QA. `replay.diagnostics` produces
+candidate explanations, supporting evidence and next checks. Frames do not become
+vials automatically. The run remains unavailable until the required inputs exist;
+synthetic examples are labeled and cannot become real run evidence. Diagnosis
+records append to SQLite and leave model/measurement/operator decisions unchanged.

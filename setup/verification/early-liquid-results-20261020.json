@@ -1,0 +1,387 @@
+{
+  "schema_version": 1,
+  "kind": "verified_early_liquid_development_results",
+  "bundle": {
+    "file": "completed-artifacts-node.tar.gz",
+    "sha256": "31b86fe156e70d839daa90389030c0f836046682a2ae8d56dfed5dd7ca489a94",
+    "source_node": "dh-dgxh100-2"
+  },
+  "scheduler": {
+    "training_array": 286291,
+    "all_training_exits": "COMPLETED 0:0",
+    "artifact_read_job": 286305,
+    "artifact_read_exit": "COMPLETED 0:0",
+    "artifact_alloc_tres": "billing=2,cpu=2,mem=2G,node=1"
+  },
+  "comparison_sha256": "8dd41f521632ffc89ad2f9b7745054acd2dc3f01fa0ea21f937fe63d080a2d4f",
+  "experiment_plan_sha256": "f59ee966a489e038a49ff08afc2b3052f0523040d106f728ea101302da4feff8",
+  "source_images": 157,
+  "source_runs": [
+    4
+  ],
+  "liquid_targets": 89,
+  "model_metadata": {
+    "yolo11n-960": {
+      "schema_version": 1,
+      "arm": "yolo11n-960",
+      "family": "yolo11n",
+      "initialization": "yolo11n.pt",
+      "imgsz": 960,
+      "batch": 16,
+      "checkpoint_sha256": "baab75a620442e2ad6f94380a4a2b270104b13740f16304a6b4767d619fa8350",
+      "experiment_plan_sha256": "f59ee966a489e038a49ff08afc2b3052f0523040d106f728ea101302da4feff8",
+      "preparation_sha256": "31e0efe943218a6be35881f42715c45240b31e62c8ded805a6333e5cb694b5df",
+      "data_provenance_sha256": "e1771944fd0f0d26ebb80954a9b04f4f5a7dddfa24bb2483c7f8467175e2bf1a",
+      "train_runs": [
+        1,
+        2,
+        3
+      ],
+      "development_runs": [
+        4
+      ],
+      "excluded_runs": [
+        5
+      ],
+      "epochs_completed": 39,
+      "best_run4_epoch": 29,
+      "best_run4_liquid_ap50_95": 0.54514,
+      "torch": "2.8.0a0+5228986c39.nv25.05",
+      "ultralytics": "8.4.182",
+      "python": "3.12.3",
+      "gpu": "NVIDIA H100 80GB HBM3",
+      "provisional_targets": true,
+      "detector_promoted": false
+    },
+    "yolo11s-640": {
+      "schema_version": 1,
+      "arm": "yolo11s-640",
+      "family": "yolo11s",
+      "initialization": "yolo11s.pt",
+      "imgsz": 640,
+      "batch": 16,
+      "checkpoint_sha256": "0f0eaeda65f111149321bc037fc03b3e87c6f10e3bd8e3547c89753f8bda955e",
+      "experiment_plan_sha256": "f59ee966a489e038a49ff08afc2b3052f0523040d106f728ea101302da4feff8",
+      "preparation_sha256": "31e0efe943218a6be35881f42715c45240b31e62c8ded805a6333e5cb694b5df",
+      "data_provenance_sha256": "e1771944fd0f0d26ebb80954a9b04f4f5a7dddfa24bb2483c7f8467175e2bf1a",
+      "train_runs": [
+        1,
+        2,
+        3
+      ],
+      "development_runs": [
+        4
+      ],
+      "excluded_runs": [
+        5
+      ],
+      "epochs_completed": 37,
+      "best_run4_epoch": 27,
+      "best_run4_liquid_ap50_95": 0.54487,
+      "torch": "2.8.0a0+5228986c39.nv25.05",
+      "ultralytics": "8.4.182",
+      "python": "3.12.3",
+      "gpu": "NVIDIA H100 80GB HBM3",
+      "provisional_targets": true,
+      "detector_promoted": false
+    },
+    "fasterrcnn-resnet50": {
+      "schema_version": 1,
+      "arm": "fasterrcnn-resnet50",
+      "family": "fasterrcnn-resnet50-fpn",
+      "initialization": "fasterrcnn-coco.pth",
+      "min_size": 480,
+      "max_size": 640,
+      "batch": 8,
+      "checkpoint_sha256": "9479fb13ed9c7ebd815c314e8219ba3b86c3ffa267f758f714a3058f9ac3a343",
+      "experiment_plan_sha256": "f59ee966a489e038a49ff08afc2b3052f0523040d106f728ea101302da4feff8",
+      "preparation_sha256": "31e0efe943218a6be35881f42715c45240b31e62c8ded805a6333e5cb694b5df",
+      "data_provenance_sha256": "e1771944fd0f0d26ebb80954a9b04f4f5a7dddfa24bb2483c7f8467175e2bf1a",
+      "train_runs": [
+        1,
+        2,
+        3
+      ],
+      "development_runs": [
+        4
+      ],
+      "excluded_runs": [
+        5
+      ],
+      "epochs_completed": 17,
+      "best_run4_epoch": 7,
+      "best_run4_liquid_ap50_95": 0.5349675072562926,
+      "torch": "2.8.0a0+5228986c39.nv25.05",
+      "ultralytics": "8.4.182",
+      "python": "3.12.3",
+      "gpu": "NVIDIA H100 80GB HBM3",
+      "provisional_targets": true,
+      "detector_promoted": false
+    }
+  },
+  "models": {
+    "Deployed": {
+      "liquid_ap50": 0.8306418592390836,
+      "liquid_ap50_95": 0.5013818147648157,
+      "at_035": {
+        "confidence": 0.35,
+        "tp": 69,
+        "unmatched_boxes": 12,
+        "missed_targets": 20,
+        "precision": 0.8518518518518519,
+        "recall": 0.7752808988764045,
+        "frames_with_multiple_boxes": 0,
+        "nested_prediction_pairs": 0,
+        "provisional_negative_frames_with_predictions": 0,
+        "target_height_strata": {
+          "height_le_32": {
+            "targets": 0,
+            "detected": 0
+          },
+          "height_32_to_64": {
+            "targets": 18,
+            "detected": 15
+          },
+          "height_gt_64": {
+            "targets": 71,
+            "detected": 54
+          }
+        }
+      }
+    },
+    "yolo-all": {
+      "liquid_ap50": 0.8643105673388295,
+      "liquid_ap50_95": 0.5151413175505134,
+      "at_035": {
+        "confidence": 0.35,
+        "tp": 77,
+        "unmatched_boxes": 16,
+        "missed_targets": 12,
+        "precision": 0.8279569892473119,
+        "recall": 0.8651685393258427,
+        "frames_with_multiple_boxes": 8,
+        "nested_prediction_pairs": 6,
+        "provisional_negative_frames_with_predictions": 0,
+        "target_height_strata": {
+          "height_le_32": {
+            "targets": 0,
+            "detected": 0
+          },
+          "height_32_to_64": {
+            "targets": 18,
+            "detected": 16
+          },
+          "height_gt_64": {
+            "targets": 71,
+            "detected": 61
+          }
+        }
+      }
+    },
+    "yolo-focused": {
+      "liquid_ap50": 0.8446074074266388,
+      "liquid_ap50_95": 0.4883544536545689,
+      "at_035": {
+        "confidence": 0.35,
+        "tp": 73,
+        "unmatched_boxes": 7,
+        "missed_targets": 16,
+        "precision": 0.9125,
+        "recall": 0.8202247191011236,
+        "frames_with_multiple_boxes": 1,
+        "nested_prediction_pairs": 0,
+        "provisional_negative_frames_with_predictions": 0,
+        "target_height_strata": {
+          "height_le_32": {
+            "targets": 0,
+            "detected": 0
+          },
+          "height_32_to_64": {
+            "targets": 18,
+            "detected": 15
+          },
+          "height_gt_64": {
+            "targets": 71,
+            "detected": 58
+          }
+        }
+      }
+    },
+    "rtdetr-all": {
+      "liquid_ap50": 0.865889036416793,
+      "liquid_ap50_95": 0.4928376902949143,
+      "at_035": {
+        "confidence": 0.35,
+        "tp": 74,
+        "unmatched_boxes": 27,
+        "missed_targets": 15,
+        "precision": 0.7326732673267327,
+        "recall": 0.8314606741573034,
+        "frames_with_multiple_boxes": 0,
+        "nested_prediction_pairs": 0,
+        "provisional_negative_frames_with_predictions": 13,
+        "target_height_strata": {
+          "height_le_32": {
+            "targets": 0,
+            "detected": 0
+          },
+          "height_32_to_64": {
+            "targets": 18,
+            "detected": 17
+          },
+          "height_gt_64": {
+            "targets": 71,
+            "detected": 57
+          }
+        }
+      }
+    },
+    "dinov3-all": {
+      "liquid_ap50": 0.9077081404370098,
+      "liquid_ap50_95": 0.5148032765591715,
+      "at_035": {
+        "confidence": 0.35,
+        "tp": 82,
+        "unmatched_boxes": 37,
+        "missed_targets": 7,
+        "precision": 0.6890756302521008,
+        "recall": 0.9213483146067416,
+        "frames_with_multiple_boxes": 27,
+        "nested_prediction_pairs": 9,
+        "provisional_negative_frames_with_predictions": 1,
+        "target_height_strata": {
+          "height_le_32": {
+            "targets": 0,
+            "detected": 0
+          },
+          "height_32_to_64": {
+            "targets": 18,
+            "detected": 17
+          },
+          "height_gt_64": {
+            "targets": 71,
+            "detected": 65
+          }
+        }
+      }
+    },
+    "yolo11n-960": {
+      "liquid_ap50": 0.8592946991886155,
+      "liquid_ap50_95": 0.5381029561189288,
+      "at_035": {
+        "confidence": 0.35,
+        "tp": 74,
+        "unmatched_boxes": 17,
+        "missed_targets": 15,
+        "precision": 0.8131868131868132,
+        "recall": 0.8314606741573034,
+        "frames_with_multiple_boxes": 6,
+        "nested_prediction_pairs": 1,
+        "provisional_negative_frames_with_predictions": 0,
+        "target_height_strata": {
+          "height_le_32": {
+            "targets": 0,
+            "detected": 0
+          },
+          "height_32_to_64": {
+            "targets": 18,
+            "detected": 15
+          },
+          "height_gt_64": {
+            "targets": 71,
+            "detected": 59
+          }
+        }
+      }
+    },
+    "yolo11s-640": {
+      "liquid_ap50": 0.9082919851598522,
+      "liquid_ap50_95": 0.53664477250972,
+      "at_035": {
+        "confidence": 0.35,
+        "tp": 75,
+        "unmatched_boxes": 10,
+        "missed_targets": 14,
+        "precision": 0.8823529411764706,
+        "recall": 0.8426966292134831,
+        "frames_with_multiple_boxes": 3,
+        "nested_prediction_pairs": 2,
+        "provisional_negative_frames_with_predictions": 0,
+        "target_height_strata": {
+          "height_le_32": {
+            "targets": 0,
+            "detected": 0
+          },
+          "height_32_to_64": {
+            "targets": 18,
+            "detected": 15
+          },
+          "height_gt_64": {
+            "targets": 71,
+            "detected": 60
+          }
+        }
+      }
+    },
+    "fasterrcnn-resnet50": {
+      "liquid_ap50": 0.9071823652108015,
+      "liquid_ap50_95": 0.5349544173683157,
+      "at_035": {
+        "confidence": 0.35,
+        "tp": 79,
+        "unmatched_boxes": 20,
+        "missed_targets": 10,
+        "precision": 0.797979797979798,
+        "recall": 0.8876404494382022,
+        "frames_with_multiple_boxes": 12,
+        "nested_prediction_pairs": 4,
+        "provisional_negative_frames_with_predictions": 0,
+        "target_height_strata": {
+          "height_le_32": {
+            "targets": 0,
+            "detected": 0
+          },
+          "height_32_to_64": {
+            "targets": 18,
+            "detected": 17
+          },
+          "height_gt_64": {
+            "targets": 71,
+            "detected": 62
+          }
+        }
+      }
+    }
+  },
+  "training_curve_sha256": {
+    "yolo11n-960": "09d0b4f98bf218e063ed2a7581473e48b7739aa27bf5a56b570567ef44f91b2f",
+    "yolo11s-640": "decc323a02353cff3479d333d25877424bef40e928794478268f3f8dc7d990cb",
+    "fasterrcnn-resnet50": "d3bf36b8370f247cdf385b47cf9f6dd5e1670113c89f0781faddd466d2fe89db"
+  },
+  "retrieval": {
+    "bundle_sha256": "31b86fe156e70d839daa90389030c0f836046682a2ae8d56dfed5dd7ca489a94",
+    "source_hostname": "dh-dgxh100-2",
+    "replaced_incomplete_local_retrievals": [
+      {
+        "file": "models/yolo11s-640/train/results.csv",
+        "first_sha256": "1922c7033104554aaf5813d9ce1a51dced0b456a332ea44856f70522ec532117",
+        "first_nul_bytes": 3297,
+        "verified_node_sha256": "decc323a02353cff3479d333d25877424bef40e928794478268f3f8dc7d990cb",
+        "preserved_at": "retrieval-first-attempt/models/yolo11s-640/train/results.csv"
+      }
+    ],
+    "original_remote_files_changed": false
+  },
+  "scorecard_sha256": "bc0ec97d8a8413b88d41f095455f0cb14f96147b71c0e48b2a67bb562fc1b5a4",
+  "run5_images_used": false,
+  "masks_scored": false,
+  "detector_promoted": false,
+  "measurement_qa_changed": false,
+  "limits": [
+    "Existing colored_liquid targets are provisional and can combine stream and body.",
+    "Short supplied targets are a geometry proxy, not reviewed first-visible-liquid or physical onset labels.",
+    "No development target <=32px; tiny-pool performance cannot be established with this inventory.",
+    "Architecture/resolution family pilots, not a matched optimization benchmark.",
+    "No new labels, synthesis, Run 5 fitting/tuning, detector promotion or measurement QA changes."
+  ]
+}

@@ -38,8 +38,10 @@ reference if available, runnable environment instructions, and the released
 single-panel MP4 as a fallback. The original visit PDF and blank forms remain
 in the [model release](https://github.com/ALL-Applied-AI-Network/msoe-ai-club-rockwell-automation-nvidia-hackath-austin-koske-s-team-8e90f213c6/releases/tag/temporal-cnn-v1.0.0).
 
-First rehearse one recording through the actual worker, QA and operator UI.
-Neither the model-only example nor the widgets page completes that rehearsal.
+The CPU Docker demo has been rehearsed with a Run4 excerpt through actual
+YOLO/U-Net inference, unchanged QA, API, UI and retained operator response.
+Repeat that recording rehearsal on the assigned workstation before using any
+approved live source. The model-only example alone does not complete this check.
 The operator display must show aligned masks, source age and QA reasons, and
 must keep unavailable evidence distinct from a normal recipe result.
 

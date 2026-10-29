@@ -85,12 +85,12 @@ box is not proof of emptiness, and some older boxes include the incoming stream.
 
 ## Training and evaluation policy
 
-New CSI-domain fitting and checkpoint/threshold selection use synthetic data.
-Keep scene families and descendants in the same split. Freeze weights and
-thresholds before real transfer scoring; disclose generic pretrained weights.
-Real imagery and human review are evaluation inputs. Legacy real-trained models
-remain development comparators. Run5 is excluded from fitting, selection,
-threshold tuning and sampling decisions; it is not a blind final test.
+Models train on synthetic data only. Runs 1–4 are real development data for transfer
+checks, not training; see [plan: data splits](plan.md#data-splits). Run5 is the ground
+truth and stays out of fitting, checkpoint/threshold selection and sampling decisions;
+it is not blind, since earlier diagnostics inspected it. Keep
+scene families, sessions and runs in one split. Freeze weights and thresholds before
+scoring the test split; disclose generic pretrained weights.
 
 Retain decoded frame indices, native PTS/time base and image/source hashes.
 Still capture timestamps must not be converted into video indices using assumed

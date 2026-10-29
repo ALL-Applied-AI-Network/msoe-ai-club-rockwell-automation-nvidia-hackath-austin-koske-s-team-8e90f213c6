@@ -1,0 +1,433 @@
+{
+  "schema_version": 1,
+  "kind": "synthetic_transfer_audit_evidence",
+  "date": "2026-10-19",
+  "base_commit": "19024b8",
+  "output": "C:\\Users\\Austin\\ai-club-tools\\results\\real-synthetic-detector-20261019\\transfer-diagnosis",
+  "no_training": true,
+  "no_input_label_changes": true,
+  "no_qa_changes": true,
+  "audit_script_sha256": "4372d9428d729d990fdefab85e957a3777d1fe4feb8b9d51ea73d3ddb1020b82",
+  "audit_json_sha256": "6b2d49c91f102ac21afe8dc5f24fa4fed28fa19da1e6e0246381fc292ced6a0e",
+  "statistics": {
+    "real": {
+      "run1": {
+        "vial": {
+          "count": 551,
+          "top_y_quantiles": [
+            43.99999919999999,
+            51.9999984,
+            55.999999200000005,
+            60.0,
+            256.0000008
+          ],
+          "width_quantiles": [
+            53.19999999999993,
+            63.0,
+            64.39999999999998,
+            65.79999999999995,
+            75.60000000000002
+          ],
+          "height_quantiles": [
+            164.00000159999996,
+            360.0,
+            368.00000159999996,
+            372.0,
+            384.00000000000006
+          ],
+          "unique_boxes": 292,
+          "top_above_200px": 546
+        },
+        "body": {
+          "count": 295,
+          "top_y_quantiles": [
+            52.00000079999999,
+            259.9999992,
+            264.0000024,
+            316.0000008,
+            388.00000079999995
+          ],
+          "width_quantiles": [
+            34.99999999999994,
+            53.19999999999993,
+            56.0,
+            64.0,
+            89.60000000000008
+          ],
+          "height_quantiles": [
+            20.000001599999933,
+            92.00000160000002,
+            147.99999839999998,
+            155.99999999999994,
+            360.0
+          ],
+          "unique_boxes": 252,
+          "top_above_200px": 20
+        }
+      },
+      "run2": {
+        "vial": {
+          "count": 76,
+          "top_y_quantiles": [
+            47.999999999999986,
+            52.00000019999999,
+            55.999999200000005,
+            60.000002400000014,
+            71.99999999999999
+          ],
+          "width_quantiles": [
+            60.19999999999993,
+            64.39999999999998,
+            65.79999999999995,
+            67.2,
+            70.0
+          ],
+          "height_quantiles": [
+            348.0,
+            360.0,
+            363.99999840000004,
+            372.0,
+            375.99999840000004
+          ],
+          "unique_boxes": 66,
+          "top_above_200px": 76
+        },
+        "body": {
+          "count": 37,
+          "top_y_quantiles": [
+            220.80000000000004,
+            268.00000079999995,
+            311.9999976,
+            348.0,
+            384.0
+          ],
+          "width_quantiles": [
+            46.19999999999999,
+            53.19999999999993,
+            56.0,
+            61.599999999999966,
+            76.80000000000001
+          ],
+          "height_quantiles": [
+            35.99999999999994,
+            63.99999839999998,
+            92.00000160000002,
+            140.00000160000008,
+            196.79999999999998
+          ],
+          "unique_boxes": 37,
+          "top_above_200px": 0
+        }
+      },
+      "run3": {
+        "vial": {
+          "count": 94,
+          "top_y_quantiles": [
+            43.99999919999999,
+            48.00000239999997,
+            52.00000079999999,
+            52.00000079999999,
+            60.000002400000014
+          ],
+          "width_quantiles": [
+            56.0,
+            61.60000000000002,
+            63.0,
+            65.79999999999995,
+            85.39999999999998
+          ],
+          "height_quantiles": [
+            356.00000159999996,
+            368.00000159999996,
+            368.0000016,
+            372.00000000000006,
+            384.00000000000006
+          ],
+          "unique_boxes": 75,
+          "top_above_200px": 94
+        },
+        "body": {
+          "count": 22,
+          "top_y_quantiles": [
+            259.2,
+            268.00000079999995,
+            322.000002,
+            364.00000020000004,
+            383.99999999999994
+          ],
+          "width_quantiles": [
+            46.19999999999999,
+            50.750000000000014,
+            52.5,
+            56.0,
+            70.40000000000003
+          ],
+          "height_quantiles": [
+            27.99999839999998,
+            36.99999959999998,
+            85.99999919999999,
+            139.00000080000007,
+            158.40000000000003
+          ],
+          "unique_boxes": 22,
+          "top_above_200px": 0
+        }
+      },
+      "run4": {
+        "vial": {
+          "count": 157,
+          "top_y_quantiles": [
+            43.99999919999999,
+            48.00000239999997,
+            52.00000079999999,
+            60.0,
+            208.00000079999998
+          ],
+          "width_quantiles": [
+            56.0,
+            61.599999999999966,
+            63.0,
+            64.39999999999998,
+            85.39999999999998
+          ],
+          "height_quantiles": [
+            219.9999984,
+            360.0,
+            368.00000159999996,
+            372.0,
+            380.0000016
+          ],
+          "unique_boxes": 115,
+          "top_above_200px": 156
+        },
+        "body": {
+          "count": 89,
+          "top_y_quantiles": [
+            56.00000159999999,
+            255.99999840000004,
+            303.9999984,
+            340.0000008,
+            380.0000016
+          ],
+          "width_quantiles": [
+            47.60000000000002,
+            51.799999999999955,
+            54.599999999999966,
+            60.200000000000045,
+            83.20000000000005
+          ],
+          "height_quantiles": [
+            32.00000160000002,
+            68.00000160000002,
+            104.00000159999996,
+            156.0,
+            360.0
+          ],
+          "unique_boxes": 85,
+          "top_above_200px": 14
+        }
+      }
+    },
+    "synthetic": {
+      "vial": {
+        "count": 768,
+        "top_y_quantiles": [
+          66.0,
+          66.0,
+          66.0,
+          66.0,
+          66.0
+        ],
+        "width_quantiles": [
+          62.0,
+          62.0,
+          62.0,
+          62.0,
+          62.0
+        ],
+        "height_quantiles": [
+          354.0,
+          354.0,
+          354.0,
+          354.0,
+          354.0
+        ],
+        "unique_boxes": 1,
+        "top_above_200px": 768
+      },
+      "body": {
+        "count": 576,
+        "top_y_quantiles": [
+          217.0,
+          298.0,
+          367.0,
+          373.0,
+          381.0
+        ],
+        "width_quantiles": [
+          44.0,
+          45.0,
+          46.0,
+          49.0,
+          53.0
+        ],
+        "height_quantiles": [
+          36.0,
+          44.0,
+          50.0,
+          119.0,
+          200.0
+        ],
+        "unique_boxes": 133,
+        "top_above_200px": 0
+      }
+    },
+    "synthetic_palette": {
+      "original-fixture": 12,
+      "pale": 292,
+      "clear-proxy": 169,
+      "colored": 295
+    },
+    "synthetic_positive_level_quantiles": [
+      0.02,
+      0.07726445426907591,
+      0.11907773768790345,
+      0.5437828462486928,
+      0.978736959989196
+    ],
+    "stream_present_body_absent": 96,
+    "synthetic_training_scope": "Only active vial 101 and accumulated body 201; stream 301 excluded",
+    "quantile_order": [
+      "min",
+      "q25",
+      "median",
+      "q75",
+      "max"
+    ],
+    "top_above_200px_policy": "Geometric review flag only; not an adjudicated error or filter",
+    "run5_teacher_geometry": {
+      "vial": {
+        "count": 814,
+        "top_y_quantiles": [
+          43.99999919999999,
+          48.00000239999997,
+          52.00000079999999,
+          55.999999200000005,
+          247.99999920000002
+        ],
+        "width_quantiles": [
+          53.19999999999993,
+          61.599999999999966,
+          63.0,
+          64.39999999999998,
+          89.60000000000002
+        ],
+        "height_quantiles": [
+          159.99999839999995,
+          363.99999840000004,
+          368.00000159999996,
+          372.0,
+          380.0000016
+        ],
+        "unique_boxes": 410,
+        "top_above_200px": 813
+      },
+      "body": {
+        "count": 541,
+        "top_y_quantiles": [
+          51.9999984,
+          264.0000024,
+          320.0000016,
+          364.0000008,
+          403.2
+        ],
+        "width_quantiles": [
+          33.60000000000002,
+          51.799999999999955,
+          56.0,
+          60.200000000000045,
+          83.20000000000005
+        ],
+        "height_quantiles": [
+          19.19999999999999,
+          51.99999840000004,
+          92.00000160000002,
+          147.99999839999998,
+          368.00000159999996
+        ],
+        "unique_boxes": 489,
+        "top_above_200px": 35
+      }
+    },
+    "run5_scope_review_records": 35,
+    "real_scope_review_records": 34
+  },
+  "inputs": {
+    "source_inventory_sha256": "81851cba53c05a1811e81c32bc8328c4f4d5236e4f26bf6510505eae029b260c",
+    "render_manifest_sha256": "6fabe4d29aaba4368e1a936e0f1bfe228a45a58589da3192b84880e1c5f9b28f",
+    "video_sha256": "6f87cec1aeec3b2bae6dac639a317c077a3f175f27abd5fc8430d6953d9d05b9"
+  },
+  "outputs": [
+    {
+      "path": "C:\\Users\\Austin\\ai-club-tools\\results\\real-synthetic-detector-20261019\\transfer-diagnosis\\01-scene-gap.png",
+      "sha256": "7282bb8b4442f905591950d74c0ae1c84a786200dba856f095b7ec3ca2432a0d",
+      "bytes": 538111
+    },
+    {
+      "path": "C:\\Users\\Austin\\ai-club-tools\\results\\real-synthetic-detector-20261019\\transfer-diagnosis\\02-target-contract.png",
+      "sha256": "c270487372990c5d2a67ad09154528c8c593338144bbfc2776d17eaeefa8ced1",
+      "bytes": 632919
+    },
+    {
+      "path": "C:\\Users\\Austin\\ai-club-tools\\results\\real-synthetic-detector-20261019\\transfer-diagnosis\\03-pale-rgb.png",
+      "sha256": "b84e026d08e06083275e94e4b4950d15d6f10e5759fed847042b99c6008c5380",
+      "bytes": 638710
+    },
+    {
+      "path": "C:\\Users\\Austin\\ai-club-tools\\results\\real-synthetic-detector-20261019\\transfer-diagnosis\\04-native-masks.png",
+      "sha256": "fa49b18009d86995aa7e9099bb8df7350d198122ec121ac7a2b73c9890623afb",
+      "bytes": 39226
+    },
+    {
+      "path": "C:\\Users\\Austin\\ai-club-tools\\results\\real-synthetic-detector-20261019\\transfer-diagnosis\\05-real-early-pale.png",
+      "sha256": "b33abe6af78ff7836410a0e68fe569116f6b86653c35b6aa59e62d3b5beb2e1f",
+      "bytes": 459787
+    },
+    {
+      "path": "C:\\Users\\Austin\\ai-club-tools\\results\\real-synthetic-detector-20261019\\transfer-diagnosis\\06-transfer-errors.png",
+      "sha256": "504579765783f4e63652b5e2e52bfea6bdea75e279b23e3bb29439a002020324",
+      "bytes": 450004
+    },
+    {
+      "path": "C:\\Users\\Austin\\ai-club-tools\\results\\real-synthetic-detector-20261019\\transfer-diagnosis\\07-evaluation-label-issue.png",
+      "sha256": "6431f9ac58f19de1645bb351ded7dd841282eda518bf5e30398b0125b27c5c65",
+      "bytes": 269454
+    },
+    {
+      "path": "C:\\Users\\Austin\\ai-club-tools\\results\\real-synthetic-detector-20261019\\transfer-diagnosis\\audit.json",
+      "sha256": "6b2d49c91f102ac21afe8dc5f24fa4fed28fa19da1e6e0246381fc292ced6a0e",
+      "bytes": 108627
+    },
+    {
+      "path": "C:\\Users\\Austin\\ai-club-tools\\results\\real-synthetic-detector-20261019\\transfer-diagnosis\\real-target-review.json",
+      "sha256": "4360393de1bb2afb0a516b758769c4f096cc65210dac17b3243ffb4c125bfe04",
+      "bytes": 36710
+    },
+    {
+      "path": "C:\\Users\\Austin\\ai-club-tools\\results\\real-synthetic-detector-20261019\\transfer-diagnosis\\run5-target-review.json",
+      "sha256": "ff52575ddddf9b14d2abada31e52639e1e823bb654ebd233d750e5afa6fcb139",
+      "bytes": 38598
+    }
+  ],
+  "verified": {
+    "original_real_image_label_pairs": 878,
+    "selected_native_rgb": 12,
+    "selected_native_mask_files": 60,
+    "source_video_frames": 7,
+    "exported_cases": 27,
+    "panels_visually_reviewed": 7,
+    "source_coordinate_checks": true,
+    "run5_cases_excluded_from_fit": true
+  },
+  "limitation": "Review flags are not adjudicated errors; selected examples are not an accuracy sample; no causal ablation."
+}

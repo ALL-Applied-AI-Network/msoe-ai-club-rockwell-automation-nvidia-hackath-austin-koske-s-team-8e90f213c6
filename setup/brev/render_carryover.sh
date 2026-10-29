@@ -9,6 +9,7 @@ set -euo pipefail
 out="$(realpath -m "$1")"; assets="$(realpath "$2")"
 families="${3:-400}"; changeovers="${4:-8}"; shard="${5:-400}"
 isaac_py="${ISAAC_PY:-/isaac-sim/python.sh}"
+helper_py="${HELPER_PY:-$(command -v python3 || echo "$isaac_py")}"   # the Isaac container has no python3
 isaac_dir="$(cd -- "$(dirname -- "$0")/../isaac" && pwd)"
 export OMNI_KIT_ACCEPT_EULA="${OMNI_KIT_ACCEPT_EULA:?Accept the Omniverse license, then export OMNI_KIT_ACCEPT_EULA=YES}"
 [[ -x "$isaac_py" ]] || { echo "No Isaac Python at $isaac_py; set ISAAC_PY" >&2; exit 2; }
@@ -16,11 +17,11 @@ export OMNI_KIT_ACCEPT_EULA="${OMNI_KIT_ACCEPT_EULA:?Accept the Omniverse licens
 mkdir -p "$out"
 
 if [[ ! -f "$out/fixture.json" ]]; then
-  (cd "$isaac_dir" && python3 make_carryover_fixture.py --out "$out/fixture.json" \
+  (cd "$isaac_dir" && "$helper_py" make_carryover_fixture.py --out "$out/fixture.json" \
     --families "$families" --changeovers "$changeovers")
 fi
 # Split into shard fixtures once; reruns reuse them.
-python3 - "$out" "$shard" <<'EOF'
+"$helper_py" - "$out" "$shard" <<'EOF'
 import json, sys
 from pathlib import Path
 out, size = Path(sys.argv[1]), int(sys.argv[2])
@@ -42,7 +43,7 @@ run_shard() {  # gpu fixture
   if [[ -f "$dest/verification.json" ]] && grep -q '"passed": true' "$dest/verification.json"; then return 0; fi
   rm -rf "$dest"; mkdir -p "$out/logs"
   local start; start=$(date +%s)
-  local count; count=$(python3 -c "import json,sys; print(len(json.load(open(sys.argv[1]))['cases']))" "$fixture")
+  local count; count=$("$helper_py" -c "import json,sys; print(len(json.load(open(sys.argv[1]))['cases']))" "$fixture")
   CUDA_VISIBLE_DEVICES="$gpu" "$isaac_py" "$isaac_dir/render_box_batch.py" --asset-root "$assets" \
     --fixture "$fixture" --out "$dest" --limit "$count" --subframes 4 --pt-spp 32 --compact \
     > "$out/logs/$name.log" 2>&1 \
@@ -67,7 +68,7 @@ pids=()
 for ((g = 0; g < gpus; g++)); do worker "$g" & pids+=($!); done
 status=0
 for pid in "${pids[@]}"; do wait "$pid" || status=1; done
-python3 - "$out" <<'EOF'
+"$helper_py" - "$out" <<'EOF'
 import json, sys
 from pathlib import Path
 out = Path(sys.argv[1])

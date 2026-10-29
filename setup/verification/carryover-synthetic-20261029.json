@@ -1,0 +1,440 @@
+{
+ "schema": "carryover-synthetic-eval/v1",
+ "date": "2026-10-29",
+ "data": {
+  "batches": [
+   "carryover-v2 (seed 29, 400 families, residue 0-0.30)",
+   "carryover-v3 (seed 31, families 400-599, residue 0-1.0)"
+  ],
+  "renders": 14400,
+  "unmeasured": 0,
+  "changeovers": 4800,
+  "train_families": 450,
+  "dev_families": 150,
+  "renderer": "Isaac Sim 6.0.1 on Brev L40S, legacy opacity liquid, pt-spp 32, 4 subframes",
+  "local_results": "C:/Users/Austin/ai-club-tools/results/carryover-analysis-20261029"
+ },
+ "current_rule_dev": {
+  "changeovers": 1200,
+  "band_de2000": 5.0,
+  "direction_cos": 0.8,
+  "detection_rate": 0.24029126213592233,
+  "false_alarm_rate": 0.0,
+  "residue_mae": 0.052514570694821266,
+  "bins": [
+   {
+    "f_range": [
+     0.0,
+     0.0
+    ],
+    "n": 376,
+    "flagged": 0,
+    "out_of_band": 0,
+    "median_de": 0.6705569322743146,
+    "residue_mae": 0.04031684319760368
+   },
+   {
+    "f_range": [
+     0.0,
+     0.05
+    ],
+    "n": 102,
+    "flagged": 0,
+    "out_of_band": 0,
+    "median_de": 0.9020430760308671,
+    "residue_mae": 0.03500799709554106
+   },
+   {
+    "f_range": [
+     0.05,
+     0.1
+    ],
+    "n": 101,
+    "flagged": 1,
+    "out_of_band": 1,
+    "median_de": 1.3476720610783368,
+    "residue_mae": 0.07272458715239986
+   },
+   {
+    "f_range": [
+     0.1,
+     0.2
+    ],
+    "n": 242,
+    "flagged": 27,
+    "out_of_band": 28,
+    "median_de": 2.0180889456769773,
+    "residue_mae": 0.06164093330239695
+   },
+   {
+    "f_range": [
+     0.2,
+     0.3
+    ],
+    "n": 241,
+    "flagged": 80,
+    "out_of_band": 81,
+    "median_de": 3.452455479407164,
+    "residue_mae": 0.055874794171126715
+   },
+   {
+    "f_range": [
+     0.3,
+     0.5
+    ],
+    "n": 43,
+    "flagged": 19,
+    "out_of_band": 19,
+    "median_de": 3.480880820211798,
+    "residue_mae": 0.08480923319404271
+   },
+   {
+    "f_range": [
+     0.5,
+     1.0
+    ],
+    "n": 95,
+    "flagged": 71,
+    "out_of_band": 71,
+    "median_de": 10.52616544783832,
+    "residue_mae": 0.05171183687982651
+   }
+  ]
+ },
+ "tuned_on_train_dev": {
+  "changeovers": 1200,
+  "band_de2000": 2.0,
+  "direction_cos": 0.5,
+  "detection_rate": 0.5072815533980582,
+  "false_alarm_rate": 0.010638297872340425,
+  "residue_mae": 0.052514570694821266,
+  "bins": [
+   {
+    "f_range": [
+     0.0,
+     0.0
+    ],
+    "n": 376,
+    "flagged": 4,
+    "out_of_band": 37,
+    "median_de": 0.6705569322743146,
+    "residue_mae": 0.04031684319760368
+   },
+   {
+    "f_range": [
+     0.0,
+     0.05
+    ],
+    "n": 102,
+    "flagged": 7,
+    "out_of_band": 13,
+    "median_de": 0.9020430760308671,
+    "residue_mae": 0.03500799709554106
+   },
+   {
+    "f_range": [
+     0.05,
+     0.1
+    ],
+    "n": 101,
+    "flagged": 25,
+    "out_of_band": 31,
+    "median_de": 1.3476720610783368,
+    "residue_mae": 0.07272458715239986
+   },
+   {
+    "f_range": [
+     0.1,
+     0.2
+    ],
+    "n": 242,
+    "flagged": 114,
+    "out_of_band": 121,
+    "median_de": 2.0180889456769773,
+    "residue_mae": 0.06164093330239695
+   },
+   {
+    "f_range": [
+     0.2,
+     0.3
+    ],
+    "n": 241,
+    "flagged": 163,
+    "out_of_band": 166,
+    "median_de": 3.452455479407164,
+    "residue_mae": 0.055874794171126715
+   },
+   {
+    "f_range": [
+     0.3,
+     0.5
+    ],
+    "n": 43,
+    "flagged": 26,
+    "out_of_band": 26,
+    "median_de": 3.480880820211798,
+    "residue_mae": 0.08480923319404271
+   },
+   {
+    "f_range": [
+     0.5,
+     1.0
+    ],
+    "n": 95,
+    "flagged": 83,
+    "out_of_band": 83,
+    "median_de": 10.52616544783832,
+    "residue_mae": 0.05171183687982651
+   }
+  ]
+ },
+ "drift_constrained_on_train": {
+  "band_de2000": 1.0,
+  "direction_cos": 0.65,
+  "selection": "max train detection with train false alarms <= 5% overall and on light-drift vials",
+  "dev": {
+   "detection_rate": 0.687,
+   "false_alarm_rate": 0.024,
+   "drift_false_alarm_rate": 0.027,
+   "detection_by_f": {
+    "0-0.1": 0.414,
+    "0.1-0.3": 0.739,
+    "0.3-0.5": 0.86,
+    "0.5-1.0": 0.926
+   }
+  }
+ },
+ "residue_cnn": {
+  "29": {
+   "best": {
+    "epoch": 52,
+    "dev_mae": 0.035746149718761444
+   },
+   "projection_dev_mae": 0.052514570694821266,
+   "dev_by_bin": [
+    {
+     "f_range": [
+      0.0,
+      0.0
+     ],
+     "n": 376,
+     "cnn_mae": 0.0192665196955204,
+     "projection_mae": 0.04031684319760368
+    },
+    {
+     "f_range": [
+      0.0,
+      0.05
+     ],
+     "n": 102,
+     "cnn_mae": 0.017535915598273277,
+     "projection_mae": 0.035007996997471126
+    },
+    {
+     "f_range": [
+      0.05,
+      0.1
+     ],
+     "n": 101,
+     "cnn_mae": 0.02260606177151203,
+     "projection_mae": 0.07272458685450586
+    },
+    {
+     "f_range": [
+      0.1,
+      0.2
+     ],
+     "n": 242,
+     "cnn_mae": 0.02731783129274845,
+     "projection_mae": 0.06164093372039382
+    },
+    {
+     "f_range": [
+      0.2,
+      0.3
+     ],
+     "n": 241,
+     "cnn_mae": 0.03723093122243881,
+     "projection_mae": 0.0558747942808317
+    },
+    {
+     "f_range": [
+      0.3,
+      0.5
+     ],
+     "n": 43,
+     "cnn_mae": 0.08364073932170868,
+     "projection_mae": 0.08480923324417217
+    },
+    {
+     "f_range": [
+      0.5,
+      1.0
+     ],
+     "n": 95,
+     "cnn_mae": 0.13051758706569672,
+     "projection_mae": 0.05171183370247733
+    }
+   ],
+   "train_changeovers": 3600,
+   "dev_changeovers": 1200,
+   "seconds": 209.21111226081848,
+   "device": "NVIDIA GeForce RTX 4080 SUPER"
+  },
+  "30": {
+   "best": {
+    "epoch": 53,
+    "dev_mae": 0.025885604321956635
+   },
+   "projection_dev_mae": 0.052514570694821266,
+   "dev_by_bin": [
+    {
+     "f_range": [
+      0.0,
+      0.0
+     ],
+     "n": 376,
+     "cnn_mae": 0.013755813241004944,
+     "projection_mae": 0.04031684319760368
+    },
+    {
+     "f_range": [
+      0.0,
+      0.05
+     ],
+     "n": 102,
+     "cnn_mae": 0.017897754907608032,
+     "projection_mae": 0.035007996997471126
+    },
+    {
+     "f_range": [
+      0.05,
+      0.1
+     ],
+     "n": 101,
+     "cnn_mae": 0.016446340829133987,
+     "projection_mae": 0.07272458685450586
+    },
+    {
+     "f_range": [
+      0.1,
+      0.2
+     ],
+     "n": 242,
+     "cnn_mae": 0.020453764125704765,
+     "projection_mae": 0.06164093372039382
+    },
+    {
+     "f_range": [
+      0.2,
+      0.3
+     ],
+     "n": 241,
+     "cnn_mae": 0.02763969823718071,
+     "projection_mae": 0.0558747942808317
+    },
+    {
+     "f_range": [
+      0.3,
+      0.5
+     ],
+     "n": 43,
+     "cnn_mae": 0.07533321529626846,
+     "projection_mae": 0.08480923324417217
+    },
+    {
+     "f_range": [
+      0.5,
+      1.0
+     ],
+     "n": 95,
+     "cnn_mae": 0.0795113742351532,
+     "projection_mae": 0.05171183370247733
+    }
+   ],
+   "train_changeovers": 3600,
+   "dev_changeovers": 1200,
+   "seconds": 191.9300355911255,
+   "device": "NVIDIA GeForce RTX 4080 SUPER"
+  },
+  "31": {
+   "best": {
+    "epoch": 56,
+    "dev_mae": 0.028907623142004013
+   },
+   "projection_dev_mae": 0.052514570694821266,
+   "dev_by_bin": [
+    {
+     "f_range": [
+      0.0,
+      0.0
+     ],
+     "n": 376,
+     "cnn_mae": 0.012750477530062199,
+     "projection_mae": 0.04031684319760368
+    },
+    {
+     "f_range": [
+      0.0,
+      0.05
+     ],
+     "n": 102,
+     "cnn_mae": 0.014596509747207165,
+     "projection_mae": 0.035007996997471126
+    },
+    {
+     "f_range": [
+      0.05,
+      0.1
+     ],
+     "n": 101,
+     "cnn_mae": 0.01824560947716236,
+     "projection_mae": 0.07272458685450586
+    },
+    {
+     "f_range": [
+      0.1,
+      0.2
+     ],
+     "n": 242,
+     "cnn_mae": 0.027433549985289574,
+     "projection_mae": 0.06164093372039382
+    },
+    {
+     "f_range": [
+      0.2,
+      0.3
+     ],
+     "n": 241,
+     "cnn_mae": 0.033089529722929,
+     "projection_mae": 0.0558747942808317
+    },
+    {
+     "f_range": [
+      0.3,
+      0.5
+     ],
+     "n": 43,
+     "cnn_mae": 0.08487330377101898,
+     "projection_mae": 0.08480923324417217
+    },
+    {
+     "f_range": [
+      0.5,
+      1.0
+     ],
+     "n": 95,
+     "cnn_mae": 0.08737126737833023,
+     "projection_mae": 0.05171183370247733
+    }
+   ],
+   "train_changeovers": 3600,
+   "dev_changeovers": 1200,
+   "seconds": 192.66069769859314,
+   "device": "NVIDIA GeForce RTX 4080 SUPER"
+  }
+ },
+ "real_data_inputs": [],
+ "run5_used": false,
+ "notes": "Synthetic only. CNN epoch selected on dev families (best epochs 52-56 of 60). Synthetic clean-vial noise (0.67 dE median) is far below real repeat-vial variation, so no threshold here is frozen."
+}

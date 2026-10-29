@@ -192,6 +192,44 @@ models, nothing tuned) reproduces segmentation, alignment, actions and timelines
 vials excluded the second / third vials are 3 / 1 IN SPEC, 3 / 0 OUT OF SPEC, 3 / 3 CAN'T VERIFY,
 and all 7 checkable first vials keep their verdict under every alternative reference.
 
+## Synthetic carryover: FLUSH rule and residue estimate (2026-10-29)
+
+14,400 Isaac renders on Brev (v2: residue 0–30%; v3: 0–100%), 4,800 changeovers of three
+renders each (intended mix, previous mix, vial), 450 train / 150 dev scene families. Every
+render was measurable. Numbers are dev families; no real data or Run 5.
+[Record](../setup/verification/carryover-synthetic-20261029.json); method in
+`replay/carryover_synthetic.py` and `setup/vision/train_carryover_estimator.py`.
+
+**FLUSH rule** (out of band and toward the previous recipe), detection by residue:
+
+| Thresholds | 0–10% | 10–30% | 30–50% | 50–100% | False alarms (clean / light drift) |
+| --- | --- | --- | --- | --- | --- |
+| Current: ΔE2000 5, cos 0.8 | 0.5% | 22% | 44% | 75% | 0% / 0% |
+| Selected on train with false alarms ≤ 5% under light drift: ΔE 1, cos 0.65 | 41% | 74% | 86% | 93% | 2.4% / 2.7% |
+
+Clean vials sit 0.67 ΔE (median) from their reference; 5–15% lighting drift alone moves them about
+2 ΔE, as much as 10–20% residue, so the direction test does most of the work. The synthetic noise
+floor is far below real repeat-vial variation, so the selected band is **not frozen**: a band
+picked here would flag many real good vials unless synthetic measurement noise is added first.
+
+**Residue estimate** (mean absolute error in residue fraction):
+
+| Residue | n | Lab projection | CNN (seeds 29 / 30 / 31) |
+| --- | --- | --- | --- |
+| 0 | 376 | 0.040 | 0.019 / 0.014 / 0.013 |
+| 0–10% | 203 | 0.035–0.073 | 0.015–0.023 |
+| 10–30% | 483 | 0.056–0.062 | 0.020–0.037 |
+| 30–50% | 43 | 0.085 | 0.075–0.085 |
+| 50–100% | 95 | **0.052** | 0.080–0.131 |
+| All | 1,200 | 0.053 | 0.036 / 0.026 / 0.029 |
+
+The CNN (9-channel liquid crops of the three renders, about 3 minutes per seed on an RTX 4080
+SUPER) is 2–3× better up to 30% residue and worse above 50%, where training data is thin (v3
+only). Its epoch is selected on the dev families (best 52–56 of 60). It reads renderer liquid
+masks, not the line's segmentation, and the app stores only reference colours, not reference
+crops, so the line keeps the projection. Above about 50% a vial is mostly the previous recipe and
+is reported as a possible schedule or switching problem rather than a carryover percentage.
+
 Annotated video: `python -m replay.annotate --video V --run DIR --library L --out annotated.mp4`
 redraws the run from its saved outputs (about 2 min for Run 5, no models): the vial region,
 fill phase, measured vs reference colour with live ΔE, the verdict, an action log with deadline

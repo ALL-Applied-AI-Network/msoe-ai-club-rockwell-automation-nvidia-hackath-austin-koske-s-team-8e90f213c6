@@ -99,12 +99,14 @@ Keep environments, downloads and generated results outside Git.
 
 ## Compute and synthetic data used (as of 2026-10-29)
 
-**GPU hours: about 6.6 in total**, measured on 2026-10-29 over the campus VPN.
+**GPU hours: about 16 in total**: 6.6 on Rosie and the GB10 (measured on 2026-10-29 over the
+campus VPN) and 9.7 billed L40S instance-hours on Brev for the carryover renders.
 
 | Where | What ran | GPU-hours |
 | --- | --- | --- |
 | Rosie (Slurm, H100) | 22 GPU jobs on account `koskea`, 2026-10-16 to 10-20: GPU checks, Cosmos trial, detector bootstrap, liquid segmentation, real+synthetic and sim-only training, epoch sweep, liquid-specialist and early-liquid arrays. Plus 4 CPU-only jobs (CSI history, artifact read) | **2.65** (from `sacct`; 2.81 h wall time including CPU jobs) |
 | GB10 (spark8) | Isaac renders, Cosmos transfer, synthetic iterations, dataset1 render/train runs, station benchmark, VLM RCA, forger-prep training | **about 4** (3.95 h of merged job-log time, 2026-10-16 to 10-28) |
+| Brev (2× g6e.4xlarge, one L40S each, $3.61/h) | Isaac Sim 6.0.1 carryover renders: setup and tests, a stopped first design (449 renders), v2 (9,600 renders, residue 0–30%) and v3 (4,800, residue 0–100%), 2026-10-29 | **9.7 billed** (6.5 + 3.2 instance-hours, about $35); 8.1 h of shard render time for v2 + v3 from `timing.jsonl` |
 | Laptop (RTX 4080 SUPER) | Inference, line-runner replays, live-camera tests (24 ms per model sample) | Not logged; minutes to tens of minutes per replay |
 
 How the numbers were taken:
@@ -117,6 +119,8 @@ How the numbers were taken:
   write times are used as its start and end, overlapping logs are merged, and install, download
   and long-lived daemon/Omniverse logs are left out. It is an upper bound on GPU-busy time
   (a job is not on the GPU for all of its run) and misses jobs that wrote no log.
+- **Brev** is the instance's billed running time, from creation to stop; shard render time is
+  each shard's start and end in `timing.jsonl` (24/24 v2 and 12/12 v3 shards verified).
 - Of the 9 YOLO11n runs with an Ultralytics timing line, training took 1.06 GPU-hours combined;
   those are inside the totals above.
 
@@ -132,14 +136,16 @@ sacct -X -u "$USER" -S 2026-10-01 -E now --format=ElapsedRaw,AllocTRES -P -n \
 The second command counts every job on the account since the start date; the 2.65 above
 excludes the four `foxwatch-*` jobs (0.05 GPU-hours).
 
-**Synthetic data: not a large amount.** Several hundred unique renders, with experiments
-reusing them through seeded repeats and augmentation:
+**Synthetic data.** Before the Brev batches, several hundred unique renders, reused through seeded
+repeats and augmentation; the Brev carryover batches add 14,400 renders (4,800 changeovers of
+three renders each, 600 scene families):
 
 | Use | Synthetic data |
 | --- | --- |
 | Shipped liquid U-Net (`temporal-cnn-training-v1.zip`) | 192 paired renders and masks: 144 training images from 36 scene families, 48 development images from 12 disjoint families |
 | Revised-render detector experiment | 18 unique renders, repeated to 768 (mixed with 1,442 real) or 2,210 (sim-only) training exposures |
 | Faster R-CNN synthetic iterations (GB10) | 614 synthetic samples per epoch; 154 and 202 synthetic development images |
+| Carryover FLUSH rule and residue estimator (Brev v2 + v3) | 14,400 renders: per changeover the intended mix, the previous mix and the vial with residue; 450 train / 150 dev families |
 | Diagnosis pilot | 1,620 synthetic four-vial sequences (feature scenarios, not rendered images) |
 
 The synthetic experiment folders hold about 10 GB and 30,000 image files, but most of those are

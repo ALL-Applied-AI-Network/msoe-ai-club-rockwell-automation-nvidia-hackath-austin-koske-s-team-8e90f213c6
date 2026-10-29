@@ -31,7 +31,7 @@ class TestSyntheticFaultEvaluator(unittest.TestCase):
         )
         self.write_csv(
             self.ledger_path,
-            ["seq", "rule_cause", "verdict"],
+            ["seq", "rule_cause", "pattern"],
             predictions
         )
         return evaluate(self.truth_path, self.ledger_path)
@@ -44,10 +44,10 @@ class TestSyntheticFaultEvaluator(unittest.TestCase):
                 {"seq": 3, "cause": "dose_error"},
             ],
             [
-                {"seq": 1, "rule_cause": "none", "verdict": "nominal"},
-                {"seq": 2, "rule_cause": "carryover", "verdict": "carryover"},
+                {"seq": 1, "rule_cause": "none", "pattern": "nominal"},
+                {"seq": 2, "rule_cause": "carryover", "pattern": "carryover"},
                 {"seq": 3, "rule_cause": "wrong_recipe_or_dose",
-                 "verdict": "persistent_deviation"},
+                 "pattern": "persistent_deviation"},
             ]
         )
 
@@ -69,10 +69,10 @@ class TestSyntheticFaultEvaluator(unittest.TestCase):
                 {"seq": 4, "cause": "short_fill"},
             ],
             [
-                {"seq": 1, "rule_cause": "unknown", "verdict": "deviation"},
-                {"seq": 2, "rule_cause": "none", "verdict": "nominal"},
-                {"seq": 3, "rule_cause": "unknown", "verdict": "deviation"},
-                {"seq": 4, "rule_cause": "unknown", "verdict": "no_reference"},
+                {"seq": 1, "rule_cause": "unknown", "pattern": "deviation"},
+                {"seq": 2, "rule_cause": "none", "pattern": "nominal"},
+                {"seq": 3, "rule_cause": "unknown", "pattern": "deviation"},
+                {"seq": 4, "rule_cause": "unknown", "pattern": "no_reference"},
             ]
         )
 
@@ -93,7 +93,7 @@ class TestSyntheticFaultEvaluator(unittest.TestCase):
                 {"seq": 2, "cause": "carryover"},
             ],
             [
-                {"seq": 1, "rule_cause": "none", "verdict": "nominal"},
+                {"seq": 1, "rule_cause": "none", "pattern": "nominal"},
             ]
         )
 

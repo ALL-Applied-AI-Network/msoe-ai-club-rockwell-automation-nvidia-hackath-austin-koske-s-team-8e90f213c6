@@ -19,7 +19,7 @@ Required columns:
 Required columns:
 - `seq`: Vial sequence number
 - `rule_cause`: Predicted fault cause
-- `verdict`: Fault detection verdict
+- - `pattern`: Fault detection pattern (`nominal`, `carryover`, `deviation`, etc.)
 
 ## Evaluation Metrics
 

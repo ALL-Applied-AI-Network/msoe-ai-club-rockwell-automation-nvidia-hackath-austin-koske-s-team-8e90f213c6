@@ -31,7 +31,7 @@ def evaluate(truth_path, ledger_path):
     if not truth or not {"seq", "cause"}.issubset(truth[0]):
         raise ValueError("Truth CSV must contain seq and cause")
 
-    if not ledger or not {"seq", "rule_cause", "verdict"}.issubset(ledger[0]):
+    if not ledger or not {"seq", "rule_cause", "pattern"}.issubset(ledger[0]):
         raise ValueError(
             "Ledger CSV must contain seq, rule_cause, and verdict"
         )
@@ -58,7 +58,7 @@ def evaluate(truth_path, ledger_path):
             continue
 
         predicted_cause = prediction["rule_cause"].strip()
-        verdict = prediction["verdict"].strip()
+        verdict = prediction["pattern"].strip()
 
         if actual == predicted_cause or (
             actual in NORMAL_CAUSES
@@ -103,7 +103,7 @@ def evaluate(truth_path, ledger_path):
             "seq": seq,
             "actual": actual,
             "predicted": predicted_cause,
-            "verdict": verdict,
+            "pattern": verdict,
             "status": status,
             "detection": detection
         })

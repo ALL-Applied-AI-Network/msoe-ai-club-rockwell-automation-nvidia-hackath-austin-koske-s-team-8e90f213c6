@@ -16,12 +16,13 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<OperatorDashboard />} />
-          <Route path="/recipe-check" element={<RecipeCheckPage />} />
+          <Route path="/" element={<LinePage />} />
           <Route path="/line" element={<LinePage />} />
+          <Route path="/monitor" element={<OperatorDashboard />} />
+          <Route path="/recipe-check" element={<RecipeCheckPage />} />
           <Route path="/history" element={<RunHistoryPage />} />
           <Route path="/runs/:runId" element={<RunReviewPage />} />
-          <Route path="*" element={<OperatorDashboard />} />
+          <Route path="*" element={<LinePage />} />
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>

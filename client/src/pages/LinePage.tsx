@@ -25,7 +25,8 @@ export default function LinePage() {
   const [order, setOrder] = useState<string | null>(null);
   useEffect(() => { if (order === null && orders.data) setOrder(orders.data[0]?.session_id ?? ""); }, [order, orders.data]);
   const [mode, setMode] = useState<Mode>("live");
-  const [source, setSource] = useState<LineSource>("recorded");
+  // The station's live cameras are the default; a run without them falls back to its first source.
+  const [source, setSource] = useState<LineSource>("camera");
   // Live cameras: "" = the station's real cameras; a run id = that run's videos played through the camera input.
   const [simulate, setSimulate] = useState("");
   const [preview, setPreview] = useState<string | null>(null);
@@ -45,7 +46,8 @@ export default function LinePage() {
   const fill = useRef<HTMLVideoElement>(null);
   const tray = useRef<HTMLVideoElement>(null);
 
-  const run = runs.data?.find((r) => r.id === runId) ?? runs.data?.[0] ?? null;
+  const run = runs.data?.find((r) => r.id === runId) ?? runs.data?.find((r) => r.sources.includes("camera"))
+    ?? runs.data?.[0] ?? null;
   useEffect(() => { if (run && !runId) setRunId(run.id); }, [run, runId]);
   useEffect(() => { if (run && !run.sources.includes(source)) setSource(run.sources[0] ?? "recorded"); }, [run, source]);
 
@@ -234,7 +236,7 @@ export default function LinePage() {
         </section>
 
         <p className="ln-hint">
-          Enter each order from CSI's machine in the <Link to="/">Monitor</Link> recipe plan, same recipe and tank amounts, same
+          Enter each order from CSI's machine in the <Link to="/monitor">Monitor</Link> recipe plan, same recipe and tank amounts, same
           order. A live line run follows that plan as it changes.
         </p>
         {runs.isError && <p className="ln-banner">Could not load line runs: {(runs.error as Error).message}</p>}

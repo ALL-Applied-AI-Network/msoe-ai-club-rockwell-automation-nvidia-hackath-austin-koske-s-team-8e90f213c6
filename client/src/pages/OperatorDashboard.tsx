@@ -700,7 +700,7 @@ export default function OperatorDashboard() {
           <div className="brand-mark" aria-hidden="true"><span /></div>
           <div><strong>LINEWATCH</strong><small>CHANGEOVER INTELLIGENCE</small></div>
         </Link>
-        <nav className="main-nav"><Link className="active" to="/">MONITOR</Link><Link to="/history">RUN HISTORY</Link></nav>
+        <nav className="main-nav"><Link to="/">LINE</Link><Link className="active" to="/monitor">MONITOR</Link><Link to="/recipe-check">RECIPE CHECK</Link><Link to="/history">RUN HISTORY</Link></nav>
         <div className="topbar-status">
           <span className={`connection-dot ${health ? "online" : ""}`} />
           <div>

@@ -7,6 +7,7 @@
 #
 # Options: --device auto|cuda|cpu  --port N  --host ADDR  --assets DIR|ZIP  --data DIR
 #          --wheels DIR (offline; a kit's wheels/ is used automatically)  --install-only
+#          --station FILE (live cameras for the LINE page; default setup/csi-station.json)  --no-cameras
 # Installs exact, hash-locked packages (setup/gb10/lock-*.txt) into .venv-gb10-<device>.
 set -euo pipefail
 
@@ -19,6 +20,8 @@ HOST=127.0.0.1
 WHEELS=""
 DATA="${LINEWATCH_DATA_DIR:-$HOME/linewatch-data}"
 MODE=serve
+STATION="${LINEWATCH_STATION:-}"
+CAMERAS=1
 while [ $# -gt 0 ]; do
   case "$1" in
     --assets) ASSETS="$2"; shift 2 ;;
@@ -28,6 +31,8 @@ while [ $# -gt 0 ]; do
     --wheels) WHEELS="$2"; shift 2 ;;
     --data) DATA="$2"; shift 2 ;;
     --install-only) MODE=install; shift ;;
+    --station) STATION="$2"; shift 2 ;;
+    --no-cameras) CAMERAS=0; shift ;;
     --check) MODE=check; shift ;;
     --selftest) MODE=selftest; shift ;;
     -h|--help) sed -n '2,10p' "${BASH_SOURCE[0]}"; exit 0 ;;
@@ -153,6 +158,20 @@ fi
 port_free "$PORT" || fail "Port $PORT is in use; pass --port <other>"
 mkdir -p "$DATA"
 export APP__DATA_DIR="$DATA" YOLO_CONFIG_DIR="$DATA/.ultralytics"
+# Live cameras for the LINE page (the landing page). Close the Linewatch recorder first:
+# a camera can be open in only one program.
+[ -n "$STATION" ] || STATION="$ROOT/setup/csi-station.json"
+if [ "$CAMERAS" = 1 ] && [ -f "$STATION" ]; then
+  STATION="$(cd "$(dirname "$STATION")" && pwd)/$(basename "$STATION")"
+  export APP__LINE_STATION="$STATION" APP__LINE_RECORDINGS="$DATA/line-recordings"
+  say "Cameras from $STATION"
+  for key in fill_camera tray_camera; do
+    dev="$("$VENV/bin/python" -c 'import json,sys; print(json.load(open(sys.argv[1])).get(sys.argv[2]) or "")' "$STATION" "$key")"
+    [ -z "$dev" ] && continue
+    if [ -e "$dev" ]; then echo "  $key: $dev -> $(readlink -f "$dev")"
+    else echo "  $key: $dev NOT FOUND (unplugged? ls -la /dev/v4l/by-id/; pass --station with the right names)"; fi
+  done
+fi
 echo "Linewatch on http://$HOST:$PORT  (device $APP__DEVICE, data $DATA). Ctrl+C stops."
 cd "$ROOT/api"
 exec "$VENV/bin/python" -m uvicorn main:app --host "$HOST" --port "$PORT"

@@ -5,8 +5,10 @@
 #   bash setup/gb10/onboard.sh                 # models from the GitHub release, Docker GPU
 #
 # Options: --assets ZIP|DIR (e.g. from USB)  --port N  --cpu (skip GPU)  --native (skip Docker)
-#          --no-selftest
-# Order: Docker+GPU -> Docker CPU -> native launcher (setup/gb10/start.sh). Every step, the
+#          --docker (use Docker even with cameras attached)  --no-selftest
+# Order: Docker+GPU -> Docker CPU -> native launcher (setup/gb10/start.sh). With cameras attached
+# (/dev/video*) the native launcher runs the app, because the containers cannot open them and
+# the LINE page's live cameras are the main view; Docker then only builds the UI if needed. Every step, the
 # machine facts and the self-test report are saved under ~/linewatch-onboarding/<timestamp>/.
 set -uo pipefail
 
@@ -14,7 +16,7 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 HERE="$ROOT/setup/gb10"
 RELEASE_TAG=temporal-cnn-v1.0.0
 ASSET_ZIP=temporal-cnn-assets-v1.zip
-ASSETS=""; PORT=8788; WANT_GPU=1; USE_DOCKER=1; SELFTEST=1
+ASSETS=""; PORT=8788; WANT_GPU=1; USE_DOCKER=1; SELFTEST=1; FORCE_DOCKER=0
 PROJECT="${LINEWATCH_PROJECT:-linewatch-demo}"
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -22,6 +24,7 @@ while [ $# -gt 0 ]; do
     --port) PORT="$2"; shift 2 ;;
     --cpu) WANT_GPU=0; shift ;;
     --native) USE_DOCKER=0; shift ;;
+    --docker) FORCE_DOCKER=1; shift ;;
     --no-selftest) SELFTEST=0; shift ;;
     -h|--help) sed -n '2,10p' "${BASH_SOURCE[0]}"; exit 0 ;;
     *) echo "Unknown option: $1" >&2; exit 2 ;;
@@ -102,6 +105,16 @@ compose_up() {  # $1 = gpu|cpu
   fi
 }
 
+if [ "$USE_DOCKER" = 1 ] && [ "$FORCE_DOCKER" = 0 ] && ls /dev/video* >/dev/null 2>&1; then
+  step "Cameras attached: running natively so the LINE page can open them (--docker to override)"
+  USE_DOCKER=0
+  if [ ! -f "$ROOT/client/dist/index.html" ] && docker info >/dev/null 2>&1; then
+    echo "Building the UI with Docker -> $REPORT/docker-ui.log"
+    docker compose -p "$PROJECT" -f "$ROOT/compose.yaml" build client > "$REPORT/docker-ui.log" 2>&1 && \
+      cid="$(docker create "$PROJECT-client")" && mkdir -p "$ROOT/client/dist" && \
+      docker cp "$cid:/usr/share/nginx/html/." "$ROOT/client/dist/" && docker rm "$cid" >/dev/null
+  fi
+fi
 if [ "$USE_DOCKER" = 1 ]; then
   docker info >/dev/null 2>&1 || { echo "Docker not usable by $(id -un) (try: sudo usermod -aG docker \$USER, then log in again)"; USE_DOCKER=0; }
 fi

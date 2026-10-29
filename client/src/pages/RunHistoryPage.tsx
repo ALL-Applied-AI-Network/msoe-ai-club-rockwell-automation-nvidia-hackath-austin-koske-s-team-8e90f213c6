@@ -19,7 +19,7 @@ export default function RunHistoryPage() {
   return (
     <PageChrome>
       <main className="history-main">
-        <section className="page-intro"><div><span className="kicker">PERSISTED INSPECTION EVIDENCE</span><h1>Run history</h1><p>Review every camera session, image batch, and recording replay after an API restart.</p></div><Link className="button primary" to="/">NEW INSPECTION RUN</Link></section>
+        <section className="page-intro"><div><span className="kicker">PERSISTED INSPECTION EVIDENCE</span><h1>Run history</h1><p>Review every camera session, image batch, and recording replay after an API restart.</p></div><Link className="button primary" to="/monitor">NEW INSPECTION RUN</Link></section>
         {error && <div className="history-error">{error}</div>}
         <section className="run-table panel">
           <div className="run-table-head"><span>RUN</span><span>SOURCE</span><span>LATEST RECIPE CONTEXT</span><span>FRAMES</span><span>UPDATED</span><span /></div>

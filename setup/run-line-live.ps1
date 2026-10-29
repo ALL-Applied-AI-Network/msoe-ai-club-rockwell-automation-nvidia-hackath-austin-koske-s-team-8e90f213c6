@@ -1,6 +1,6 @@
 # Live line view on Windows: the API with the models on the GPU, the station's USB cameras, and the UI.
 #   pwsh -File setup/run-line-live.ps1 -Station C:\path\station.json
-# Open http://127.0.0.1:8794/line yourself; Ctrl+C stops. See docs/line-view.md ("Live cameras").
+# Open http://127.0.0.1:8794 yourself (the LINE page is the landing page); Ctrl+C stops. See docs/line-view.md ("Live cameras").
 # WSL and Docker cannot see Windows webcams, so this runs native Windows Python.
 param(
     [string]$Station = "",
@@ -34,6 +34,6 @@ $env:YOLO_CONFIG_DIR = "$Data\yolo"
 if ($Station) { $env:APP__LINE_STATION = (Resolve-Path $Station).Path }
 if ($Runs) { $env:APP__LINE_RUNS = (Resolve-Path $Runs).Path }
 
-Write-Host "Linewatch live line view on http://127.0.0.1:$Port/line  (device $Device, data $Data). Ctrl+C stops."
+Write-Host "Linewatch live line view on http://127.0.0.1:$Port  (LINE page; device $Device, data $Data). Ctrl+C stops."
 Set-Location "$Repo\api"
 & $Python -m uvicorn main:app --host 127.0.0.1 --port $Port

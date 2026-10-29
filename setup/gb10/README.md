@@ -95,9 +95,20 @@ Dependency locks: `lock-cuda.txt` / `lock-cpu.txt` are generated with
 --python-platform aarch64-unknown-linux-gnu --index-strategy unsafe-best-match --generate-hashes
 --emit-index-url`. Regenerate them only deliberately, then rerun the self-test.
 
-## Camera
+## Cameras (LINE page)
 
-LIVE CAMERA uses the browser's `getUserMedia`. The camera must be visible to a browser on the
+The LINE page is the landing page. It reads the station's two USB cameras on the server: the
+fill camera and the finished-vial tray camera, named by their `/dev/v4l/by-id/` links in
+`setup/csi-station.json` (the Run 5 cameras of the Linewatch recorder). `START.sh` uses that
+file by default and prints where each link resolves; `--station FILE` names another,
+`--no-cameras` leaves the LINE page without live cameras. `onboard.sh` runs the app natively
+when `/dev/video*` exists, because the Docker containers cannot open the cameras (`--docker`
+overrides). Close the Linewatch recorder first: a camera can be open in only one program.
+Sessions are recorded under `<data>/line-recordings`. See [the line view](../../docs/line-view.md).
+
+## Browser camera (MONITOR page)
+
+The MONITOR page (`/monitor`) keeps the single-vial flow. Its LIVE CAMERA uses the browser's `getUserMedia`. The camera must be visible to a browser on the
 GB10 (for example a UVC `/dev/video*` device), at 640×480 with the released fill-station view.
 A different view or resolution needs its own camera profile and reviewed reference; the app
 rejects other geometry rather than resizing. If the camera is not browser-visible, record

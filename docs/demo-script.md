@@ -4,9 +4,28 @@ A 5–7 minute presenter run-of-show for the operator app, with claims limited t
 was verified on 2026-10-27. Setup and launch are in [the laptop demo](demo.md).
 Numbers below are integration and availability counts, not accuracy.
 
-## Before presenting
+## Main view: the LINE page (live cameras)
 
-- App open at **http://localhost:8788**: laptop Docker, or a browser on the GB10 after
+The app opens on the LINE page (`/`). On the GB10 at CSI it shows the fill and tray cameras
+from `setup/csi-station.json`; the single-vial flow below moved to **MONITOR** (`/monitor`).
+
+1. Close the Linewatch recorder. Start the app (`bash START.sh` from the kit, or
+   `bash setup/gb10/onboard.sh`), and check its output: each camera link must resolve to a
+   `/dev/videoN`.
+2. In **MONITOR**, enter the order from CSI's machine as the recipe plan; on LINE pick it under
+   **RECIPE ORDER**.
+3. LINE → **Live** → *Cameras (live, models now)* → *Station cameras* → **Start**. Each vial's
+   verdict and action appear when the carrier moves it on; the camera stats show dropped
+   frames and reconnects.
+4. Fallback without cameras: *Cameras* → a recorded run (e.g. Run 5) plays its videos through
+   the same camera input in real time.
+
+Live cameras were exercised with recorded Run 5 video played through the camera input, not
+yet on the CSI GB10's cameras; run step 1 well before presenting.
+
+## Before presenting (MONITOR flow)
+
+- App open at **http://localhost:8788/monitor**: laptop Docker, or a browser on the GB10 after
   `bash setup/gb10/onboard.sh` (USB backup: `bash START.sh`; see [GB10 deployment](../setup/gb10/README.md)).
   Onboarding must end with *Self-test PASSED*. The header shows
   **SYSTEM ONLINE** and decision badge **MODEL** once a frame is processed.

@@ -1,5 +1,8 @@
 # Line view (LINE page)
 
+The LINE page is the app's landing page (`/`; `/line` also works). The single-vial MONITOR page
+moved to `/monitor`. With a station configured it opens on the station's live cameras.
+
 The LINE page shows the fill-station camera, the finished-vial tray camera and an operator panel.
 Each vial's verdict, actions and tray arrival appear when the engine produces them. It is the
 annotated line-and-tray MP4, drawn by the app over the real videos instead of burned into a file.

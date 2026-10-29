@@ -37,52 +37,74 @@ def thumbnail(bgr):
     return cv2.resize(grey[:430], (32, 24), interpolation=cv2.INTER_AREA)[10:23, 11:21].astype(np.int16)
 
 
-def stream(video, runtime, fps_override=None):
-    """Yield (dwell, samples) per still period. Each sample is one model evaluation."""
-    capture = cv2.VideoCapture(str(video))
-    fps = fps_override or capture.get(cv2.CAP_PROP_FPS) or 30.0
-    prev, recent, index = None, [], -1
-    dwell = None
-    while True:
-        ok, bgr = capture.read()
-        index += 1
-        if not ok:
-            break
+class FillTracker:
+    """Causal stage 2, one frame at a time. push() returns ("start" | "sample" | "end", payload)
+    events as they happen: a dwell starts when the carrier stops and ends when it moves again."""
+
+    def __init__(self, runtime, fps):
+        self.runtime, self.fps = runtime, fps
+        self.prev, self.recent, self.dwell = None, [], None
+
+    def push(self, index, bgr):
         thumb = thumbnail(bgr)
-        motion = 0.0 if prev is None else float(np.abs(thumb - prev).mean())
-        prev = thumb
-        recent = (recent + [motion])[-MOTION_WIN:]
-        moving = max(recent) > MOTION_THR
-        if moving:
-            if dwell is not None:
-                yield dwell, fps
-                dwell = None
-            continue
-        if dwell is None:
-            dwell = {"start_frame": index, "end_frame": index, "reference_frame": None, "samples": []}
-            qa = runtime.new_measurement() if runtime else None
-            reference = None
+        motion = 0.0 if self.prev is None else float(np.abs(thumb - self.prev).mean())
+        self.prev = thumb
+        self.recent = (self.recent + [motion])[-MOTION_WIN:]
+        if max(self.recent) > MOTION_THR:
+            return self.close()
+        out = []
+        if self.dwell is None:
+            self.dwell = {"start_frame": index, "end_frame": index, "reference_frame": None, "samples": []}
+            self.qa = self.runtime.new_measurement() if self.runtime else None
+            self.reference = None
+            out.append(("start", self.dwell))
+        dwell = self.dwell
         dwell["end_frame"] = index
         k = index - dwell["start_frame"]
-        if runtime is None:
-            continue
+        if self.runtime is None:
+            return out
         if k == SETTLE:
-            reference = cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB)
+            self.reference = cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB)
             dwell["reference_frame"] = index
-        if reference is not None and k > SETTLE and (k - SETTLE) % STEP == 0:
+        if self.reference is not None and k > SETTLE and (k - SETTLE) % STEP == 0:
             rgb = cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB)
-            result, measured, boxes = runtime.infer(rgb, reference, qa)
-            dwell["samples"].append({
-                "frame": index, "t": index / fps,
+            result, measured, boxes = self.runtime.infer(rgb, self.reference, self.qa)
+            sample = {
+                "frame": index, "t": index / self.fps,
                 "presence": float(result["presence"]),
                 "liquid_px": int(np.asarray(result["proposal_mask"]).sum()),
                 "vial_boxes": int(len(boxes)),
                 "qa_valid": bool(measured["measurement_valid"]),
                 "flags": list(measured["quality_flags"]),
                 "lab": measured["lab"], "rgb": measured["rgb"],
-            })
+            }
+            dwell["samples"].append(sample)
+            out.append(("sample", sample))
+        return out
+
+    def close(self):
+        """End the open dwell (carrier moved, or the stream ended)."""
+        if self.dwell is None:
+            return []
+        dwell, self.dwell = self.dwell, None
+        return [("end", dwell)]
+
+
+def stream(video, runtime, fps_override=None):
+    """Yield (dwell, fps) per still period. Each sample is one model evaluation."""
+    capture = cv2.VideoCapture(str(video))
+    fps = fps_override or capture.get(cv2.CAP_PROP_FPS) or 30.0
+    tracker, index = FillTracker(runtime, fps), -1
+    while True:
+        ok, bgr = capture.read()
+        index += 1
+        if not ok:
+            break
+        for kind, dwell in tracker.push(index, bgr):
+            if kind == "end":
+                yield dwell, fps
     capture.release()
-    if dwell is not None:
+    for _, dwell in tracker.close():
         yield dwell, fps
 
 
@@ -163,23 +185,25 @@ def run(args):
         print(json.dumps(metrics["summary"], indent=1))
 
 
+def ledger_row(vial, v):
+    kinds = [a.kind for a in v.actions]
+    return {
+        "seq": vial["seq"], "recipe_id": v.recipe_id, "previous_recipe_id": v.previous_recipe_id,
+        "arrival_s": round(vial["arrival_s"], 2), "fill_start_s": round(vial["fill_start_s"], 2),
+        "fill_end_s": round(vial["fill_end_s"], 2), "decision_s": round(vial["decision_s"], 2),
+        "endpoint_samples": vial["endpoint_samples"],
+        "L": v.endpoint_lab and round(v.endpoint_lab[0], 2), "a": v.endpoint_lab and round(v.endpoint_lab[1], 2),
+        "b": v.endpoint_lab and round(v.endpoint_lab[2], 2),
+        "de_intended": v.de_intended and round(v.de_intended, 2), "de_previous": v.de_previous and round(v.de_previous, 2),
+        "direction_cos": v.direction_cos and round(v.direction_cos, 2),
+        "verdict": v.verdict, "pattern": v.pattern, "actions": "+".join(kinds),
+        "scrap_deadline_s": round(vial["fill_end_s"] + 120, 2) if "SCRAP" in kinds else None,
+        "rule_cause": rule_cause(v),
+    }
+
+
 def write_outputs(out, vials, verdicts, actions, schedule, dwells, args):
-    rows = []
-    for vial, v in zip(vials, verdicts):
-        kinds = [a.kind for a in v.actions]
-        rows.append({
-            "seq": vial["seq"], "recipe_id": v.recipe_id, "previous_recipe_id": v.previous_recipe_id,
-            "arrival_s": round(vial["arrival_s"], 2), "fill_start_s": round(vial["fill_start_s"], 2),
-            "fill_end_s": round(vial["fill_end_s"], 2), "decision_s": round(vial["decision_s"], 2),
-            "endpoint_samples": vial["endpoint_samples"],
-            "L": v.endpoint_lab and round(v.endpoint_lab[0], 2), "a": v.endpoint_lab and round(v.endpoint_lab[1], 2),
-            "b": v.endpoint_lab and round(v.endpoint_lab[2], 2),
-            "de_intended": v.de_intended and round(v.de_intended, 2), "de_previous": v.de_previous and round(v.de_previous, 2),
-            "direction_cos": v.direction_cos and round(v.direction_cos, 2),
-            "verdict": v.verdict, "pattern": v.pattern, "actions": "+".join(kinds),
-            "scrap_deadline_s": round(vial["fill_end_s"] + 120, 2) if "SCRAP" in kinds else None,
-            "rule_cause": rule_cause(v),
-        })
+    rows = [ledger_row(vial, v) for vial, v in zip(vials, verdicts)]
     with (out / "ledger.csv").open("w", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=list(rows[0]) if rows else ["seq"])
         writer.writeheader()

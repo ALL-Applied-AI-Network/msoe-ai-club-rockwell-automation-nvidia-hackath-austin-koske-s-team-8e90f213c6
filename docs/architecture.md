@@ -10,8 +10,9 @@ existing line; the software does not command its PLC, sorter or valves.
 The per-frame perception and measurement feed two consumers. The operator app checks one
 vial at a time, and a person confirms each vial. The line runner processes a whole run from
 the recipe schedule. It adds actions with deadlines, finished-tray reconciliation and
-root-cause packets. The line runner is offline batch work on `austin/line-runner`. The dotted
-links into the app are planned, not built.
+root-cause packets. It runs as a batch command or live: `replay.live` emits each decision when
+the carrier moves the vial on, and the app's LINE page shows it as it happens
+([line view](line-view.md)). The dotted links are planned, not built.
 
 ```mermaid
 flowchart LR
@@ -20,11 +21,12 @@ flowchart LR
         Y[YOLO11n vial] --> Q[Measurement QA<br/>RGB/Lab sample or unavailable]
         U[Temporal U-Net liquid mask] --> Q
     end
-    subgraph APP["Operator app · existing"]
+    subgraph APP["Operator app"]
+        LV[LINE page · new<br/>live and review]
         OP[Recipe-first vial check<br/>operator confirms GOOD/SCRAP/HOLD] --> J[(History and<br/>operator responses)]
         INV[Investigation panel]
     end
-    subgraph LINE["Line runner · new, offline batch"]
+    subgraph LINE["Line runner · new, batch and live"]
         SCH[schedule.csv] --> LR[replay.line<br/>dwells, vials, decide]
         LR --> L[Ledger and actions<br/>with deadlines]
         LR --> P[RCA packets] --> X[replay.explain]
@@ -35,6 +37,8 @@ flowchart LR
     end
     Q --> OP
     Q --> LR
+    L --> LV
+    R --> LV
     L -. planned .-> OP
     X -. planned .-> INV
 ```
@@ -76,7 +80,7 @@ observations and operator responses; it is not a model stage.
 | Human evaluation | [Mask review and scorers](../annotation_review/README.md) | Explicit presence, mask and onset review |
 | HTTP and UI | [FastAPI](../api/main.py), [React](../client/src/App.tsx) | Source ingestion, model overlays, QA evidence, persistent history and operator responses |
 | Operator loop | [Model adapter](../api/pipelines/temporal.py) and [runtime](../integration/runtime.py) | Long-lived YOLO/U-Net and unchanged QA; browser seek/capture clocks remain distinct from native PTS |
-| Line runner | [line](../replay/line.py), [decide](../replay/decide.py), [explain](../replay/explain.py), [tray](../replay/tray.py), [annotate](../replay/annotate.py) | Offline: video + recipe schedule → vial ledger, actions with deadlines, RCA packets/explanations, finished-tray reconciliation, annotated video |
+| Line runner | [line](../replay/line.py), [decide](../replay/decide.py), [explain](../replay/explain.py), [tray](../replay/tray.py), [annotate](../replay/annotate.py), [live](../replay/live.py) | Video + recipe schedule → vial ledger, actions with deadlines, RCA packets/explanations, finished-tray reconciliation, annotated video. Batch, or live through the app's [LINE page](line-view.md) |
 
 Development branches contain additional dashboard and comparator work. The selected operator adapter is integrated on `austin-work`; recipe references and physical qualification remain separate commissioning work.
 
@@ -247,8 +251,11 @@ flowchart TB
 
 [SVG](assets/architecture-line-runner.svg) · [PNG](assets/architecture-line-runner.png)
 
-The runner decides each vial only after the run ends. Live use needs a per-dwell
-`decide` call. On-site deployment is in [deploy-gb10-line](deploy-gb10-line.md).
+`python -m replay.line` decides after the whole video. `replay.live` runs the same stages one
+frame or stored sample at a time and emits events as they become known. On Run 5 it gives the
+same 30 verdicts, the same 39 actions and the same 26 tray matches as the batch path; the
+differences are listed in [line view](line-view.md). On-site deployment is in
+[deploy-gb10-line](deploy-gb10-line.md).
 
 ## Investigation
 

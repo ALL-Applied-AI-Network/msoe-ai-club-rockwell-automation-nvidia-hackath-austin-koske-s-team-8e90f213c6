@@ -67,24 +67,37 @@ def slots(bgr, empty):
     return out
 
 
+class TrayScanner:
+    """One sample every STEP frames. The frame at empty_frame must show an empty Good tray."""
+
+    def __init__(self, fps, empty_frame=0):
+        self.fps, self.empty_frame, self.empty = fps, empty_frame, None
+
+    def push(self, index, bgr):
+        if index == self.empty_frame:
+            self.empty = bgr.copy()
+        if index % STEP or self.empty is None:
+            return None
+        per = caps(bgr)
+        return {"frame": index, "t": index / self.fps,
+                **{f"{k}_count": v[0] for k, v in per.items()},
+                **{f"{k}_caps": v[1] for k, v in per.items()},
+                "arm": any(v[2] for v in per.values()),
+                "slots": slots(bgr, self.empty)}
+
+
 def scan(video, empty_frame=0):
     """Samples every STEP frames. The frame at empty_frame must show an empty Good tray."""
     capture = cv2.VideoCapture(str(video))
     fps = capture.get(cv2.CAP_PROP_FPS) or 30.0
-    samples, index, empty = [], 0, None
+    scanner, samples, index = TrayScanner(fps, empty_frame), [], 0
     while True:
         ok, bgr = capture.read()
         if not ok:
             break
-        if index == empty_frame:
-            empty = bgr.copy()
-        if index % STEP == 0 and empty is not None:
-            per = caps(bgr)
-            samples.append({"frame": index, "t": index / fps,
-                            **{f"{k}_count": v[0] for k, v in per.items()},
-                            **{f"{k}_caps": v[1] for k, v in per.items()},
-                            "arm": any(v[2] for v in per.values()),
-                            "slots": slots(bgr, empty)})
+        sample = scanner.push(index, bgr)
+        if sample:
+            samples.append(sample)
         index += 1
     capture.release()
     return samples, fps
@@ -94,46 +107,63 @@ def _new_points(before, after):
     return [p for p in after if all(np.hypot(p[0] - q[0], p[1] - q[1]) > MATCH_PX for q in before)]
 
 
-def events(samples):
-    """Committed tray states -> events. An arrival is a new high in a tray's committed count, so a
-    cap that is briefly occluded (count drops, then returns) is a dip, not a removal plus arrival."""
-    committed = {tray: (0, []) for tray in TRAYS}
-    high = {tray: 0 for tray in TRAYS}
-    run, out = [], []
-    for s in samples:
+class CapTracker:
+    """Committed tray states -> events, one sample at a time. An arrival is a new high in a tray's
+    committed count, so a cap that is briefly occluded (count drops, then returns) is a dip, not a
+    removal plus arrival."""
+
+    def __init__(self):
+        self.committed = {tray: (0, []) for tray in TRAYS}
+        self.high = {tray: 0 for tray in TRAYS}
+        self.run = []
+
+    def push(self, s):
         key = None if s["arm"] else tuple(s[f"{t}_count"] for t in TRAYS)
         if key is None:
-            run = []
-            continue
-        run = run + [s] if run and key == tuple(run[0][f"{t}_count"] for t in TRAYS) else [s]
+            self.run = []
+            return []
+        run = self.run = self.run + [s] if self.run and key == tuple(self.run[0][f"{t}_count"] for t in TRAYS) else [s]
         if len(run) != STABLE:
-            continue
+            return []
+        out = []
         for tray in TRAYS:
             count, points = run[-1][f"{tray}_count"], run[-1][f"{tray}_caps"]
-            old_count, old_points = committed[tray]
-            if count > high[tray]:
+            old_count, old_points = self.committed[tray]
+            if count > self.high[tray]:
                 # Arrival time: first sample of the stable run (the arm has just left).
                 new = _new_points(old_points, points)
-                for i in range(count - high[tray]):
+                for i in range(count - self.high[tray]):
                     out.append({"kind": "arrival", "tray": tray, "t": run[0]["t"], "frame": run[0]["frame"],
-                                "position": new[i] if i < len(new) else None, "tray_count": high[tray] + i + 1})
-                high[tray] = count
+                                "position": new[i] if i < len(new) else None, "tray_count": self.high[tray] + i + 1})
+                self.high[tray] = count
             elif count != old_count:
                 out.append({"kind": "dip" if count < old_count else "recovered", "tray": tray, "t": run[0]["t"],
-                            "frame": run[0]["frame"], "tray_count": count, "high": high[tray]})
-            committed[tray] = (count, points)
-    return out, {tray: committed[tray][0] for tray in TRAYS}
+                            "frame": run[0]["frame"], "tray_count": count, "high": self.high[tray]})
+            self.committed[tray] = (count, points)
+        return out
+
+    def counts(self):
+        return {tray: self.committed[tray][0] for tray in TRAYS}
 
 
-def slot_events(samples):
-    """Good-tray slot arrivals. Arm samples are skipped (the arm occludes slots); a slot is committed
-    occupied (or vacated) after SLOT_STABLE consecutive arm-free samples in the new state."""
-    state = [False] * len(GOOD_SLOTS)
-    runs = [[] for _ in GOOD_SLOTS]
-    out = []
-    for s in samples:
+def events(samples):
+    tracker = CapTracker()
+    return [e for s in samples for e in tracker.push(s)], tracker.counts()
+
+
+class SlotTracker:
+    """Good-tray slot arrivals, one sample at a time. Arm samples are skipped (the arm occludes
+    slots); a slot is committed occupied (or vacated) after SLOT_STABLE consecutive arm-free
+    samples in the new state."""
+
+    def __init__(self):
+        self.state = [False] * len(GOOD_SLOTS)
+        self.runs = [[] for _ in GOOD_SLOTS]
+
+    def push(self, s):
         if s["arm"]:
-            continue
+            return []
+        out, state, runs = [], self.state, self.runs
         for k, (diff, yellow) in enumerate(s["slots"]):
             occupied = diff > OCCUPIED_DIFF
             runs[k] = runs[k] + [(s, yellow)] if occupied != state[k] else []
@@ -148,7 +178,12 @@ def slot_events(samples):
                     event["capped"] = event["yellow"] >= CAPPED_YELLOW
                 out.append(event)
                 runs[k] = []
-    return out, sum(state)
+        return out
+
+
+def slot_events(samples):
+    tracker = SlotTracker()
+    return [e for s in samples for e in tracker.push(s)], sum(tracker.state)
 
 
 EXPECTED_TRAY = {"PASS": "good", "SCRAP": "bad", "HOLD": "bad"}

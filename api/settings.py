@@ -36,6 +36,9 @@ class AppConfig(BaseSettings):
     client_dist: Path | None = None
     # Folder of line-run manifests for the live line view (see services/line.py).
     line_runs: Path | None = None
+    # Live cameras for the line view (station JSON) and where live sessions are saved.
+    line_station: Path | None = None
+    line_recordings: Path | None = None
 
 
 config = AppConfig()

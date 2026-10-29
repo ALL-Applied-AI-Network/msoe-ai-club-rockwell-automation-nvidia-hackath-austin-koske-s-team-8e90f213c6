@@ -26,6 +26,72 @@ reveals them as the playhead reaches each one.
   models**. Without the models, its frame decoding, dwell detection and tray scanning match the
   stored Run 5 results (below).
 
+## Live cameras (real time)
+
+Run **Live cameras** (id `live`), source **Cameras (live, models now)**:
+- **Capture.** The fill and tray cameras are read as their frames arrive, on one clock
+  ([cameras.py](../replay/cameras.py)).
+- **Models.** YOLO/U-Net and measurement QA run on the vial under the nozzle every 0.5 s
+  while the carrier is stopped.
+- **Decisions.** Each vial is decided when the carrier moves it on.
+- **Display.** The page shows both live feeds (MJPEG) with the same overlays.
+- **Saving.** Each session records both feeds (H.264) and the model samples, and saves itself
+  as a run. **Stop** shows a link to open it in Review.
+
+**Measured on the laptop (RTX 4080 SUPER, native Windows Python, 2026-10-28):**
+- Model load: 1.7 s, plus a warm-up inference at load.
+- Model sample: 24 ms (p90 29 ms), against a 500 ms budget.
+- Run 5 played through the camera input at real time for 130 s: 0 frames dropped, at most
+  0.08 s behind. Vials 1–3 were decided at 28.0, 74.5 and 121.0 s, with the batch verdicts:
+  OUT OF SPEC ΔE 12.48, IN SPEC 2.84, IN SPEC 2.05.
+
+These runs used **simulated cameras**: the Run 5 videos played at real time through the same
+camera input. Real webcams have not been connected. The repository rules leave that to the
+person at the machine.
+
+**Before relying on it:**
+- **Aim the cameras to match the Run 5 framing.** The models read a fixed vial region
+  (`[256, 240, 368, 432]` at 640×480), and the tray slot grid is fixed too. The overlays on the
+  live feeds show where these are: aim each camera so the vial and the tray slots sit inside
+  them. Per-mount calibration (`station.json` offsets) is still deploy work item 2.
+- **Cameras must deliver 640×480.** Frames are never resized; a camera that cannot do
+  640×480 is refused with an error.
+- **Start the live session before the first vial.** Vials are numbered from the start of the
+  session, and vial n takes recipe n of the recipe order.
+- **Different cameras and lighting from CSI's.** Expect lower accuracy than on Run 5; the
+  models were not tuned for them.
+
+**Configure the station** with `APP__LINE_STATION=station.json`:
+
+```json
+{
+  "title": "CSI line",
+  "fill_camera": 0,
+  "tray_camera": 1,
+  "library": "/path/to/repo/client/public/data/run5/recipe-library.json"
+}
+```
+
+- A camera is an OpenCV device index, or a device path such as `/dev/video0` on the GB10.
+  Leave `tray_camera` out if there is no tray camera.
+- The server also needs `APP__MODEL_ASSETS` (the extracted `temporal-cnn-assets-v1`) and
+  `APP__DEVICE=cuda:0`.
+- Sessions are saved to `APP__LINE_RECORDINGS`; the default is `APP__DATA_DIR/line-recordings`.
+- With `imageio-ffmpeg` installed, recordings are H.264 and play in the browser. Without it,
+  they are OpenCV `mp4v`.
+
+**On Windows**, `pwsh -File setup/run-line-live.ps1 -Station station.json` starts it:
+- it uses the `vision-windows` environment and the extracted model release;
+- it installs the four API packages into a side folder, so the environment itself is not
+  changed;
+- it needs `client/dist` built first (`npm ci && npm run build` in `client/`).
+
+**Where the server must run:** natively on the machine the cameras are plugged into.
+- On Windows, OpenCV opens USB webcams directly; WSL and Docker on Windows cannot see them.
+  Use a Python environment with torch (CUDA), OpenCV, ultralytics and scikit-image, plus
+  `fastapi`, `uvicorn[standard]`, `pydantic-settings` and `imageio-ffmpeg`.
+- On the GB10 (Linux), the cameras are `/dev/video*`. The user needs the `video` group.
+
 ## Recipe order
 
 The line runner needs the intended recipe of every vial, in order. At CSI we copy each order
@@ -155,12 +221,15 @@ paths.
 | `GET /api/v1/line/runs/{id}/events?order=RUN` | Every event of the recorded run (Review), optionally with an inspection run's recipe plan |
 | `GET /api/v1/line/runs/{id}/video/{fill\|tray}` | The recording, with range requests |
 | `GET /api/v1/line/orders` | Inspection runs with a recipe plan, newest first |
-| `WS /api/v1/line/runs/{id}/live?source=recorded\|video&speed=N&start=S&order=RUN` | `meta`, then `events` and `clock` messages, then `end`. Send `{"speed": N}` or `{"paused": true}` |
+| `GET /api/v1/line/preview/{key}/{fill\|tray}` | MJPEG stream of a live camera session's feed |
+| `WS /api/v1/line/runs/{id}/live?source=recorded\|video\|camera&speed=N&start=S&order=RUN&simulate=RUN` | `meta`, then `events` and `clock` messages, then `end`. Send `{"speed": N}` or `{"paused": true}` |
 
 ## Not yet
 
-- **A camera source.** Live mode reads recordings; a USB camera (`/dev/video*`) source via
-  `replay/capture.py` is deploy work item 1.
-- **Running the "Video → models now" source with the models.**
+- **Real webcams.** Not yet connected; see "Live cameras" above.
+- **Per-mount calibration** of the vial region and tray slots (deploy work item 2). Until
+  then, cameras are aimed to the overlays.
+- **The GB10 kit and Docker image** do not yet include the line modules, camera access or
+  `imageio-ffmpeg` (deploy work items 3–4).
 - **Operator sign-off.** Decisions on this page are not yet sent to the operator's
   confirm/override flow or stored in the inspection history.

@@ -37,6 +37,8 @@ class LiveLine:
         self.scanner = None
         self.caps, self.slots = CapTracker(), SlotTracker()
         self.vials, self.flushed, self.waiting = [], set(), []
+        # What the engine saw from frames, so a live session can be saved and reviewed later.
+        self.dwells, self.tray_samples = [], []
 
     def meta(self):
         references = {str(r["id"]): r.get("reference") and r["reference"]["lab"] for r in self.library["recipes"]}
@@ -54,14 +56,18 @@ class LiveLine:
 
     # Fill camera.
     def fill_frame(self, index, bgr):
-        return self._fill(self.fill.push(index, bgr))
+        items = self.fill.push(index, bgr)
+        self.dwells.extend({**d, "fps": self.fps} for kind, d in items if kind == "end")
+        return self._fill(items)
 
     def fill_item(self, kind, payload):
         """A stored stage-2 event: ("start", dwell), ("sample", sample) or ("end", full dwell)."""
         return self._fill([(kind, payload)])
 
     def finish(self):
-        return self._fill(self.fill.close())
+        items = self.fill.close()
+        self.dwells.extend({**d, "fps": self.fps} for kind, d in items if kind == "end")
+        return self._fill(items)
 
     def _fill(self, items):
         out = []
@@ -106,6 +112,8 @@ class LiveLine:
         if self.scanner is None:
             self.scanner = TrayScanner(self.fps, empty_frame=index)
         sample = self.scanner.push(index, bgr)
+        if sample:
+            self.tray_samples.append(sample)
         return self.tray_sample(sample) if sample else []
 
     def tray_sample(self, s):

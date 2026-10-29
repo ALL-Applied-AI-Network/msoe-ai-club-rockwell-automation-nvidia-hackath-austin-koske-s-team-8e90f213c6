@@ -4,8 +4,8 @@ import PageChrome from "@/components/PageChrome";
 import { deltaE2000 } from "@/services/recipeCheck";
 import { Link } from "react-router-dom";
 import {
-  listLineOrders, listLineRuns, liveSocket, reviewEvents, videoUrl,
-  type LineEvent, type LiveMessage, type TrayArrival,
+  listLineOrders, listLineRuns, liveSocket, previewUrl, reviewEvents, videoUrl,
+  type LineEvent, type LineSource, type LiveMessage, type TrayArrival,
 } from "@/services/lineService";
 import { ACTION_TONE, VERDICT_TONE, clock, labToCss, phase, viewAt, type LineView } from "@/services/lineState";
 import "./LinePage.css";
@@ -25,7 +25,12 @@ export default function LinePage() {
   const [order, setOrder] = useState<string | null>(null);
   useEffect(() => { if (order === null && orders.data) setOrder(orders.data[0]?.session_id ?? ""); }, [order, orders.data]);
   const [mode, setMode] = useState<Mode>("live");
-  const [source, setSource] = useState<"recorded" | "video">("recorded");
+  const [source, setSource] = useState<LineSource>("recorded");
+  // Live cameras: "" = the station's real cameras; a run id = that run's videos played through the camera input.
+  const [simulate, setSimulate] = useState("");
+  const [preview, setPreview] = useState<string | null>(null);
+  const [saved, setSaved] = useState<string | null>(null);
+  const [cameraStats, setCameraStats] = useState<Record<string, number> | null>(null);
   const [speed, setSpeed] = useState(8);
   const [startMin, setStartMin] = useState(0);
   const [paused, setPaused] = useState(false);
@@ -48,7 +53,9 @@ export default function LinePage() {
     socket.current?.close();
     socket.current = null;
     serverClock.current = null;
+    setPreview(null);
   }, []);
+  const camera = source === "camera";
   useEffect(() => stop, [stop]);
 
   const review = useQuery({
@@ -72,8 +79,11 @@ export default function LinePage() {
     setEventCount(0);
     setError(null);
     setPaused(false);
+    setSaved(null);
+    setCameraStats(null);
     setStatus("connecting");
-    const ws = liveSocket(run.id, source, speed, source === "recorded" ? startMin * 60 : 0, order);
+    const start = source === "recorded" || (camera && simulate) ? startMin * 60 : 0;
+    const ws = liveSocket(run.id, source, camera ? 1 : speed, start, order, camera ? simulate || null : null);
     socket.current = ws;
     ws.onmessage = (message) => {
       const data = JSON.parse(message.data) as LiveMessage;
@@ -83,11 +93,22 @@ export default function LinePage() {
         serverClock.current = { t: data.t, at: performance.now(), speed: data.speed, paused: data.paused };
         setLag(data.lag_s);
         setStatus("live");
-      } else if (data.type === "end") setStatus("ended");
+        if (data.cameras) setCameraStats(data.cameras);
+      } else if (data.type === "preview") setPreview(data.key);
+      else if (data.type === "saved") { setSaved(data.run_id); void runs.refetch(); }
+      else if (data.type === "end") { setStatus("ended"); ws.close(); }
       else if (data.type === "error") { setError(data.message); setStatus("error"); }
       setEventCount(events.current.length);
     };
     ws.onclose = () => setStatus((s) => (s === "live" || s === "connecting" ? "ended" : s));
+  }
+
+  /** Ask the server to end the session (a camera session then saves itself and says so), then close. */
+  function finish() {
+    const ws = socket.current;
+    if (!ws || ws.readyState !== WebSocket.OPEN) { stop(); setStatus("idle"); return; }
+    ws.send(JSON.stringify({ stop: true }));
+    window.setTimeout(() => { if (ws.readyState === WebSocket.OPEN) ws.close(); }, 15000);
   }
 
   function changeSpeed(next: number) {
@@ -111,7 +132,7 @@ export default function LinePage() {
       const sc = serverClock.current;
       if (mode === "live" && sc) {
         time = sc.paused ? sc.t : sc.t + Math.min(1, (now - sc.at) / 1000) * sc.speed;
-        for (const video of [fill.current, tray.current]) {
+        for (const video of camera ? [] : [fill.current, tray.current]) {
           if (!video) continue;
           if (Math.abs(video.currentTime - time) > Math.max(0.6, sc.speed * 0.3)) video.currentTime = time;
           video.playbackRate = Math.min(sc.speed, 16);
@@ -128,7 +149,7 @@ export default function LinePage() {
     };
     frame = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(frame);
-  }, [mode, status]);
+  }, [camera, mode, status]);
 
   // eventCount forces a recompute when live events arrive.
   const view = useMemo(() => viewAt(events.current, t), [t, eventCount]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -152,6 +173,7 @@ export default function LinePage() {
             </span>
             <strong>{clock(view.t)}</strong>
             {live && status === "live" && <small>{lag > 0.5 ? `processing ${lag.toFixed(1)} s behind` : "keeping up"}</small>}
+            {camera && cameraStats && <small>{cameraStats.fill ?? 0} fill · {cameraStats.tray ?? 0} tray frames · {cameraStats.dropped} dropped</small>}
           </div>
         </section>
 
@@ -178,12 +200,23 @@ export default function LinePage() {
           {live && (
             <>
               <label>Source
-                <select value={source} onChange={(e) => setSource(e.target.value as "recorded" | "video")}>
+                <select value={source} onChange={(e) => setSource(e.target.value as LineSource)}>
+                  {run?.sources.includes("camera") && <option value="camera">Cameras (live, models now)</option>}
                   {run?.sources.includes("recorded") && <option value="recorded">Recorded model outputs</option>}
                   {run?.sources.includes("video") && <option value="video">Video → models now</option>}
                 </select>
               </label>
-              {source === "recorded" && (
+              {camera && (
+                <label>Cameras
+                  <select value={simulate} onChange={(e) => setSimulate(e.target.value)}>
+                    <option value="">Station cameras</option>
+                    {runs.data?.filter((r) => r.sources.includes("video")).map((r) => (
+                      <option key={r.id} value={r.id}>Simulate with {r.title}</option>
+                    ))}
+                  </select>
+                </label>
+              )}
+              {(source === "recorded" || (camera && simulate)) && (
                 <label>Start at (min)
                   <input type="number" min={0} max={28} value={startMin} onChange={(e) => setStartMin(Math.max(0, Number(e.target.value)))} />
                 </label>
@@ -191,13 +224,13 @@ export default function LinePage() {
               <button className="ln-primary" onClick={startLive} disabled={!run || !run.sources.length}>
                 {status === "live" ? "Restart" : "Start"}
               </button>
-              <button onClick={togglePause} disabled={status !== "live"}>{paused ? "Resume" : "Pause"}</button>
-              <button onClick={() => { stop(); setStatus("idle"); }} disabled={status !== "live" && status !== "connecting"}>Stop</button>
+              {!camera && <button onClick={togglePause} disabled={status !== "live"}>{paused ? "Resume" : "Pause"}</button>}
+              <button onClick={finish} disabled={status !== "live" && status !== "connecting"}>Stop</button>
             </>
           )}
-          <div className="ln-seg" role="group" aria-label="Speed">
+          {!(live && camera) && <div className="ln-seg" role="group" aria-label="Speed">
             {SPEEDS.map((s) => <button key={s} className={speed === s ? "active" : ""} onClick={() => changeSpeed(s)}>{s}×</button>)}
-          </div>
+          </div>}
         </section>
 
         <p className="ln-hint">
@@ -209,13 +242,24 @@ export default function LinePage() {
           <p className="ln-banner">No line runs configured. Set APP__LINE_RUNS to a folder of run manifests (see docs/line-view.md).</p>
         )}
         {error && <p className="ln-banner ln-banner-failure">{error}</p>}
+        {run?.live && run.models === false && (
+          <p className="ln-banner">The server has no models loaded: set APP__MODEL_ASSETS to use live cameras.</p>
+        )}
+        {saved && (
+          <p className="ln-banner ln-banner-ok">
+            Saved this live session as run <strong>{saved}</strong>.{" "}
+            <button className="ln-link" onClick={() => { stop(); setRunId(saved); setMode("review"); }}>Open it in Review</button>
+          </p>
+        )}
         {mode === "review" && review.isLoading && <p className="ln-banner">Running the line engine over the recorded run…</p>}
 
         {run && (
           <section className="ln-stage">
-            <FillCamera view={view} runId={run.id} videoRef={fill} controls={!live} />
+            <FillCamera view={view} runId={run.id} videoRef={fill} controls={!live}
+              preview={live && camera && preview ? previewUrl(preview, "fill") : undefined} />
             <Panel view={view} />
-            {run.has_tray && <TrayCamera view={view} runId={run.id} videoRef={tray} />}
+            {run.has_tray && <TrayCamera view={view} runId={run.id} videoRef={tray}
+              preview={live && camera && preview ? previewUrl(preview, "tray") : undefined} />}
           </section>
         )}
 
@@ -225,7 +269,7 @@ export default function LinePage() {
   );
 }
 
-function FillCamera({ view, runId, videoRef, controls }: { view: LineView; runId: string; videoRef: React.RefObject<HTMLVideoElement | null>; controls: boolean }) {
+function FillCamera({ view, runId, videoRef, controls, preview }: { view: LineView; runId: string; videoRef: React.RefObject<HTMLVideoElement | null>; controls: boolean; preview?: string }) {
   const roi = view.meta?.roi;
   const last = view.vials[view.vials.length - 1];
   const justDecided = last && view.t - last.decision_s < BANNER_S;
@@ -236,7 +280,9 @@ function FillCamera({ view, runId, videoRef, controls }: { view: LineView; runId
     <figure className="ln-camera">
       <figcaption>Fill station camera</figcaption>
       <div className="ln-video">
-        <video ref={videoRef} src={videoUrl(runId, "fill")} muted playsInline preload="auto" controls={controls} />
+        {preview ? <img src={preview} alt="Fill station camera, live" />
+          : runId === "live" ? <div className="ln-no-feed">Camera feed appears when the live session starts</div>
+          : <video ref={videoRef} src={videoUrl(runId, "fill")} muted playsInline preload="auto" controls={controls} />}
         <svg viewBox="0 0 640 480" aria-hidden="true">
           {roi && (view.dwell || justDecided) && (
             <rect x={roi[0]} y={roi[1]} width={roi[2] - roi[0]} height={roi[3] - roi[1]} className={`ln-roi ln-stroke-${tone}`} />
@@ -253,7 +299,7 @@ function FillCamera({ view, runId, videoRef, controls }: { view: LineView; runId
   );
 }
 
-function TrayCamera({ view, runId, videoRef }: { view: LineView; runId: string; videoRef: React.RefObject<HTMLVideoElement | null> }) {
+function TrayCamera({ view, runId, videoRef, preview }: { view: LineView; runId: string; videoRef: React.RefObject<HTMLVideoElement | null>; preview?: string }) {
   const slots = view.meta?.good_slots ?? [];
   const slotIndex = (name: string | null) => {
     const m = name?.match(/^R(\d)C(\d)$/);
@@ -265,7 +311,9 @@ function TrayCamera({ view, runId, videoRef }: { view: LineView; runId: string; 
     <figure className="ln-camera">
       <figcaption>Finished-vial tray camera</figcaption>
       <div className="ln-video">
-        <video ref={videoRef} src={videoUrl(runId, "tray")} muted playsInline preload="auto" />
+        {preview ? <img src={preview} alt="Finished-vial tray camera, live" />
+          : runId === "live" ? <div className="ln-no-feed">Camera feed appears when the live session starts</div>
+          : <video ref={videoRef} src={videoUrl(runId, "tray")} muted playsInline preload="auto" />}
         <svg viewBox="0 0 640 480" aria-hidden="true">
           {view.arrivals.map((a, i) => {
             const k = slotIndex(a.slot);

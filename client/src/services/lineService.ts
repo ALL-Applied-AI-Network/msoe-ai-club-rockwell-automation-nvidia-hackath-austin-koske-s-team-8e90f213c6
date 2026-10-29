@@ -84,15 +84,22 @@ export type LineEvent =
 export type LiveMessage =
   | LineMeta
   | { type: "events"; events: LineEvent[]; catch_up?: boolean }
-  | { type: "clock"; t: number; lag_s: number; speed: number; paused: boolean }
+  | { type: "clock"; t: number; lag_s: number; speed: number; paused: boolean; cameras?: Record<string, number> }
+  | { type: "preview"; key: string; cameras: string[]; run_id: string }
+  | { type: "saved"; run_id: string }
   | { type: "end"; t: number }
   | { type: "error"; message: string };
+
+export type LineSource = "recorded" | "video" | "camera";
 
 export interface LineRun {
   id: string;
   title: string;
-  sources: ("recorded" | "video")[];
+  sources: LineSource[];
   has_tray: boolean;
+  /** The station's live cameras (run "live"); models: whether the server has the models loaded. */
+  live?: boolean;
+  models?: boolean;
 }
 
 /** An inspection run whose recipe plan (the order copied from CSI's machine) the line can follow. */
@@ -121,10 +128,16 @@ export function videoUrl(runId: string, camera: "fill" | "tray"): string {
   return `${api.defaults.baseURL}/line/runs/${encodeURIComponent(runId)}/video/${camera}`;
 }
 
-export function liveSocket(runId: string, source: string, speed: number, start: number, order?: string | null): WebSocket {
+export function previewUrl(key: string, camera: "fill" | "tray"): string {
+  return `${api.defaults.baseURL}/line/preview/${encodeURIComponent(key)}/${camera}`;
+}
+
+export function liveSocket(runId: string, source: string, speed: number, start: number, order?: string | null,
+  simulate?: string | null): WebSocket {
   const base = new URL(api.defaults.baseURL ?? "/api/v1", window.location.href);
   base.protocol = base.protocol === "https:" ? "wss:" : "ws:";
   base.pathname = `${base.pathname.replace(/\/$/, "")}/line/runs/${encodeURIComponent(runId)}/live`;
-  base.search = new URLSearchParams({ source, speed: String(speed), start: String(start), ...(order ? { order } : {}) }).toString();
+  base.search = new URLSearchParams({ source, speed: String(speed), start: String(start), ...(order ? { order } : {}),
+    ...(simulate ? { simulate } : {}) }).toString();
   return new WebSocket(base);
 }

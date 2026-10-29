@@ -4,10 +4,10 @@ import threading
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisconnect
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, StreamingResponse
 
 from dependencies import get_inspection_service, get_line_runs
-from services.line import MAX_SESSIONS, SPEEDS, SessionClock
+from services.line import LIVE, MAX_SESSIONS, SPEEDS, SessionClock
 
 router = APIRouter(prefix="/line", tags=["line"])
 _active = {"sessions": 0}
@@ -66,12 +66,33 @@ async def video(run_id: str, camera: str, runs=Depends(get_line_runs)):
         raise HTTPException(404, "Video not found") from error
 
 
+@router.get("/preview/{key}/{camera}")
+async def preview(key: str, camera: str, runs=Depends(get_line_runs)):
+    """MJPEG stream of a live session's camera (the newest frame, as it arrives)."""
+    if key not in runs.previews or camera not in ("fill", "tray"):
+        raise HTTPException(404, "No such live preview")
+
+    async def frames():
+        last = None
+        while key in runs.previews:
+            jpeg = runs.previews.get(key, {}).get(camera)
+            if jpeg is not None and jpeg is not last:
+                last = jpeg
+                yield b"--frame\r\nContent-Type: image/jpeg\r\nContent-Length: " + str(len(jpeg)).encode() + b"\r\n\r\n" + jpeg + b"\r\n"
+            await asyncio.sleep(0.03)
+
+    return StreamingResponse(frames(), media_type="multipart/x-mixed-replace; boundary=frame")
+
+
 @router.websocket("/runs/{run_id}/live")
 async def live(websocket: WebSocket, run_id: str, runs=Depends(get_line_runs),
                service=Depends(get_inspection_service)):
-    """Paced live session. Query: source=recorded|video, speed, start (seconds, recorded only),
-    order (an inspection run id whose recipe plan is followed, re-read while running).
-    The client may send {"speed": N} or {"paused": bool}."""
+    """Live session. Query: source=recorded|video|camera, speed, start (seconds), order (an
+    inspection run id whose recipe plan is followed, re-read while running). Source camera is
+    run "live": the station cameras in real time, or with simulate=<run id> that run's videos
+    played at real time through the camera input. The client may send {"speed": N} or
+    {"paused": bool} (recorded and video sources), and {"stop": true} to end the session and
+    receive "saved" (camera sessions) and "end"."""
     await websocket.accept()
     params = websocket.query_params
     try:
@@ -79,9 +100,16 @@ async def live(websocket: WebSocket, run_id: str, runs=Depends(get_line_runs),
         source = params.get("source", "recorded")
         speed = float(params.get("speed", 1))
         start = float(params.get("start", 0))
-        if source not in runs.sources(manifest):
+        simulate = params.get("simulate") or None
+        if source == "camera":
+            if run_id != LIVE:
+                raise ValueError("Cameras are the run 'live'")
+            if simulate:
+                runs.manifest(simulate)
+            speed = 1
+        elif source not in runs.sources(manifest):
             raise ValueError(f"Source {source} is not available for this run")
-        if speed not in SPEEDS or start < 0 or (source == "video" and start):
+        if speed not in SPEEDS or start < 0 or (source in ("video", "camera") and start and not simulate):
             raise ValueError("Unsupported speed or start")
         if _active["sessions"] >= MAX_SESSIONS:
             raise ValueError("Too many live sessions")
@@ -106,19 +134,28 @@ async def live(websocket: WebSocket, run_id: str, runs=Depends(get_line_runs),
 
     def worker():
         try:
-            runs.session(run_id, source, clock, send, stop, order if order_id else None)
+            if source == "camera":
+                runs.camera_session(clock, send, stop, order if order_id else None, simulate, start)
+            else:
+                runs.session(run_id, source, clock, send, stop, order if order_id else None)
         except Exception as error:  # report to the client; the session ends either way
             send({"type": "error", "message": f"{type(error).__name__}: {error}"})
         finally:
             send(None)
 
     async def pump():
-        while (message := await queue.get()) is not None:
-            await websocket.send_text(json.dumps(message, default=str))
+        try:
+            while (message := await queue.get()) is not None:
+                await websocket.send_text(json.dumps(message, default=str))
+        except (WebSocketDisconnect, RuntimeError):
+            stop.set()      # the client went away; the session stops and still saves
 
     async def control():
         while True:
             data = await websocket.receive_json()
+            if data.get("stop"):
+                stop.set()      # finish: the session saves, sends "saved"/"end", then closes
+                continue
             speed = data.get("speed")
             clock.set(speed=speed if speed in SPEEDS else None,
                       paused=data["paused"] if isinstance(data.get("paused"), bool) else None)
@@ -139,5 +176,5 @@ async def live(websocket: WebSocket, run_id: str, runs=Depends(get_line_runs),
         _active["sessions"] -= 1
         try:
             await websocket.close()
-        except RuntimeError:
-            pass
+        except (RuntimeError, WebSocketDisconnect):
+            pass        # already closed by the client

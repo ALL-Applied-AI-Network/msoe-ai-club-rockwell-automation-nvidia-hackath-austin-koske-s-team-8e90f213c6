@@ -71,13 +71,16 @@ class TrayScanner:
     """One sample every STEP frames. The frame at empty_frame must show an empty Good tray."""
 
     def __init__(self, fps, empty_frame=0):
-        self.fps, self.empty_frame, self.empty = fps, empty_frame, None
+        self.fps, self.empty_frame, self.empty, self.next_sample = fps, empty_frame, None, None
 
     def push(self, index, bgr):
-        if index == self.empty_frame:
+        if self.empty is None and index >= self.empty_frame:
             self.empty = bgr.copy()
-        if index % STEP or self.empty is None:
+            self.next_sample = index + (-index) % STEP
+        # Next multiple of STEP at or after this frame, so dropped live frames do not stop sampling.
+        if self.empty is None or index < self.next_sample:
             return None
+        self.next_sample = index + STEP - index % STEP
         per = caps(bgr)
         return {"frame": index, "t": index / self.fps,
                 **{f"{k}_count": v[0] for k, v in per.items()},

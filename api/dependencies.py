@@ -44,7 +44,8 @@ _inspection = InspectionService(
     worker_count=config.model_workers,
 )
 
-_line_runs = LineRuns(config.line_runs, config.model_assets, config.device)
+_line_runs = LineRuns(config.line_runs, config.model_assets, config.device, config.line_station,
+                      config.line_recordings or _data_dir / "line-recordings")
 
 
 def get_widget_service() -> WidgetService:

@@ -57,16 +57,21 @@ class FillTracker:
             self.dwell = {"start_frame": index, "end_frame": index, "reference_frame": None, "samples": []}
             self.qa = self.runtime.new_measurement() if self.runtime else None
             self.reference = None
+            self.next_sample = SETTLE + STEP
             out.append(("start", self.dwell))
         dwell = self.dwell
         dwell["end_frame"] = index
         k = index - dwell["start_frame"]
         if self.runtime is None:
             return out
-        if k == SETTLE:
+        # ">=" rather than "==" so a live camera that drops a frame still gets its reference
+        # and samples; with every frame present this is the same schedule.
+        if self.reference is None and k >= SETTLE:
             self.reference = cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB)
             dwell["reference_frame"] = index
-        if self.reference is not None and k > SETTLE and (k - SETTLE) % STEP == 0:
+            return out
+        if self.reference is not None and k >= self.next_sample:
+            self.next_sample = k + STEP - (k - SETTLE) % STEP
             rgb = cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB)
             result, measured, boxes = self.runtime.infer(rgb, self.reference, self.qa)
             sample = {

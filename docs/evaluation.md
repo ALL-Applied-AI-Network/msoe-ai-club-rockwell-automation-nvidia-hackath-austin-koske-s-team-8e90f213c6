@@ -260,6 +260,39 @@ fresh CSI run; the noise-free selection (ΔE 1.0 / cos 0.5) would over-alarm on 
 noise model is independent per render (no lighting or camera drift), and the Runs 1–4 level rests
 on 9 unlabelled pairs. [Record](../setup/verification/carryover-noise-20261030.json).
 
+**Direction in optical density.** Dyes mix linearly in optical density (−ln linear RGB), not in Lab.
+For very different recipes a pure mix bends in Lab: the mixing model predicts a Lab cosine of
+0.47–0.59 for Run 5 recipe 7 contaminated by recipe 6, and the recoloured footage below measured
+0.45–0.53. `toward_previous(..., "density")` (line setting `direction_space`) measures it where the
+mix is straight. On the synthetic renders under noise, density alone is worse (σ = 1: 11/38/62% at
+5–10/10–20/20–30% residue, as the log amplifies dark-channel noise), but **either space** (the larger
+of the two cosines), selected on train, matches Lab alone: ΔE 2.0, cos 0.85, 5.3% false alarms,
+9/29/46/68% detection. [Record](../setup/verification/carryover-noise-either-20261030.json).
+
+**Known carryover on real footage** (`replay/recolour_eval.py`). Cosmos Transfer cannot inject a known
+fraction: our October 21 trial on the GB10 took 26 min for a 6 s clip and changed liquid hues and
+filled empty vials. Instead the real Run 5 liquid (the segmenter's own mask) is shifted in optical
+density toward the previous recipe by a known f, and the unchanged models, QA, segmentation and
+decision run on the result. Targets: the 6 in-spec vials whose recipe and previous recipe have
+references (6, 8, 9, 20, 21, 24). Vials flagged as carryover (out of band and toward the previous
+recipe):
+
+| f | Current (ΔE 5, Lab 0.8) | Noise-calibrated (ΔE 2.0, Lab 0.75) | Calibrated, either space (ΔE 2.0, 0.85) | Measurable |
+| --- | --- | --- | --- | --- |
+| 0 | 0 | 0 | 0 | 6 / 6 |
+| 0.1 | 0 | 1 | 2 | 6 / 6 |
+| 0.2 | 1 | 2 | 3 | 5 / 6 |
+| 0.3 | 1 | 3 | 4 | 4 / 6 |
+
+At f = 0 the harness reproduces the original verdicts (6/6 in spec), and no rule flags carryover on
+the untouched vials. Recipes 11 after 10 (vials 20, 21) barely move (the two references are close),
+as expected. Heavy recolouring of dark vials can make QA refuse the colour (vials 6 and 9), so
+"measurable" falls. Six vials, one run, and the thresholds were chosen on synthetic data before this
+test; the recolouring is a physical approximation (no scattering, no change in the fill dynamics), and
+the segmenter's mask spills onto glass and background in some frames, which get tinted too (a
+visible halo; `screenshots/11-known-carryover-recolour.png`, local).
+[Record](../setup/verification/recolour-run5-20261030.json).
+
 **Residue estimate** (mean absolute error in residue fraction):
 
 | Residue | n | Lab projection | CNN, uniform (seeds 29 / 30 / 31) | CNN, balanced (seeds 29 / 30 / 31) |

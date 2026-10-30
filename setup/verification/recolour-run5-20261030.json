@@ -1,0 +1,471 @@
+{
+ "video": "C:\\git\\FDS-Dark\\ALL-Applied-AI-Network\\msoe-ai-club-rockwell-automation-nvidia-hackath-austin-koske-s-team-8e90f213c6\\datasets\\csi-vial-fill-dataset\\vial_fill\\videos\\vial_fill_video_5.mp4",
+ "line": {
+  "band_de2000": 5.0,
+  "direction_cos": 0.8,
+  "scrap_deadline_s": 120.0,
+  "persistent_count": 3,
+  "proactive_flush_de": 15.0
+ },
+ "fractions": [
+  0.0,
+  0.1,
+  0.2,
+  0.3
+ ],
+ "results": [
+  {
+   "f": 0.0,
+   "vials": 30,
+   "targets": [
+    {
+     "seq": 6,
+     "recipe": "6",
+     "previous": "5",
+     "reference_vial": true,
+     "verdict": "IN_SPEC",
+     "pattern": "nominal",
+     "de_intended": 1.8729314458067476,
+     "de_previous": 26.088848957875076,
+     "direction_cos": -0.5739610053686148,
+     "endpoint_lab": [
+      22.552891562175766,
+      19.32892308538084,
+      27.033459439256745
+     ],
+     "density_cos": -0.29546841344942915,
+     "flush": false
+    },
+    {
+     "seq": 8,
+     "recipe": "7",
+     "previous": "6",
+     "reference_vial": false,
+     "verdict": "IN_SPEC",
+     "pattern": "nominal",
+     "de_intended": 1.0584697790049167,
+     "de_previous": 34.0766066960267,
+     "direction_cos": -0.23426326496982475,
+     "endpoint_lab": [
+      17.12880459596687,
+      -6.898118563724825,
+      -14.524542106119275
+     ],
+     "density_cos": -0.8896138092077576,
+     "flush": false
+    },
+    {
+     "seq": 9,
+     "recipe": "7",
+     "previous": "6",
+     "reference_vial": true,
+     "verdict": "IN_SPEC",
+     "pattern": "nominal",
+     "de_intended": 2.343803909400549,
+     "de_previous": 33.87146042217036,
+     "direction_cos": 0.09366988081818194,
+     "endpoint_lab": [
+      19.325802858385245,
+      -6.830471421833822,
+      -14.055603399046268
+     ],
+     "density_cos": 0.691662326420241,
+     "flush": false
+    },
+    {
+     "seq": 20,
+     "recipe": "11",
+     "previous": "10",
+     "reference_vial": true,
+     "verdict": "IN_SPEC",
+     "pattern": "nominal",
+     "de_intended": 2.310874459281128,
+     "de_previous": 15.263992298261652,
+     "direction_cos": 0.14617582236375307,
+     "endpoint_lab": [
+      11.250895316357287,
+      -7.386189849564406,
+      -3.0998167261166722
+     ],
+     "density_cos": 0.8149191587788811,
+     "flush": false
+    },
+    {
+     "seq": 21,
+     "recipe": "11",
+     "previous": "10",
+     "reference_vial": false,
+     "verdict": "IN_SPEC",
+     "pattern": "nominal",
+     "de_intended": 3.2996346539959833,
+     "de_previous": 16.25241084668853,
+     "direction_cos": -0.10237683858930793,
+     "endpoint_lab": [
+      11.762571343437486,
+      -7.405311363416212,
+      -4.5246279010149495
+     ],
+     "density_cos": 0.6960978385063084,
+     "flush": false
+    },
+    {
+     "seq": 24,
+     "recipe": "12",
+     "previous": "11",
+     "reference_vial": true,
+     "verdict": "IN_SPEC",
+     "pattern": "nominal",
+     "de_intended": 1.5467778831342147,
+     "de_previous": 23.9012574435921,
+     "direction_cos": 0.5603648955094201,
+     "endpoint_lab": [
+      12.55203190997679,
+      9.71273335201782,
+      13.420164186806987
+     ],
+     "density_cos": 0.5164558169307485,
+     "flush": false
+    }
+   ],
+   "out_of_spec": 0,
+   "carryover": 0
+  },
+  {
+   "f": 0.1,
+   "vials": 30,
+   "targets": [
+    {
+     "seq": 6,
+     "recipe": "6",
+     "previous": "5",
+     "reference_vial": true,
+     "verdict": "IN_SPEC",
+     "pattern": "nominal",
+     "de_intended": 1.8772713874024656,
+     "de_previous": 24.405572231368907,
+     "direction_cos": 0.8780445722974041,
+     "endpoint_lab": [
+      20.17528057970558,
+      16.5535803237834,
+      24.37633792567541
+     ],
+     "density_cos": 0.6435144855223753,
+     "flush": false
+    },
+    {
+     "seq": 8,
+     "recipe": "7",
+     "previous": "6",
+     "reference_vial": false,
+     "verdict": "OUT_OF_SPEC",
+     "pattern": "deviation",
+     "de_intended": 5.264321158106408,
+     "de_previous": 31.785540412394905,
+     "direction_cos": 0.44769359499093697,
+     "endpoint_lab": [
+      14.586733313085105,
+      -9.123517736553163,
+      -8.923452196376768
+     ],
+     "density_cos": 0.7509276006069654,
+     "flush": false
+    },
+    {
+     "seq": 9,
+     "recipe": "7",
+     "previous": "6",
+     "reference_vial": true,
+     "verdict": "IN_SPEC",
+     "pattern": "nominal",
+     "de_intended": 4.198023397083201,
+     "de_previous": 31.72828275912399,
+     "direction_cos": 0.43680507798940565,
+     "endpoint_lab": [
+      16.279751934772793,
+      -8.757141324397699,
+      -10.176435908610209
+     ],
+     "density_cos": 0.9710984944169706,
+     "flush": false
+    },
+    {
+     "seq": 20,
+     "recipe": "11",
+     "previous": "10",
+     "reference_vial": true,
+     "verdict": "IN_SPEC",
+     "pattern": "nominal",
+     "de_intended": 1.3005860872566029,
+     "de_previous": 14.030739702886741,
+     "direction_cos": 0.8646727478328277,
+     "endpoint_lab": [
+      9.761777433293464,
+      -7.583119550225531,
+      -0.8587405210106258
+     ],
+     "density_cos": 0.9609439362091706,
+     "flush": false
+    },
+    {
+     "seq": 21,
+     "recipe": "11",
+     "previous": "10",
+     "reference_vial": false,
+     "verdict": "IN_SPEC",
+     "pattern": "nominal",
+     "de_intended": 1.3528757980761719,
+     "de_previous": 13.963113731437092,
+     "direction_cos": 0.8689574853388103,
+     "endpoint_lab": [
+      9.78166813542185,
+      -7.417797227538825,
+      -0.8587405210106258
+     ],
+     "density_cos": 0.9611884792427209,
+     "flush": false
+    },
+    {
+     "seq": 24,
+     "recipe": "12",
+     "previous": "11",
+     "reference_vial": true,
+     "verdict": "IN_SPEC",
+     "pattern": "nominal",
+     "de_intended": 4.0263901161030935,
+     "de_previous": 20.827044956891086,
+     "direction_cos": 0.9056486701665339,
+     "endpoint_lab": [
+      10.212467553056715,
+      7.011555682291032,
+      9.96660494020526
+     ],
+     "density_cos": 0.8895292332078168,
+     "flush": false
+    }
+   ],
+   "out_of_spec": 1,
+   "carryover": 0
+  },
+  {
+   "f": 0.2,
+   "vials": 30,
+   "targets": [
+    {
+     "seq": 6,
+     "recipe": "6",
+     "previous": "5",
+     "reference_vial": true,
+     "verdict": "CANT_VERIFY",
+     "pattern": "unmeasured",
+     "de_intended": null,
+     "de_previous": null,
+     "direction_cos": null,
+     "endpoint_lab": null,
+     "density_cos": null,
+     "flush": false
+    },
+    {
+     "seq": 8,
+     "recipe": "7",
+     "previous": "6",
+     "reference_vial": false,
+     "verdict": "OUT_OF_SPEC",
+     "pattern": "deviation",
+     "de_intended": 8.764266207428973,
+     "de_previous": 32.486855925927784,
+     "direction_cos": 0.45294102765853506,
+     "endpoint_lab": [
+      13.962648536068755,
+      -11.076741933046751,
+      -5.326043502811295
+     ],
+     "density_cos": 0.7219384212118763,
+     "flush": false
+    },
+    {
+     "seq": 9,
+     "recipe": "7",
+     "previous": "6",
+     "reference_vial": true,
+     "verdict": "OUT_OF_SPEC",
+     "pattern": "deviation",
+     "de_intended": 7.759346805834877,
+     "de_previous": 32.021094608829195,
+     "direction_cos": 0.4981108226513633,
+     "endpoint_lab": [
+      15.013638187710807,
+      -10.29965895464921,
+      -6.038307125269704
+     ],
+     "density_cos": 0.9975378378179833,
+     "flush": false
+    },
+    {
+     "seq": 20,
+     "recipe": "11",
+     "previous": "10",
+     "reference_vial": true,
+     "verdict": "IN_SPEC",
+     "pattern": "nominal",
+     "de_intended": 1.7905640559635534,
+     "de_previous": 13.558294218549046,
+     "direction_cos": 0.9516324939827124,
+     "endpoint_lab": [
+      9.800046357894853,
+      -7.728484336512159,
+      -0.07406551775942516
+     ],
+     "density_cos": 0.9798440289854883,
+     "flush": false
+    },
+    {
+     "seq": 21,
+     "recipe": "11",
+     "previous": "10",
+     "reference_vial": false,
+     "verdict": "IN_SPEC",
+     "pattern": "nominal",
+     "de_intended": 2.460559322307805,
+     "de_previous": 12.922222988189587,
+     "direction_cos": 0.9786817301000824,
+     "endpoint_lab": [
+      10.043508100760981,
+      -7.575532475797287,
+      0.7166665677572348
+     ],
+     "density_cos": 0.9870797579360967,
+     "flush": false
+    },
+    {
+     "seq": 24,
+     "recipe": "12",
+     "previous": "11",
+     "reference_vial": true,
+     "verdict": "OUT_OF_SPEC",
+     "pattern": "carryover",
+     "de_intended": 7.765123530878206,
+     "de_previous": 16.183749645322976,
+     "direction_cos": 0.9587713607362203,
+     "endpoint_lab": [
+      8.195785405654817,
+      3.373000696476031,
+      7.366032341976458
+     ],
+     "density_cos": 0.9077859136288109,
+     "flush": true
+    }
+   ],
+   "out_of_spec": 3,
+   "carryover": 1
+  },
+  {
+   "f": 0.3,
+   "vials": 30,
+   "targets": [
+    {
+     "seq": 6,
+     "recipe": "6",
+     "previous": "5",
+     "reference_vial": true,
+     "verdict": "CANT_VERIFY",
+     "pattern": "unmeasured",
+     "de_intended": null,
+     "de_previous": null,
+     "direction_cos": null,
+     "endpoint_lab": null,
+     "density_cos": null,
+     "flush": false
+    },
+    {
+     "seq": 8,
+     "recipe": "7",
+     "previous": "6",
+     "reference_vial": false,
+     "verdict": "OUT_OF_SPEC",
+     "pattern": "deviation",
+     "de_intended": 12.45504570617977,
+     "de_previous": 32.76848680990507,
+     "direction_cos": 0.5268040706927202,
+     "endpoint_lab": [
+      14.382320206788037,
+      -12.300428691516249,
+      -0.8432804573479391
+     ],
+     "density_cos": 0.9818529580126693,
+     "flush": false
+    },
+    {
+     "seq": 9,
+     "recipe": "7",
+     "previous": "6",
+     "reference_vial": true,
+     "verdict": "CANT_VERIFY",
+     "pattern": "unmeasured",
+     "de_intended": null,
+     "de_previous": null,
+     "direction_cos": null,
+     "endpoint_lab": null,
+     "density_cos": null,
+     "flush": false
+    },
+    {
+     "seq": 20,
+     "recipe": "11",
+     "previous": "10",
+     "reference_vial": true,
+     "verdict": "IN_SPEC",
+     "pattern": "nominal",
+     "de_intended": 3.9147922725766335,
+     "de_previous": 11.879419247282662,
+     "direction_cos": 0.9520073427490412,
+     "endpoint_lab": [
+      11.321399596040099,
+      -7.920769322347504,
+      2.185602564626743
+     ],
+     "density_cos": 0.9875782732202886,
+     "flush": false
+    },
+    {
+     "seq": 21,
+     "recipe": "11",
+     "previous": "10",
+     "reference_vial": false,
+     "verdict": "IN_SPEC",
+     "pattern": "nominal",
+     "de_intended": 4.620765911489888,
+     "de_previous": 11.094085248715261,
+     "direction_cos": 0.9780352363951281,
+     "endpoint_lab": [
+      11.426269841047922,
+      -7.492101218708941,
+      3.0597204501361386
+     ],
+     "density_cos": 0.9934128274641253,
+     "flush": false
+    },
+    {
+     "seq": 24,
+     "recipe": "12",
+     "previous": "11",
+     "reference_vial": true,
+     "verdict": "OUT_OF_SPEC",
+     "pattern": "carryover",
+     "de_intended": 10.074360500192022,
+     "de_previous": 13.358059770489882,
+     "direction_cos": 0.9827644321343012,
+     "endpoint_lab": [
+      8.335802415280998,
+      1.4224655726270685,
+      6.059134991139414
+     ],
+     "density_cos": 0.9704543361397234,
+     "flush": true
+    }
+   ],
+   "out_of_spec": 2,
+   "carryover": 1
+  }
+ ],
+ "note": "Run 5 footage with injected carryover; evaluation only, nothing fitted."
+}

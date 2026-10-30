@@ -37,7 +37,7 @@ def main():
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--sigmas", type=float, nargs="+", default=[0.0, 0.5, 1.0, 1.5, 2.0, 3.0])
     parser.add_argument("--seeds", type=int, default=3)
-    parser.add_argument("--direction", choices=("lab", "density"), default="lab",
+    parser.add_argument("--direction", choices=("lab", "density", "either"), default="lab",
                         help="space of the toward-previous cosine (replay.decide.toward_previous)")
     args = parser.parse_args()
     rows = [row for batch in args.renders for row in measure(batch)]
@@ -47,8 +47,9 @@ def main():
         runs = []
         for seed in range(args.seeds):
             cs = changeovers(noisy(rows, sigma, np.random.default_rng(seed)))
-            if args.direction == "density":
-                cs = [{**c, "direction_cos": c["density_cos"]} for c in cs]
+            if args.direction != "lab":
+                cs = [{**c, "direction_cos": c["density_cos"] if args.direction == "density"
+                       else max(c["direction_cos"], c["density_cos"])} for c in cs]
             train = [c for c in cs if c["split"] == "train"]
             dev = [c for c in cs if c["split"] == "dev"]
             clean = [c["de_intended"] for c in dev if c["f"] == 0]

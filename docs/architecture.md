@@ -305,7 +305,7 @@ flowchart TB
 frame or stored sample at a time and emits events as they become known. On Run 5 it gives the
 same 30 verdicts, the same 39 actions and the same 26 tray matches as the batch path; the
 differences are listed in [line view](line-view.md). On-site deployment is in
-[deploy-gb10-line](deploy-gb10-line.md).
+[the GB10 line plan](archive/deploy-gb10-line-plan.md).
 
 ## Investigation
 

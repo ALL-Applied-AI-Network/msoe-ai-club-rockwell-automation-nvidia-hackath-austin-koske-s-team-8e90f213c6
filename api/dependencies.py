@@ -1,6 +1,5 @@
 from pathlib import Path
 
-from databridge.memory_widgets import MemoryWidgetBridge
 from databridge.sqlite_inspections import SQLiteInspectionBridge
 from pipelines.base import InspectionPipeline
 from pipelines.mock import MockInspectionPipeline
@@ -9,10 +8,8 @@ from services.artifacts import ArtifactStore
 from services.event_broker import EventBroker
 from services.inspection import InspectionService
 from services.line import LineRuns
-from services.widget import WidgetService
 from settings import config
 
-_widgets = WidgetService(MemoryWidgetBridge())
 _api_root = Path(__file__).resolve().parent
 _data_dir = (
     config.data_dir.resolve()
@@ -47,9 +44,6 @@ _inspection = InspectionService(
 _line_runs = LineRuns(config.line_runs, config.model_assets, config.device, config.line_station,
                       config.line_recordings or _data_dir / "line-recordings", _data_dir / "site-recipes.json")
 
-
-def get_widget_service() -> WidgetService:
-    return _widgets
 
 
 def get_inspection_service() -> InspectionService:

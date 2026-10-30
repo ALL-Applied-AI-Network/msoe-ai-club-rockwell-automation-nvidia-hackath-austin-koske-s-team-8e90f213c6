@@ -187,7 +187,7 @@ test** and **Run 5**; their difference is the sim-to-real gap.
 ## Not in scope before submission
 
 SAM/Faster R-CNN comparators, Dataset 1, TensorRT, the live digital-twin UI. Code stays in the
-repo; see [branches](branches.md).
+repo; see [branches (archived)](archive/branches-20261029.md).
 
 ## From CSI (October 27)
 

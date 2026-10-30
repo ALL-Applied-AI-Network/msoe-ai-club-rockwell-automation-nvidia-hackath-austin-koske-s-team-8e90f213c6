@@ -2,20 +2,18 @@
 
 | Document | Contents |
 | --- | --- |
-| [**Plan**](plan.md) | **The pipeline to submission: inputs, stages, actions, RCA, metrics, schedule, owners** |
+| [**Presentation**](../PRESENTATION.md) | **Submission: executive summary, talk and demo script, results against baselines** |
+| [Evaluation](evaluation.md) | Every measured result and its limits |
 | [Architecture](architecture.md) | Components, model inputs, measurement QA and the recipe-first vial check |
-| [Evaluation](evaluation.md) | Measured results and their limits (GB10, Run 5 retrospective, diagnosis pilot) |
+| [Line view](line-view.md) | The LINE page: live cameras, MOCK, recipe setup and CREATE mode, review |
+| [CSI session](csi-session.md) | On-site setup, trial checklist, recording and data handling |
+| [Plan](plan.md) | Pipeline design: inputs, stages, actions, RCA, metrics |
 | [Data and models](data.md) | Downloads, checksums, splits and the training/evaluation policy |
+| [Compute](compute.md) | Compute hosts, GPU-hours used and synthetic data volumes |
 | [Development](development.md) | Run inference, the app and the checks |
-| [Demo](demo.md) · [script](demo-script.md) | Laptop/GB10 operator app and rehearsal |
-| [CSI session](csi-session.md) | On-site setup, recording and data handling |
-| [Line view](line-view.md) | The LINE page: live and review modes, run manifests, how it was verified |
-| [Line runner on GB10](deploy-gb10-line.md) | Plan: capture, line runner, tray and RCA on CSI GB10s |
-| [Handoff 2026-10-28](handoff-20261028.md) | What is new on the line-runner branch and what each person needs |
-| [Operations](operations.md) · [Compute](compute.md) | Reference setup, supervised test, compute hosts |
+| [Demo](demo.md) · [script](demo-script.md) | Laptop app and the MONITOR single-vial walkthrough |
+| [Operations](operations.md) | Reference setup and supervised test |
 | [Investigation](investigation.md) | Rule-based sequence diagnosis panel (RCA baseline) |
-| [Branches](branches.md) | What each branch holds and what to do with it |
 | [Contributing](../CONTRIBUTING.md) | Branches, ownership and change boundaries |
 
-[Archive](archive/README.md): original briefs and the October 20 handoff. Their R-CNN/SAM design
-and real-data training instructions are superseded.
+[Archive](archive/README.md): original briefs, handoffs and superseded plans.

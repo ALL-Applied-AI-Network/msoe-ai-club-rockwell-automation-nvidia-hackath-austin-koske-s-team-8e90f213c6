@@ -19,3 +19,7 @@ branch reviews are available in Git history; verification JSON remains under
 
 The [October 20 consolidated handoff](handoff-2026-10-20.md) was the repository's root
 `HANDOFF.md`. It is superseded by [the plan](../plan.md).
+
+Superseded working notes from the last week: the [October 28 handoff](handoff-20261028.md),
+the [branch table](branches-20261029.md) and the [GB10 line deployment plan](deploy-gb10-line-plan.md)
+(now built; see [line view](../line-view.md) and [CSI session](../csi-session.md)).

@@ -424,6 +424,16 @@ empty signatures were corrected from that attributed evidence. Replay of the sam
 Good from two boxes to zero while retaining the two visible Bad inventory boxes. This is a narrow
 profile correction, not a full human-labeled accuracy evaluation.
 
+### LINE sessions on the CSI GB10 (2026-10-29)
+
+Ten sessions were run on CSI's GB10 with the station's fill and tray cameras and saved by the app
+(`Linewatch-OMEGA-20261030` handoff, checksums verified; two are simulated replays). Replayed
+offline through the same engine: 5,859 model samples, 746 with a QA-valid colour, 14 vials
+segmented and decided, 4 tray arrivals. The sessions followed a demo order of Run 5 recipe ids
+(7, 11, 5) against Run 5 references while the line ran other recipes, and the physical contents
+were not logged, so the verdicts (7 OUT OF SPEC, 7 CAN'T VERIFY) show the path works on
+the hardware, not accuracy. The kit's self-test passed 40/40 twice on the same GB10.
+
 ## CSI capture: water flushes after red and yellow (2026-10-28 clips, measured 2026-10-30)
 
 Six fill-camera clips recorded by CSI with mL metadata (`shamar-capture/` in the

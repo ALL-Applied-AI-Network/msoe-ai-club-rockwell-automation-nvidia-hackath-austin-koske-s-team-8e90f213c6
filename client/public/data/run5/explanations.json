@@ -1,0 +1,377 @@
+{
+ "schema": "linewatch-explanations/v1",
+ "model": "nvidia/nemotron-3-ultra-550b-a55b",
+ "recorded": "2026-10-30",
+ "source": "replay.explain --backend openai on build.nvidia.com, numbers only, Run 5 line runner v3 packets (rca-nim-nemotron-3-ultra-550b-a55b-text)",
+ "note": "Advisory. Used by the LINE page when the server cannot call the model; only for the same vial, recipe and verdict.",
+ "vials": {
+  "1": {
+   "recipe_id": "5",
+   "verdict": "OUT_OF_SPEC",
+   "latency_s": 17.78,
+   "problems": [],
+   "explanation": {
+    "cause": "vial_position",
+    "confidence": 0.75,
+    "evidence_ids": [
+     "context",
+     "measurement",
+     "comparison",
+     "neighbours",
+     "actions"
+    ],
+    "explanation": "Vial 1 shows a high ΔE2000 of 12.48 to its intended recipe 5 while the next two vials (seq 2–3) of the same recipe are in spec (ΔE 2.8 and 2.1). The QA flags for vial 1 include 26 counts of liquid_missing_or_ambiguous_inside_vial, insufficient_final_liquid_pixels, and insufficient_unclipped_pixels, plus vial_track_not_stable (3) and carrier_motion (2), indicating the vial was not stably positioned during fill and measurement. This instability likely caused both an unreliable colour reading and possible under-fill, triggering the scrap action.",
+    "next_check": "Inspect the vial seating and carrier mechanism at the fill station for sequence 1; verify that the vial is properly clamped and the carrier runs without vibration."
+   }
+  },
+  "4": {
+   "recipe_id": "6",
+   "verdict": "OUT_OF_SPEC",
+   "latency_s": 11.175,
+   "problems": [],
+   "explanation": {
+    "cause": "carryover",
+    "confidence": 0.95,
+    "evidence_ids": [
+     "context",
+     "measurement",
+     "comparison",
+     "neighbours",
+     "actions"
+    ],
+    "explanation": "Vial 4 (intended recipe 6) shows a large ΔE2000 of 24.0 to its intended recipe but only 8.2 to previous recipe 5, with a direction cosine of 0.93 confirming the color shift is toward recipe 5. Neighbouring vials 2–3 (recipe 5) are in spec, vial 5 (recipe 6) is also out of spec (ΔE 9.3), and vial 6 returns to in spec, indicating a carryover tail after the recipe change. The system correctly ordered a water-vial flush.",
+    "next_check": "Confirm the water-vial flush brings vial 7 (next recipe 6) back within spec (ΔE < 2.5)."
+   }
+  },
+  "5": {
+   "recipe_id": "6",
+   "verdict": "OUT_OF_SPEC",
+   "latency_s": 19.141,
+   "problems": [],
+   "explanation": {
+    "cause": "carryover",
+    "confidence": 0.95,
+    "evidence_ids": [
+     "context",
+     "measurement",
+     "comparison",
+     "neighbours",
+     "actions"
+    ],
+    "explanation": "Vial 5 (intended recipe 6) shows a ΔE of 9.3 to its target but a strong direction cosine of 0.99 toward previous recipe 5, with ΔE 17.0 to that recipe. The system verdict 'carryover' and the automatic FLUSH action confirm residual dye from recipe 5 contaminated the first vial after the changeover.",
+    "next_check": "Confirm the water flush vial was executed and verify the next vial (seq 6) is IN_SPEC before resuming production."
+   }
+  },
+  "7": {
+   "recipe_id": "7",
+   "verdict": "OUT_OF_SPEC",
+   "latency_s": 9.538,
+   "problems": [],
+   "explanation": {
+    "cause": "carryover",
+    "confidence": 0.98,
+    "evidence_ids": [
+     "context",
+     "measurement",
+     "comparison",
+     "neighbours",
+     "actions"
+    ],
+    "explanation": "Vial 7 (intended recipe 7) shows a ΔE of 23.6 to its target recipe but only 13.1 to previous recipe 6, with a direction cosine of 0.96 confirming the color shift is almost exactly toward recipe 6. Neighboring vials confirm recipe 6 vial 6 was in spec (ΔE 1.9) and the next recipe 7 vial 8 is in spec (ΔE 1.1), indicating the line had not fully cleared the previous dye before this fill.",
+    "next_check": "Verify the flush sequence between recipe 6 and 7: ensure at least one water vial is run and confirm the flush volume/flow clears the dosing lines before the first production vial of the new recipe."
+   }
+  },
+  "10": {
+   "recipe_id": "8",
+   "verdict": "CANT_VERIFY",
+   "latency_s": 24.569,
+   "problems": [],
+   "explanation": {
+    "cause": "no_reference",
+    "confidence": 0.95,
+    "evidence_ids": [
+     "context",
+     "measurement",
+     "comparison",
+     "neighbours",
+     "actions"
+    ],
+    "explanation": "The comparison shows a 'no_reference' pattern with verdict CANT_VERIFY because there is no reference colour for recipe 8. The HOLD action was issued explicitly for 'No reference colour for recipe 8'. Neighbouring vials 11 and 12 (also recipe 8) are similarly CANT_VERIFY, confirming the missing reference is systemic.",
+    "next_check": "Verify that the reference colour for recipe 8 is loaded in the system and that the reference frame (keyframe 12532) contains a valid colour measurement."
+   }
+  },
+  "11": {
+   "recipe_id": "8",
+   "verdict": "CANT_VERIFY",
+   "latency_s": 21.826,
+   "problems": [],
+   "explanation": {
+    "cause": "short_fill",
+    "confidence": 0.8,
+    "evidence_ids": [
+     "measurement",
+     "comparison",
+     "neighbours",
+     "actions"
+    ],
+    "explanation": "The vial has no valid colour measurement (endpoint_lab null, 0 endpoint samples) and QA flags show insufficient_final_liquid_pixels (60) and liquid_missing_or_ambiguous_inside_vial (60), indicating the fill volume was too low for reliable colour analysis. The HOLD action was issued because no QA-valid colour was found in the endpoint window.",
+    "next_check": "Verify the actual fill volume for vial 11 and inspect the fill nozzle for partial occlusion or incorrect dwell time."
+   }
+  },
+  "12": {
+   "recipe_id": "8",
+   "verdict": "CANT_VERIFY",
+   "latency_s": 5.389,
+   "problems": [],
+   "explanation": {
+    "cause": "no_reference",
+    "confidence": 0.95,
+    "evidence_ids": [
+     "context",
+     "comparison",
+     "neighbours",
+     "actions"
+    ],
+    "explanation": "The system cannot verify vial 12 (recipe 8) because no reference colour exists for recipe 8 — comparison shows 'pattern': 'no_reference' and all ΔE values are null. Neighbouring vials 10, 11, 13, 14 also return CANT_VERIFY with no reference, and the PLC action explicitly states 'No reference colour for recipe 8'.",
+    "next_check": "Capture or load a valid reference colour for recipe 8 before resuming production."
+   }
+  },
+  "13": {
+   "recipe_id": "9",
+   "verdict": "CANT_VERIFY",
+   "latency_s": 6.411,
+   "problems": [],
+   "explanation": {
+    "cause": "no_reference",
+    "confidence": 0.95,
+    "evidence_ids": [
+     "context",
+     "measurement",
+     "comparison",
+     "neighbours",
+     "actions"
+    ],
+    "explanation": "The system cannot verify vial 13 because there is no reference colour for recipe 9 (comparison.pattern = 'no_reference', actions.reason = 'No reference colour for recipe 9'). All neighbouring vials (seq 11-15) also show CANT_VERIFY, confirming the reference is missing for the entire recipe. QA flags indicate liquid detection issues but the root cause is the absent reference.",
+    "next_check": "Verify that a valid reference colour for recipe 9 has been captured and stored in the system before releasing the hold."
+   }
+  },
+  "14": {
+   "recipe_id": "9",
+   "verdict": "CANT_VERIFY",
+   "latency_s": 10.507,
+   "problems": [],
+   "explanation": {
+    "cause": "no_reference",
+    "confidence": 0.95,
+    "evidence_ids": [
+     "comparison",
+     "context",
+     "actions"
+    ],
+    "explanation": "The verification failed because there is no reference colour for recipe 9 (pattern 'no_reference' in comparison, hold reason 'No reference colour for recipe 9'). The QA flags also indicate liquid detection issues, but the primary cause is the missing reference.",
+    "next_check": "Confirm that a reference colour for recipe 9 has been captured and stored in the system, or run a reference vial for recipe 9."
+   }
+  },
+  "15": {
+   "recipe_id": "9",
+   "verdict": "CANT_VERIFY",
+   "latency_s": 11.605,
+   "problems": [],
+   "explanation": {
+    "cause": "no_reference",
+    "confidence": 0.98,
+    "evidence_ids": [
+     "context",
+     "measurement",
+     "comparison",
+     "neighbours",
+     "actions"
+    ],
+    "explanation": "The system cannot verify vial 15 because there is no reference colour for recipe 9; the comparison shows null ΔE values and pattern 'no_reference', and the HOLD action was explicitly triggered with reason 'No reference colour for recipe 9'.",
+    "next_check": "Capture and store a valid reference colour for recipe 9 in the system before running further vials of this recipe."
+   }
+  },
+  "16": {
+   "recipe_id": "10",
+   "verdict": "OUT_OF_SPEC",
+   "latency_s": 32.394,
+   "problems": [],
+   "explanation": {
+    "cause": "carryover",
+    "confidence": 0.92,
+    "evidence_ids": [
+     "context",
+     "measurement",
+     "comparison",
+     "neighbours",
+     "actions"
+    ],
+    "explanation": "Vial 16 is the first vial of recipe 10 after recipe 9, and its ΔE2000 to the intended recipe is 13.5 (OUT_OF_SPEC). The following vials 17 and 18 of the same recipe are IN_SPEC with ΔE values of 3.3 and 1.7, confirming the line stabilizes quickly. This pattern is consistent with residual dye from recipe 9 carrying over into the first vial of the new recipe.",
+    "next_check": "Confirm a water flush vial was executed between recipe 9 and 10, and verify flush volume and duration are sufficient to clear the line."
+   }
+  },
+  "19": {
+   "recipe_id": "11",
+   "verdict": "OUT_OF_SPEC",
+   "latency_s": 14.285,
+   "problems": [],
+   "explanation": {
+    "cause": "carryover",
+    "confidence": 0.99,
+    "evidence_ids": [
+     "context",
+     "measurement",
+     "comparison",
+     "neighbours",
+     "actions"
+    ],
+    "explanation": "Vial 19 (intended recipe 11) shows a ΔE of 13.54 to its target but only 1.74 to the previous recipe 10, with a direction cosine of 0.9996 indicating the colour shift is almost exactly toward recipe 10. Neighbouring vials 17–18 (recipe 10) and 20–21 (recipe 11) are all in spec, confirming a single-vial carryover event. The system correctly issued a SCRAP and a FLUSH water vial.",
+    "next_check": "Confirm the water vial flush completed and verify vial 20 (seq 20) colour is within spec for recipe 11 to ensure the line is cleared."
+   }
+  },
+  "22": {
+   "recipe_id": "12",
+   "verdict": "CANT_VERIFY",
+   "latency_s": 26.374,
+   "problems": [],
+   "explanation": {
+    "cause": "short_fill",
+    "confidence": 0.85,
+    "evidence_ids": [
+     "measurement",
+     "comparison",
+     "actions"
+    ],
+    "explanation": "Vial 22 shows no valid endpoint colour measurement (endpoint_samples=0, verdict=CANT_VERIFY) and QA flags indicate liquid_missing_or_ambiguous_inside_vial and insufficient_final_liquid_pixels (65 each). The hold action cites 'No QA-valid colour in the endpoint window', consistent with an underfilled vial that lacks enough liquid for colour analysis.",
+    "next_check": "Verify fill volume and nozzle function for vial 22; check for partial fill or nozzle blockage during its 25-second fill window."
+   }
+  },
+  "23": {
+   "recipe_id": "12",
+   "verdict": "OUT_OF_SPEC",
+   "latency_s": 23.326,
+   "problems": [],
+   "explanation": {
+    "cause": "carryover",
+    "confidence": 0.95,
+    "evidence_ids": [
+     "context",
+     "measurement",
+     "comparison",
+     "neighbours",
+     "actions"
+    ],
+    "explanation": "Vial 23 (recipe 12) shows a ΔE of 5.45 to its intended recipe (out of spec) but a strong direction cosine of 0.975 toward previous recipe 11, indicating the colour shift is almost exactly toward the prior formulation. The subsequent vial 24 (recipe 12) is in spec with ΔE 1.55, confirming the line recovers after the flush action that was triggered to clear carryover.",
+    "next_check": "Confirm the water flush vial completes and the next production vial (seq 24) remains in spec before resuming normal production."
+   }
+  },
+  "25": {
+   "recipe_id": "13",
+   "verdict": "CANT_VERIFY",
+   "latency_s": 69.736,
+   "problems": [],
+   "explanation": {
+    "cause": "vial_position",
+    "confidence": 0.75,
+    "evidence_ids": [
+     "context",
+     "measurement",
+     "neighbours",
+     "actions"
+    ],
+    "explanation": "Vial tracking was unstable (vial_track_not_stable: 2) with carrier motion detected, causing liquid detection to fail across 66 samples (liquid_missing_or_ambiguous_inside_vial and insufficient_final_liquid_pixels). No valid colour measurement could be obtained, triggering a HOLD. Neighbouring vials of the previous recipe measured normally, indicating the issue is specific to this vial's positioning.",
+    "next_check": "Verify vial seating and tracking stability for recipe 13 vials, especially the first vials after recipe change."
+   }
+  },
+  "26": {
+   "recipe_id": "13",
+   "verdict": "CANT_VERIFY",
+   "latency_s": 31.85,
+   "problems": [],
+   "explanation": {
+    "cause": "vial_position",
+    "confidence": 0.9,
+    "evidence_ids": [
+     "context",
+     "measurement",
+     "neighbours",
+     "actions"
+    ],
+    "explanation": "Vial 26 (recipe 13) showed no valid colour measurement (endpoint_samples=0, verdict CANT_VERIFY) because the vial track was unstable in 4 frames, carrier motion was detected, and the vial was not detected in 1 frame, resulting in insufficient final liquid pixels (75 frames) and liquid missing/ambiguous (74 frames). The hold action was triggered due to 'No QA-valid colour in the endpoint window'.",
+    "next_check": "Inspect the vial positioning and tracking system for vial 26; verify carrier stability and vial detection sensors at the fill station."
+   }
+  },
+  "27": {
+   "recipe_id": "13",
+   "verdict": "CANT_VERIFY",
+   "latency_s": 41.981,
+   "problems": [],
+   "explanation": {
+    "cause": "short_fill",
+    "confidence": 0.7,
+    "evidence_ids": [
+     "measurement",
+     "comparison",
+     "neighbours",
+     "actions"
+    ],
+    "explanation": "Vial 27 has zero endpoint colour samples and 75 QA flags for liquid missing/insufficient pixels, indicating the vial likely did not fill enough for a valid colour measurement. Neighbouring vials 25–26 (same recipe) also cannot be verified, while vial 29 (next recipe) is out of spec, suggesting a possible fill-volume issue.",
+    "next_check": "Verify the actual fill volume of vial 27 and inspect the fill nozzle for consistent operation."
+   }
+  },
+  "28": {
+   "recipe_id": "14",
+   "verdict": "CANT_VERIFY",
+   "latency_s": 20.437,
+   "problems": [],
+   "explanation": {
+    "cause": "short_fill",
+    "confidence": 0.75,
+    "evidence_ids": [
+     "measurement",
+     "comparison",
+     "neighbours",
+     "actions"
+    ],
+    "explanation": "Vial 28 (first of recipe 14) has zero QA-valid color samples and endpoint_lab is null. The QA flags show liquid_missing_or_ambiguous_inside_vial and insufficient_final_liquid_pixels each at 46 frames, indicating the fill volume was too low for reliable color measurement. The hold action was triggered because no QA-valid color could be obtained in the endpoint window.",
+    "next_check": "Verify the fill volume and nozzle performance for the first vial of recipe 14; check for partial blockage or pump calibration drift."
+   }
+  },
+  "29": {
+   "recipe_id": "14",
+   "verdict": "OUT_OF_SPEC",
+   "latency_s": 127.056,
+   "problems": [],
+   "explanation": {
+    "cause": "carryover",
+    "confidence": 0.8,
+    "evidence_ids": [
+     "context",
+     "measurement",
+     "comparison",
+     "neighbours"
+    ],
+    "explanation": "Vial 29 is the second vial after a recipe change from 13 to 14; the first vial (seq 28) could not be verified, and the next two vials (29 and 30) both show large ΔE to the intended recipe 14 (14.9 and 9.95). This pattern of elevated colour deviation on the first few vials after a change is characteristic of carryover from the previous recipe, especially since the line switches without cleaning and relies on a water flush that may have been insufficient.",
+    "next_check": "Confirm that a water flush vial was executed after recipe 13 and verify the flush volume and line clearance before recipe 14 production."
+   }
+  },
+  "30": {
+   "recipe_id": "14",
+   "verdict": "OUT_OF_SPEC",
+   "latency_s": 37.817,
+   "problems": [],
+   "explanation": {
+    "cause": "dose_error",
+    "confidence": 0.75,
+    "evidence_ids": [
+     "context",
+     "measurement",
+     "comparison",
+     "neighbours"
+    ],
+    "explanation": "Vial 30 has a ΔE2000 of 9.95 to its intended recipe 14 (OUT_OF_SPEC). The previous vial (seq 29, same recipe) shows an even larger ΔE of 14.88, indicating a consistent color deviation for recipe 14. No carryover from recipe 13 is evident (direction cosine and ΔE to previous are null). This systematic offset points to a dosing error in the recipe 14 formulation or pump calibration.",
+    "next_check": "Verify dye tank volumes and pump calibration for recipe 14; compare actual dispensed volumes against recipe targets."
+   }
+  }
+ }
+}

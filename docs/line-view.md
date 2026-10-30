@@ -232,7 +232,21 @@ fallback.
   - the first new vial may appear in any open slot; capped vials already present in the first
     arm-free baseline are treated as existing inventory, not arrivals from this run;
   - a banner for each arrival.
-- **Ledger:** the vials decided so far, with tray status.
+- **Ledger:** the vials decided so far, with tray status. Click a row for why: ΔE to the
+  intended and previous recipes, the direction cosine, the rule cause and every action's reason.
+- **Why a vial failed:** each action carries its reason (the Actions list shows it under the
+  action; Last decision and the ledger row list them with the rule cause). This is the
+  deterministic RCA: the pattern from `replay/decide.py` and `rule_cause`.
+- **Explain with AI** (non-IN SPEC vials, on request): sends the vial's evidence packet (the same
+  one as the offline explainer evaluation: context, measurement, comparison, neighbours decided so
+  far, actions) to Nemotron 3 Ultra on build.nvidia.com, which returns a cause, confidence, a short
+  explanation and a next check. It is labelled **AI · ADVISORY** and never changes a verdict or
+  action; a claim the packet's numbers rule out is shown as a contradiction. Takes about 15–100 s.
+  It needs `NVIDIA_API_KEY` in the server's environment (or `APP__EXPLAIN_KEY_FILE`, a KEY=VALUE
+  file); the key is never returned or logged. Without a key or internet, a run whose library folder
+  has `explanations.json` (Run 5: the recorded 2026-10-30 answers) shows the recorded answer for
+  the same vial, recipe and verdict, marked "recorded". `APP__EXPLAIN_MODEL` and
+  `APP__EXPLAIN_URL` select another OpenAI-compatible endpoint.
 
 Nothing the panel shows uses future frames. The phase and the liquid bar come from samples so
 far. The vial number under the nozzle is the next schedule row; a vial gets its number only when
@@ -323,6 +337,8 @@ paths.
 | `GET /api/v1/line/runs/{id}/video/{fill\|tray}` | The recording, with range requests |
 | `GET /api/v1/line/orders` | Inspection runs with a recipe plan, newest first |
 | `GET /api/v1/line/preview/{key}/{fill\|fill_mask\|tray\|tray_detection}` | Raw or evidence-overlay MJPEG stream of a live camera session |
+| `GET /api/v1/line/explain` | The explainer model and whether a key is configured |
+| `POST /api/v1/line/explain` | Body `{run_id, vial, actions, decided, next_recipe}`: advisory AI explanation of one vial |
 | `WS /api/v1/line/runs/{id}/live?source=recorded\|video\|camera&speed=N&start=S&order=RUN&simulate=RUN` | `meta`, then `events` and `clock` messages, then `end`. Send `{"speed": N}` or `{"paused": true}` |
 
 ## Not yet

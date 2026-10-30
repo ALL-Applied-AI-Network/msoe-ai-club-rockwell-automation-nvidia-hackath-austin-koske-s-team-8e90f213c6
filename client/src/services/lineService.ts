@@ -166,3 +166,21 @@ export async function createLineRecipe(name: string, ml: { t100_ml: number; t200
 export async function setLineCapture(recipeId: string | null): Promise<string | null> {
   return (await api.put<{ capture: string | null }>("/line/recipes/capture", { recipe_id: recipeId })).data.capture;
 }
+
+/** Advisory AI explanation of a decided vial (api/services/explain.py); never changes its verdict. */
+export interface VialExplanation {
+  source: "live" | "recorded";
+  model: string;
+  recorded?: string;
+  latency_s: number | null;
+  note?: string;
+  problems: string[];
+  contradictions: string[];
+  explanation: { cause: string; confidence: number; evidence_ids: string[]; explanation: string | null; next_check: string | null };
+}
+
+export async function explainVial(runId: string, vial: LineVial, actions: LineAction[], decided: LineVial[],
+  nextRecipe: string | null): Promise<VialExplanation> {
+  const body = { run_id: runId, vial, actions, decided, next_recipe: nextRecipe };
+  return (await api.post<VialExplanation>("/line/explain", body, { timeout: 150_000 })).data;
+}

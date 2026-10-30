@@ -1,13 +1,15 @@
 import asyncio
 import json
 import threading
+from pathlib import Path
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel, Field
 
-from dependencies import get_inspection_service, get_line_runs
+from dependencies import get_explainer, get_inspection_service, get_line_runs
+from services.explain import packet
 from services.line import LIVE, MAX_SESSIONS, MOCK, SPEEDS, SessionClock
 
 router = APIRouter(prefix="/line", tags=["line"])
@@ -94,6 +96,37 @@ async def review_events(run_id: str, order: str | None = None, runs=Depends(get_
         raise HTTPException(404, "Line run not found") from error
     except ValueError as error:
         raise HTTPException(409, str(error)) from error
+
+
+class ExplainRequest(BaseModel):
+    run_id: str
+    vial: dict
+    actions: list[dict] = []
+    decided: list[dict] = []
+    next_recipe: str | None = None
+
+
+@router.get("/explain")
+async def explain_status(explainer=Depends(get_explainer)):
+    """Which model explains vials, and whether this server can call it (a key is configured)."""
+    return explainer.available()
+
+
+@router.post("/explain")
+async def explain(body: ExplainRequest, runs=Depends(get_line_runs), explainer=Depends(get_explainer)):
+    """Advisory AI explanation of one decided vial; never changes its verdict or actions."""
+    if "seq" not in body.vial or "recipe_id" not in body.vial:
+        raise HTTPException(400, "vial needs seq and recipe_id")
+    try:
+        library = runs.manifest(body.run_id).get("library")
+    except KeyError:
+        library = None
+    recorded = Path(library).parent / "explanations.json" if library else None
+    evidence = packet(body.vial, body.actions, body.decided, body.next_recipe)
+    try:
+        return {**await asyncio.to_thread(explainer.explain, evidence, recorded), "packet": evidence}
+    except LookupError as error:
+        raise HTTPException(503, str(error)) from error
 
 
 @router.get("/runs/{run_id}/video/{camera}")

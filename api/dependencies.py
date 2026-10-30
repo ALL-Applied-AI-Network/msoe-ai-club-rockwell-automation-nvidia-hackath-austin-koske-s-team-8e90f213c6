@@ -6,6 +6,7 @@ from pipelines.mock import MockInspectionPipeline
 from pipelines.temporal import TemporalInspectionPipeline
 from services.artifacts import ArtifactStore
 from services.event_broker import EventBroker
+from services.explain import Explainer
 from services.inspection import InspectionService
 from services.line import LineRuns
 from settings import config
@@ -52,3 +53,10 @@ def get_inspection_service() -> InspectionService:
 
 def get_line_runs() -> LineRuns:
     return _line_runs
+
+
+_explainer = Explainer(config.explain_url, config.explain_model, config.explain_key_file)
+
+
+def get_explainer() -> Explainer:
+    return _explainer

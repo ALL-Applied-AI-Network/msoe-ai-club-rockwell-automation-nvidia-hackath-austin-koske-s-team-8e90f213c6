@@ -148,7 +148,8 @@ def openai_explain(packet, args, images):
         args.url.rstrip("/") + "/chat/completions",
         data=json.dumps({"model": args.model, "temperature": 0, "max_tokens": args.max_tokens,
                          "messages": [{"role": "system", "content": SYSTEM}, {"role": "user", "content": content}]}).encode(),
-        headers={"Content-Type": "application/json", "Authorization": f"Bearer {os.environ.get(args.key_env, 'none')}"})
+        headers={"Content-Type": "application/json",
+                 "Authorization": f"Bearer {getattr(args, 'key', None) or os.environ.get(args.key_env, 'none')}"})
     with urllib.request.urlopen(request, timeout=args.timeout) as response:
         return json.loads(response.read())["choices"][0]["message"]["content"]
 

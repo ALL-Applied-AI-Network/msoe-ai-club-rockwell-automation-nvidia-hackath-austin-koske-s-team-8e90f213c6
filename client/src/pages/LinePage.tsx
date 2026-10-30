@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import PageChrome from "@/components/PageChrome";
 import type { RecipeContext } from "@/models/inspection";
@@ -7,8 +7,8 @@ import { deltaE2000, loadRecipeLibrary, recipeSummary, type RecipeDefinition } f
 import { Link } from "react-router-dom";
 import {
   listLineOrders, listLineRuns, liveSocket, previewUrl, reviewEvents, videoUrl,
-  type LineEvent, type LineSource, type LiveMessage, type TrayArrival,
-  createLineRecipe, listLineRecipes, setLineCapture,
+  type LineAction, type LineEvent, type LineSource, type LineVial, type LiveMessage, type TrayArrival,
+  createLineRecipe, explainVial, listLineRecipes, setLineCapture, type VialExplanation,
 } from "@/services/lineService";
 import { ACTION_TONE, VERDICT_TONE, clock, labToCss, phase, viewAt, type LineView } from "@/services/lineState";
 import "./LinePage.css";
@@ -524,14 +524,14 @@ export default function LinePage() {
             <FillCamera view={view} runId={run.id} videoRef={fill} controls={!live}
               preview={live && camera && preview ? previewUrl(preview, "fill") : undefined}
               maskPreview={live && camera && preview ? previewUrl(preview, "fill_mask") : undefined} />
-            <Panel view={view} />
+            <Panel view={view} runId={run.id} />
             {run.has_tray && <TrayCamera view={view} runId={run.id} videoRef={tray}
               preview={live && camera && preview ? previewUrl(preview, "tray") : undefined}
               detectionPreview={live && camera && preview ? previewUrl(preview, "tray_detection") : undefined} />}
           </section>
         )}
 
-        {run && <Ledger view={view} />}
+        {run && <Ledger view={view} runId={run.id} />}
       </main>
     </PageChrome>
   );
@@ -618,7 +618,7 @@ function arrivalNote(a: TrayArrival) {
   return "as decided";
 }
 
-function Panel({ view }: { view: LineView }) {
+function Panel({ view, runId }: { view: LineView; runId: string }) {
   const meta = view.meta;
   const ordered = meta?.scheduled_vials ?? 0;
   const n = Math.max(ordered, view.vials.length);
@@ -676,6 +676,8 @@ function Panel({ view }: { view: LineView }) {
                   {last.de_intended != null ? `endpoint ΔE ${last.de_intended.toFixed(1)} to recipe` : "no QA-valid endpoint colour"}
                   {last.direction_cos != null && `, cos ${last.direction_cos.toFixed(2)} toward ${last.previous_recipe_id}`}
                 </p>
+                <Why vial={last} actions={view.actions} />
+                {last.verdict !== "IN_SPEC" && <AiExplain key={`${runId}-${last.seq}`} runId={runId} vial={last} view={view} />}
               </>
             ) : <p className="ln-muted">No vial decided yet</p>}
           </div>
@@ -689,6 +691,7 @@ function Panel({ view }: { view: LineView }) {
                   <strong className={`ln-tone-${ACTION_TONE[a.kind] ?? "muted"}`}>{a.kind.replaceAll("_", " ")}</strong>
                   <span>{a.seq ? `vial ${a.seq}` : "line"}</span>
                   {a.deadline_s != null && a.kind !== "PASS" && a.deadline_s - view.t >= 1 && <em>due {Math.round(a.deadline_s - view.t)} s</em>}
+                  {a.kind !== "PASS" && <small className="ln-reason">{a.reason}</small>}
                 </li>
               ))}
               {!actions.length && <li className="ln-muted">None yet</li>}
@@ -720,12 +723,80 @@ function Panel({ view }: { view: LineView }) {
   );
 }
 
-function Ledger({ view }: { view: LineView }) {
+const CAUSE: Record<string, string> = {
+  carryover: "carryover from the previous recipe",
+  wrong_recipe_or_dose: "wrong recipe or dosing",
+  unknown: "not established",
+};
+
+/** Rule-based explanation of one vial's decision: the cause and every action's reason. */
+function Why({ vial, actions }: { vial: LineVial; actions: LineAction[] }) {
+  const own = actions.filter((a) => a.seq === vial.seq && a.kind !== "PASS");
+  if (vial.verdict === "IN_SPEC" && !own.length) return null;
+  return (
+    <div className="ln-why">
+      {vial.rule_cause !== "none" && <p><small>CAUSE (RULE)</small> {CAUSE[vial.rule_cause] ?? vial.rule_cause.replaceAll("_", " ")}</p>}
+      <ul>{own.map((a, i) => <li key={`${a.kind}-${i}`}><strong className={`ln-tone-${ACTION_TONE[a.kind] ?? "muted"}`}>{a.kind.replaceAll("_", " ")}</strong> {a.reason}</li>)}</ul>
+    </div>
+  );
+}
+
+// Answers survive re-renders and switching between the panel and the ledger.
+const explained = new Map<string, VialExplanation>();
+
+/** On request: Nemotron's explanation of a decided vial. Advisory; the verdict and actions are the rules'. */
+function AiExplain({ runId, vial, view }: { runId: string; vial: LineVial; view: LineView }) {
+  const key = `${runId}:${vial.seq}:${vial.verdict}:${vial.recipe_id}`;
+  const [answer, setAnswer] = useState<VialExplanation | null>(() => explained.get(key) ?? null);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const ask = async () => {
+    setBusy(true);
+    setError(null);
+    try {
+      const decided = view.vials.filter((v) => v.seq <= vial.seq + 2);
+      const result = await explainVial(runId, vial, view.actions, decided, view.meta?.schedule[vial.seq] ?? null);
+      explained.set(key, result);
+      setAnswer(result);
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "Explanation unavailable");
+    } finally {
+      setBusy(false);
+    }
+  };
+  if (!answer) {
+    return (
+      <div className="ln-ai">
+        <button type="button" onClick={(e) => { e.stopPropagation(); void ask(); }} disabled={busy}>
+          {busy ? "ASKING NEMOTRON…" : "EXPLAIN WITH AI"}
+        </button>
+        {error && <small className="ln-tone-failure">{error}</small>}
+      </div>
+    );
+  }
+  const e = answer.explanation;
+  return (
+    <div className="ln-ai ln-ai-answer">
+      <p className="ln-ai-head">
+        <small>AI · ADVISORY</small> {answer.model.replace(/^nvidia\//, "")}
+        {answer.source === "recorded" ? ` · recorded ${answer.recorded ?? ""}` : answer.latency_s != null ? ` · ${answer.latency_s} s` : ""}
+      </p>
+      <p><strong>{e.cause.replaceAll("_", " ")}</strong> <span className="ln-muted">confidence {Math.round(e.confidence * 100)}%</span></p>
+      {e.explanation && <p>{e.explanation}</p>}
+      {e.next_check && <p><small>NEXT CHECK</small> {e.next_check}</p>}
+      {answer.contradictions.length > 0 && <p className="ln-tone-warning">The measurements contradict this: {answer.contradictions.map((c) => c.replaceAll("_", " ")).join("; ")}</p>}
+      {answer.note && <p className="ln-muted">{answer.note}; showing the recorded answer for this vial.</p>}
+    </div>
+  );
+}
+
+function Ledger({ view, runId }: { view: LineView; runId: string }) {
   const arrivals = new Map(view.arrivals.filter((a) => a.seq).map((a) => [a.seq!, a]));
+  const [open, setOpen] = useState<number | null>(null);
   if (!view.vials.length) return null;
   return (
     <section className="ln-ledger panel">
-      <div className="panel-heading compact"><div><h2>Ledger</h2><p>Vials decided so far, newest first</p></div></div>
+      <div className="panel-heading compact"><div><h2>Ledger</h2><p>Vials decided so far, newest first · click a row for why</p></div></div>
       <div className="ln-table-wrap">
         <table>
           <thead><tr><th>Vial</th><th>Recipe</th><th>Decided</th><th>Colour</th><th>ΔE</th><th>Verdict</th><th>Pattern</th><th>Actions</th><th>Tray</th></tr></thead>
@@ -733,7 +804,8 @@ function Ledger({ view }: { view: LineView }) {
             {[...view.vials].reverse().map((v) => {
               const a = arrivals.get(v.seq);
               return (
-                <tr key={v.seq}>
+                <Fragment key={v.seq}>
+                <tr className="ln-row" onClick={() => setOpen(open === v.seq ? null : v.seq)} aria-expanded={open === v.seq}>
                   <td>{v.seq}</td>
                   <td>{v.recipe_id}{v.previous_recipe_id ? <small> after {v.previous_recipe_id}</small> : null}</td>
                   <td>{clock(v.decision_s)}</td>
@@ -744,6 +816,19 @@ function Ledger({ view }: { view: LineView }) {
                   <td>{v.actions.replaceAll("+", " + ")}</td>
                   <td>{a ? `${a.tray}${a.slot ? ` ${a.slot}` : ""}${a.capped === false ? " · NO CAP" : ""}${a.status === "escaped" ? " · escaped" : ""}` : view.missed.includes(v.seq) ? "not seen" : "in transit"}</td>
                 </tr>
+                {open === v.seq && (
+                  <tr className="ln-row-detail"><td colSpan={9}>
+                    <p className="ln-muted">
+                      {v.de_intended != null ? `ΔE ${v.de_intended.toFixed(1)} to recipe ${v.recipe_id}` : "no QA-valid endpoint colour"}
+                      {v.de_previous != null && ` · ΔE ${v.de_previous.toFixed(1)} to previous recipe ${v.previous_recipe_id}`}
+                      {v.direction_cos != null && ` · shift toward it cos ${v.direction_cos.toFixed(2)}`}
+                    </p>
+                    <Why vial={v} actions={view.actions} />
+                    {v.verdict !== "IN_SPEC" && <AiExplain runId={runId} vial={v} view={view} />}
+                    {v.verdict === "IN_SPEC" && <p className="ln-muted">Within the recipe band: routed to the Good tray.</p>}
+                  </td></tr>
+                )}
+                </Fragment>
               );
             })}
           </tbody>

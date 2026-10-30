@@ -57,7 +57,7 @@ The models do the perception; every decision on top of them is a fixed, auditabl
 | Vial verdict | Endpoint Lab vs the recipe's reference (ΔE2000 band 5), direction toward the previous recipe (cos 0.8) | No: fixed thresholds |
 | Early warning | Each sample during the fill vs the reference vial's colour at the same time since fill start; 3 in a row beyond the band ([replay/early.py](../replay/early.py)) | No: fixed rule, one reference vial |
 | Actions and deadlines | SCRAP before the sorter (120 s), FLUSH before the next fill, STOP after 3 deviations, HOLD | No: fixed rules ([replay/decide.py](../replay/decide.py)) |
-| Cause | Rule baseline decides; hosted and on-device language/vision models were compared as explainers | Models only word the explanation |
+| Cause | Rule baseline decides (pattern and `rule_cause`, shown with each action's reason). On request, the LINE page's **Explain with AI** asks Nemotron 3 Ultra (build.nvidia.com) for a cause, explanation and next check from the same evidence ([api/services/explain.py](../api/services/explain.py)); answers the numbers rule out are flagged | The AI answer is advisory: it never changes a verdict or action |
 
 Why rules above the models: a new recipe needs one accepted vial, not a labelled training set (no
 dataset records per-vial outcomes, and real CSI recordings are evaluation-only); every action

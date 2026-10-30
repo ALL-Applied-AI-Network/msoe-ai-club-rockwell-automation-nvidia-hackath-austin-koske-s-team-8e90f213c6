@@ -37,11 +37,11 @@ mkdir -p "$K/replay" "$K/integration" "$K/setup/vision" "$K/setup/gb10" "$K/clie
 (cd "$ROOT" && tar --exclude=__pycache__ --exclude='.venv*' --exclude=.pytest_cache --exclude=data --exclude=.env --exclude=tests -cf - api) | tar -xf - -C "$K"
 cp "$ROOT"/replay/{__init__,config,geometry,measurement,diagnostics}.py "$K/replay/"
 # The LINE page: live cameras, the line runner and its decisions, and the CSI station config.
-cp "$ROOT"/replay/{cameras,decide,early,eval_freeze,line,line_metrics,live,recipes,recipes_order,segmentation,tray}.py "$K/replay/"
+cp "$ROOT"/replay/{cameras,decide,early,eval_freeze,explain,line,line_metrics,live,recipes,recipes_order,segmentation,tray}.py "$K/replay/"
 cp "$ROOT/setup/csi-station.json" "$K/setup/"
 mkdir -p "$K/replay/examples" && cp "$ROOT/replay/examples/run5-schedule.csv" "$K/replay/examples/"
 mkdir -p "$K/client/public/data/run5"
-cp "$ROOT"/client/public/data/run5/{recipe-library,reference-trajectories}.json "$K/client/public/data/run5/"
+cp "$ROOT"/client/public/data/run5/{recipe-library,reference-trajectories,explanations}.json "$K/client/public/data/run5/"
 cp "$ROOT"/integration/{runtime,measurement_qa}.py "$K/integration/"
 cp "$ROOT"/setup/vision/{temporal_pool,train_pair_masks}.py "$K/setup/vision/"
 cp "$ROOT"/setup/gb10/{start.sh,README.md,selftest.py,selftest-expected.json,e2e_mock.py,lock-cuda.txt,lock-cpu.txt} "$K/setup/gb10/"

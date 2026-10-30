@@ -111,6 +111,16 @@
 .ln-actions li { display: grid; grid-template-columns: 44px minmax(0, 1fr) 54px 64px; gap: 6px; align-items: baseline; }
 .ln-actions strong { font: 600 11px var(--mono); }
 .ln-actions em { color: var(--cyan); font: 11px var(--mono); font-style: normal; text-align: right; }
+.ln-actions .ln-reason { grid-column: 2 / -1; color: var(--muted); font-size: 11px; line-height: 1.35; }
+.ln-why { margin-top: 6px; font-size: 12px; line-height: 1.4; }
+.ln-why p { margin: 0 0 4px; }
+.ln-why small { color: var(--muted); font: 600 10px var(--mono); margin-right: 4px; }
+.ln-why ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 3px; }
+.ln-why strong { font: 600 11px var(--mono); margin-right: 4px; }
+.ln-row { cursor: pointer; }
+.ln-row:hover td { background: color-mix(in srgb, var(--cyan) 6%, transparent); }
+.ln-ledger .ln-row-detail td { white-space: normal; padding-top: 2px; padding-bottom: 10px; }
+.ln-row-detail p { margin: 0 0 4px; }
 .ln-strip { display: grid; gap: 2px; }
 .ln-strip span { height: 16px; background: var(--line); }
 .ln-strip .ln-current { outline: 2px solid var(--text); outline-offset: 1px; }
@@ -146,3 +156,11 @@
 .ln-create-mode p { margin: 0; }
 .ln-create-mode.armed { border-style: solid; border-color: #e0a100; background: rgba(224, 161, 0, 0.12); opacity: 1; }
 .ln-new-recipe { margin-top: 8px; }
+
+.ln-ai { margin-top: 8px; display: grid; gap: 4px; justify-items: start; font-size: 12px; line-height: 1.45; }
+.ln-ai button { font: 600 11px var(--mono); padding: 4px 10px; border: 1px solid var(--cyan); color: var(--cyan); background: transparent; border-radius: 4px; cursor: pointer; }
+.ln-ai button:disabled { opacity: .6; cursor: progress; }
+.ln-ai-answer { border-left: 2px solid var(--cyan); padding-left: 8px; max-width: 72ch; }
+.ln-ai-answer p { margin: 0; }
+.ln-ai-head, .ln-ai small { color: var(--muted); font: 600 10px var(--mono); }
+.ln-ai-head small { color: var(--cyan); margin-right: 4px; }

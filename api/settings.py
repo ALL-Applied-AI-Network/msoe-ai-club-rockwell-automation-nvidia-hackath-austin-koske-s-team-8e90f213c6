@@ -39,6 +39,10 @@ class AppConfig(BaseSettings):
     # Live cameras for the line view (station JSON) and where live sessions are saved.
     line_station: Path | None = None
     line_recordings: Path | None = None
+    # AI explanation of a decided vial (LINE page "Explain"); key in NVIDIA_API_KEY or this KEY=VALUE file.
+    explain_url: str = "https://integrate.api.nvidia.com/v1"
+    explain_model: str = "nvidia/nemotron-3-ultra-550b-a55b"
+    explain_key_file: Path | None = None
 
 
 config = AppConfig()

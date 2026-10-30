@@ -165,6 +165,9 @@ fi
 port_free "$PORT" || fail "Port $PORT is in use; pass --port <other>"
 mkdir -p "$DATA"
 export APP__DATA_DIR="$DATA" YOLO_CONFIG_DIR="$DATA/.ultralytics"
+# "Explain with AI" on the LINE page calls Nemotron on build.nvidia.com with NVIDIA_API_KEY
+# (exported, or a KEY=VALUE file in LINEWATCH_NVIDIA_ENV). Without it, Run 5 shows recorded answers.
+[ -n "${LINEWATCH_NVIDIA_ENV:-}" ] && export APP__EXPLAIN_KEY_FILE="$LINEWATCH_NVIDIA_ENV"
 # Live cameras for the LINE page (the landing page). Close the Linewatch recorder first:
 # a camera can be open in only one program.
 [ -n "$STATION" ] || STATION="$ROOT/setup/csi-station.json"

@@ -423,3 +423,29 @@ The operator then identified Good R1C6 and R2C6 as empty in a live frame; their 
 empty signatures were corrected from that attributed evidence. Replay of the same frame changed
 Good from two boxes to zero while retaining the two visible Bad inventory boxes. This is a narrow
 profile correction, not a full human-labeled accuracy evaluation.
+
+## CSI capture: water flushes after red and yellow (2026-10-28 clips, measured 2026-10-30)
+
+Six fill-camera clips recorded by CSI with mL metadata (`shamar-capture/` in the
+`Linewatch-OMEGA-20261030` handoff, checksums verified): a water flush, red 40 mL, a water
+flush after red, yellow 40 mL, a water flush after yellow, blue 40 mL. Evaluation only. Colour is
+the median of a fixed liquid patch (x 296–336, y 330–385) at 90% of each clip, with optical
+density taken against the same clip's empty-vial frame.
+
+| Clip label | Looks | Lab | Density R / G / B |
+| --- | --- | --- | --- |
+| Water flush (first) | brown | 22.7, 8.3, 20.3 | 0.35 / 1.20 / 2.12 |
+| Red 40 mL | brown | 26.6, 2.2, 15.1 | 0.38 / 0.78 / 1.33 |
+| Water flush after red | strong red | 18.3, 24.6, 24.5 | 0.15 / 2.23 / 3.58 |
+| Yellow 40 mL | orange | 22.9, 10.4, 25.3 | 0.15 / 1.07 / 2.26 |
+| Water flush after yellow | amber | 23.4, 6.9, 30.2 | 0.37 / 1.20 / 3.76 |
+| Blue 40 mL | green | 23.2, −8.4, 20.8 | 1.08 / 0.93 / 2.34 |
+
+Both water flushes hold **more** dye than the vial labelled with the dye before them (2.7–2.9× in
+green/blue after red, 1.1–2.4× after yellow). A residue fraction f ≤ 1 cannot produce that, so the
+proportional carryover model (`replay/schedule.py`) does not fit these clips and no f was set from
+them. They look like a one-vial lag: each vial holds mostly the previous dose (the line holding
+about one dose), or the metadata is one row off. Run 5's first vials after a change point the same
+way (vial 4: ΔE 1.6 to the previous recipe). Until CSI confirms which, expect the first vial after
+every change to read as the previous recipe, and do not assume one water vial clears the line
+(the yellow vial after the red flush is orange). One patch, six clips, no repeats: indicative only.

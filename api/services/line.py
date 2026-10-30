@@ -9,7 +9,9 @@ A run is a JSON manifest in APP__LINE_RUNS (one file per run):
 Live cameras: APP__LINE_STATION names a station JSON (see docs/line-view.md) with the fill
 and tray camera devices; it appears as the run "live" with source "camera". The models run on
 frames as they arrive; each live session is recorded and saved as a reviewable run in
-APP__LINE_RECORDINGS.
+APP__LINE_RECORDINGS. An optional "mock" entry in the station names recorded videos
+("file:PATH") that stand in for the cameras (simulate=mock), with their own framing: the
+station's vial box and tray slots are not applied to them.
 
 Relative paths resolve against the manifest's folder. `schedule` is optional: a session can
 instead follow an inspection run's recipe plan (the order copied from CSI's machine), which
@@ -39,6 +41,9 @@ MAX_SESSIONS = 4
 
 
 LIVE = "live"
+MOCK = "mock"
+# Station keys that describe where the real cameras look; a mock camera's video brings its own.
+GEOMETRY = ("fill_vial_box", "tray_slots", "tray_clear_thumbnail", "tray_empty_slot_gray")
 
 
 class LineRuns:
@@ -60,7 +65,7 @@ class LineRuns:
             station = self.manifest(LIVE)
             runs.append({"id": LIVE, "title": station.get("title", "Live cameras"), "sources": ["camera"],
                          "has_tray": station.get("tray_camera") not in (None, ""), "live": True,
-                         "models": self.assets is not None})
+                         "models": self.assets is not None, "mock": bool(station.get("mock"))})
         for root in self._roots():
             for path in sorted(root.glob("*.json"), reverse=root == self.recordings):
                 manifest = self._manifest(path)
@@ -216,16 +221,25 @@ class LineRuns:
 
     def camera_session(self, clock, send, stop: threading.Event, order=None, simulate=None, start_s=0.0):
         """A live session on the station cameras (or, with simulate=<run id>, that run's videos
-        played at real time through the camera input). Runs the models on frames as they
+        played at real time through the camera input; simulate="mock" plays the station's mock
+        cameras). Runs the models on frames as they
         arrive, publishes previews, records both feeds and saves the session as a run."""
         from replay.cameras import FPS, CameraSet
         station = self.manifest(LIVE) if self.station is not None else {}
-        library_source = station if station.get("library") else self.manifest(simulate) if simulate else station
-        if simulate:
+        cameras_only = {k: v for k, v in station.items() if k not in GEOMETRY + ("mock",)}
+        if simulate == MOCK:
+            if not station.get("mock"):
+                raise ValueError("No mock cameras configured (START.sh --mock-fill VIDEO)")
+            station = {**cameras_only, **station["mock"]}
+            fill, tray = station.get("fill_camera"), station.get("tray_camera")
+        elif simulate:
+            # A recorded run's videos keep that run's framing, not the station's.
             sim = self.manifest(simulate)
+            station = {**cameras_only, **{k: sim[k] for k in GEOMETRY if k in sim}}
             fill, tray = f"file:{sim['fill_video']}", (f"file:{sim['tray_video']}" if sim.get("tray_video") else None)
         else:
             fill, tray = station.get("fill_camera"), station.get("tray_camera")
+        library_source = station if station.get("library") else self.manifest(simulate) if simulate else station
         if fill in (None, ""):
             raise ValueError("No fill camera configured (APP__LINE_STATION)")
         if self.assets is None:
@@ -296,7 +310,7 @@ class LineRuns:
         (folder / "frames.jsonl").write_text("".join(json.dumps(d) + "\n" for d in live.dwells))
         (folder / "tray-samples.jsonl").write_text("".join(json.dumps(s) + "\n" for s in live.tray_samples))
         (folder / "schedule.csv").write_text("seq,recipe_id\n" + "".join(f"{i},{r}\n" for i, r in enumerate(live.schedule, 1)))
-        manifest = {"title": f"{station.get('title', 'Live')} · {run_id[5:]}" + (f" (simulated from {simulate})" if simulate else ""),
+        manifest = {"title": f"{station.get('title', 'Live')} · {run_id[5:]}" + (f" (simulated from {simulate})" if simulate and simulate != MOCK else ""),
                     "fill_samples": f"{run_id}/frames.jsonl", "schedule": f"{run_id}/schedule.csv",
                     "library": library_source["library"], "recorded_from_s": start}
         if station.get("fill_vial_box") is not None:

@@ -108,6 +108,37 @@ person at the machine.
 - With `imageio-ffmpeg` installed, recordings are H.264 and play in the browser. Without it,
   they are OpenCV `mp4v`.
 
+**Mock cameras (rehearsal without a camera).** Start with recorded videos as mock cameras next
+to the real ones:
+
+```bash
+bash START.sh --mock-fill vial_fill_video_5.mp4 --mock-tray cap_seal_video_5.mp4
+```
+
+The LINE page then shows a **WEBCAMS | MOCK** switch beside the source. **MOCK** plays the videos
+at real time through the same camera threads, frame clock, models, previews and recording as a
+webcam; the status line says `MOCK cameras`, and the saved run is titled *Mock cameras*.
+**WEBCAMS** is the station's real cameras, unchanged. Switch before **Start**.
+
+`START.sh` writes `station-with-mock.json` in the data folder: the station file plus a `mock`
+entry (`fill_camera`/`tray_camera` as `"file:PATH"`, optional `schedule`). Mock videos keep their
+own framing: the station's `fill_vial_box` and tray slots are not applied to them (the same now
+holds for *Simulate with* a recorded run), so use Run 5 videos. The API is
+`source=camera&simulate=mock`.
+
+To check the whole path without the browser, while the server runs:
+
+```bash
+.venv-gb10-cuda/bin/python setup/gb10/e2e_mock.py --schedule replay/examples/run5-schedule.csv \
+  --report ~/linewatch-data/e2e-mock.json            # add --seconds 120 for a short check
+```
+
+It enters the recipe order as RECIPE ORDER does, starts MOCK following it, reads both MJPEG
+previews, waits for the saved recording and opens it in Review. It fails on a session error,
+dropped frames, lag above 2 s, a missing preview or saved run, and with `--compare RUN` on any
+verdict that differs from that run's stored results. Real cameras use the same code from the
+frame queue on; only the V4L2 open, MJPG decode and USB drop-outs are not exercised.
+
 **On Windows**, `pwsh -File setup/run-line-live.ps1 -Station station.json` starts it:
 - it uses the `vision-windows` environment and the extracted model release;
 - it installs the four API packages into a side folder, so the environment itself is not

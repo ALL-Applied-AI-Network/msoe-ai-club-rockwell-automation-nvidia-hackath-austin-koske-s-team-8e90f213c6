@@ -122,3 +122,34 @@ def test_live_session_picks_up_vials_ordered_while_running(client):
     events = [e for m in messages if m["type"] == "events" for e in m["events"]]
     assert any(e["type"] == "schedule" and e["schedule"] == ["1", "2"] for e in events)
     assert [e["vial"]["recipe_id"] for e in events if e["type"] == "vial"] == ["1", "2"]
+
+
+def station_client(tmp_path, station):
+    (tmp_path / "station.json").write_text(json.dumps(station))
+    app.dependency_overrides[get_line_runs] = lambda: LineRuns(None, station=tmp_path / "station.json")
+    return TestClient(app)
+
+
+def test_station_offers_mock_cameras(client, tmp_path):
+    library = str(tmp_path / "data" / "library.json")
+    with station_client(tmp_path, {"title": "CSI", "fill_camera": "/dev/video9", "library": library,
+                                   "mock": {"fill_camera": "file:/videos/run5.mp4"}}) as test_client:
+        live = test_client.get("/api/v1/line/runs").json()[0]
+        assert (live["id"], live["mock"], live["models"]) == ("live", True, False)
+        # The mock path is taken (and needs the models, like the station cameras).
+        with test_client.websocket_connect("/api/v1/line/runs/live/live?source=camera&simulate=mock") as ws:
+            messages = [ws.receive_json()]
+            while messages[-1]["type"] not in ("end", "error"):
+                messages.append(ws.receive_json())
+        assert "models" in messages[-1]["message"]
+
+
+def test_mock_cameras_need_a_mock_entry(client, tmp_path):
+    with station_client(tmp_path, {"title": "CSI", "fill_camera": "/dev/video9",
+                                   "library": str(tmp_path / "data" / "library.json")}) as test_client:
+        assert test_client.get("/api/v1/line/runs").json()[0]["mock"] is False
+        with test_client.websocket_connect("/api/v1/line/runs/live/live?source=camera&simulate=mock") as ws:
+            messages = [ws.receive_json()]
+            while messages[-1]["type"] not in ("end", "error"):
+                messages.append(ws.receive_json())
+        assert "No mock cameras" in messages[-1]["message"]

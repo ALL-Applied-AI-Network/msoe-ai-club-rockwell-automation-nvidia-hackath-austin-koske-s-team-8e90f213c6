@@ -8,6 +8,9 @@
 # Options: --device auto|cuda|cpu  --port N  --host ADDR  --assets DIR|ZIP  --data DIR
 #          --wheels DIR (offline; a kit's wheels/ is used automatically)  --install-only
 #          --station FILE (live cameras for the LINE page; default setup/csi-station.json)  --no-cameras
+#          --mock-fill VIDEO [--mock-tray VIDEO] [--mock-schedule CSV]: recorded 640x480 videos offered
+#          as mock cameras next to the real ones (LINE page: WEBCAMS | MOCK), played at real time
+#          through the camera input with their own framing (Run 5's), not the CSI vial box and slots.
 # Installs exact, hash-locked packages (setup/gb10/lock-*.txt) into .venv-gb10-<device>.
 set -euo pipefail
 
@@ -22,6 +25,7 @@ DATA="${LINEWATCH_DATA_DIR:-$HOME/linewatch-data}"
 MODE=serve
 STATION="${LINEWATCH_STATION:-}"
 CAMERAS=1
+MOCK_FILL="" MOCK_TRAY="" MOCK_SCHEDULE=""
 while [ $# -gt 0 ]; do
   case "$1" in
     --assets) ASSETS="$2"; shift 2 ;;
@@ -33,9 +37,12 @@ while [ $# -gt 0 ]; do
     --install-only) MODE=install; shift ;;
     --station) STATION="$2"; shift 2 ;;
     --no-cameras) CAMERAS=0; shift ;;
+    --mock-fill) MOCK_FILL="$2"; shift 2 ;;
+    --mock-tray) MOCK_TRAY="$2"; shift 2 ;;
+    --mock-schedule) MOCK_SCHEDULE="$2"; shift 2 ;;
     --check) MODE=check; shift ;;
     --selftest) MODE=selftest; shift ;;
-    -h|--help) sed -n '2,10p' "${BASH_SOURCE[0]}"; exit 0 ;;
+    -h|--help) sed -n '2,13p' "${BASH_SOURCE[0]}"; exit 0 ;;
     *) echo "Unknown option: $1" >&2; exit 2 ;;
   esac
 done
@@ -161,6 +168,30 @@ export APP__DATA_DIR="$DATA" YOLO_CONFIG_DIR="$DATA/.ultralytics"
 # Live cameras for the LINE page (the landing page). Close the Linewatch recorder first:
 # a camera can be open in only one program.
 [ -n "$STATION" ] || STATION="$ROOT/setup/csi-station.json"
+if [ -n "$MOCK_FILL" ]; then
+  # The station plus a "mock" entry: the LINE page's WEBCAMS | MOCK switch picks between them.
+  BASE="$STATION"; STATION="$DATA/station-with-mock.json"
+  "$VENV/bin/python" - "$BASE" "$STATION" "$ROOT/client/public/data/run5/recipe-library.json" \
+    "$MOCK_FILL" "$MOCK_TRAY" "$MOCK_SCHEDULE" <<'EOF'
+import json, os, sys
+base, out, library, fill, tray, schedule = sys.argv[1:]
+for path in (fill, tray, schedule):
+    if path and not os.path.isfile(path):
+        sys.exit(f"ERROR: mock file not found: {path}")
+station = json.load(open(base)) if os.path.isfile(base) else {"title": "No station cameras"}
+for key in ("library", "schedule"):  # relative to the original station file
+    if isinstance(station.get(key), str):
+        station[key] = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(base)), station[key]))
+station.setdefault("library", library)
+mock = {"title": "Mock cameras (recorded video)", "fill_camera": "file:" + os.path.abspath(fill)}
+if tray:
+    mock["tray_camera"] = "file:" + os.path.abspath(tray)
+if schedule:
+    mock["schedule"] = os.path.abspath(schedule)
+station["mock"] = mock
+json.dump(station, open(out, "w"), indent=1)
+EOF
+fi
 if [ "$CAMERAS" = 1 ] && [ -f "$STATION" ]; then
   STATION="$(cd "$(dirname "$STATION")" && pwd)/$(basename "$STATION")"
   export APP__LINE_STATION="$STATION" APP__LINE_RECORDINGS="$DATA/line-recordings"
@@ -168,9 +199,11 @@ if [ "$CAMERAS" = 1 ] && [ -f "$STATION" ]; then
   for key in fill_camera tray_camera; do
     dev="$("$VENV/bin/python" -c 'import json,sys; print(json.load(open(sys.argv[1])).get(sys.argv[2]) or "")' "$STATION" "$key")"
     [ -z "$dev" ] && continue
-    if [ -e "$dev" ]; then echo "  $key: $dev -> $(readlink -f "$dev")"
+    if [[ "$dev" == file:* ]]; then echo "  $key: recorded video ${dev#file:} (mock camera)"
+    elif [ -e "$dev" ]; then echo "  $key: $dev -> $(readlink -f "$dev")"
     else echo "  $key: $dev NOT FOUND (unplugged? ls -la /dev/v4l/by-id/; pass --station with the right names)"; fi
   done
+  [ -n "$MOCK_FILL" ] && echo "  mock: $MOCK_FILL${MOCK_TRAY:+ + $MOCK_TRAY} (LINE page: WEBCAMS | MOCK)"
 fi
 echo "Linewatch on http://$HOST:$PORT  (device $APP__DEVICE, data $DATA). Ctrl+C stops."
 cd "$ROOT/api"

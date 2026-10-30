@@ -295,6 +295,7 @@ export default function LinePage() {
             </span>
             <strong>{clock(view.t)}</strong>
             {live && status === "live" && <small>{lag > 0.5 ? `processing ${lag.toFixed(1)} s behind` : "keeping up"}</small>}
+            {camera && simulate === "mock" && <small>MOCK cameras: recorded video, not the station</small>}
             {camera && cameraStats && <small>{cameraStats.fill ?? 0} fill · {cameraStats.tray ?? 0} tray frames · {cameraStats.dropped} dropped{cameraStats.reconnects ? ` · ${cameraStats.reconnects} reconnects` : ""}</small>}
           </div>
         </section>
@@ -328,7 +329,13 @@ export default function LinePage() {
                   {run?.sources.includes("video") && <option value="video">Video → models now</option>}
                 </select>
               </label>
-              {camera && (
+              {camera && run?.mock && (
+                <div className="ln-seg" role="group" aria-label="Camera input">
+                  <button className={simulate !== "mock" ? "active" : ""} onClick={() => setSimulate("")}>Webcams</button>
+                  <button className={simulate === "mock" ? "active" : ""} onClick={() => setSimulate("mock")}>Mock</button>
+                </div>
+              )}
+              {camera && simulate !== "mock" && runs.data?.some((r) => r.sources.includes("video")) && (
                 <label>Cameras
                   <select value={simulate} onChange={(e) => setSimulate(e.target.value)}>
                     <option value="">Station cameras</option>

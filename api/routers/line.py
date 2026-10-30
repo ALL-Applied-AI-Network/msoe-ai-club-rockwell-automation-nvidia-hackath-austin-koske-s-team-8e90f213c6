@@ -7,7 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisco
 from fastapi.responses import FileResponse, StreamingResponse
 
 from dependencies import get_inspection_service, get_line_runs
-from services.line import LIVE, MAX_SESSIONS, SPEEDS, SessionClock
+from services.line import LIVE, MAX_SESSIONS, MOCK, SPEEDS, SessionClock
 
 router = APIRouter(prefix="/line", tags=["line"])
 _active = {"sessions": 0}
@@ -104,7 +104,7 @@ async def live(websocket: WebSocket, run_id: str, runs=Depends(get_line_runs),
         if source == "camera":
             if run_id != LIVE:
                 raise ValueError("Cameras are the run 'live'")
-            if simulate:
+            if simulate and simulate != MOCK:
                 runs.manifest(simulate)
             speed = 1
         elif source not in runs.sources(manifest):

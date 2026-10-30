@@ -105,6 +105,8 @@ export interface LineRun {
   /** The station's live cameras (run "live"); models: whether the server has the models loaded. */
   live?: boolean;
   models?: boolean;
+  /** The station also offers mock cameras (recorded videos), started with simulate "mock". */
+  mock?: boolean;
 }
 
 /** An inspection run whose recipe plan (the order copied from CSI's machine) the line can follow. */

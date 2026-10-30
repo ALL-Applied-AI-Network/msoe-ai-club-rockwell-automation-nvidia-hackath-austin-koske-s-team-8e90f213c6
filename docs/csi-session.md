@@ -46,8 +46,39 @@ The demo runs the LINE page (`/`) on the CSI GB10 with the station's two cameras
 kit fails → `--native` / `--docker` via `setup/gb10/onboard.sh`, or `linewatch-v1.1.0`; GB10
 unusable → laptop fallback.
 
-Not yet verified on the CSI GB10's own cameras, and the v1.2.0 kit has not been self-tested on GB10
-hardware (spark8 was unreachable): run step 2 first.
+The v1.2.0 kit passed `--selftest` (40/40) twice on the CSI GB10 on 2026-10-29, and the station
+cameras ran 10 LINE sessions there (`Linewatch-OMEGA-20261030` handoff).
+
+## Trial checklist (2026-10-30)
+
+**Start with mock cameras available, and rehearse on them first** (about 3 minutes):
+
+```bash
+bash START.sh --mock-fill ~/mock/vial_fill_video_5.mp4 --mock-tray ~/mock/cap_seal_video_5.mp4
+```
+
+On the LINE page, **MOCK** → **Start**: vial 1 must come out OUT OF SPEC (ΔE about 12.5) and
+vial 2 IN SPEC (about 2.8) within 2 minutes; **Stop**. Then **WEBCAMS** → **Start** for the
+real line, with no restart. From a terminal instead: `.venv-gb10-cuda/bin/python
+setup/gb10/e2e_mock.py --schedule replay/examples/run5-schedule.csv --seconds 120 --report
+~/linewatch-data/e2e-mock.json` must print `PASSED`.
+
+**Bring:** the trial kit (`linewatch-gb10-trial-20261030.tar.gz` + `.sha256`, built from
+`austin/integration-dashboard-main`; it adds the mock cameras to v1.2.0's contents), the
+offline wheels, the model assets and the two Run 5 videos (`vial_fill_video_5.mp4`,
+`cap_seal_video_5.mp4`, about 100 MB) for the rehearsal.
+
+**Enter every dispensed vial in the recipe order, water flushes included.** Vial n takes recipe
+n from **Start**; an unlisted flush shifts every later vial onto the wrong recipe.
+
+**Expect the first vial after each change to read as the previous recipe.** In the 2026-10-28
+CSI clips, each water flush held more dye than the vial before it
+([evaluation](evaluation.md#csi-capture-water-flushes-after-red-and-yellow-2026-10-28-clips-measured-2026-10-30)).
+Ask Shamar:
+- Is the clip metadata one row off, or does the line hold about one dose?
+- How many water vials clear a red → yellow change?
+- Record one change with three repeat vials and two flush vials. Note each vial's actual
+  contents by hand.
 
 ## Get the software
 

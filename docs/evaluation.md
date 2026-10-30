@@ -187,6 +187,10 @@ stored samples), reference vials excluded:
 | Warning lead before the fill ends | 4.0–21.0 s; as early as 2.5 s into the fill (vial 1) |
 | In-spec vials warned (false warnings) | 1 / 4 (vial 2, ΔE 2.84 at the end) |
 
+The early warning is not a model. The learned models (vial detector, liquid segmenter) produce the
+per-sample colour, and the warning is a fixed comparison with one reference vial's fill
+([architecture](architecture.md#learned-perception-deterministic-decisions)).
+
 Not a blind result: the rule was changed twice after looking at Run 5. Comparing with the final
 reference colour warned on 3 / 4 in-spec vials (mid-fill colour differs because tanks dispense in
 sequence), so the reference trajectory replaced it; then a warning after the reference's fill had

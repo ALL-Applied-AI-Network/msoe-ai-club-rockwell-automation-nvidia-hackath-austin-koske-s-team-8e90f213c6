@@ -45,6 +45,27 @@ flowchart LR
 
 [SVG](assets/architecture-system.svg) · [PNG](assets/architecture-system.png)
 
+## Learned perception, deterministic decisions
+
+The models do the perception; every decision on top of them is a fixed, auditable rule.
+
+| Layer | What does it | Learned? |
+| --- | --- | --- |
+| Find the vial | YOLO11n vial detector (or the station's fixed vial region) | Yes, trained on Isaac Sim renders only |
+| Find the liquid | Temporal U-Net liquid segmenter | Yes, trained on Isaac Sim renders only |
+| Trust a colour | Measurement QA: refuses glare, clipping, too few pixels, unstable tracks | No: fixed checks |
+| Vial verdict | Endpoint Lab vs the recipe's reference (ΔE2000 band 5), direction toward the previous recipe (cos 0.8) | No: fixed thresholds |
+| Early warning | Each sample during the fill vs the reference vial's colour at the same time since fill start; 3 in a row beyond the band ([replay/early.py](../replay/early.py)) | No: fixed rule, one reference vial |
+| Actions and deadlines | SCRAP before the sorter (120 s), FLUSH before the next fill, STOP after 3 deviations, HOLD | No: fixed rules ([replay/decide.py](../replay/decide.py)) |
+| Cause | Rule baseline decides; hosted and on-device language/vision models were compared as explainers | Models only word the explanation |
+
+Why rules above the models: a new recipe needs one accepted vial, not a labelled training set (no
+dataset records per-vial outcomes, and real CSI recordings are evaluation-only); every action
+carries the numbers that triggered it, so an operator can check it; and the zero-shot vision
+models we tried picked causes worse than the rules ([evaluation](evaluation.md#rca-explainers-on-run-5-v1)).
+A learned early warning that predicts the final colour from a partial fill would need recorded fills
+with known outcomes, which do not exist yet.
+
 ## Processing path
 
 ```mermaid

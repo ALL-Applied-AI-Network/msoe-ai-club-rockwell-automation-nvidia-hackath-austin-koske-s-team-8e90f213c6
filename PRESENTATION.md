@@ -36,6 +36,11 @@ return. Today, catching it takes a person looking at every vial.
    it.
 5. **Checks the result at the tray:** a second camera confirms where each vial landed.
 
+**Learned perception, deterministic decisions.** The models (trained only in simulation) find the
+vial and liquid and measure its colour. Everything on top of that is a fixed rule an operator can
+audit, including the early warning, which compares each moment of the fill with one reference
+vial's fill. A new recipe needs one accepted vial, not a training set.
+
 CSI does not allow connections to the PLC or sorter. Actions therefore go to the operator, and
 are logged as the commands an integration would send.
 

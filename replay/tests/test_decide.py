@@ -63,5 +63,22 @@ class SegmentTest(unittest.TestCase):
         self.assertIsNone(segment({"start_frame": 0, "end_frame": 600, "reference_frame": 8, "samples": samples}, 30.))
 
 
+class DirectionSpaceTest(unittest.TestCase):
+    def test_density_direction_sees_a_dye_mix_as_straight_toward_the_previous_recipe(self):
+        import numpy as np
+        from replay.decide import toward_previous
+        from replay.measurement import optical_density, rgb_to_lab
+        own, previous = [16.1, -6.1, -14.6], [20.4, 19.6, 25.3]       # Run 5 recipes 7 and 6
+        mix_density = 0.8 * optical_density(own) + 0.2 * optical_density(previous)
+        mix = rgb_to_lab(np.clip(255 * _encode(np.exp(-mix_density)), 0, 255))
+        self.assertAlmostEqual(toward_previous(mix, own, previous, "density"), 1.0, places=2)
+        self.assertLess(toward_previous(mix, own, previous), 0.8)      # the Lab cosine under-reads it
+
+
+def _encode(linear):
+    import numpy as np
+    return np.where(linear <= 0.0031308, 12.92 * linear, 1.055 * linear ** (1 / 2.4) - 0.055)
+
+
 if __name__ == "__main__":
     unittest.main()

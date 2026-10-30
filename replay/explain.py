@@ -332,6 +332,7 @@ def main():
     parser.add_argument("--keyframes", type=Path, help="directory from --export-keyframes (instead of --video)")
     parser.add_argument("--export-keyframes", type=Path, help="write keyframe crops for every packet and exit")
     parser.add_argument("--text-only", action="store_true", help="send no images (numbers only)")
+    parser.add_argument("--images", nargs="+", choices=IMAGES, help="send only these keyframes (models that take one image)")
     parser.add_argument("--rescore", type=Path, help="recompute metrics.json for an existing rca-<name> directory")
     parser.add_argument("--truth", type=Path, help="CSV seq,cause (synthetic sessions) for cause accuracy")
     parser.add_argument("--max-tokens", type=int, default=1024)
@@ -372,6 +373,8 @@ def main():
         if args.backend != "rule" and not args.text_only:
             images = load_keyframes(args.keyframes, path) if args.keyframes else \
                 keyframes(args.video, packet) if args.video else {}
+            if args.images:
+                images = {k: v for k, v in images.items() if k in args.images}
         allowed = set(SECTIONS) | {f"image:{k}" for k in images}
         started = time.perf_counter()
         try:

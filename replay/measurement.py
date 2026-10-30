@@ -22,6 +22,19 @@ def rgb_to_lab(rgb):
     return np.array([116 * fx[1] - 16, 500 * (fx[0] - fx[1]), 200 * (fx[1] - fx[2])])
 
 
+def optical_density(lab):
+    """-ln(linear RGB) of a Lab colour, inverting rgb_to_lab. Dye mixtures add in this space."""
+    L, a, b = np.asarray(lab, dtype=float)
+    fy = (L + 16) / 116
+    f = np.array([fy + a / 500, fy, fy - b / 200])
+    delta = 6 / 29
+    xyz = np.where(f > delta, f ** 3, 3 * delta ** 2 * (f - 4 / 29)) * [.95047, 1., 1.08883]
+    matrix = np.array([[3.2404542, -1.5371385, -.4985314],
+                       [-.9692660, 1.8760108, .0415560],
+                       [.0556434, -.2040259, 1.0572252]])
+    return -np.log(np.clip(matrix @ xyz, 1e-4, 1))
+
+
 def crop(rgb, box):
     x0, y0, x1, y1 = box
     return rgb[y0:y1, x0:x1]

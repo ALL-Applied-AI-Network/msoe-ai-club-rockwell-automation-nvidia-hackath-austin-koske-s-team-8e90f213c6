@@ -111,6 +111,7 @@ Full tables and records: [evaluation](docs/evaluation.md).
 
 | Time | Say | On screen |
 | --- | --- | --- |
+| 0:00 (alt. opener) | "Poor quality costs manufacturers 15 to 20 percent of sales. The top cause of US food recalls, about 4 in 10, is the previous product ending up in the next one, and a recall costs about ten million dollars. It happens at changeovers, and lines change over more every year." | Two big numbers: 15–20% · $10M ([sources](docs/industry-research.md)) |
 | 0:00 | "CSI's colour check doesn't know which recipe was ordered. The first vial after a recipe change can be the old recipe and still pass. In the organizers' Run 5, every measurable first vial after a change was off recipe, and every vial that reached the trays went to the Good tray." | Run 5 vial 4 next to its recipe swatch: ΔE 24.5 from recipe 6, 1.6 from recipe 5 |
 | 0:35 | "Linewatch gives the inspection the missing input: the recipe order. Two cameras, a GB10 at the line, models trained only on Isaac Sim renders of this station. For every vial: is it the ordered recipe, and what do we do, by when?" | Pipeline diagram (README) |
 | 1:10 | "Measured on the full Run 5 video with only the recipe order: all 30 vials found and assigned the right recipe. All 5 checkable first vials caught. All 9 scraps issued before the sorter, with at least 100 seconds to spare." | Results table, first two rows |
@@ -183,6 +184,14 @@ Details: [compute](docs/compute.md).
 ---
 
 ## Impact numbers for the slides (sourced)
+
+Full research with a trust rating per source: [docs/industry-research.md](docs/industry-research.md).
+The strongest hooks:
+- **Allergen recalls:** undeclared allergens cause 38.8% of US food recalls, and the usual
+  mechanism is the previous product's residue (cross-contact).
+- **Rockwell's own survey:** quality control is manufacturers' #1 AI use case.
+- **Inspectors:** human inspection is benchmarked at about 80% accuracy.
+- **Labour:** 1.9M US manufacturing jobs could go unfilled by 2033.
 
 **The cost of the problem**
 - **Cost of poor quality:** commonly put at about **15–20% of sales** for manufacturers, and up to

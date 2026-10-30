@@ -1,0 +1,3350 @@
+{
+ "real_repeat_de": 1.8,
+ "renders": 14400,
+ "seeds": 3,
+ "note": "Synthetic only; noise level compared with Runs 1-4, never Run 5.",
+ "results": [
+  {
+   "sigma": 0.0,
+   "runs": [
+    {
+     "seed": 0,
+     "clean_median_de": 0.6705569322743146,
+     "current": {
+      "changeovers": 1200,
+      "band_de2000": 5.0,
+      "direction_cos": 0.8,
+      "bins": [
+       {
+        "f_range": [
+         0.0,
+         0.0
+        ],
+        "n": 376,
+        "flagged": 0,
+        "out_of_band": 0,
+        "median_de": 0.6705569322743146,
+        "residue_mae": 0.04031684319760368
+       },
+       {
+        "f_range": [
+         0.0,
+         0.05
+        ],
+        "n": 102,
+        "flagged": 0,
+        "out_of_band": 0,
+        "median_de": 0.9020430760308671,
+        "residue_mae": 0.03500799709554106
+       },
+       {
+        "f_range": [
+         0.05,
+         0.1
+        ],
+        "n": 101,
+        "flagged": 1,
+        "out_of_band": 1,
+        "median_de": 1.3476720610783368,
+        "residue_mae": 0.07272458715239986
+       },
+       {
+        "f_range": [
+         0.1,
+         0.2
+        ],
+        "n": 242,
+        "flagged": 27,
+        "out_of_band": 28,
+        "median_de": 2.0180889456769773,
+        "residue_mae": 0.06164093330239695
+       },
+       {
+        "f_range": [
+         0.2,
+         0.3
+        ],
+        "n": 241,
+        "flagged": 80,
+        "out_of_band": 81,
+        "median_de": 3.452455479407164,
+        "residue_mae": 0.055874794171126715
+       },
+       {
+        "f_range": [
+         0.3,
+         0.5
+        ],
+        "n": 43,
+        "flagged": 19,
+        "out_of_band": 19,
+        "median_de": 3.480880820211798,
+        "residue_mae": 0.08480923319404271
+       },
+       {
+        "f_range": [
+         0.5,
+         1.0
+        ],
+        "n": 95,
+        "flagged": 71,
+        "out_of_band": 71,
+        "median_de": 10.52616544783832,
+        "residue_mae": 0.05171183687982651
+       }
+      ],
+      "false_alarm_rate": 0.0,
+      "detection_rate": 0.24029126213592233,
+      "residue_mae": 0.052514570694821266,
+      "residue_mae_large_change": 0.01892252722493201
+     },
+     "tuned": {
+      "band": 1.0,
+      "cos": 0.5,
+      "dev": {
+       "changeovers": 1200,
+       "band_de2000": 1.0,
+       "direction_cos": 0.5,
+       "bins": [
+        {
+         "f_range": [
+          0.0,
+          0.0
+         ],
+         "n": 376,
+         "flagged": 15,
+         "out_of_band": 104,
+         "median_de": 0.6705569322743146,
+         "residue_mae": 0.04031684319760368
+        },
+        {
+         "f_range": [
+          0.0,
+          0.05
+         ],
+         "n": 102,
+         "flagged": 27,
+         "out_of_band": 43,
+         "median_de": 0.9020430760308671,
+         "residue_mae": 0.03500799709554106
+        },
+        {
+         "f_range": [
+          0.05,
+          0.1
+         ],
+         "n": 101,
+         "flagged": 61,
+         "out_of_band": 71,
+         "median_de": 1.3476720610783368,
+         "residue_mae": 0.07272458715239986
+        },
+        {
+         "f_range": [
+          0.1,
+          0.2
+         ],
+         "n": 242,
+         "flagged": 165,
+         "out_of_band": 182,
+         "median_de": 2.0180889456769773,
+         "residue_mae": 0.06164093330239695
+        },
+        {
+         "f_range": [
+          0.2,
+          0.3
+         ],
+         "n": 241,
+         "flagged": 203,
+         "out_of_band": 207,
+         "median_de": 3.452455479407164,
+         "residue_mae": 0.055874794171126715
+        },
+        {
+         "f_range": [
+          0.3,
+          0.5
+         ],
+         "n": 43,
+         "flagged": 38,
+         "out_of_band": 39,
+         "median_de": 3.480880820211798,
+         "residue_mae": 0.08480923319404271
+        },
+        {
+         "f_range": [
+          0.5,
+          1.0
+         ],
+         "n": 95,
+         "flagged": 89,
+         "out_of_band": 89,
+         "median_de": 10.52616544783832,
+         "residue_mae": 0.05171183687982651
+        }
+       ],
+       "false_alarm_rate": 0.0398936170212766,
+       "detection_rate": 0.7075242718446602,
+       "residue_mae": 0.052514570694821266,
+       "residue_mae_large_change": 0.01892252722493201
+      }
+     }
+    },
+    {
+     "seed": 1,
+     "clean_median_de": 0.6705569322743146,
+     "current": {
+      "changeovers": 1200,
+      "band_de2000": 5.0,
+      "direction_cos": 0.8,
+      "bins": [
+       {
+        "f_range": [
+         0.0,
+         0.0
+        ],
+        "n": 376,
+        "flagged": 0,
+        "out_of_band": 0,
+        "median_de": 0.6705569322743146,
+        "residue_mae": 0.04031684319760368
+       },
+       {
+        "f_range": [
+         0.0,
+         0.05
+        ],
+        "n": 102,
+        "flagged": 0,
+        "out_of_band": 0,
+        "median_de": 0.9020430760308671,
+        "residue_mae": 0.03500799709554106
+       },
+       {
+        "f_range": [
+         0.05,
+         0.1
+        ],
+        "n": 101,
+        "flagged": 1,
+        "out_of_band": 1,
+        "median_de": 1.3476720610783368,
+        "residue_mae": 0.07272458715239986
+       },
+       {
+        "f_range": [
+         0.1,
+         0.2
+        ],
+        "n": 242,
+        "flagged": 27,
+        "out_of_band": 28,
+        "median_de": 2.0180889456769773,
+        "residue_mae": 0.06164093330239695
+       },
+       {
+        "f_range": [
+         0.2,
+         0.3
+        ],
+        "n": 241,
+        "flagged": 80,
+        "out_of_band": 81,
+        "median_de": 3.452455479407164,
+        "residue_mae": 0.055874794171126715
+       },
+       {
+        "f_range": [
+         0.3,
+         0.5
+        ],
+        "n": 43,
+        "flagged": 19,
+        "out_of_band": 19,
+        "median_de": 3.480880820211798,
+        "residue_mae": 0.08480923319404271
+       },
+       {
+        "f_range": [
+         0.5,
+         1.0
+        ],
+        "n": 95,
+        "flagged": 71,
+        "out_of_band": 71,
+        "median_de": 10.52616544783832,
+        "residue_mae": 0.05171183687982651
+       }
+      ],
+      "false_alarm_rate": 0.0,
+      "detection_rate": 0.24029126213592233,
+      "residue_mae": 0.052514570694821266,
+      "residue_mae_large_change": 0.01892252722493201
+     },
+     "tuned": {
+      "band": 1.0,
+      "cos": 0.5,
+      "dev": {
+       "changeovers": 1200,
+       "band_de2000": 1.0,
+       "direction_cos": 0.5,
+       "bins": [
+        {
+         "f_range": [
+          0.0,
+          0.0
+         ],
+         "n": 376,
+         "flagged": 15,
+         "out_of_band": 104,
+         "median_de": 0.6705569322743146,
+         "residue_mae": 0.04031684319760368
+        },
+        {
+         "f_range": [
+          0.0,
+          0.05
+         ],
+         "n": 102,
+         "flagged": 27,
+         "out_of_band": 43,
+         "median_de": 0.9020430760308671,
+         "residue_mae": 0.03500799709554106
+        },
+        {
+         "f_range": [
+          0.05,
+          0.1
+         ],
+         "n": 101,
+         "flagged": 61,
+         "out_of_band": 71,
+         "median_de": 1.3476720610783368,
+         "residue_mae": 0.07272458715239986
+        },
+        {
+         "f_range": [
+          0.1,
+          0.2
+         ],
+         "n": 242,
+         "flagged": 165,
+         "out_of_band": 182,
+         "median_de": 2.0180889456769773,
+         "residue_mae": 0.06164093330239695
+        },
+        {
+         "f_range": [
+          0.2,
+          0.3
+         ],
+         "n": 241,
+         "flagged": 203,
+         "out_of_band": 207,
+         "median_de": 3.452455479407164,
+         "residue_mae": 0.055874794171126715
+        },
+        {
+         "f_range": [
+          0.3,
+          0.5
+         ],
+         "n": 43,
+         "flagged": 38,
+         "out_of_band": 39,
+         "median_de": 3.480880820211798,
+         "residue_mae": 0.08480923319404271
+        },
+        {
+         "f_range": [
+          0.5,
+          1.0
+         ],
+         "n": 95,
+         "flagged": 89,
+         "out_of_band": 89,
+         "median_de": 10.52616544783832,
+         "residue_mae": 0.05171183687982651
+        }
+       ],
+       "false_alarm_rate": 0.0398936170212766,
+       "detection_rate": 0.7075242718446602,
+       "residue_mae": 0.052514570694821266,
+       "residue_mae_large_change": 0.01892252722493201
+      }
+     }
+    },
+    {
+     "seed": 2,
+     "clean_median_de": 0.6705569322743146,
+     "current": {
+      "changeovers": 1200,
+      "band_de2000": 5.0,
+      "direction_cos": 0.8,
+      "bins": [
+       {
+        "f_range": [
+         0.0,
+         0.0
+        ],
+        "n": 376,
+        "flagged": 0,
+        "out_of_band": 0,
+        "median_de": 0.6705569322743146,
+        "residue_mae": 0.04031684319760368
+       },
+       {
+        "f_range": [
+         0.0,
+         0.05
+        ],
+        "n": 102,
+        "flagged": 0,
+        "out_of_band": 0,
+        "median_de": 0.9020430760308671,
+        "residue_mae": 0.03500799709554106
+       },
+       {
+        "f_range": [
+         0.05,
+         0.1
+        ],
+        "n": 101,
+        "flagged": 1,
+        "out_of_band": 1,
+        "median_de": 1.3476720610783368,
+        "residue_mae": 0.07272458715239986
+       },
+       {
+        "f_range": [
+         0.1,
+         0.2
+        ],
+        "n": 242,
+        "flagged": 27,
+        "out_of_band": 28,
+        "median_de": 2.0180889456769773,
+        "residue_mae": 0.06164093330239695
+       },
+       {
+        "f_range": [
+         0.2,
+         0.3
+        ],
+        "n": 241,
+        "flagged": 80,
+        "out_of_band": 81,
+        "median_de": 3.452455479407164,
+        "residue_mae": 0.055874794171126715
+       },
+       {
+        "f_range": [
+         0.3,
+         0.5
+        ],
+        "n": 43,
+        "flagged": 19,
+        "out_of_band": 19,
+        "median_de": 3.480880820211798,
+        "residue_mae": 0.08480923319404271
+       },
+       {
+        "f_range": [
+         0.5,
+         1.0
+        ],
+        "n": 95,
+        "flagged": 71,
+        "out_of_band": 71,
+        "median_de": 10.52616544783832,
+        "residue_mae": 0.05171183687982651
+       }
+      ],
+      "false_alarm_rate": 0.0,
+      "detection_rate": 0.24029126213592233,
+      "residue_mae": 0.052514570694821266,
+      "residue_mae_large_change": 0.01892252722493201
+     },
+     "tuned": {
+      "band": 1.0,
+      "cos": 0.5,
+      "dev": {
+       "changeovers": 1200,
+       "band_de2000": 1.0,
+       "direction_cos": 0.5,
+       "bins": [
+        {
+         "f_range": [
+          0.0,
+          0.0
+         ],
+         "n": 376,
+         "flagged": 15,
+         "out_of_band": 104,
+         "median_de": 0.6705569322743146,
+         "residue_mae": 0.04031684319760368
+        },
+        {
+         "f_range": [
+          0.0,
+          0.05
+         ],
+         "n": 102,
+         "flagged": 27,
+         "out_of_band": 43,
+         "median_de": 0.9020430760308671,
+         "residue_mae": 0.03500799709554106
+        },
+        {
+         "f_range": [
+          0.05,
+          0.1
+         ],
+         "n": 101,
+         "flagged": 61,
+         "out_of_band": 71,
+         "median_de": 1.3476720610783368,
+         "residue_mae": 0.07272458715239986
+        },
+        {
+         "f_range": [
+          0.1,
+          0.2
+         ],
+         "n": 242,
+         "flagged": 165,
+         "out_of_band": 182,
+         "median_de": 2.0180889456769773,
+         "residue_mae": 0.06164093330239695
+        },
+        {
+         "f_range": [
+          0.2,
+          0.3
+         ],
+         "n": 241,
+         "flagged": 203,
+         "out_of_band": 207,
+         "median_de": 3.452455479407164,
+         "residue_mae": 0.055874794171126715
+        },
+        {
+         "f_range": [
+          0.3,
+          0.5
+         ],
+         "n": 43,
+         "flagged": 38,
+         "out_of_band": 39,
+         "median_de": 3.480880820211798,
+         "residue_mae": 0.08480923319404271
+        },
+        {
+         "f_range": [
+          0.5,
+          1.0
+         ],
+         "n": 95,
+         "flagged": 89,
+         "out_of_band": 89,
+         "median_de": 10.52616544783832,
+         "residue_mae": 0.05171183687982651
+        }
+       ],
+       "false_alarm_rate": 0.0398936170212766,
+       "detection_rate": 0.7075242718446602,
+       "residue_mae": 0.052514570694821266,
+       "residue_mae_large_change": 0.01892252722493201
+      }
+     }
+    }
+   ]
+  },
+  {
+   "sigma": 0.5,
+   "runs": [
+    {
+     "seed": 0,
+     "clean_median_de": 1.0761186542523866,
+     "current": {
+      "changeovers": 1200,
+      "band_de2000": 5.0,
+      "direction_cos": 0.8,
+      "bins": [
+       {
+        "f_range": [
+         0.0,
+         0.0
+        ],
+        "n": 376,
+        "flagged": 0,
+        "out_of_band": 0,
+        "median_de": 1.0761186542523866,
+        "residue_mae": 0.057880923788088824
+       },
+       {
+        "f_range": [
+         0.0,
+         0.05
+        ],
+        "n": 102,
+        "flagged": 0,
+        "out_of_band": 1,
+        "median_de": 1.2938929219689181,
+        "residue_mae": 0.05071941381940523
+       },
+       {
+        "f_range": [
+         0.05,
+         0.1
+        ],
+        "n": 101,
+        "flagged": 1,
+        "out_of_band": 2,
+        "median_de": 1.5743617442910478,
+        "residue_mae": 0.09909359984139811
+       },
+       {
+        "f_range": [
+         0.1,
+         0.2
+        ],
+        "n": 242,
+        "flagged": 27,
+        "out_of_band": 29,
+        "median_de": 2.262901074408618,
+        "residue_mae": 0.07988305478083094
+       },
+       {
+        "f_range": [
+         0.2,
+         0.3
+        ],
+        "n": 241,
+        "flagged": 83,
+        "out_of_band": 87,
+        "median_de": 3.6273730324879288,
+        "residue_mae": 0.07301935235524408
+       },
+       {
+        "f_range": [
+         0.3,
+         0.5
+        ],
+        "n": 43,
+        "flagged": 19,
+        "out_of_band": 19,
+        "median_de": 4.313178786890771,
+        "residue_mae": 0.12495350984703851
+       },
+       {
+        "f_range": [
+         0.5,
+         1.0
+        ],
+        "n": 95,
+        "flagged": 71,
+        "out_of_band": 71,
+        "median_de": 10.924632493651872,
+        "residue_mae": 0.07785577855520015
+       }
+      ],
+      "false_alarm_rate": 0.0,
+      "detection_rate": 0.24393203883495146,
+      "residue_mae": 0.07220310349885294,
+      "residue_mae_large_change": 0.023838967492982425
+     },
+     "tuned": {
+      "band": 1.5,
+      "cos": 0.55,
+      "dev": {
+       "changeovers": 1200,
+       "band_de2000": 1.5,
+       "direction_cos": 0.55,
+       "bins": [
+        {
+         "f_range": [
+          0.0,
+          0.0
+         ],
+         "n": 376,
+         "flagged": 13,
+         "out_of_band": 105,
+         "median_de": 1.0761186542523866,
+         "residue_mae": 0.057880923788088824
+        },
+        {
+         "f_range": [
+          0.0,
+          0.05
+         ],
+         "n": 102,
+         "flagged": 21,
+         "out_of_band": 40,
+         "median_de": 1.2938929219689181,
+         "residue_mae": 0.05071941381940523
+        },
+        {
+         "f_range": [
+          0.05,
+          0.1
+         ],
+         "n": 101,
+         "flagged": 47,
+         "out_of_band": 54,
+         "median_de": 1.5743617442910478,
+         "residue_mae": 0.09909359984139811
+        },
+        {
+         "f_range": [
+          0.1,
+          0.2
+         ],
+         "n": 242,
+         "flagged": 153,
+         "out_of_band": 171,
+         "median_de": 2.262901074408618,
+         "residue_mae": 0.07988305478083094
+        },
+        {
+         "f_range": [
+          0.2,
+          0.3
+         ],
+         "n": 241,
+         "flagged": 183,
+         "out_of_band": 191,
+         "median_de": 3.6273730324879288,
+         "residue_mae": 0.07301935235524408
+        },
+        {
+         "f_range": [
+          0.3,
+          0.5
+         ],
+         "n": 43,
+         "flagged": 32,
+         "out_of_band": 33,
+         "median_de": 4.313178786890771,
+         "residue_mae": 0.12495350984703851
+        },
+        {
+         "f_range": [
+          0.5,
+          1.0
+         ],
+         "n": 95,
+         "flagged": 88,
+         "out_of_band": 89,
+         "median_de": 10.924632493651872,
+         "residue_mae": 0.07785577855520015
+        }
+       ],
+       "false_alarm_rate": 0.034574468085106384,
+       "detection_rate": 0.6359223300970874,
+       "residue_mae": 0.07220310349885294,
+       "residue_mae_large_change": 0.023838967492982425
+      }
+     }
+    },
+    {
+     "seed": 1,
+     "clean_median_de": 0.9897597438652967,
+     "current": {
+      "changeovers": 1200,
+      "band_de2000": 5.0,
+      "direction_cos": 0.8,
+      "bins": [
+       {
+        "f_range": [
+         0.0,
+         0.0
+        ],
+        "n": 376,
+        "flagged": 0,
+        "out_of_band": 0,
+        "median_de": 0.9897597438652967,
+        "residue_mae": 0.050181921471429906
+       },
+       {
+        "f_range": [
+         0.0,
+         0.05
+        ],
+        "n": 102,
+        "flagged": 0,
+        "out_of_band": 0,
+        "median_de": 1.1535210516520884,
+        "residue_mae": 0.041090326787549744
+       },
+       {
+        "f_range": [
+         0.05,
+         0.1
+        ],
+        "n": 101,
+        "flagged": 1,
+        "out_of_band": 2,
+        "median_de": 1.7820333331139222,
+        "residue_mae": 0.07190571645071361
+       },
+       {
+        "f_range": [
+         0.1,
+         0.2
+        ],
+        "n": 242,
+        "flagged": 27,
+        "out_of_band": 29,
+        "median_de": 2.3025938882668036,
+        "residue_mae": 0.07482886452446633
+       },
+       {
+        "f_range": [
+         0.2,
+         0.3
+        ],
+        "n": 241,
+        "flagged": 81,
+        "out_of_band": 84,
+        "median_de": 3.5314331402915236,
+        "residue_mae": 0.08352748285904474
+       },
+       {
+        "f_range": [
+         0.3,
+         0.5
+        ],
+        "n": 43,
+        "flagged": 19,
+        "out_of_band": 19,
+        "median_de": 3.770316412588501,
+        "residue_mae": 0.11946652830662663
+       },
+       {
+        "f_range": [
+         0.5,
+         1.0
+        ],
+        "n": 95,
+        "flagged": 74,
+        "out_of_band": 74,
+        "median_de": 10.907011332938762,
+        "residue_mae": 0.05558164498791974
+       }
+      ],
+      "false_alarm_rate": 0.0,
+      "detection_rate": 0.24514563106796117,
+      "residue_mae": 0.06581509895174811,
+      "residue_mae_large_change": 0.022950307377571533
+     },
+     "tuned": {
+      "band": 1.5,
+      "cos": 0.6,
+      "dev": {
+       "changeovers": 1200,
+       "band_de2000": 1.5,
+       "direction_cos": 0.6,
+       "bins": [
+        {
+         "f_range": [
+          0.0,
+          0.0
+         ],
+         "n": 376,
+         "flagged": 15,
+         "out_of_band": 104,
+         "median_de": 0.9897597438652967,
+         "residue_mae": 0.050181921471429906
+        },
+        {
+         "f_range": [
+          0.0,
+          0.05
+         ],
+         "n": 102,
+         "flagged": 18,
+         "out_of_band": 30,
+         "median_de": 1.1535210516520884,
+         "residue_mae": 0.041090326787549744
+        },
+        {
+         "f_range": [
+          0.05,
+          0.1
+         ],
+         "n": 101,
+         "flagged": 47,
+         "out_of_band": 57,
+         "median_de": 1.7820333331139222,
+         "residue_mae": 0.07190571645071361
+        },
+        {
+         "f_range": [
+          0.1,
+          0.2
+         ],
+         "n": 242,
+         "flagged": 143,
+         "out_of_band": 163,
+         "median_de": 2.3025938882668036,
+         "residue_mae": 0.07482886452446633
+        },
+        {
+         "f_range": [
+          0.2,
+          0.3
+         ],
+         "n": 241,
+         "flagged": 192,
+         "out_of_band": 201,
+         "median_de": 3.5314331402915236,
+         "residue_mae": 0.08352748285904474
+        },
+        {
+         "f_range": [
+          0.3,
+          0.5
+         ],
+         "n": 43,
+         "flagged": 33,
+         "out_of_band": 34,
+         "median_de": 3.770316412588501,
+         "residue_mae": 0.11946652830662663
+        },
+        {
+         "f_range": [
+          0.5,
+          1.0
+         ],
+         "n": 95,
+         "flagged": 88,
+         "out_of_band": 89,
+         "median_de": 10.907011332938762,
+         "residue_mae": 0.05558164498791974
+        }
+       ],
+       "false_alarm_rate": 0.0398936170212766,
+       "detection_rate": 0.6322815533980582,
+       "residue_mae": 0.06581509895174811,
+       "residue_mae_large_change": 0.022950307377571533
+      }
+     }
+    },
+    {
+     "seed": 2,
+     "clean_median_de": 1.0897654779864034,
+     "current": {
+      "changeovers": 1200,
+      "band_de2000": 5.0,
+      "direction_cos": 0.8,
+      "bins": [
+       {
+        "f_range": [
+         0.0,
+         0.0
+        ],
+        "n": 376,
+        "flagged": 0,
+        "out_of_band": 2,
+        "median_de": 1.0897654779864034,
+        "residue_mae": 0.06378855159357415
+       },
+       {
+        "f_range": [
+         0.0,
+         0.05
+        ],
+        "n": 102,
+        "flagged": 0,
+        "out_of_band": 0,
+        "median_de": 1.1755090356593048,
+        "residue_mae": 0.04516928848380049
+       },
+       {
+        "f_range": [
+         0.05,
+         0.1
+        ],
+        "n": 101,
+        "flagged": 1,
+        "out_of_band": 2,
+        "median_de": 1.7326965845751698,
+        "residue_mae": 0.09377333621997613
+       },
+       {
+        "f_range": [
+         0.1,
+         0.2
+        ],
+        "n": 242,
+        "flagged": 23,
+        "out_of_band": 24,
+        "median_de": 1.9822915917167534,
+        "residue_mae": 0.07302320970689943
+       },
+       {
+        "f_range": [
+         0.2,
+         0.3
+        ],
+        "n": 241,
+        "flagged": 78,
+        "out_of_band": 80,
+        "median_de": 3.6895613766550084,
+        "residue_mae": 0.07954071567563144
+       },
+       {
+        "f_range": [
+         0.3,
+         0.5
+        ],
+        "n": 43,
+        "flagged": 20,
+        "out_of_band": 20,
+        "median_de": 3.9229667213977795,
+        "residue_mae": 0.10591238888739776
+       },
+       {
+        "f_range": [
+         0.5,
+         1.0
+        ],
+        "n": 95,
+        "flagged": 72,
+        "out_of_band": 72,
+        "median_de": 10.695665162638019,
+        "residue_mae": 0.07562819214636773
+       }
+      ],
+      "false_alarm_rate": 0.0,
+      "detection_rate": 0.2354368932038835,
+      "residue_mae": 0.07220225832142417,
+      "residue_mae_large_change": 0.02287036113515228
+     },
+     "tuned": {
+      "band": 1.5,
+      "cos": 0.6,
+      "dev": {
+       "changeovers": 1200,
+       "band_de2000": 1.5,
+       "direction_cos": 0.6,
+       "bins": [
+        {
+         "f_range": [
+          0.0,
+          0.0
+         ],
+         "n": 376,
+         "flagged": 19,
+         "out_of_band": 103,
+         "median_de": 1.0897654779864034,
+         "residue_mae": 0.06378855159357415
+        },
+        {
+         "f_range": [
+          0.0,
+          0.05
+         ],
+         "n": 102,
+         "flagged": 25,
+         "out_of_band": 40,
+         "median_de": 1.1755090356593048,
+         "residue_mae": 0.04516928848380049
+        },
+        {
+         "f_range": [
+          0.05,
+          0.1
+         ],
+         "n": 101,
+         "flagged": 43,
+         "out_of_band": 58,
+         "median_de": 1.7326965845751698,
+         "residue_mae": 0.09377333621997613
+        },
+        {
+         "f_range": [
+          0.1,
+          0.2
+         ],
+         "n": 242,
+         "flagged": 140,
+         "out_of_band": 160,
+         "median_de": 1.9822915917167534,
+         "residue_mae": 0.07302320970689943
+        },
+        {
+         "f_range": [
+          0.2,
+          0.3
+         ],
+         "n": 241,
+         "flagged": 190,
+         "out_of_band": 198,
+         "median_de": 3.6895613766550084,
+         "residue_mae": 0.07954071567563144
+        },
+        {
+         "f_range": [
+          0.3,
+          0.5
+         ],
+         "n": 43,
+         "flagged": 31,
+         "out_of_band": 35,
+         "median_de": 3.9229667213977795,
+         "residue_mae": 0.10591238888739776
+        },
+        {
+         "f_range": [
+          0.5,
+          1.0
+         ],
+         "n": 95,
+         "flagged": 85,
+         "out_of_band": 90,
+         "median_de": 10.695665162638019,
+         "residue_mae": 0.07562819214636773
+        }
+       ],
+       "false_alarm_rate": 0.05053191489361702,
+       "detection_rate": 0.6237864077669902,
+       "residue_mae": 0.07220225832142417,
+       "residue_mae_large_change": 0.02287036113515228
+      }
+     }
+    }
+   ]
+  },
+  {
+   "sigma": 1.0,
+   "runs": [
+    {
+     "seed": 0,
+     "clean_median_de": 1.6871103662127482,
+     "current": {
+      "changeovers": 1200,
+      "band_de2000": 5.0,
+      "direction_cos": 0.8,
+      "bins": [
+       {
+        "f_range": [
+         0.0,
+         0.0
+        ],
+        "n": 376,
+        "flagged": 0,
+        "out_of_band": 3,
+        "median_de": 1.6871103662127482,
+        "residue_mae": 0.08695975355938061
+       },
+       {
+        "f_range": [
+         0.0,
+         0.05
+        ],
+        "n": 102,
+        "flagged": 0,
+        "out_of_band": 2,
+        "median_de": 1.8854540022736512,
+        "residue_mae": 0.07282008131966007
+       },
+       {
+        "f_range": [
+         0.05,
+         0.1
+        ],
+        "n": 101,
+        "flagged": 3,
+        "out_of_band": 5,
+        "median_de": 2.1399424830732587,
+        "residue_mae": 0.11539870969167272
+       },
+       {
+        "f_range": [
+         0.1,
+         0.2
+        ],
+        "n": 242,
+        "flagged": 32,
+        "out_of_band": 34,
+        "median_de": 2.814062743542028,
+        "residue_mae": 0.10612488862808223
+       },
+       {
+        "f_range": [
+         0.2,
+         0.3
+        ],
+        "n": 241,
+        "flagged": 86,
+        "out_of_band": 93,
+        "median_de": 3.8918151266639334,
+        "residue_mae": 0.10264714930935644
+       },
+       {
+        "f_range": [
+         0.3,
+         0.5
+        ],
+        "n": 43,
+        "flagged": 22,
+        "out_of_band": 22,
+        "median_de": 5.180097472919191,
+        "residue_mae": 0.14884581284624443
+       },
+       {
+        "f_range": [
+         0.5,
+         1.0
+        ],
+        "n": 95,
+        "flagged": 71,
+        "out_of_band": 71,
+        "median_de": 11.342456865388021,
+        "residue_mae": 0.10189521823335056
+       }
+      ],
+      "false_alarm_rate": 0.0,
+      "detection_rate": 0.25970873786407767,
+      "residue_mae": 0.09856698918991583,
+      "residue_mae_large_change": 0.03213839542621378
+     },
+     "tuned": {
+      "band": 2.0,
+      "cos": 0.75,
+      "dev": {
+       "changeovers": 1200,
+       "band_de2000": 2.0,
+       "direction_cos": 0.75,
+       "bins": [
+        {
+         "f_range": [
+          0.0,
+          0.0
+         ],
+         "n": 376,
+         "flagged": 18,
+         "out_of_band": 154,
+         "median_de": 1.6871103662127482,
+         "residue_mae": 0.08695975355938061
+        },
+        {
+         "f_range": [
+          0.0,
+          0.05
+         ],
+         "n": 102,
+         "flagged": 13,
+         "out_of_band": 42,
+         "median_de": 1.8854540022736512,
+         "residue_mae": 0.07282008131966007
+        },
+        {
+         "f_range": [
+          0.05,
+          0.1
+         ],
+         "n": 101,
+         "flagged": 30,
+         "out_of_band": 57,
+         "median_de": 2.1399424830732587,
+         "residue_mae": 0.11539870969167272
+        },
+        {
+         "f_range": [
+          0.1,
+          0.2
+         ],
+         "n": 242,
+         "flagged": 120,
+         "out_of_band": 164,
+         "median_de": 2.814062743542028,
+         "residue_mae": 0.10612488862808223
+        },
+        {
+         "f_range": [
+          0.2,
+          0.3
+         ],
+         "n": 241,
+         "flagged": 165,
+         "out_of_band": 189,
+         "median_de": 3.8918151266639334,
+         "residue_mae": 0.10264714930935644
+        },
+        {
+         "f_range": [
+          0.3,
+          0.5
+         ],
+         "n": 43,
+         "flagged": 29,
+         "out_of_band": 34,
+         "median_de": 5.180097472919191,
+         "residue_mae": 0.14884581284624443
+        },
+        {
+         "f_range": [
+          0.5,
+          1.0
+         ],
+         "n": 95,
+         "flagged": 85,
+         "out_of_band": 88,
+         "median_de": 11.342456865388021,
+         "residue_mae": 0.10189521823335056
+        }
+       ],
+       "false_alarm_rate": 0.047872340425531915,
+       "detection_rate": 0.5364077669902912,
+       "residue_mae": 0.09856698918991583,
+       "residue_mae_large_change": 0.03213839542621378
+      }
+     }
+    },
+    {
+     "seed": 1,
+     "clean_median_de": 1.586897572641315,
+     "current": {
+      "changeovers": 1200,
+      "band_de2000": 5.0,
+      "direction_cos": 0.8,
+      "bins": [
+       {
+        "f_range": [
+         0.0,
+         0.0
+        ],
+        "n": 376,
+        "flagged": 1,
+        "out_of_band": 5,
+        "median_de": 1.586897572641315,
+        "residue_mae": 0.06645178958022696
+       },
+       {
+        "f_range": [
+         0.0,
+         0.05
+        ],
+        "n": 102,
+        "flagged": 1,
+        "out_of_band": 2,
+        "median_de": 1.595625611132103,
+        "residue_mae": 0.05624615501043616
+       },
+       {
+        "f_range": [
+         0.05,
+         0.1
+        ],
+        "n": 101,
+        "flagged": 2,
+        "out_of_band": 3,
+        "median_de": 2.16125066672887,
+        "residue_mae": 0.09952212227548123
+       },
+       {
+        "f_range": [
+         0.1,
+         0.2
+        ],
+        "n": 242,
+        "flagged": 31,
+        "out_of_band": 37,
+        "median_de": 2.692005458205034,
+        "residue_mae": 0.10278287334114393
+       },
+       {
+        "f_range": [
+         0.2,
+         0.3
+        ],
+        "n": 241,
+        "flagged": 78,
+        "out_of_band": 84,
+        "median_de": 3.9177541986794537,
+        "residue_mae": 0.10327976281379489
+       },
+       {
+        "f_range": [
+         0.3,
+         0.5
+        ],
+        "n": 43,
+        "flagged": 20,
+        "out_of_band": 20,
+        "median_de": 4.55521155336935,
+        "residue_mae": 0.13647578210744196
+       },
+       {
+        "f_range": [
+         0.5,
+         1.0
+        ],
+        "n": 95,
+        "flagged": 75,
+        "out_of_band": 75,
+        "median_de": 11.232442669251828,
+        "residue_mae": 0.07153755656878966
+       }
+      ],
+      "false_alarm_rate": 0.0026595744680851063,
+      "detection_rate": 0.2512135922330097,
+      "residue_mae": 0.08600259977865822,
+      "residue_mae_large_change": 0.03203072633728784
+     },
+     "tuned": {
+      "band": 2.5,
+      "cos": 0.65,
+      "dev": {
+       "changeovers": 1200,
+       "band_de2000": 2.5,
+       "direction_cos": 0.65,
+       "bins": [
+        {
+         "f_range": [
+          0.0,
+          0.0
+         ],
+         "n": 376,
+         "flagged": 18,
+         "out_of_band": 91,
+         "median_de": 1.586897572641315,
+         "residue_mae": 0.06645178958022696
+        },
+        {
+         "f_range": [
+          0.0,
+          0.05
+         ],
+         "n": 102,
+         "flagged": 9,
+         "out_of_band": 22,
+         "median_de": 1.595625611132103,
+         "residue_mae": 0.05624615501043616
+        },
+        {
+         "f_range": [
+          0.05,
+          0.1
+         ],
+         "n": 101,
+         "flagged": 28,
+         "out_of_band": 37,
+         "median_de": 2.16125066672887,
+         "residue_mae": 0.09952212227548123
+        },
+        {
+         "f_range": [
+          0.1,
+          0.2
+         ],
+         "n": 242,
+         "flagged": 110,
+         "out_of_band": 130,
+         "median_de": 2.692005458205034,
+         "residue_mae": 0.10278287334114393
+        },
+        {
+         "f_range": [
+          0.2,
+          0.3
+         ],
+         "n": 241,
+         "flagged": 162,
+         "out_of_band": 177,
+         "median_de": 3.9177541986794537,
+         "residue_mae": 0.10327976281379489
+        },
+        {
+         "f_range": [
+          0.3,
+          0.5
+         ],
+         "n": 43,
+         "flagged": 27,
+         "out_of_band": 28,
+         "median_de": 4.55521155336935,
+         "residue_mae": 0.13647578210744196
+        },
+        {
+         "f_range": [
+          0.5,
+          1.0
+         ],
+         "n": 95,
+         "flagged": 83,
+         "out_of_band": 85,
+         "median_de": 11.232442669251828,
+         "residue_mae": 0.07153755656878966
+        }
+       ],
+       "false_alarm_rate": 0.047872340425531915,
+       "detection_rate": 0.508495145631068,
+       "residue_mae": 0.08600259977865822,
+       "residue_mae_large_change": 0.03203072633728784
+      }
+     }
+    },
+    {
+     "seed": 2,
+     "clean_median_de": 1.7217076826388253,
+     "current": {
+      "changeovers": 1200,
+      "band_de2000": 5.0,
+      "direction_cos": 0.8,
+      "bins": [
+       {
+        "f_range": [
+         0.0,
+         0.0
+        ],
+        "n": 376,
+        "flagged": 0,
+        "out_of_band": 8,
+        "median_de": 1.7217076826388253,
+        "residue_mae": 0.0857187425896527
+       },
+       {
+        "f_range": [
+         0.0,
+         0.05
+        ],
+        "n": 102,
+        "flagged": 0,
+        "out_of_band": 0,
+        "median_de": 1.8650036318291177,
+        "residue_mae": 0.07359108027292238
+       },
+       {
+        "f_range": [
+         0.05,
+         0.1
+        ],
+        "n": 101,
+        "flagged": 2,
+        "out_of_band": 3,
+        "median_de": 2.2575162693584123,
+        "residue_mae": 0.11260457203382182
+       },
+       {
+        "f_range": [
+         0.1,
+         0.2
+        ],
+        "n": 242,
+        "flagged": 26,
+        "out_of_band": 30,
+        "median_de": 2.61529481233838,
+        "residue_mae": 0.09406148336390195
+       },
+       {
+        "f_range": [
+         0.2,
+         0.3
+        ],
+        "n": 241,
+        "flagged": 80,
+        "out_of_band": 83,
+        "median_de": 3.834912952686527,
+        "residue_mae": 0.11027082340168395
+       },
+       {
+        "f_range": [
+         0.3,
+         0.5
+        ],
+        "n": 43,
+        "flagged": 20,
+        "out_of_band": 20,
+        "median_de": 3.636142929736113,
+        "residue_mae": 0.10974813964545818
+       },
+       {
+        "f_range": [
+         0.5,
+         1.0
+        ],
+        "n": 95,
+        "flagged": 72,
+        "out_of_band": 72,
+        "median_de": 10.74318640929965,
+        "residue_mae": 0.10064372382669737
+       }
+      ],
+      "false_alarm_rate": 0.0,
+      "detection_rate": 0.24271844660194175,
+      "residue_mae": 0.09560672529927046,
+      "residue_mae_large_change": 0.03187297724005576
+     },
+     "tuned": {
+      "band": 2.5,
+      "cos": 0.65,
+      "dev": {
+       "changeovers": 1200,
+       "band_de2000": 2.5,
+       "direction_cos": 0.65,
+       "bins": [
+        {
+         "f_range": [
+          0.0,
+          0.0
+         ],
+         "n": 376,
+         "flagged": 17,
+         "out_of_band": 94,
+         "median_de": 1.7217076826388253,
+         "residue_mae": 0.0857187425896527
+        },
+        {
+         "f_range": [
+          0.0,
+          0.05
+         ],
+         "n": 102,
+         "flagged": 12,
+         "out_of_band": 27,
+         "median_de": 1.8650036318291177,
+         "residue_mae": 0.07359108027292238
+        },
+        {
+         "f_range": [
+          0.05,
+          0.1
+         ],
+         "n": 101,
+         "flagged": 28,
+         "out_of_band": 39,
+         "median_de": 2.2575162693584123,
+         "residue_mae": 0.11260457203382182
+        },
+        {
+         "f_range": [
+          0.1,
+          0.2
+         ],
+         "n": 242,
+         "flagged": 106,
+         "out_of_band": 125,
+         "median_de": 2.61529481233838,
+         "residue_mae": 0.09406148336390195
+        },
+        {
+         "f_range": [
+          0.2,
+          0.3
+         ],
+         "n": 241,
+         "flagged": 163,
+         "out_of_band": 174,
+         "median_de": 3.834912952686527,
+         "residue_mae": 0.11027082340168395
+        },
+        {
+         "f_range": [
+          0.3,
+          0.5
+         ],
+         "n": 43,
+         "flagged": 26,
+         "out_of_band": 28,
+         "median_de": 3.636142929736113,
+         "residue_mae": 0.10974813964545818
+        },
+        {
+         "f_range": [
+          0.5,
+          1.0
+         ],
+         "n": 95,
+         "flagged": 85,
+         "out_of_band": 89,
+         "median_de": 10.74318640929965,
+         "residue_mae": 0.10064372382669737
+        }
+       ],
+       "false_alarm_rate": 0.04521276595744681,
+       "detection_rate": 0.5097087378640777,
+       "residue_mae": 0.09560672529927046,
+       "residue_mae_large_change": 0.03187297724005576
+      }
+     }
+    }
+   ]
+  },
+  {
+   "sigma": 1.5,
+   "runs": [
+    {
+     "seed": 0,
+     "clean_median_de": 2.382318046351194,
+     "current": {
+      "changeovers": 1200,
+      "band_de2000": 5.0,
+      "direction_cos": 0.8,
+      "bins": [
+       {
+        "f_range": [
+         0.0,
+         0.0
+        ],
+        "n": 376,
+        "flagged": 3,
+        "out_of_band": 21,
+        "median_de": 2.382318046351194,
+        "residue_mae": 0.10898945276008158
+       },
+       {
+        "f_range": [
+         0.0,
+         0.05
+        ],
+        "n": 102,
+        "flagged": 2,
+        "out_of_band": 8,
+        "median_de": 2.5001180353756416,
+        "residue_mae": 0.1061759687587067
+       },
+       {
+        "f_range": [
+         0.05,
+         0.1
+        ],
+        "n": 101,
+        "flagged": 3,
+        "out_of_band": 8,
+        "median_de": 2.8186665757713394,
+        "residue_mae": 0.13172773273941696
+       },
+       {
+        "f_range": [
+         0.1,
+         0.2
+        ],
+        "n": 242,
+        "flagged": 31,
+        "out_of_band": 44,
+        "median_de": 3.419264308500967,
+        "residue_mae": 0.1251819189400041
+       },
+       {
+        "f_range": [
+         0.2,
+         0.3
+        ],
+        "n": 241,
+        "flagged": 89,
+        "out_of_band": 102,
+        "median_de": 4.404987892178473,
+        "residue_mae": 0.12784421046376385
+       },
+       {
+        "f_range": [
+         0.3,
+         0.5
+        ],
+        "n": 43,
+        "flagged": 22,
+        "out_of_band": 23,
+        "median_de": 5.577343258128374,
+        "residue_mae": 0.1634845198473326
+       },
+       {
+        "f_range": [
+         0.5,
+         1.0
+        ],
+        "n": 95,
+        "flagged": 70,
+        "out_of_band": 72,
+        "median_de": 11.079743051426831,
+        "residue_mae": 0.12171621322477194
+       }
+      ],
+      "false_alarm_rate": 0.007978723404255319,
+      "detection_rate": 0.2633495145631068,
+      "residue_mae": 0.12067653147741382,
+      "residue_mae_large_change": 0.041914858382703125
+     },
+     "tuned": {
+      "band": 3.0,
+      "cos": 0.75,
+      "dev": {
+       "changeovers": 1200,
+       "band_de2000": 3.0,
+       "direction_cos": 0.75,
+       "bins": [
+        {
+         "f_range": [
+          0.0,
+          0.0
+         ],
+         "n": 376,
+         "flagged": 19,
+         "out_of_band": 125,
+         "median_de": 2.382318046351194,
+         "residue_mae": 0.10898945276008158
+        },
+        {
+         "f_range": [
+          0.0,
+          0.05
+         ],
+         "n": 102,
+         "flagged": 8,
+         "out_of_band": 38,
+         "median_de": 2.5001180353756416,
+         "residue_mae": 0.1061759687587067
+        },
+        {
+         "f_range": [
+          0.05,
+          0.1
+         ],
+         "n": 101,
+         "flagged": 19,
+         "out_of_band": 41,
+         "median_de": 2.8186665757713394,
+         "residue_mae": 0.13172773273941696
+        },
+        {
+         "f_range": [
+          0.1,
+          0.2
+         ],
+         "n": 242,
+         "flagged": 99,
+         "out_of_band": 147,
+         "median_de": 3.419264308500967,
+         "residue_mae": 0.1251819189400041
+        },
+        {
+         "f_range": [
+          0.2,
+          0.3
+         ],
+         "n": 241,
+         "flagged": 143,
+         "out_of_band": 168,
+         "median_de": 4.404987892178473,
+         "residue_mae": 0.12784421046376385
+        },
+        {
+         "f_range": [
+          0.3,
+          0.5
+         ],
+         "n": 43,
+         "flagged": 25,
+         "out_of_band": 32,
+         "median_de": 5.577343258128374,
+         "residue_mae": 0.1634845198473326
+        },
+        {
+         "f_range": [
+          0.5,
+          1.0
+         ],
+         "n": 95,
+         "flagged": 82,
+         "out_of_band": 85,
+         "median_de": 11.079743051426831,
+         "residue_mae": 0.12171621322477194
+        }
+       ],
+       "false_alarm_rate": 0.05053191489361702,
+       "detection_rate": 0.4563106796116505,
+       "residue_mae": 0.12067653147741382,
+       "residue_mae_large_change": 0.041914858382703125
+      }
+     }
+    },
+    {
+     "seed": 1,
+     "clean_median_de": 2.2811425100401808,
+     "current": {
+      "changeovers": 1200,
+      "band_de2000": 5.0,
+      "direction_cos": 0.8,
+      "bins": [
+       {
+        "f_range": [
+         0.0,
+         0.0
+        ],
+        "n": 376,
+        "flagged": 3,
+        "out_of_band": 27,
+        "median_de": 2.2811425100401808,
+        "residue_mae": 0.08303593488014865
+       },
+       {
+        "f_range": [
+         0.0,
+         0.05
+        ],
+        "n": 102,
+        "flagged": 1,
+        "out_of_band": 6,
+        "median_de": 2.2052492743304484,
+        "residue_mae": 0.0791481781885715
+       },
+       {
+        "f_range": [
+         0.05,
+         0.1
+        ],
+        "n": 101,
+        "flagged": 3,
+        "out_of_band": 9,
+        "median_de": 2.852691492997067,
+        "residue_mae": 0.12096680410568542
+       },
+       {
+        "f_range": [
+         0.1,
+         0.2
+        ],
+        "n": 242,
+        "flagged": 36,
+        "out_of_band": 54,
+        "median_de": 3.2881385626331463,
+        "residue_mae": 0.12706116200296255
+       },
+       {
+        "f_range": [
+         0.2,
+         0.3
+        ],
+        "n": 241,
+        "flagged": 83,
+        "out_of_band": 98,
+        "median_de": 4.413627119343397,
+        "residue_mae": 0.1251672511443687
+       },
+       {
+        "f_range": [
+         0.3,
+         0.5
+        ],
+        "n": 43,
+        "flagged": 21,
+        "out_of_band": 21,
+        "median_de": 4.8551902095815365,
+        "residue_mae": 0.17009827843728664
+       },
+       {
+        "f_range": [
+         0.5,
+         1.0
+        ],
+        "n": 95,
+        "flagged": 79,
+        "out_of_band": 80,
+        "median_de": 11.40978054307183,
+        "residue_mae": 0.09349373663581621
+       }
+      ],
+      "false_alarm_rate": 0.007978723404255319,
+      "detection_rate": 0.27063106796116504,
+      "residue_mae": 0.1071854271571334,
+      "residue_mae_large_change": 0.042725249070305615
+     },
+     "tuned": {
+      "band": 2.5,
+      "cos": 0.85,
+      "dev": {
+       "changeovers": 1200,
+       "band_de2000": 2.5,
+       "direction_cos": 0.85,
+       "bins": [
+        {
+         "f_range": [
+          0.0,
+          0.0
+         ],
+         "n": 376,
+         "flagged": 16,
+         "out_of_band": 164,
+         "median_de": 2.2811425100401808,
+         "residue_mae": 0.08303593488014865
+        },
+        {
+         "f_range": [
+          0.0,
+          0.05
+         ],
+         "n": 102,
+         "flagged": 6,
+         "out_of_band": 42,
+         "median_de": 2.2052492743304484,
+         "residue_mae": 0.0791481781885715
+        },
+        {
+         "f_range": [
+          0.05,
+          0.1
+         ],
+         "n": 101,
+         "flagged": 14,
+         "out_of_band": 55,
+         "median_de": 2.852691492997067,
+         "residue_mae": 0.12096680410568542
+        },
+        {
+         "f_range": [
+          0.1,
+          0.2
+         ],
+         "n": 242,
+         "flagged": 81,
+         "out_of_band": 166,
+         "median_de": 3.2881385626331463,
+         "residue_mae": 0.12706116200296255
+        },
+        {
+         "f_range": [
+          0.2,
+          0.3
+         ],
+         "n": 241,
+         "flagged": 141,
+         "out_of_band": 202,
+         "median_de": 4.413627119343397,
+         "residue_mae": 0.1251672511443687
+        },
+        {
+         "f_range": [
+          0.3,
+          0.5
+         ],
+         "n": 43,
+         "flagged": 26,
+         "out_of_band": 35,
+         "median_de": 4.8551902095815365,
+         "residue_mae": 0.17009827843728664
+        },
+        {
+         "f_range": [
+          0.5,
+          1.0
+         ],
+         "n": 95,
+         "flagged": 82,
+         "out_of_band": 88,
+         "median_de": 11.40978054307183,
+         "residue_mae": 0.09349373663581621
+        }
+       ],
+       "false_alarm_rate": 0.0425531914893617,
+       "detection_rate": 0.42475728155339804,
+       "residue_mae": 0.1071854271571334,
+       "residue_mae_large_change": 0.042725249070305615
+      }
+     }
+    },
+    {
+     "seed": 2,
+     "clean_median_de": 2.4393223119137915,
+     "current": {
+      "changeovers": 1200,
+      "band_de2000": 5.0,
+      "direction_cos": 0.8,
+      "bins": [
+       {
+        "f_range": [
+         0.0,
+         0.0
+        ],
+        "n": 376,
+        "flagged": 4,
+        "out_of_band": 30,
+        "median_de": 2.4393223119137915,
+        "residue_mae": 0.10754832725503631
+       },
+       {
+        "f_range": [
+         0.0,
+         0.05
+        ],
+        "n": 102,
+        "flagged": 2,
+        "out_of_band": 5,
+        "median_de": 2.360540121015725,
+        "residue_mae": 0.09443216292511501
+       },
+       {
+        "f_range": [
+         0.05,
+         0.1
+        ],
+        "n": 101,
+        "flagged": 2,
+        "out_of_band": 7,
+        "median_de": 2.848907331994672,
+        "residue_mae": 0.13668474357570978
+       },
+       {
+        "f_range": [
+         0.1,
+         0.2
+        ],
+        "n": 242,
+        "flagged": 33,
+        "out_of_band": 44,
+        "median_de": 3.126718410767022,
+        "residue_mae": 0.11764647575969059
+       },
+       {
+        "f_range": [
+         0.2,
+         0.3
+        ],
+        "n": 241,
+        "flagged": 86,
+        "out_of_band": 96,
+        "median_de": 4.180859436078462,
+        "residue_mae": 0.13525791508560378
+       },
+       {
+        "f_range": [
+         0.3,
+         0.5
+        ],
+        "n": 43,
+        "flagged": 21,
+        "out_of_band": 21,
+        "median_de": 3.7069224698684904,
+        "residue_mae": 0.12982829686725464
+       },
+       {
+        "f_range": [
+         0.5,
+         1.0
+        ],
+        "n": 95,
+        "flagged": 70,
+        "out_of_band": 73,
+        "median_de": 10.685372483301144,
+        "residue_mae": 0.1263397421050709
+       }
+      ],
+      "false_alarm_rate": 0.010638297872340425,
+      "detection_rate": 0.25970873786407767,
+      "residue_mae": 0.1187732564184595,
+      "residue_mae_large_change": 0.041595030435965845
+     },
+     "tuned": {
+      "band": 3.5,
+      "cos": 0.7,
+      "dev": {
+       "changeovers": 1200,
+       "band_de2000": 3.5,
+       "direction_cos": 0.7,
+       "bins": [
+        {
+         "f_range": [
+          0.0,
+          0.0
+         ],
+         "n": 376,
+         "flagged": 18,
+         "out_of_band": 94,
+         "median_de": 2.4393223119137915,
+         "residue_mae": 0.10754832725503631
+        },
+        {
+         "f_range": [
+          0.0,
+          0.05
+         ],
+         "n": 102,
+         "flagged": 10,
+         "out_of_band": 25,
+         "median_de": 2.360540121015725,
+         "residue_mae": 0.09443216292511501
+        },
+        {
+         "f_range": [
+          0.05,
+          0.1
+         ],
+         "n": 101,
+         "flagged": 17,
+         "out_of_band": 30,
+         "median_de": 2.848907331994672,
+         "residue_mae": 0.13668474357570978
+        },
+        {
+         "f_range": [
+          0.1,
+          0.2
+         ],
+         "n": 242,
+         "flagged": 82,
+         "out_of_band": 102,
+         "median_de": 3.126718410767022,
+         "residue_mae": 0.11764647575969059
+        },
+        {
+         "f_range": [
+          0.2,
+          0.3
+         ],
+         "n": 241,
+         "flagged": 138,
+         "out_of_band": 151,
+         "median_de": 4.180859436078462,
+         "residue_mae": 0.13525791508560378
+        },
+        {
+         "f_range": [
+          0.3,
+          0.5
+         ],
+         "n": 43,
+         "flagged": 22,
+         "out_of_band": 24,
+         "median_de": 3.7069224698684904,
+         "residue_mae": 0.12982829686725464
+        },
+        {
+         "f_range": [
+          0.5,
+          1.0
+         ],
+         "n": 95,
+         "flagged": 80,
+         "out_of_band": 85,
+         "median_de": 10.685372483301144,
+         "residue_mae": 0.1263397421050709
+        }
+       ],
+       "false_alarm_rate": 0.047872340425531915,
+       "detection_rate": 0.42354368932038833,
+       "residue_mae": 0.1187732564184595,
+       "residue_mae_large_change": 0.041595030435965845
+      }
+     }
+    }
+   ]
+  },
+  {
+   "sigma": 2.0,
+   "runs": [
+    {
+     "seed": 0,
+     "clean_median_de": 3.078459874292934,
+     "current": {
+      "changeovers": 1200,
+      "band_de2000": 5.0,
+      "direction_cos": 0.8,
+      "bins": [
+       {
+        "f_range": [
+         0.0,
+         0.0
+        ],
+        "n": 376,
+        "flagged": 7,
+        "out_of_band": 61,
+        "median_de": 3.078459874292934,
+        "residue_mae": 0.129684213344689
+       },
+       {
+        "f_range": [
+         0.0,
+         0.05
+        ],
+        "n": 102,
+        "flagged": 4,
+        "out_of_band": 20,
+        "median_de": 3.1421067667335745,
+        "residue_mae": 0.12639653851184302
+       },
+       {
+        "f_range": [
+         0.05,
+         0.1
+        ],
+        "n": 101,
+        "flagged": 5,
+        "out_of_band": 14,
+        "median_de": 3.4416768305677126,
+        "residue_mae": 0.14829005633506429
+       },
+       {
+        "f_range": [
+         0.1,
+         0.2
+        ],
+        "n": 242,
+        "flagged": 36,
+        "out_of_band": 68,
+        "median_de": 4.019023622851469,
+        "residue_mae": 0.14267106933104698
+       },
+       {
+        "f_range": [
+         0.2,
+         0.3
+        ],
+        "n": 241,
+        "flagged": 100,
+        "out_of_band": 120,
+        "median_de": 4.993189782860237,
+        "residue_mae": 0.1484499406596618
+       },
+       {
+        "f_range": [
+         0.3,
+         0.5
+        ],
+        "n": 43,
+        "flagged": 21,
+        "out_of_band": 23,
+        "median_de": 5.817218633508384,
+        "residue_mae": 0.1777038681361546
+       },
+       {
+        "f_range": [
+         0.5,
+         1.0
+        ],
+        "n": 95,
+        "flagged": 74,
+        "out_of_band": 76,
+        "median_de": 11.976956855629698,
+        "residue_mae": 0.13825047207796837
+       }
+      ],
+      "false_alarm_rate": 0.018617021276595744,
+      "detection_rate": 0.2912621359223301,
+      "residue_mae": 0.1397574187416717,
+      "residue_mae_large_change": 0.05254472157324791
+     },
+     "tuned": {
+      "band": 4.0,
+      "cos": 0.8,
+      "dev": {
+       "changeovers": 1200,
+       "band_de2000": 4.0,
+       "direction_cos": 0.8,
+       "bins": [
+        {
+         "f_range": [
+          0.0,
+          0.0
+         ],
+         "n": 376,
+         "flagged": 14,
+         "out_of_band": 118,
+         "median_de": 3.078459874292934,
+         "residue_mae": 0.129684213344689
+        },
+        {
+         "f_range": [
+          0.0,
+          0.05
+         ],
+         "n": 102,
+         "flagged": 7,
+         "out_of_band": 34,
+         "median_de": 3.1421067667335745,
+         "residue_mae": 0.12639653851184302
+        },
+        {
+         "f_range": [
+          0.05,
+          0.1
+         ],
+         "n": 101,
+         "flagged": 14,
+         "out_of_band": 38,
+         "median_de": 3.4416768305677126,
+         "residue_mae": 0.14829005633506429
+        },
+        {
+         "f_range": [
+          0.1,
+          0.2
+         ],
+         "n": 242,
+         "flagged": 60,
+         "out_of_band": 124,
+         "median_de": 4.019023622851469,
+         "residue_mae": 0.14267106933104698
+        },
+        {
+         "f_range": [
+          0.2,
+          0.3
+         ],
+         "n": 241,
+         "flagged": 117,
+         "out_of_band": 153,
+         "median_de": 4.993189782860237,
+         "residue_mae": 0.1484499406596618
+        },
+        {
+         "f_range": [
+          0.3,
+          0.5
+         ],
+         "n": 43,
+         "flagged": 24,
+         "out_of_band": 29,
+         "median_de": 5.817218633508384,
+         "residue_mae": 0.1777038681361546
+        },
+        {
+         "f_range": [
+          0.5,
+          1.0
+         ],
+         "n": 95,
+         "flagged": 78,
+         "out_of_band": 82,
+         "median_de": 11.976956855629698,
+         "residue_mae": 0.13825047207796837
+        }
+       ],
+       "false_alarm_rate": 0.03723404255319149,
+       "detection_rate": 0.3640776699029126,
+       "residue_mae": 0.1397574187416717,
+       "residue_mae_large_change": 0.05254472157324791
+      }
+     }
+    },
+    {
+     "seed": 1,
+     "clean_median_de": 2.924544177973468,
+     "current": {
+      "changeovers": 1200,
+      "band_de2000": 5.0,
+      "direction_cos": 0.8,
+      "bins": [
+       {
+        "f_range": [
+         0.0,
+         0.0
+        ],
+        "n": 376,
+        "flagged": 10,
+        "out_of_band": 65,
+        "median_de": 2.924544177973468,
+        "residue_mae": 0.10098230274863756
+       },
+       {
+        "f_range": [
+         0.0,
+         0.05
+        ],
+        "n": 102,
+        "flagged": 3,
+        "out_of_band": 16,
+        "median_de": 2.7895963562682278,
+        "residue_mae": 0.10264723158664328
+       },
+       {
+        "f_range": [
+         0.05,
+         0.1
+        ],
+        "n": 101,
+        "flagged": 8,
+        "out_of_band": 19,
+        "median_de": 3.417170212558009,
+        "residue_mae": 0.1390924251523004
+       },
+       {
+        "f_range": [
+         0.1,
+         0.2
+        ],
+        "n": 242,
+        "flagged": 38,
+        "out_of_band": 72,
+        "median_de": 3.974010299417769,
+        "residue_mae": 0.1494985994877631
+       },
+       {
+        "f_range": [
+         0.2,
+         0.3
+        ],
+        "n": 241,
+        "flagged": 97,
+        "out_of_band": 120,
+        "median_de": 4.918567062495124,
+        "residue_mae": 0.1427376616391085
+       },
+       {
+        "f_range": [
+         0.3,
+         0.5
+        ],
+        "n": 43,
+        "flagged": 22,
+        "out_of_band": 24,
+        "median_de": 5.365569757658828,
+        "residue_mae": 0.19211669117290486
+       },
+       {
+        "f_range": [
+         0.5,
+         1.0
+        ],
+        "n": 95,
+        "flagged": 77,
+        "out_of_band": 80,
+        "median_de": 11.5834405748715,
+        "residue_mae": 0.11143040612394821
+       }
+      ],
+      "false_alarm_rate": 0.026595744680851064,
+      "detection_rate": 0.2973300970873786,
+      "residue_mae": 0.12659420185748455,
+      "residue_mae_large_change": 0.054466184449768924
+     },
+     "tuned": {
+      "band": 5.0,
+      "cos": 0.6,
+      "dev": {
+       "changeovers": 1200,
+       "band_de2000": 5.0,
+       "direction_cos": 0.6,
+       "bins": [
+        {
+         "f_range": [
+          0.0,
+          0.0
+         ],
+         "n": 376,
+         "flagged": 19,
+         "out_of_band": 65,
+         "median_de": 2.924544177973468,
+         "residue_mae": 0.10098230274863756
+        },
+        {
+         "f_range": [
+          0.0,
+          0.05
+         ],
+         "n": 102,
+         "flagged": 8,
+         "out_of_band": 16,
+         "median_de": 2.7895963562682278,
+         "residue_mae": 0.10264723158664328
+        },
+        {
+         "f_range": [
+          0.05,
+          0.1
+         ],
+         "n": 101,
+         "flagged": 12,
+         "out_of_band": 19,
+         "median_de": 3.417170212558009,
+         "residue_mae": 0.1390924251523004
+        },
+        {
+         "f_range": [
+          0.1,
+          0.2
+         ],
+         "n": 242,
+         "flagged": 54,
+         "out_of_band": 72,
+         "median_de": 3.974010299417769,
+         "residue_mae": 0.1494985994877631
+        },
+        {
+         "f_range": [
+          0.2,
+          0.3
+         ],
+         "n": 241,
+         "flagged": 111,
+         "out_of_band": 120,
+         "median_de": 4.918567062495124,
+         "residue_mae": 0.1427376616391085
+        },
+        {
+         "f_range": [
+          0.3,
+          0.5
+         ],
+         "n": 43,
+         "flagged": 22,
+         "out_of_band": 24,
+         "median_de": 5.365569757658828,
+         "residue_mae": 0.19211669117290486
+        },
+        {
+         "f_range": [
+          0.5,
+          1.0
+         ],
+         "n": 95,
+         "flagged": 80,
+         "out_of_band": 80,
+         "median_de": 11.5834405748715,
+         "residue_mae": 0.11143040612394821
+        }
+       ],
+       "false_alarm_rate": 0.05053191489361702,
+       "detection_rate": 0.3483009708737864,
+       "residue_mae": 0.12659420185748455,
+       "residue_mae_large_change": 0.054466184449768924
+      }
+     }
+    },
+    {
+     "seed": 2,
+     "clean_median_de": 3.095330411303263,
+     "current": {
+      "changeovers": 1200,
+      "band_de2000": 5.0,
+      "direction_cos": 0.8,
+      "bins": [
+       {
+        "f_range": [
+         0.0,
+         0.0
+        ],
+        "n": 376,
+        "flagged": 11,
+        "out_of_band": 69,
+        "median_de": 3.095330411303263,
+        "residue_mae": 0.1281442199204001
+       },
+       {
+        "f_range": [
+         0.0,
+         0.05
+        ],
+        "n": 102,
+        "flagged": 5,
+        "out_of_band": 15,
+        "median_de": 2.8426751509845642,
+        "residue_mae": 0.12013854079268033
+       },
+       {
+        "f_range": [
+         0.05,
+         0.1
+        ],
+        "n": 101,
+        "flagged": 9,
+        "out_of_band": 21,
+        "median_de": 3.6076941615417617,
+        "residue_mae": 0.15800366342412897
+       },
+       {
+        "f_range": [
+         0.1,
+         0.2
+        ],
+        "n": 242,
+        "flagged": 40,
+        "out_of_band": 66,
+        "median_de": 3.7604184033944956,
+        "residue_mae": 0.13349714974582955
+       },
+       {
+        "f_range": [
+         0.2,
+         0.3
+        ],
+        "n": 241,
+        "flagged": 85,
+        "out_of_band": 105,
+        "median_de": 4.589605846694486,
+        "residue_mae": 0.15582051014936224
+       },
+       {
+        "f_range": [
+         0.3,
+         0.5
+        ],
+        "n": 43,
+        "flagged": 21,
+        "out_of_band": 21,
+        "median_de": 4.660330263048751,
+        "residue_mae": 0.15433114109490026
+       },
+       {
+        "f_range": [
+         0.5,
+         1.0
+        ],
+        "n": 95,
+        "flagged": 70,
+        "out_of_band": 74,
+        "median_de": 11.01404857034081,
+        "residue_mae": 0.14899710065364488
+       }
+      ],
+      "false_alarm_rate": 0.02925531914893617,
+      "detection_rate": 0.279126213592233,
+      "residue_mae": 0.13920395389202073,
+      "residue_mae_large_change": 0.05329105186181313
+     },
+     "tuned": {
+      "band": 4.0,
+      "cos": 0.8,
+      "dev": {
+       "changeovers": 1200,
+       "band_de2000": 4.0,
+       "direction_cos": 0.8,
+       "bins": [
+        {
+         "f_range": [
+          0.0,
+          0.0
+         ],
+         "n": 376,
+         "flagged": 19,
+         "out_of_band": 128,
+         "median_de": 3.095330411303263,
+         "residue_mae": 0.1281442199204001
+        },
+        {
+         "f_range": [
+          0.0,
+          0.05
+         ],
+         "n": 102,
+         "flagged": 7,
+         "out_of_band": 28,
+         "median_de": 2.8426751509845642,
+         "residue_mae": 0.12013854079268033
+        },
+        {
+         "f_range": [
+          0.05,
+          0.1
+         ],
+         "n": 101,
+         "flagged": 15,
+         "out_of_band": 38,
+         "median_de": 3.6076941615417617,
+         "residue_mae": 0.15800366342412897
+        },
+        {
+         "f_range": [
+          0.1,
+          0.2
+         ],
+         "n": 242,
+         "flagged": 58,
+         "out_of_band": 106,
+         "median_de": 3.7604184033944956,
+         "residue_mae": 0.13349714974582955
+        },
+        {
+         "f_range": [
+          0.2,
+          0.3
+         ],
+         "n": 241,
+         "flagged": 119,
+         "out_of_band": 155,
+         "median_de": 4.589605846694486,
+         "residue_mae": 0.15582051014936224
+        },
+        {
+         "f_range": [
+          0.3,
+          0.5
+         ],
+         "n": 43,
+         "flagged": 21,
+         "out_of_band": 25,
+         "median_de": 4.660330263048751,
+         "residue_mae": 0.15433114109490026
+        },
+        {
+         "f_range": [
+          0.5,
+          1.0
+         ],
+         "n": 95,
+         "flagged": 75,
+         "out_of_band": 85,
+         "median_de": 11.01404857034081,
+         "residue_mae": 0.14899710065364488
+        }
+       ],
+       "false_alarm_rate": 0.05053191489361702,
+       "detection_rate": 0.3580097087378641,
+       "residue_mae": 0.13920395389202073,
+       "residue_mae_large_change": 0.05329105186181313
+      }
+     }
+    }
+   ]
+  },
+  {
+   "sigma": 3.0,
+   "runs": [
+    {
+     "seed": 0,
+     "clean_median_de": 4.511357368267483,
+     "current": {
+      "changeovers": 1200,
+      "band_de2000": 5.0,
+      "direction_cos": 0.8,
+      "bins": [
+       {
+        "f_range": [
+         0.0,
+         0.0
+        ],
+        "n": 376,
+        "flagged": 24,
+        "out_of_band": 152,
+        "median_de": 4.511357368267483,
+        "residue_mae": 0.1737492550353089
+       },
+       {
+        "f_range": [
+         0.0,
+         0.05
+        ],
+        "n": 102,
+        "flagged": 8,
+        "out_of_band": 44,
+        "median_de": 4.533768501360808,
+        "residue_mae": 0.1547503296870465
+       },
+       {
+        "f_range": [
+         0.05,
+         0.1
+        ],
+        "n": 101,
+        "flagged": 15,
+        "out_of_band": 50,
+        "median_de": 4.936539765517707,
+        "residue_mae": 0.17128333613271127
+       },
+       {
+        "f_range": [
+         0.1,
+         0.2
+        ],
+        "n": 242,
+        "flagged": 50,
+        "out_of_band": 139,
+        "median_de": 5.3790508299300015,
+        "residue_mae": 0.17227184891467956
+       },
+       {
+        "f_range": [
+         0.2,
+         0.3
+        ],
+        "n": 241,
+        "flagged": 106,
+        "out_of_band": 155,
+        "median_de": 6.097170120734457,
+        "residue_mae": 0.17695957496175993
+       },
+       {
+        "f_range": [
+         0.3,
+         0.5
+        ],
+        "n": 43,
+        "flagged": 21,
+        "out_of_band": 30,
+        "median_de": 6.366775489385699,
+        "residue_mae": 0.20248406354775783
+       },
+       {
+        "f_range": [
+         0.5,
+         1.0
+        ],
+        "n": 95,
+        "flagged": 72,
+        "out_of_band": 83,
+        "median_de": 12.916629924475638,
+        "residue_mae": 0.16413288854887761
+       }
+      ],
+      "false_alarm_rate": 0.06382978723404255,
+      "detection_rate": 0.3300970873786408,
+      "residue_mae": 0.17254196218216022,
+      "residue_mae_large_change": 0.07522863130967135
+     },
+     "tuned": {
+      "band": 7.5,
+      "cos": 0.6,
+      "dev": {
+       "changeovers": 1200,
+       "band_de2000": 7.5,
+       "direction_cos": 0.6,
+       "bins": [
+        {
+         "f_range": [
+          0.0,
+          0.0
+         ],
+         "n": 376,
+         "flagged": 16,
+         "out_of_band": 52,
+         "median_de": 4.511357368267483,
+         "residue_mae": 0.1737492550353089
+        },
+        {
+         "f_range": [
+          0.0,
+          0.05
+         ],
+         "n": 102,
+         "flagged": 8,
+         "out_of_band": 19,
+         "median_de": 4.533768501360808,
+         "residue_mae": 0.1547503296870465
+        },
+        {
+         "f_range": [
+          0.05,
+          0.1
+         ],
+         "n": 101,
+         "flagged": 5,
+         "out_of_band": 10,
+         "median_de": 4.936539765517707,
+         "residue_mae": 0.17128333613271127
+        },
+        {
+         "f_range": [
+          0.1,
+          0.2
+         ],
+         "n": 242,
+         "flagged": 41,
+         "out_of_band": 55,
+         "median_de": 5.3790508299300015,
+         "residue_mae": 0.17227184891467956
+        },
+        {
+         "f_range": [
+          0.2,
+          0.3
+         ],
+         "n": 241,
+         "flagged": 73,
+         "out_of_band": 81,
+         "median_de": 6.097170120734457,
+         "residue_mae": 0.17695957496175993
+        },
+        {
+         "f_range": [
+          0.3,
+          0.5
+         ],
+         "n": 43,
+         "flagged": 18,
+         "out_of_band": 19,
+         "median_de": 6.366775489385699,
+         "residue_mae": 0.20248406354775783
+        },
+        {
+         "f_range": [
+          0.5,
+          1.0
+         ],
+         "n": 95,
+         "flagged": 68,
+         "out_of_band": 70,
+         "median_de": 12.916629924475638,
+         "residue_mae": 0.16413288854887761
+        }
+       ],
+       "false_alarm_rate": 0.0425531914893617,
+       "detection_rate": 0.25849514563106796,
+       "residue_mae": 0.17254196218216022,
+       "residue_mae_large_change": 0.07522863130967135
+      }
+     }
+    },
+    {
+     "seed": 1,
+     "clean_median_de": 4.254749829742767,
+     "current": {
+      "changeovers": 1200,
+      "band_de2000": 5.0,
+      "direction_cos": 0.8,
+      "bins": [
+       {
+        "f_range": [
+         0.0,
+         0.0
+        ],
+        "n": 376,
+        "flagged": 24,
+        "out_of_band": 145,
+        "median_de": 4.254749829742767,
+        "residue_mae": 0.13572048722657964
+       },
+       {
+        "f_range": [
+         0.0,
+         0.05
+        ],
+        "n": 102,
+        "flagged": 8,
+        "out_of_band": 34,
+        "median_de": 4.249743825706947,
+        "residue_mae": 0.14541167780429531
+       },
+       {
+        "f_range": [
+         0.05,
+         0.1
+        ],
+        "n": 101,
+        "flagged": 16,
+        "out_of_band": 47,
+        "median_de": 4.765308133116113,
+        "residue_mae": 0.17117090726844328
+       },
+       {
+        "f_range": [
+         0.1,
+         0.2
+        ],
+        "n": 242,
+        "flagged": 58,
+        "out_of_band": 134,
+        "median_de": 5.298060561134319,
+        "residue_mae": 0.18488503398599668
+       },
+       {
+        "f_range": [
+         0.2,
+         0.3
+        ],
+        "n": 241,
+        "flagged": 96,
+        "out_of_band": 157,
+        "median_de": 6.209660494274105,
+        "residue_mae": 0.17314417858574646
+       },
+       {
+        "f_range": [
+         0.3,
+         0.5
+        ],
+        "n": 43,
+        "flagged": 24,
+        "out_of_band": 31,
+        "median_de": 6.5483713277072795,
+        "residue_mae": 0.22549300556693433
+       },
+       {
+        "f_range": [
+         0.5,
+         1.0
+        ],
+        "n": 95,
+        "flagged": 75,
+        "out_of_band": 85,
+        "median_de": 12.28895385892537,
+        "residue_mae": 0.14468420183861191
+       }
+      ],
+      "false_alarm_rate": 0.06382978723404255,
+      "detection_rate": 0.33616504854368934,
+      "residue_mae": 0.16088523303763938,
+      "residue_mae_large_change": 0.07988203180286453
+     },
+     "tuned": {
+      "band": 5.5,
+      "cos": 0.85,
+      "dev": {
+       "changeovers": 1200,
+       "band_de2000": 5.5,
+       "direction_cos": 0.85,
+       "bins": [
+        {
+         "f_range": [
+          0.0,
+          0.0
+         ],
+         "n": 376,
+         "flagged": 15,
+         "out_of_band": 123,
+         "median_de": 4.254749829742767,
+         "residue_mae": 0.13572048722657964
+        },
+        {
+         "f_range": [
+          0.0,
+          0.05
+         ],
+         "n": 102,
+         "flagged": 6,
+         "out_of_band": 30,
+         "median_de": 4.249743825706947,
+         "residue_mae": 0.14541167780429531
+        },
+        {
+         "f_range": [
+          0.05,
+          0.1
+         ],
+         "n": 101,
+         "flagged": 9,
+         "out_of_band": 39,
+         "median_de": 4.765308133116113,
+         "residue_mae": 0.17117090726844328
+        },
+        {
+         "f_range": [
+          0.1,
+          0.2
+         ],
+         "n": 242,
+         "flagged": 36,
+         "out_of_band": 112,
+         "median_de": 5.298060561134319,
+         "residue_mae": 0.18488503398599668
+        },
+        {
+         "f_range": [
+          0.2,
+          0.3
+         ],
+         "n": 241,
+         "flagged": 80,
+         "out_of_band": 141,
+         "median_de": 6.209660494274105,
+         "residue_mae": 0.17314417858574646
+        },
+        {
+         "f_range": [
+          0.3,
+          0.5
+         ],
+         "n": 43,
+         "flagged": 21,
+         "out_of_band": 26,
+         "median_de": 6.5483713277072795,
+         "residue_mae": 0.22549300556693433
+        },
+        {
+         "f_range": [
+          0.5,
+          1.0
+         ],
+         "n": 95,
+         "flagged": 68,
+         "out_of_band": 84,
+         "median_de": 12.28895385892537,
+         "residue_mae": 0.14468420183861191
+        }
+       ],
+       "false_alarm_rate": 0.0398936170212766,
+       "detection_rate": 0.2669902912621359,
+       "residue_mae": 0.16088523303763938,
+       "residue_mae_large_change": 0.07988203180286453
+      }
+     }
+    },
+    {
+     "seed": 2,
+     "clean_median_de": 4.6044953950818055,
+     "current": {
+      "changeovers": 1200,
+      "band_de2000": 5.0,
+      "direction_cos": 0.8,
+      "bins": [
+       {
+        "f_range": [
+         0.0,
+         0.0
+        ],
+        "n": 376,
+        "flagged": 29,
+        "out_of_band": 166,
+        "median_de": 4.6044953950818055,
+        "residue_mae": 0.16685315813157203
+       },
+       {
+        "f_range": [
+         0.0,
+         0.05
+        ],
+        "n": 102,
+        "flagged": 13,
+        "out_of_band": 38,
+        "median_de": 4.185688077495628,
+        "residue_mae": 0.14920082892695882
+       },
+       {
+        "f_range": [
+         0.05,
+         0.1
+        ],
+        "n": 101,
+        "flagged": 20,
+        "out_of_band": 54,
+        "median_de": 5.171863043063527,
+        "residue_mae": 0.19712440503335826
+       },
+       {
+        "f_range": [
+         0.1,
+         0.2
+        ],
+        "n": 242,
+        "flagged": 46,
+        "out_of_band": 119,
+        "median_de": 4.92512773671141,
+        "residue_mae": 0.1579972876927322
+       },
+       {
+        "f_range": [
+         0.2,
+         0.3
+        ],
+        "n": 241,
+        "flagged": 84,
+        "out_of_band": 145,
+        "median_de": 5.9731216532034255,
+        "residue_mae": 0.18895759288045927
+       },
+       {
+        "f_range": [
+         0.3,
+         0.5
+        ],
+        "n": 43,
+        "flagged": 20,
+        "out_of_band": 27,
+        "median_de": 6.316079971115198,
+        "residue_mae": 0.191192713758803
+       },
+       {
+        "f_range": [
+         0.5,
+         1.0
+        ],
+        "n": 95,
+        "flagged": 69,
+        "out_of_band": 84,
+        "median_de": 11.071876208736946,
+        "residue_mae": 0.1818785015132761
+       }
+      ],
+      "false_alarm_rate": 0.07712765957446809,
+      "detection_rate": 0.3058252427184466,
+      "residue_mae": 0.17261558729800974,
+      "residue_mae_large_change": 0.0778822083457479
+     },
+     "tuned": {
+      "band": 6.5,
+      "cos": 0.8,
+      "dev": {
+       "changeovers": 1200,
+       "band_de2000": 6.5,
+       "direction_cos": 0.8,
+       "bins": [
+        {
+         "f_range": [
+          0.0,
+          0.0
+         ],
+         "n": 376,
+         "flagged": 15,
+         "out_of_band": 99,
+         "median_de": 4.6044953950818055,
+         "residue_mae": 0.16685315813157203
+        },
+        {
+         "f_range": [
+          0.0,
+          0.05
+         ],
+         "n": 102,
+         "flagged": 8,
+         "out_of_band": 22,
+         "median_de": 4.185688077495628,
+         "residue_mae": 0.14920082892695882
+        },
+        {
+         "f_range": [
+          0.05,
+          0.1
+         ],
+         "n": 101,
+         "flagged": 11,
+         "out_of_band": 27,
+         "median_de": 5.171863043063527,
+         "residue_mae": 0.19712440503335826
+        },
+        {
+         "f_range": [
+          0.1,
+          0.2
+         ],
+         "n": 242,
+         "flagged": 28,
+         "out_of_band": 63,
+         "median_de": 4.92512773671141,
+         "residue_mae": 0.1579972876927322
+        },
+        {
+         "f_range": [
+          0.2,
+          0.3
+         ],
+         "n": 241,
+         "flagged": 65,
+         "out_of_band": 105,
+         "median_de": 5.9731216532034255,
+         "residue_mae": 0.18895759288045927
+        },
+        {
+         "f_range": [
+          0.3,
+          0.5
+         ],
+         "n": 43,
+         "flagged": 18,
+         "out_of_band": 21,
+         "median_de": 6.316079971115198,
+         "residue_mae": 0.191192713758803
+        },
+        {
+         "f_range": [
+          0.5,
+          1.0
+         ],
+         "n": 95,
+         "flagged": 64,
+         "out_of_band": 71,
+         "median_de": 11.071876208736946,
+         "residue_mae": 0.1818785015132761
+        }
+       ],
+       "false_alarm_rate": 0.0398936170212766,
+       "detection_rate": 0.2354368932038835,
+       "residue_mae": 0.17261558729800974,
+       "residue_mae_large_change": 0.0778822083457479
+      }
+     }
+    }
+   ]
+  }
+ ]
+}

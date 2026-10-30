@@ -1,0 +1,97 @@
+{
+ "schema": "linewatch-vial-csi-view-candidate/v1",
+ "recorded": "2026-10-30",
+ "model": {
+  "architecture": "yolo11n_detect",
+  "classes": [
+   "vial",
+   "colored_liquid"
+  ],
+  "init": "released vial-best.pt (sha256 0bfac07a...)",
+  "checkpoint_sha256": "99cc69907e7b0a580658e82f8c5deeb3b5c4c2f26fa404c380e402954af9ca71",
+  "checkpoint_selection": "fixed final epoch 12; no real checkpoint selection",
+  "epochs": 12,
+  "imgsz": 640,
+  "batch": 32,
+  "seed": 19,
+  "ultralytics": "8.4.182",
+  "local_path": "ai-club-tools/results/vial-csi-view-20261030/train/weights/last.pt"
+ },
+ "training_data": {
+  "source": "carryover-v2 + v3 Isaac renders (CSI FillCam view)",
+  "train": 4000,
+  "val": 800,
+  "total_available": {
+   "train": 10800,
+   "dev": 3600
+  },
+  "split": "scene families: train->train, dev->val",
+  "real_images": 0
+ },
+ "synthetic_val": "mAP50 0.995 (saturated; not informative)",
+ "transfer_eval": {
+  "CSI live-20261029-230248": {
+   "frames": 956,
+   "released": {
+    "frames_with_vial": 0,
+    "matching_station_region": 0
+   },
+   "csi-view": {
+    "frames_with_vial": 91,
+    "matching_station_region": 91
+   },
+   "both_detect_iou_median": null
+  },
+  "CSI live-20261029-231953": {
+   "frames": 2021,
+   "released": {
+    "frames_with_vial": 7,
+    "matching_station_region": 7
+   },
+   "csi-view": {
+    "frames_with_vial": 387,
+    "matching_station_region": 387
+   },
+   "both_detect_iou_median": 0.9196925163269043
+  },
+  "CSI live-20261029-233940": {
+   "frames": 1043,
+   "released": {
+    "frames_with_vial": 0,
+    "matching_station_region": 0
+   },
+   "csi-view": {
+    "frames_with_vial": 368,
+    "matching_station_region": 368
+   },
+   "both_detect_iou_median": null
+  },
+  "CSI live-20261030-000510": {
+   "frames": 1312,
+   "released": {
+    "frames_with_vial": 15,
+    "matching_station_region": 15
+   },
+   "csi-view": {
+    "frames_with_vial": 971,
+    "matching_station_region": 971
+   },
+   "both_detect_iou_median": 0.9190232753753662
+  },
+  "Run 5": {
+   "frames": 850,
+   "released": {
+    "frames_with_vial": 817,
+    "matching_station_region": 817
+   },
+   "csi-view": {
+    "frames_with_vial": 831,
+    "matching_station_region": 827
+   },
+   "both_detect_iou_median": 0.8673878908157349
+  }
+ },
+ "eval_rule": "every 15th frame (Run 5: every 60th); conf 0.35, iou 0.45, class vial; station region [278,75,358,420], IoU >= 0.5",
+ "real_data_use": "evaluation only (CSI live sessions 2026-10-29, Run 5); no human vial labels on CSI frames, so counts are detections, not recall",
+ "status": "candidate; not shipped (runtime pins the released checkpoint)"
+}

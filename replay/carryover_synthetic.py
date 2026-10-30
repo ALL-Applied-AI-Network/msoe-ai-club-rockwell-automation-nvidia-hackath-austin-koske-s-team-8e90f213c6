@@ -59,7 +59,8 @@ def changeovers(rows):
         residue = float(np.clip((vial - ref) @ w / (w @ w + 1e-9), 0, 1))
         out.append(dict(pair=pair, split=roles["vial"]["split"], family=roles["vial"]["family"],
                         f=roles["vial"]["f"], light_drift=roles["vial"]["light_drift"], de_intended=delta_e(vial, ref), de_change=delta_e(prev, ref),
-                        direction_cos=toward_previous(vial, ref, prev), residue_estimate=residue))
+                        direction_cos=toward_previous(vial, ref, prev),
+                        density_cos=toward_previous(vial, ref, prev, "density"), residue_estimate=residue))
     return out
 
 

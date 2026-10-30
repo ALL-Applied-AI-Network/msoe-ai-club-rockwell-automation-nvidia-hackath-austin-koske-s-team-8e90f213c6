@@ -240,6 +240,26 @@ Clean vials sit 0.67 ΔE (median) from their reference; 5–15% lighting drift a
 floor is far below real repeat-vial variation, so the selected band is **not frozen**: a band
 picked here would flag many real good vials unless synthetic measurement noise is added first.
 
+**Under realistic measurement noise** (`replay/carryover_noise.py`, 2026-10-30). Independent
+Gaussian noise (σ per Lab axis) is added to every render's measured colour, with 3 noise seeds, and
+thresholds are re-selected on the train families (false alarms ≤ 5%). The real level comes from
+Runs 1–4, not Run 5: consecutive vials closer than ΔE 5 (assumed repeats of one recipe; no recipe
+labels exist) differ by a median of 1.8 ΔE (0.3–3.6, 9 pairs). σ = 1.0 gives clean synthetic vials
+a median of 1.69 ΔE from their reference. Dev families, seed 0:
+
+| σ (clean median ΔE) | Rule | False alarms | 0–5% | 5–10% | 10–20% | 20–30% | 30–50% | 50–100% |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1.0 (1.69) | Current: ΔE 5, cos 0.8 | 0% | 0% | 3% | 13% | 36% | 51% | 75% |
+| 1.0 (1.69) | **Selected on train: ΔE 2.0, cos 0.75** | 4.8% | 13% | 30% | 50% | 68% | 67% | 89% |
+| 1.5 (2.38) | Selected on train: ΔE 3.0, cos 0.75 | 5.1% | 8% | 19% | 41% | 59% | 58% | 86% |
+| 0 (0.67) | Selected on train: ΔE 1.0, cos 0.5 | 4.0% | 26% | 60% | 68% | 84% | 88% | 94% |
+
+At the noise level matched to Runs 1–4, **ΔE 2.0 / cos 0.75** keeps about 5% false alarms and
+flags about 4× more 10–20% residue than the current rule. That is the candidate to freeze before a
+fresh CSI run; the noise-free selection (ΔE 1.0 / cos 0.5) would over-alarm on real vials. The
+noise model is independent per render (no lighting or camera drift), and the Runs 1–4 level rests
+on 9 unlabelled pairs. [Record](../setup/verification/carryover-noise-20261030.json).
+
 **Residue estimate** (mean absolute error in residue fraction):
 
 | Residue | n | Lab projection | CNN, uniform (seeds 29 / 30 / 31) | CNN, balanced (seeds 29 / 30 / 31) |
@@ -287,6 +307,21 @@ line model, so these are predicted savings:
 | 0.2 | 1.52 | 0.20, 2.62 | 0.14, 1.38 | 0.03, 0.48 | 0, 0.16 |
 | 0.3 | 2.56 | 1.59, 2.62 | 1.31, 1.25 | 0.49, 0.75 | 0.21, 0.58 |
 
+**Lag line model** (`--model lag`, 2026-10-30). CSI's flush clips suggest each vial holds mostly
+the previous *dose* rather than a fraction of the mixed line contents. In the lag model a vial is
+(1 − f) its dose + f the previous dose, so a water flush dilutes the next vial instead of clearing
+it. On the same 300 queues:
+
+| f (lag) | Requested, no flush | Current rule | Best flushes | Reordered within 2 | Reordered freely |
+| --- | --- | --- | --- | --- | --- |
+| 0.3 | 2.39 scraps | 1.49 + 2.62 flushes | 1.29 + 1.10 | 0.50 + 0.61 | 0.24 + 0.49 |
+| 0.6 | 3.53 | 3.53 + 2.62 | 3.53 + 0 | 2.26 + 0 | **2.07 + 0** |
+| 0.9 | 3.99 | 3.99 + 2.62 | 3.99 + 0 | 2.94 + 0 | **2.82 + 0** |
+
+Under a strong lag, flushes do not help (the current rule spends 2.62 water vials per queue for no
+fewer scraps) and reordering is the only lever (−29 to −41%). Which model fits CSI's line, and its
+f, needs one recorded changeover with repeat vials and known contents.
+
 The line's f is unknown and is not fitted to Run 5; whether CSI may reorder runs is a question for
 CSI. Neither is in the app yet.
 
@@ -332,6 +367,19 @@ all 5 real carryovers but call almost everything carryover with 0.7–0.95 confi
 images make Cosmos worse, not better. Zero-shot VLM causes are not usable; verdicts and actions stay
 numeric, and the VLM's job (if any) is wording plus visual causes after a LoRA on synthetic packets.
 Run 5 has no cause labels, so none of this is cause accuracy.
+
+**Hosted on build.nvidia.com** (2026-10-30, same 20 packets, prompt and scoring; zero-shot):
+
+| Explainer | Schema-valid | Agrees where stage 4 fixes the cause | Consistent with packet | Median s/vial |
+| --- | --- | --- | --- | --- |
+| Nemotron 3 Ultra 550B, numbers only | 20 | 10/10 | 18 | 21.8 |
+| Nemotron 3.5 Super VL 120B + images | 18 | 10/10 | 14 | 20.5 |
+| Llama 3.2 90B Vision + fill-end image (one image only) | 18 | 9/10 | 12 | 25.3 |
+| Nemotron 3 Nano Omni 30B + images | 18 | 5/10 | 8 | 9.3 |
+
+Cosmos-Reason2-8B is listed but returned "function not found for this account" (not enabled for
+the key). The large text model is close to the rules; the smaller vision models still over-call
+carryover. Records: `rca-nim-*` folders beside the Run 5 line-runner results.
 
 ¹ Jev answers a `choice` question over the same 11 causes (with a description per cause) and
 returns the cause with per-cause probabilities, not prose, so it has no explanation or next check
@@ -418,6 +466,29 @@ source-matched human vial boxes or liquid masks. Operator review of the profile
 box and human transfer labels remain required before approving it as a station
 profile. The MP4 uses the recorder's generated constant-frame time grid; native
 USB capture timestamps are unavailable.
+
+### Vial detector retrained on CSI-view renders (candidate, 2026-10-30)
+
+The released YOLO11n was trained on renders framed like Run 5 and found no vial on CSI's current
+camera. The Brev carryover renders use the station's own FillCam, whose fill-position vial box
+([279, 66, 341, 420]) almost matches the CSI station region ([278, 75, 358, 420]). The detector
+was fine-tuned from the released checkpoint on 4,000 of those renders (train families; 800 dev
+renders for validation; fill-position vial and liquid only, as in the release), 12 epochs, with
+the fixed final epoch. No real image was used for training or selection.
+
+| Frames (every 15th; Run 5 every 60th) | Released | Retrained | In the station region |
+| --- | --- | --- | --- |
+| CSI live 230248 (956) | 0 | 91 | 91 |
+| CSI live 231953 (2,021) | 7 | 387 | 387 |
+| CSI live 233940 (1,043) | 0 | 368 | 368 |
+| CSI live 000510 (1,312) | 15 | 971 | 971 |
+| Run 5 (850) | 817 | 831 | 827; median IoU with the released boxes 0.87 |
+
+Every retrained detection on CSI's camera lies on the station vial position, and Run 5 detection
+is unchanged. The CSI frames have no human vial labels and include frames with no vial under the
+nozzle, so these are detection counts, not recall or precision. The candidate is not shipped:
+the runtime pins the released checkpoint, and adopting it needs a new release identity and a
+labelled CSI check. [Record](../setup/verification/vial-csi-view-20261030.json).
 
 ### Dual finished-sort profile candidate
 

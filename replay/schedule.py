@@ -1,7 +1,8 @@
 """Carryover-aware recipe order: forecast each vial from what the line holds, then reorder runs.
 
-Line model (one parameter, the residue fraction f): each fill leaves the line holding what it
-dispensed, and the next vial is (1 - f) * its recipe + f * the line contents, mixed in optical
+Line model (one parameter, the residue fraction f; see step()): "mix" (default) - each fill leaves
+the line holding what it dispensed, and the next vial is (1 - f) * its recipe + f * the line
+contents; "lag" - the next vial is (1 - f) * its recipe + f * the previous dose. Mixed in optical
 density (-log linear RGB, the forecast that tracked the synthetic renders best,
 replay.carryover_forecast). A flush is one water vial (density 0), so each flush multiplies the
 residue by f. A vial is a predicted scrap when its forecast sits more than the band from its
@@ -29,7 +30,7 @@ from replay.carryover_forecast import linear, srgb
 from replay.decide import DEFAULT_LINE
 from replay.measurement import delta_e, rgb_to_lab
 
-SETTINGS = dict(band=DEFAULT_LINE["band_de2000"], max_flushes=2, flush_cost=0.5, scrap_cost=1.0)
+SETTINGS = dict(band=DEFAULT_LINE["band_de2000"], max_flushes=2, flush_cost=0.5, scrap_cost=1.0, model="mix")
 
 
 def density(lab):
@@ -41,6 +42,18 @@ def lab_of(d):
     return np.asarray(rgb_to_lab(srgb(np.exp(-d))))
 
 
+def step(state, dose, f, s):
+    """One fill: (vial density, what the line holds after it).
+
+    "mix": the vial is (1 - f) dose + f line contents, and the line then holds the vial's mix.
+    "lag": the line holds the previous *dose*: the vial is (1 - f) dose + f previous dose, and the
+    line then holds this dose. With f near 1 each vial is mostly the previous dose (the one-vial lag
+    seen in CSI's flush clips), and a water flush dilutes the next vial instead of clearing it.
+    """
+    vial = (1 - f) * dose + f * state
+    return vial, (dose if s.get("model") == "lag" else vial)
+
+
 def run_cost(line, recipe, count, refs, f, s, flushes=None):
     """Flushes before a run (best of 0..max_flushes, or the given number) from the line's density.
 
@@ -50,11 +63,13 @@ def run_cost(line, recipe, count, refs, f, s, flushes=None):
     target, ref = refs[recipe]
     best = None
     for k in [flushes] if flushes is not None else range(s["max_flushes"] + 1 if line is not None else 1):
-        state = None if line is None else line * f ** k
+        state = line
+        for _ in range(k if line is not None else 0):
+            _, state = step(state, np.zeros(3), f, s)
         des = []
         for _ in range(count):
-            state = target if state is None else (1 - f) * target + f * state
-            des.append(delta_e(lab_of(state), ref))
+            vial, state = (target, target) if state is None else step(state, target, f, s)
+            des.append(delta_e(lab_of(vial), ref))
         cost = k * s["flush_cost"] + s["scrap_cost"] * sum(de > s["band"] for de in des)
         if best is None or cost < best[0] - 1e-9:
             best = (cost, k, des, state)
@@ -131,6 +146,7 @@ def main():
     parser.add_argument("--max-flushes", type=int, default=SETTINGS["max_flushes"])
     parser.add_argument("--flush-cost", type=float, default=SETTINGS["flush_cost"], help="per water vial; a scrap costs 1")
     parser.add_argument("--max-shift", type=int)
+    parser.add_argument("--model", choices=("mix", "lag"), default=SETTINGS["model"], help="line model (see step())")
     parser.add_argument("--line-lab", type=float, nargs=3, help="measured Lab of the last vial (re-plan from it)")
     args = parser.parse_args()
     refs = references(json.loads(args.library.read_text(encoding="utf-8")))
@@ -138,7 +154,7 @@ def main():
     missing = sorted({r for r, _ in runs} - set(refs))
     if missing:
         parser.error(f"No reference colour for recipes {missing}")
-    settings = dict(band=args.band, max_flushes=args.max_flushes, flush_cost=args.flush_cost)
+    settings = dict(band=args.band, max_flushes=args.max_flushes, flush_cost=args.flush_cost, model=args.model)
     line = density(args.line_lab) if args.line_lab else None
     requested = simulate(runs, refs, args.f, settings, line)
     _, proposed = plan(runs, refs, args.f, settings, args.max_shift, line)

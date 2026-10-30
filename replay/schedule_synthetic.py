@@ -50,6 +50,7 @@ def main():
     parser.add_argument("--queues", type=int, default=300)
     parser.add_argument("--seed", type=int, default=29)
     parser.add_argument("--fractions", type=float, nargs="+", default=[0.05, 0.1, 0.2, 0.3])
+    parser.add_argument("--model", choices=("mix", "lag"), default="mix", help="line model (replay.schedule.step)")
     args = parser.parse_args()
     rng = random.Random(args.seed)
     queues = [queue(rng) for _ in range(args.queues)]
@@ -57,11 +58,12 @@ def main():
     for f in args.fractions:
         totals = {}
         for refs, runs in queues:
-            policies = {"requested, no flush": simulate(runs, refs, f, dict(max_flushes=0)),
-                        "requested, current proactive rule": simulate(runs, refs, f, flushes=proactive(runs, refs)),
-                        "requested, best flushes": simulate(runs, refs, f),
-                        "reordered within 2": plan(runs, refs, f, max_shift=2)[1],
-                        "reordered freely": plan(runs, refs, f)[1]}
+            m = dict(model=args.model)
+            policies = {"requested, no flush": simulate(runs, refs, f, dict(m, max_flushes=0)),
+                        "requested, current proactive rule": simulate(runs, refs, f, m, flushes=proactive(runs, refs)),
+                        "requested, best flushes": simulate(runs, refs, f, m),
+                        "reordered within 2": plan(runs, refs, f, m, max_shift=2)[1],
+                        "reordered freely": plan(runs, refs, f, m)[1]}
             for name, (cost, steps) in policies.items():
                 t = totals.setdefault(name, dict(cost=0.0, scraps=0, flushes=0))
                 t["cost"] += cost
@@ -72,7 +74,7 @@ def main():
         print(f"f {f}: " + "; ".join(f"{k} {v['scraps']:.2f} scraps {v['flushes']:.2f} flushes" for k, v in per.items()))
     vials = sum(c for _, runs in queues for _, c in runs) / len(queues)
     args.out.write_text(json.dumps(dict(queues=args.queues, runs_per_queue=6, vials_per_queue=vials, seed=args.seed,
-                                        settings=SETTINGS, results=results, real_data_inputs=[],
+                                        settings={**SETTINGS, "model": args.model}, results=results, real_data_inputs=[],
                                         note="Scored with the schedule's own line model: predicted, not measured."),
                                    indent=1), encoding="utf-8")
 

@@ -8,7 +8,7 @@ from dataclasses import asdict, dataclass, field
 
 import numpy as np
 
-from replay.measurement import delta_e
+from replay.measurement import delta_e, optical_density
 
 DEFAULT_LINE = {
     "band_de2000": 5.0,          # ΔE2000 to the intended recipe's reference
@@ -50,7 +50,15 @@ def _reference(library, recipe_id):
     return None
 
 
-def toward_previous(lab, reference, previous):
+def toward_previous(lab, reference, previous, space="lab"):
+    """Cosine between (vial - reference) and (previous - reference), in Lab or in optical density.
+
+    Dyes mix in optical density, so a carryover mix lies on the straight line reference -> previous
+    in density but on a curve in Lab: for very different recipes the Lab cosine of a pure mix can
+    be about 0.5 (Run 5 recipe 7 after 6). "density" measures the direction where the mix is linear.
+    """
+    if space == "density":
+        lab, reference, previous = (optical_density(x) for x in (lab, reference, previous))
     u = np.subtract(lab, reference)
     w = np.subtract(previous, reference)
     return float(u @ w / (np.linalg.norm(u) * np.linalg.norm(w) + 1e-9))
@@ -105,7 +113,7 @@ def decide(vials, schedule, library, line=None):
             v.de_intended = delta_e(lab, ref)
             if prev_ref:
                 v.de_previous = delta_e(lab, prev_ref)
-                v.direction_cos = toward_previous(lab, ref, prev_ref)
+                v.direction_cos = toward_previous(lab, ref, prev_ref, line.get("direction_space", "lab"))
             if v.de_intended <= line["band_de2000"]:
                 v.verdict, v.pattern, streak = "IN_SPEC", "nominal", 0
                 v.actions.append(Action("PASS", seq, t, deadline, f"ΔE {v.de_intended:.1f} ≤ {line['band_de2000']}", "ROUTE_GOOD"))

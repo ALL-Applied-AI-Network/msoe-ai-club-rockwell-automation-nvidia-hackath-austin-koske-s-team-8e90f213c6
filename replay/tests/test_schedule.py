@@ -36,6 +36,16 @@ class ScheduleTest(unittest.TestCase):
         _, (cost, _) = plan(runs, REFS, 0.3)
         self.assertLessEqual(cost, requested)
 
+    def test_lag_model_flush_dilutes_instead_of_clearing(self):
+        lag = dict(model="lag", max_flushes=0)
+        _, mixed = simulate([("blue", 1), ("yellow", 3)], REFS, 0.9, dict(max_flushes=0))
+        _, lagged = simulate([("blue", 1), ("yellow", 3)], REFS, 0.9, lag)
+        # mix: residue decays over several vials; lag: only the first vial after the change is off
+        self.assertGreater(mixed[1]["predicted_scraps"], lagged[1]["predicted_scraps"])
+        self.assertEqual(lagged[1]["predicted_scraps"], 1)
+        _, flushed = simulate([("blue", 1), ("yellow", 3)], REFS, 0.9, dict(model="lag"), flushes=[0, 1])
+        self.assertEqual(flushed[1]["predicted_scraps"], 1)   # the vial after the water flush is diluted
+
 
 if __name__ == "__main__":
     unittest.main()

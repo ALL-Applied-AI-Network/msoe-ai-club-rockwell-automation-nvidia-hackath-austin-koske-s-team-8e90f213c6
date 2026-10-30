@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1900" height="1370" viewBox="0 0 1900 1370">
+<rect width="1900" height="1370" fill="white"/>
+<defs><marker id="arrow" markerWidth="12" markerHeight="12" refX="9" refY="4" orient="auto"><path d="M0,0 L0,8 L10,4 z" fill="#5B7181"/></marker></defs>
+<rect x="40" y="30" width="840" height="180" rx="18" fill="#EAF4F4" stroke="#087F83" stroke-width="3"/>
+<text x="62" y="75" font-family="Lato,Arial,sans-serif" font-size="34" font-weight="700" fill="#142B40">PART 1 / GPU INFERENCE + CPU QA</text>
+<text x="62" y="121" font-family="Lato,Arial,sans-serif" font-size="30" font-weight="400" fill="#566676">Exact-frame vial, liquid and mask proposals</text>
+<text x="62" y="158" font-family="Lato,Arial,sans-serif" font-size="30" font-weight="400" fill="#566676">Sample feature + usable/unavailable + source ID</text>
+<rect x="1020" y="30" width="840" height="180" rx="18" fill="#EAF4F4" stroke="#087F83" stroke-width="3"/>
+<text x="1042" y="75" font-family="Lato,Arial,sans-serif" font-size="34" font-weight="700" fill="#142B40">CONTEXT / OPERATOR OR TEST SOURCE</text>
+<text x="1042" y="121" font-family="Lato,Arial,sans-serif" font-size="30" font-weight="400" fill="#566676">Physical vial + recipe + human-confirmed completion</text>
+<text x="1042" y="158" font-family="Lato,Arial,sans-serif" font-size="30" font-weight="400" fill="#566676">Phase / meters: simulation or qualified log exports</text>
+<rect x="40" y="300" width="840" height="180" rx="18" fill="#EFF5F7" stroke="#526C87" stroke-width="3"/>
+<text x="62" y="345" font-family="Lato,Arial,sans-serif" font-size="34" font-weight="700" fill="#142B40">OBSERVED APPEARANCE / CPU</text>
+<text x="62" y="391" font-family="Lato,Arial,sans-serif" font-size="30" font-weight="400" fill="#566676">Compatible sampling / camera measurement profile</text>
+<text x="62" y="428" font-family="Lato,Arial,sans-serif" font-size="30" font-weight="400" fill="#566676">Raw baseline; guarded normalization is a candidate</text>
+<rect x="1020" y="300" width="840" height="180" rx="18" fill="#EFF5F7" stroke="#526C87" stroke-width="3"/>
+<text x="1042" y="345" font-family="Lato,Arial,sans-serif" font-size="34" font-weight="700" fill="#142B40">EXPECTED TRAJECTORY / CPU</text>
+<text x="1042" y="391" font-family="Lato,Arial,sans-serif" font-size="30" font-weight="400" fill="#566676">Endpoint reference for confirmed completed fills</text>
+<text x="1042" y="428" font-family="Lato,Arial,sans-serif" font-size="30" font-weight="400" fill="#566676">Phase / progress trajectory when evidence is available</text>
+<polyline points="460,210 460,300" fill="none" stroke="#5B7181" stroke-width="4"/>
+<polygon points="460.0,300.0 450.0,282.0 470.0,282.0" fill="#5B7181"/>
+<polyline points="1440,210 1440,300" fill="none" stroke="#5B7181" stroke-width="4"/>
+<polygon points="1440.0,300.0 1430.0,282.0 1450.0,282.0" fill="#5B7181"/>
+<rect x="500" y="570" width="900" height="180" rx="18" fill="#EFF5F7" stroke="#526C87" stroke-width="3"/>
+<text x="522" y="615" font-family="Lato,Arial,sans-serif" font-size="34" font-weight="700" fill="#142B40">EVIDENCE ELIGIBILITY / CPU</text>
+<text x="522" y="661" font-family="Lato,Arial,sans-serif" font-size="30" font-weight="400" fill="#566676">Current clocks + physical identity + geometry / sample QA</text>
+<text x="522" y="698" font-family="Lato,Arial,sans-serif" font-size="30" font-weight="400" fill="#566676">Reference compatibility + camera health + provenance</text>
+<polyline points="460,480 460,525 730,525 730,570" fill="none" stroke="#5B7181" stroke-width="4"/>
+<polygon points="730.0,570.0 720.0,552.0 740.0,552.0" fill="#5B7181"/>
+<polyline points="1440,480 1440,525 1170,525 1170,570" fill="none" stroke="#5B7181" stroke-width="4"/>
+<polygon points="1170.0,570.0 1160.0,552.0 1180.0,552.0" fill="#5B7181"/>
+<rect x="40" y="880" width="840" height="155" rx="18" fill="#EFF5F7" stroke="#526C87" stroke-width="3"/>
+<text x="62" y="925" font-family="Lato,Arial,sans-serif" font-size="34" font-weight="700" fill="#142B40">UNAVAILABLE / REASON RECORDED</text>
+<text x="62" y="971" font-family="Lato,Arial,sans-serif" font-size="30" font-weight="400" fill="#566676">Missing, stale, ambiguous or incompatible evidence</text>
+<text x="62" y="1008" font-family="Lato,Arial,sans-serif" font-size="30" font-weight="400" fill="#566676">A missing assessment cannot clear a latched review</text>
+<rect x="1020" y="880" width="840" height="155" rx="18" fill="#EFF5F7" stroke="#526C87" stroke-width="3"/>
+<text x="1042" y="925" font-family="Lato,Arial,sans-serif" font-size="34" font-weight="700" fill="#142B40">SEQUENTIAL COMPARISON / CPU</text>
+<text x="1042" y="971" font-family="Lato,Arial,sans-serif" font-size="30" font-weight="400" fill="#566676">Same-vial / phase qualified evidence + persistence</text>
+<text x="1042" y="1008" font-family="Lato,Arial,sans-serif" font-size="30" font-weight="400" fill="#566676">Within band / collecting / review required</text>
+<polyline points="730,750 730,810 460,810 460,880" fill="none" stroke="#5B7181" stroke-width="4"/>
+<polygon points="460.0,880.0 450.0,862.0 470.0,862.0" fill="#5B7181"/>
+<polyline points="1170,750 1170,810 1440,810 1440,880" fill="none" stroke="#5B7181" stroke-width="4"/>
+<polygon points="1440.0,880.0 1430.0,862.0 1450.0,862.0" fill="#5B7181"/>
+<text x="50" y="852" font-family="Lato,Arial,sans-serif" font-size="29" font-weight="400" fill="#566676">Missing or incompatible</text>
+<text x="1470" y="852" font-family="Lato,Arial,sans-serif" font-size="29" font-weight="400" fill="#566676">Qualified current evidence</text>
+<rect x="40" y="1130" width="840" height="180" rx="18" fill="#EFF5F7" stroke="#526C87" stroke-width="3"/>
+<text x="62" y="1175" font-family="Lato,Arial,sans-serif" font-size="34" font-weight="700" fill="#142B40">AUDIT &amp; INDEPENDENT EVALUATION</text>
+<text x="62" y="1221" font-family="Lato,Arial,sans-serif" font-size="30" font-weight="400" fill="#566676">Source / reference / event IDs + coverage and misses</text>
+<text x="62" y="1258" font-family="Lato,Arial,sans-serif" font-size="30" font-weight="400" fill="#566676">Private truth and independent outcomes stay here</text>
+<rect x="1020" y="1130" width="840" height="180" rx="18" fill="#FFF5E9" stroke="#9B713B" stroke-width="3"/>
+<text x="1042" y="1175" font-family="Lato,Arial,sans-serif" font-size="34" font-weight="700" fill="#142B40">OPERATOR VIEW &amp; RECOVERY / CPU</text>
+<text x="1042" y="1221" font-family="Lato,Arial,sans-serif" font-size="30" font-weight="400" fill="#566676">Review → human response → recorded outcome</text>
+<text x="1042" y="1258" font-family="Lato,Arial,sans-serif" font-size="30" font-weight="400" fill="#566676">No line I/O or database updates during hackathon</text>
+<polyline points="460,1035 460,1130" fill="none" stroke="#5B7181" stroke-width="4"/>
+<polygon points="460.0,1130.0 450.0,1112.0 470.0,1112.0" fill="#5B7181"/>
+<polyline points="1440,1035 1440,1130" fill="none" stroke="#5B7181" stroke-width="4"/>
+<polygon points="1440.0,1130.0 1430.0,1112.0 1450.0,1112.0" fill="#5B7181"/>
+<polyline points="880,955 970,955 970,1180 1020,1180" fill="none" stroke="#5B7181" stroke-width="4"/>
+<polygon points="1020.0,1180.0 1002.0,1170.0 1002.0,1190.0" fill="#5B7181"/>
+<polyline points="1020,1220 880,1220" fill="none" stroke="#5B7181" stroke-width="4"/>
+<polygon points="880.0,1220.0 898.0,1210.0 898.0,1230.0" fill="#5B7181"/>
+<text x="40" y="1352" font-family="Lato,Arial,sans-serif" font-size="29" font-weight="400" fill="#566676">Twin: metered trajectories + simulated actions. Physical mode: human response; no direct line I/O.</text>
+</svg>

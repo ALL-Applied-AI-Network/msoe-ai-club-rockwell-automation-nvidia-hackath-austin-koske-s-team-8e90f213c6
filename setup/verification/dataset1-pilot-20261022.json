@@ -1,0 +1,203 @@
+{
+  "schema_version": 1,
+  "checked_utc": "2026-10-23T04:13:27.117502+00:00",
+  "branch": "austin-work",
+  "completed": true,
+  "experiment_root": "/mnt/c/Users/Austin/ai-club-tools/results/dataset1-pilot-20261022",
+  "remote_root": "~/ai-club-tools/experiments/dataset1-pilot-20261022-v1",
+  "archive_sha256": "5852d6266cd5571ff26c6d57b201d679eb3a581a3badcbdb0b0fa275da6a1b11",
+  "source_stage_sha256": "293d74ba59614cc85f56c95abfa034f0a8a0879fd045d014318e0056b96cb713",
+  "source_camera_sha256": "0376842d9049e4b27e070f5a2b08f69b53c4a055af96495cfb2db2f9d6f273c6",
+  "source_stage_unchanged": true,
+  "source_camera_unchanged": true,
+  "plan_sha256": "a69b8538adb395cb6bd2e18a7df06cd7229473ca02db0e5197b556b732864fac",
+  "executed_renderer_sha256": "5b4e0295cad9e373b636c409b90bc6a07ca2e2ee28ce2f7e223b5ec68ca789eb",
+  "repository_renderer_sha256": "3aae45a2678d9a2000431059500e300aba234a3d0d977fa4f9107e38f58ce560",
+  "repository_renderer_followup": "Absolute root resolution and isolate experiment argv before Kit; executed snapshots preserved.",
+  "model_hashes": {
+    "rgb": "6a84398a3e53d09750173e3a50a75a7af8bf70f37199e2cfca733ebf3ef552f7",
+    "paired_reference": "48be880901690d8e10afed44965457a496710a9f617fd9346ee887a91e852600"
+  },
+  "selected_epochs": {
+    "rgb": 5,
+    "paired_reference": 7
+  },
+  "scene_counts": {
+    "train": 36,
+    "val": 12,
+    "test": 12
+  },
+  "verified_render_images": 120,
+  "verified_test_predictions": 720,
+  "summary_artifacts_verified": 18,
+  "actual_training_repeats": 0,
+  "checkpoints_frozen_before_test": true,
+  "counts_are_synthetic": true,
+  "comparison": {
+    "classes": [
+      "pass",
+      "missing_cap",
+      "no_vial"
+    ],
+    "test_scenes": 12,
+    "test_targets": 360,
+    "arms": {
+      "rgb": {
+        "samples": 360,
+        "confusion_rows_truth_columns_prediction": [
+          [
+            120,
+            0,
+            0
+          ],
+          [
+            0,
+            120,
+            0
+          ],
+          [
+            0,
+            0,
+            120
+          ]
+        ],
+        "per_class": {
+          "pass": {
+            "targets": 120,
+            "correct": 120,
+            "missed": 0,
+            "recall": 1.0,
+            "precision": 1.0
+          },
+          "missing_cap": {
+            "targets": 120,
+            "correct": 120,
+            "missed": 0,
+            "recall": 1.0,
+            "precision": 1.0
+          },
+          "no_vial": {
+            "targets": 120,
+            "correct": 120,
+            "missed": 0,
+            "recall": 1.0,
+            "precision": 1.0
+          }
+        },
+        "accuracy": 1.0,
+        "macro_recall": 1.0,
+        "complete_scenes": 12,
+        "all_30_correct_scenes": 12,
+        "occupied_cap_diagnostic": {
+          "score": "1-P(pass)",
+          "threshold": 0.9984631072729826,
+          "missing_cap_cases": 120,
+          "missing_cap_missed": 0,
+          "acceptable_cases": 120,
+          "acceptable_false_alarms": 0,
+          "no_vial_excluded": true,
+          "policy_action": "none; occupancy context/real validation not implemented"
+        },
+        "classifier_30_crop_batch_ms": {
+          "median": 0.30207395320758224,
+          "p95": 0.33856299705803394,
+          "excludes": "render, source decode, crop extraction, transport, operator UI"
+        }
+      },
+      "paired_reference": {
+        "samples": 360,
+        "confusion_rows_truth_columns_prediction": [
+          [
+            120,
+            0,
+            0
+          ],
+          [
+            0,
+            120,
+            0
+          ],
+          [
+            0,
+            0,
+            120
+          ]
+        ],
+        "per_class": {
+          "pass": {
+            "targets": 120,
+            "correct": 120,
+            "missed": 0,
+            "recall": 1.0,
+            "precision": 1.0
+          },
+          "missing_cap": {
+            "targets": 120,
+            "correct": 120,
+            "missed": 0,
+            "recall": 1.0,
+            "precision": 1.0
+          },
+          "no_vial": {
+            "targets": 120,
+            "correct": 120,
+            "missed": 0,
+            "recall": 1.0,
+            "precision": 1.0
+          }
+        },
+        "accuracy": 1.0,
+        "macro_recall": 1.0,
+        "complete_scenes": 12,
+        "all_30_correct_scenes": 12,
+        "occupied_cap_diagnostic": {
+          "score": "1-P(pass)",
+          "threshold": 0.9996686026570387,
+          "missing_cap_cases": 120,
+          "missing_cap_missed": 0,
+          "acceptable_cases": 120,
+          "acceptable_false_alarms": 0,
+          "no_vial_excluded": true,
+          "policy_action": "none; occupancy context/real validation not implemented"
+        },
+        "classifier_30_crop_batch_ms": {
+          "median": 0.305049994494766,
+          "p95": 0.3448349889367819,
+          "excludes": "render, source decode, crop extraction, transport, operator UI"
+        }
+      }
+    },
+    "counts_are_synthetic": true,
+    "real_accuracy": null,
+    "physical_identity_link": false,
+    "selection_complete_before_test": true
+  },
+  "human_real_accuracy": null,
+  "physical_vial_association": false,
+  "operator_application_changed": false,
+  "video_fully_decoded": true,
+  "video_frames": 12,
+  "video_scene_rate": "one independent synthetic scene/s, not a temporal sequence",
+  "visually_inspected": [
+    "smoke/scene-000-inspection.png",
+    "smoke-targets.png",
+    "summary-v1/fixture-predictions.png",
+    "summary-v1/synthetic-test-confusion.png"
+  ],
+  "initial_kit_stall_preserved": true,
+  "recovery_completed": true,
+  "tests_passed": 4,
+  "all_gpu_work": "GB10",
+  "gpu_lock_free_after_completion": true,
+  "local_gpu_used": false,
+  "training_real_runs": [],
+  "selection_real_runs": [],
+  "run5_used": false,
+  "approved_labels_created": false,
+  "main_changed": false,
+  "pushed": false,
+  "results_zip": "/mnt/c/Users/Austin/ai-club-tools/results/dataset1-pilot-20261022/Dataset-1-Synthetic-Pilot-Results.zip",
+  "results_zip_sha256": "0b3838b4c3f29c07b4883c4fd389d371bbc47f22c43c7b4288b3162cf55809ce",
+  "zip_manifest_verified": true,
+  "zip_files": 20
+}

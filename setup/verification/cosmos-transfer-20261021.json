@@ -1,0 +1,84 @@
+{
+  "kind": "verified_completed_cosmos_transfer_neutral_trial",
+  "generated_frames_verified": 93,
+  "retrieved_files_verified": 37,
+  "paired_model_samples_pixel_and_clock_verified": 58,
+  "source_and_generated_model_summary": {
+    "source": {
+      "samples": 29,
+      "qa_pass": 24,
+      "vial_present": 29,
+      "liquid_present": 25,
+      "nonempty_final_mask": 25,
+      "first_model_liquid_clip_s": 0.8125,
+      "first_qa_valid_clip_s": 1.0
+    },
+    "generated": {
+      "samples": 29,
+      "qa_pass": 17,
+      "vial_present": 22,
+      "liquid_present": 29,
+      "nonempty_final_mask": 22,
+      "first_model_liquid_clip_s": 0.0,
+      "first_qa_valid_clip_s": 1.0
+    }
+  },
+  "generation_elapsed_s": 1544.9973618984222,
+  "guardrail_success_logged_without_error": true,
+  "final_media": [
+    {
+      "path": "C:\\Users\\Austin\\ai-club-tools\\results\\cosmos-transfer-trial-20261021\\neutral-v4\\outputs-neutral-v4\\vial-neutral.mp4",
+      "sha256": "c0e6f7c8f74f75a2b37d490cb50f221f11e98bd8af942b8b795be58564ba6ec5",
+      "decoded_frames": 93,
+      "fps": 16
+    },
+    {
+      "path": "C:\\Users\\Austin\\ai-club-tools\\results\\cosmos-transfer-trial-20261021\\model-evaluation-v1\\generated-inspection.mp4",
+      "sha256": "7636fde2eb254a5911280bf4a8c3e0928f86276d198c0a10eb4214cedbe29723",
+      "decoded_frames": 93,
+      "fps": 16
+    }
+  ],
+  "model_pins": {
+    "vial": "10856c18a8a5c485e832adcc6b841b739e726a969dc043fe8db64c49163bb361",
+    "liquid": "9479fb13ed9c7ebd815c314e8219ba3b86c3ffa267f758f714a3058f9ac3a343",
+    "sam": "7402e0d864fa82708a20fbd15bc84245c2f26dff0eb43a4b5b93452deb34be69"
+  },
+  "training_eligible": false,
+  "real_accuracy": null,
+  "disposition": "Hold from training and automatic label inheritance; generated empty-frame liquid and hue changes flagged during visual inspection.",
+  "verification_scope": "Recomputed source pixels, clocks, counts, mask sizes and paired diagnostics from retained actual inference; neural inference was not repeated.",
+  "evidence_sha256": {
+    "neutral-v4\\completed-neutral-artifacts-v1.manifest.json": "13b84effbd6243f0aa448af2aeeb66249803bcbdfed2ac5e4aeaf471d0fd6d31",
+    "neutral-v4\\local-retrieval-verification.json": "778235254f62b20dafd0a4d7eee22df3fe0adc5398096664c3da5712a3b4ccd3",
+    "review-neutral-v1\\review.json": "d2d5966e5cf5eb64d392534d9ff89785bad159ffb6c517444e2ee1fa651fabbd",
+    "review-neutral-v1\\completed.json": "640683a241d3135f46ce61b396c92e5206aff91b729dd5674376c26d2884904e",
+    "model-evaluation-v1\\completed.json": "761cae7b3dffafc19b08f63a522bfe23d9c6907a8360d64c8ef55f73269cfc8d",
+    "model-evaluation-v1\\comparison.json": "040e9ce3c9471e95a7b6781c99fd01719000cda9afb56cff0f6afafe7f7bafea",
+    "model-evaluation-v1\\paired-model-disagreement.json": "7cbfbe65ae90c82cdeead6a94700caea252eae61c3dbf04ec7a01a2056f78131"
+  },
+  "schema_version": 1,
+  "recorded_utc": "2026-10-21T17:12:15.105692+00:00",
+  "local_root": "C:/Users/Austin/ai-club-tools/results/cosmos-transfer-trial-20261021",
+  "remote_host": "msoe-spark",
+  "remote_experiment": "~/ai-club-tools/experiments/cosmos-transfer-20261021-v2",
+  "remote_attempt": "neutral-v4",
+  "generation_status": "completed",
+  "output_retrieved": true,
+  "source_or_human_labels_modified": false,
+  "cool_and_warm_jobs_started": false,
+  "main_modified": false,
+  "archive_sha256": "23e27aeb657391c760ca329ac5083a1da7bd7c48a8655a8eba2b6807f19f72cc",
+  "verification_file_sha256": "153e7a569d68312f907864e6f3fe6fe8c73026a8f6430349f26af28ce08b22f5",
+  "visual_inspection_flags": [
+    "Generated frame zero contains blue liquid in a source-empty vial.",
+    "Additional source-empty vials acquire colored contents.",
+    "Source red/dark-purple liquid becomes different generated hues."
+  ],
+  "limits": [
+    "One edge-controlled neutral clip; no conclusion about every Transfer configuration.",
+    "Source is repeated/resized 5 Hz synthetic imagery; output is not 93 independent process states.",
+    "Model availability and disagreement are not generated-label or real detector accuracy.",
+    "No generated labels have human approval and no model was trained on this output."
+  ]
+}

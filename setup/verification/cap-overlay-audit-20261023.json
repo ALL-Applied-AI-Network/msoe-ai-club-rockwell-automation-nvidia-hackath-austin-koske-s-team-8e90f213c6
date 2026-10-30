@@ -1,0 +1,170 @@
+{
+  "checked_utc": "2026-10-23T15:12:46.323414+00:00",
+  "completed": true,
+  "branch": "austin-work",
+  "audit": {
+    "schema": "cap-overlay-audit-summary/v1",
+    "present_caps": 646,
+    "old_markers_outside_projected_cap_bounds": 273,
+    "maximum_anchor_displacement_px": 28.70554677647794,
+    "genuine_exact_class_errors": 9,
+    "targets": 720,
+    "per_class": {
+      "seated_cap": {
+        "targets": 608,
+        "correct": 608
+      },
+      "missing_cap": {
+        "targets": 38,
+        "correct": 36
+      },
+      "crooked_cap": {
+        "targets": 38,
+        "correct": 31
+      },
+      "no_vial": {
+        "targets": 36,
+        "correct": 36
+      }
+    },
+    "display_gated_warning": {
+      "missing_cap": {
+        "targets": 38,
+        "missed": 0
+      },
+      "crooked_cap": {
+        "targets": 38,
+        "missed": 1
+      }
+    },
+    "errors": [
+      {
+        "scene": "confirmation-000",
+        "slot": "G02",
+        "truth": 2,
+        "prediction": 1,
+        "source_sha256": "54d174280a0812a1bcb00b6a2f168926c4fdbc46711a138084c2954dd07a1b34"
+      },
+      {
+        "scene": "confirmation-000",
+        "slot": "S05",
+        "truth": 1,
+        "prediction": 2,
+        "source_sha256": "54d174280a0812a1bcb00b6a2f168926c4fdbc46711a138084c2954dd07a1b34"
+      },
+      {
+        "scene": "confirmation-000",
+        "slot": "S10",
+        "truth": 2,
+        "prediction": 0,
+        "source_sha256": "54d174280a0812a1bcb00b6a2f168926c4fdbc46711a138084c2954dd07a1b34"
+      },
+      {
+        "scene": "confirmation-000",
+        "slot": "S13",
+        "truth": 2,
+        "prediction": 0,
+        "source_sha256": "54d174280a0812a1bcb00b6a2f168926c4fdbc46711a138084c2954dd07a1b34"
+      },
+      {
+        "scene": "confirmation-001",
+        "slot": "G20",
+        "truth": 1,
+        "prediction": 2,
+        "source_sha256": "327113bbe918e36071c4659aec887c937fa911467419cf227947533804b2b8e8"
+      },
+      {
+        "scene": "confirmation-001",
+        "slot": "G25",
+        "truth": 2,
+        "prediction": 1,
+        "source_sha256": "327113bbe918e36071c4659aec887c937fa911467419cf227947533804b2b8e8"
+      },
+      {
+        "scene": "confirmation-001",
+        "slot": "S16",
+        "truth": 2,
+        "prediction": 3,
+        "source_sha256": "327113bbe918e36071c4659aec887c937fa911467419cf227947533804b2b8e8"
+      },
+      {
+        "scene": "confirmation-002",
+        "slot": "S04",
+        "truth": 2,
+        "prediction": 0,
+        "source_sha256": "4b9d22cab070a828c2dda4e73f02644aa1574594153664e7ab85d55b225ec8af"
+      },
+      {
+        "scene": "confirmation-004",
+        "slot": "G14",
+        "truth": 2,
+        "prediction": 0,
+        "source_sha256": "51f80ab7b4c5cbc884b36a42d370fa9fae117b5c1b4828d148b6f686293102fc"
+      }
+    ],
+    "models_changed": false,
+    "training": false,
+    "new_inference": false,
+    "source_images_changed": false,
+    "synthetic_CAD_used_for_audit_only": true,
+    "learned_cap_localization": false
+  },
+  "description": "Correct fixture-coordinate presentation and disclose class/gated-warning metrics; no model accuracy improvement",
+  "old_marker_centers_are_fixture_apertures": true,
+  "cap_CAD_projection_used_only_for_audit": true,
+  "model_predictions_changed": false,
+  "identical_slot_predictions_verified": 720,
+  "cap_source_views_verified_without_class_colored_dots": 12,
+  "model_inputs_and_source_RGB_unchanged": true,
+  "training": false,
+  "new_inference": false,
+  "original_USD_unchanged": true,
+  "unit_tests_passed": 4,
+  "browser_verification": {
+    "checks": {
+      "fixture_crop_is_distinct_from_learned_cap_localization": true,
+      "review_frame_pinned_while_source_advances": true,
+      "closure_blocked_before_response": true,
+      "actual_backend_export_has_two_domains_and_native_source_identity": true,
+      "acknowledgement_not_resolution_and_no_release": true,
+      "browser_reload_preserves_server_journal": true,
+      "mobile_no_horizontal_overflow": true,
+      "no_browser_errors_or_external_requests": true
+    },
+    "counts": {
+      "fill_frames": 72,
+      "cap_states": 12,
+      "direct_qa": 27,
+      "sam_qa": 53
+    },
+    "browser_errors": [],
+    "network_requests": 54,
+    "new_inference": false,
+    "training": false,
+    "physical_vials_linked": false,
+    "demonstration": true,
+    "product_release_authorized": false,
+    "hardware_commands": 0
+  },
+  "interactive_url": "http://127.0.0.1:8870",
+  "windows_HTTP_status": 200,
+  "old_workspace_preserved": true,
+  "new_workspace": "/mnt/c/Users/Austin/ai-club-tools/results/full-app-demo-20261023/operator-workspace-v2",
+  "video": {
+    "path": "/mnt/c/Users/Austin/ai-club-tools/results/cap-overlay-audit-20261023/First-Vial-Corrected-Slot-Display.mp4",
+    "decoded_frames": 1189,
+    "duration_seconds": 47.56,
+    "sha256": "5edff81ea7e63a22a99c70fad391a6b20c8e84a0bb3187fbf44f25de15057196"
+  },
+  "source_file_sha256": {
+    "setup/vision/audit_cap_display_geometry.py": "94407ebb4381e7871aa0d84e403e0f1891d2c3dcafd308c14da5cf991d134aec",
+    "setup/vision/prepare_full_app_demo.py": "ab95587117b2e2e1121feaff96fe55ea8f6f1094e45123d9412b82d69a56c8ce",
+    "replay/operator/static/full_demo.html": "1d76202a4d5403453751ac579458c320af67344b175b11a12f09065b1867afe3",
+    "replay/operator/static/full_demo.css": "ff2a7077c32aafc6c239a903b2c4253c2ef60d30249d9c0346d4816384dff035",
+    "replay/operator/static/full_demo.js": "8d8725e1493a7e3d52164f59f1e615f0aa15b5f86967895ed96af78516120794",
+    "replay/tests/record_full_app_demo.py": "6217a8e1f7ace2a1bfa73b4ed1ff543ac16903589e3c072d56dacb2fda4c6896",
+    "replay/operator/FULL-APP-DEMO.md": "33da71e7278811648f36a2b559f4495f763286f286a5428f3e3ab0a0f56c1e92"
+  },
+  "main_changed": false,
+  "pushed": false
+}

@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-22",
+  "status": "passed",
+  "kind": "part2-team-architecture-release",
+  "version": 2,
+  "pages": 7,
+  "files": 9,
+  "code_free": true,
+  "local_root": "C:/Users/Austin/ai-club-tools/results/part2-team-release-20261022",
+  "pdf": "release-v2/Part-2-Team-Architecture.pdf",
+  "zip": "release-v2.zip",
+  "pdf_sha256": "d86db8736a8d197a8626dbd409a08d85ba2741b32d0d478c3dcdf14afc76f32b",
+  "zip_sha256": "ae4384687daf8ee978a1b4e9a74655c3b836a4a7d3cb978b45d7fcf1fb378a26",
+  "source_sha256": "ec4cb74c5d2f439f783392345d60fe3f61386aab4b2e42ee7898423e9b5e8453",
+  "benchmark_report_sha256": "65ac079b14e6117b5dbaa8d3746b87fe66d28de9939e5dfc9b9e8fb56270c23a",
+  "checks": {
+    "metric_claims_match_actual_benchmarks": true,
+    "seven_pages_rendered": true,
+    "updated_page_visually_inspected": true,
+    "first_six_pages_text_unchanged_except_version_footer": true,
+    "text_bounds_and_links_checked": true,
+    "all_package_hashes_verified": true,
+    "ZIP_fully_read": true,
+    "code_models_and_data_excluded": true,
+    "original_release_preserved": true
+  },
+  "published": false,
+  "pushed": false
+}

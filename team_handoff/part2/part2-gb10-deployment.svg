@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="450" viewBox="0 0 1500 450"><rect width="1500" height="450" fill="white"/>
+<text x="5" y="35" fill="#142B40" font-family="Lato,Arial,sans-serif" font-size="32" font-weight="700">PROPOSED WORKER: GB10 OR LOCAL RTX</text>
+<rect x="5" y="72" width="900" height="278" rx="14" fill="#EAF4F4" stroke="#9EB5BF" stroke-width="2"/>
+<text x="23" y="115" fill="#142B40" font-family="Lato,Arial,sans-serif" font-size="32" font-weight="700">PIXELS AND PROCESSING STAY TOGETHER</text>
+<text x="23" y="160" fill="#142B40" font-family="Lato,Arial,sans-serif" font-size="28" font-weight="400">Input: approved camera/file OR simulator</text>
+<text x="23" y="197" fill="#142B40" font-family="Lato,Arial,sans-serif" font-size="28" font-weight="400">GPU: perception; Isaac rendering only for live tests</text>
+<text x="23" y="234" fill="#142B40" font-family="Lato,Arial,sans-serif" font-size="28" font-weight="400">CPU: context, QA, comparison, reviews and audit</text>
+<text x="23" y="271" fill="#142B40" font-family="Lato,Arial,sans-serif" font-size="28" font-weight="400">Worker owns source / result timestamps</text>
+<rect x="1050" y="72" width="440" height="278" rx="14" fill="#FFF3E5" stroke="#9EB5BF" stroke-width="2"/>
+<text x="1068" y="115" fill="#142B40" font-family="Lato,Arial,sans-serif" font-size="32" font-weight="700">OPERATOR BROWSER</text>
+<text x="1068" y="160" fill="#142B40" font-family="Lato,Arial,sans-serif" font-size="28" font-weight="400">Decode display video</text>
+<text x="1068" y="197" fill="#142B40" font-family="Lato,Arial,sans-serif" font-size="28" font-weight="400">Show matching CV evidence</text>
+<text x="1068" y="234" fill="#142B40" font-family="Lato,Arial,sans-serif" font-size="28" font-weight="400">Send context + responses</text>
+<text x="1068" y="271" fill="#142B40" font-family="Lato,Arial,sans-serif" font-size="28" font-weight="400">No GPU inference here</text>
+<polyline points="905,155 1050,155" fill="none" stroke="#087F83" stroke-width="4"/>
+<polygon points="1050.0,155.0 1036.0,147.0 1036.0,163.0" fill="#087F83"/>
+<polyline points="1050,260 905,260" fill="none" stroke="#087F83" stroke-width="4"/>
+<polygon points="905.0,260.0 919.0,252.0 919.0,268.0" fill="#087F83"/>
+<text x="915" y="135" fill="#142B40" font-family="Lato,Arial,sans-serif" font-size="24" font-weight="400">View</text>
+<text x="915" y="293" fill="#142B40" font-family="Lato,Arial,sans-serif" font-size="24" font-weight="400">Input</text>
+<text x="5" y="405" fill="#142B40" font-family="Lato,Arial,sans-serif" font-size="29" font-weight="400">Network adds delay. Shared rendering and inference need a measured GPU budget.</text>
+</svg>

@@ -1,0 +1,106 @@
+{
+  "checked_utc": "2026-10-23T04:32:19.994966+00:00",
+  "branch": "austin-work",
+  "completed": true,
+  "local_root": "/mnt/c/Users/Austin/ai-club-tools/results/dataset1-real-transfer-20261022",
+  "remote_root": "~/ai-club-tools/experiments/dataset1-real-transfer-20261022-v1",
+  "checkpoint_sha256": "6a84398a3e53d09750173e3a50a75a7af8bf70f37199e2cfca733ebf3ef552f7",
+  "checkpoint_changed": false,
+  "model_selected_epoch": 5,
+  "source_runs": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "source_images_verified": 16,
+  "target_predictions_verified": 480,
+  "input_archive_sha256": "1edbcfa68fcf7e97cb6018b4dc5fdd8ffe7366867d23b8c48107412a4d62d04b",
+  "returned_archive_sha256": "340da037bca1386a5ab91af5db3ddb7f260b6a0f57f201db025b9c9c6b1ffc32",
+  "frozen_input_manifest_sha256": "6978099bae7b3e32813a0c9646f8ed6eb620b15dbbe909bec750b399edd836a3",
+  "executed_helper_sha256": "942983c3d2bfba9b6808f9f3e6593484be4081857e937913ea03850dfd785d69",
+  "real_probe": {
+    "source_stills": 16,
+    "slot_frame_predictions": 480,
+    "per_run_prediction_counts": {
+      "1": {
+        "pass": 14,
+        "no_vial": 106
+      },
+      "2": {
+        "no_vial": 96,
+        "pass": 24
+      },
+      "3": {
+        "no_vial": 120
+      },
+      "4": {
+        "no_vial": 117,
+        "pass": 3
+      }
+    },
+    "prediction_counts": {
+      "pass": 41,
+      "no_vial": 439
+    },
+    "model_sha256": "6a84398a3e53d09750173e3a50a75a7af8bf70f37199e2cfca733ebf3ef552f7",
+    "geometric_registration": {
+      "anchor": "first indexed Run4 cap_seal still",
+      "rmse_pixels": 0.658515998287298,
+      "max_error_pixels": 1.4139816904255051,
+      "approved": false
+    },
+    "real_accuracy": null,
+    "reviewed_labels": 0,
+    "paired_reference_status": "unavailable: no human-qualified capped real golden; no substitute provided",
+    "physical_vial_association": false,
+    "training": false,
+    "run5_used": false,
+    "video_decoded_frames": 16,
+    "limitations": [
+      "Counts are provisional repeated slot-frame predictions, not unique vials or correctness.",
+      "No reviewed defect labels or qualified occlusion/mapping. No missing-cap recall can be claimed from zero predictions.",
+      "Only capped/uncapped/empty G targets are modeled; tilted caps/damaged bodies and S fixture are unsupported.",
+      "Output MP4 is a one-still-per-second visualization, not original timing or a live feed."
+    ]
+  },
+  "review_packet_id": "c1e165bd0146bdd703f0d5209385533ae9eb125ac7a02af1e8188775de308cfa",
+  "review_targets": 480,
+  "priority_review_targets": 96,
+  "packet_hashes_verified": true,
+  "zip_integrity_verified": true,
+  "review_zip_sha256": "82ec1d455e88fdbf516a1bb4c6d2fbf4ba15f9e6cc4212406cd5b32a33a1538c",
+  "headless_demonstration_checks": {
+    "raw_first_verified": true,
+    "priority_tasks": 96,
+    "save_download_reopen_history_equal": true,
+    "mismatched_packet_refused": true,
+    "divergent_history_refused": true,
+    "page_errors": [],
+    "demonstration_only": true,
+    "approved_labels_created": false
+  },
+  "demonstration_export_refused_by_scorer": true,
+  "human_review_decisions": 0,
+  "real_accuracy": null,
+  "approved_mapping": false,
+  "paired_reference_available": false,
+  "focused_integrity_tests_passed": 10,
+  "compilation_passed": true,
+  "javascript_syntax_passed": true,
+  "video_fully_decoded": true,
+  "video_decoded_frames": 16,
+  "source_timing_preserved_as_capture_timestamp": true,
+  "video_timing_not_inferred": true,
+  "physical_identity_link": false,
+  "local_gpu_used": false,
+  "gpu": "GB10",
+  "gpu_lock_free_after_run": null,
+  "training": false,
+  "real_threshold_tuning": false,
+  "run5_pixels_used": false,
+  "app_changed": false,
+  "main_changed": false,
+  "pushed": false,
+  "post_run_remote_audit": "Hostname resolution failed during final SSH recheck. Inference completed normally and all results had already been retrieved/hash-verified; current remote GPU state was not reverified."
+}

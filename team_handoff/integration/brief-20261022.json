@@ -1,0 +1,340 @@
+{
+  "title": "Liquid Vision — Integration and Physical-Test Brief",
+  "prepared": "2026-10-22",
+  "edition": "Team integration / release 2 — synthetic training clarification",
+  "pages": [
+    {
+      "kicker": "TEAM IMPLEMENTATION BRIEF / INTEGRATION",
+      "title": "Connect the liquid vision system",
+      "sub": "Three model teams, one operator workflow, a shared physical test",
+      "blocks": [
+        [
+          "p",
+          "Goal: identify the first visibly accumulated liquid in the active vial, produce a useful pool mask, and present qualified evidence that an operator can respond to. Monday, October 26 is the readiness target; the CSI visit and video arrangement still require confirmation."
+        ],
+        [
+          "diagram"
+        ],
+        [
+          "h",
+          "Continue the original three-team architecture"
+        ],
+        [
+          "table",
+          [
+            "Team",
+            "Starting model",
+            "Module responsibility"
+          ],
+          [
+            [
+              "1",
+              "YOLO11n",
+              "Locate the active vial and expose uncertain geometry."
+            ],
+            [
+              "2",
+              "Faster R-CNN / ResNet50-FPN",
+              "Locate accumulated liquid, including shallow early pools."
+            ],
+            [
+              "3",
+              "SAM2.1 / Hiera Tiny",
+              "Turn same-frame detector evidence into a proposed pool mask."
+            ]
+          ],
+          [
+            43,
+            178,
+            291
+          ]
+        ],
+        [
+          "small",
+          "GPU: learned detector and SAM inference. CPU: decoding, association, sequence state, sampling QA, recipe/reference checks and the operator journal. Isaac Sim is a replaceable test-image source; it is separate from the physical line."
+        ],
+        [
+          "small",
+          "This extends the October 20 Team Architecture Implementation Brief. It defines deliverables and evidence requirements; teams choose, implement and explain their methods."
+        ]
+      ]
+    },
+    {
+      "kicker": "MODULE DELIVERIES / CURRENT EVIDENCE",
+      "title": "Bring components we can compare",
+      "sub": "A working model becomes useful when its inputs, outputs and failures are clear",
+      "blocks": [
+        [
+          "h",
+          "Team 1 — active-vial geometry"
+        ],
+        [
+          "p",
+          "Deliver the checkpoint, class mapping, training configuration, source splits and validation results. Show the active vial beside neighboring vials, during motion and under occlusion. Explain how missing, ambiguous and duplicate boxes are exposed to downstream modules. Alayna’s candidate was reported by the team; its checkpoint and results were not located in the repository at this review."
+        ],
+        [
+          "h",
+          "Team 2 — earliest visible pooled liquid"
+        ],
+        [
+          "p",
+          "Deliver frame-aligned liquid proposals and a failure review covering confirmed absence, first visible shallow pools and established fills. Distinguish accumulated pool, falling stream and glass. Explain how an oversized or missing proposal affects segmentation. Report source splits, model identity and checkpoint-selection evidence."
+        ],
+        [
+          "h",
+          "Team 3 — masks and detector integration"
+        ],
+        [
+          "p",
+          "Connect actual Team 1/2 outputs and preserve full-image masks, frame identity and prompt provenance. Demonstrate oversized, absent and inaccurate prompts plus a vial transition. Validate reference-source matching; keep proposal availability separate from nonempty-mask presence. Include missed present frames in coverage and explicitly defined evaluation denominators."
+        ],
+        [
+          "table",
+          [
+            "Evidence available October 22",
+            "Interpretation"
+          ],
+          [
+            [
+              "Cameron’s team-3 branch: SAM2.1 pilot, evaluator and progress PDF; commit 5d15423.",
+              "Four Run 4 frames and five candidate masks. Localized prompts: mean IoU 0.599 on three present frames. Broad prompts: 0.085 on two frames."
+            ],
+            [
+              "Draft hand masks support exploratory prompt comparisons.",
+              "Different denominators; use matched frames for the next comparison. Raw GB10 result files were not retrieved during review. These are reported development scores, not verified general accuracy."
+            ],
+            [
+              "Austin’s prototype already connects detectors, guided SAM prompts, sequence handling, QA and the operator UI.",
+              "Use it as the integration baseline. Its reviewed onset/mask accuracy is also unestablished; compare candidate modules on the same reviewed evidence."
+            ]
+          ],
+          [
+            252,
+            260
+          ]
+        ],
+        [
+          "small",
+          "Bring a short method explanation and representative failures with every module. Sharing a checkpoint alone does not establish a reproducible or improved component."
+        ]
+      ]
+    },
+    {
+      "kicker": "SHARED INTERFACES / EVALUATION",
+      "title": "Agree on what the outputs mean",
+      "sub": "Same source frame, compatible coordinates, explicit uncertainty",
+      "blocks": [
+        [
+          "table",
+          [
+            "Handoff",
+            "Required information"
+          ],
+          [
+            [
+              "Frame",
+              "Session/camera/run, source identity or hash, decoded frame index, native PTS/time base, RGB and original dimensions."
+            ],
+            [
+              "Detectors",
+              "Matching source identity, proposed boxes, class meaning, scores, model/config identity and unavailable or ambiguity reasons."
+            ],
+            [
+              "Mask",
+              "Full-image binary mask; 0 background and 255 foreground in PNG transport. Preserve prompt provenance and distinguish no proposal, empty mask and unresolved result."
+            ],
+            [
+              "Sample",
+              "Exact sampling region, usable/unavailable state and reasons. Return observed features only when supporting QA passes."
+            ],
+            [
+              "Operator evidence",
+              "Physical vial association, intended recipe, attributed completion/context, compatible reference, exact source image and assessment reason. Unknown inputs remain unknown."
+            ]
+          ],
+          [
+            100,
+            412
+          ]
+        ],
+        [
+          "h",
+          "Coordinate and identity contract"
+        ],
+        [
+          "p",
+          "Exchange full-image pixel [left, top, right, bottom] boxes with exclusive right/bottom bounds. Convert model-resized coordinates before handoff. The current profile uses 640 × 480; a different camera pose or resolution needs commissioning. Native video PTS identifies source time; process-clock and physical-vial associations need separate evidence. Never substitute assumed FPS, visual track counters or observed color for those associations."
+        ],
+        [
+          "h",
+          "Evaluate the task we actually care about"
+        ],
+        [
+          "p",
+          "The data reviewers agree on pool/stream/glass conventions and inspect source clips before model overlays. Return first-definitely-visible and last-definitely-absent frames, uncertain/censored cases and reviewed masks with source hashes, reviewer and convention version. The prepared six-clip Run 4 batch is a bounded starting point; it supplies no approved onset or mask truth."
+        ],
+        [
+          "table",
+          [
+            "Metric",
+            "Required denominator / context"
+          ],
+          [
+            [
+              "Early detection",
+              "Onset delay against reviewed source PTS, false presence before visibility, misses and censored cases. Current 5 Hz sampling gives about 0.2 s onset resolution."
+            ],
+            [
+              "Mask quality",
+              "IoU/Dice on reviewed eligible frames, whole-vial/oversized errors and missing-mask coverage. Score a missed eligible positive as an empty prediction; report unavailable cases separately."
+            ],
+            [
+              "Runtime",
+              "Source-to-displayed-result age, p95, processed/dropped samples and sustained cadence. Thirty-fps playback is separate from model throughput."
+            ]
+          ],
+          [
+            100,
+            412
+          ]
+        ],
+        [
+          "small",
+          "New CSI-domain training uses synthetic imagery only; keep rendered scene/seed groups in one split and select checkpoints using synthetic development evidence. Real Runs 1–4 support inspection/evaluation, not weight fitting. Run 5 remains diagnostic-only and excluded from fitting/selection. Legacy real-trained models are comparators. Disclose generic pretraining and preserve fresh physical evaluation sequences."
+        ]
+      ]
+    },
+    {
+      "kicker": "PART 2 / OPERATOR RESPONSE",
+      "title": "Turn observations into useful advice",
+      "sub": "Qualified comparison, visible uncertainty and an attributable human response",
+      "blocks": [
+        [
+          "p",
+          "Part 1 supplies proposed geometry, masks and sample QA. Part 2 connects those observations to intended recipe context and compatible acceptable references. The physical MVP starts with completed fills after operator-confirmed completion. During-fill recipe assessment requires independently qualified phase/progress evidence; elapsed time and recipe setpoints are not actual delivered volume."
+        ],
+        [
+          "table",
+          [
+            "Workstream",
+            "Deliver and demonstrate"
+          ],
+          [
+            [
+              "A — context and references",
+              "Link physical vial, intended recipe/version, operator completion and compatible camera/reference profile. Independently acceptable reference fills are separate from evaluation fills. Unknown recipe, identity or reference stays unavailable."
+            ],
+            [
+              "B — evidence and comparison",
+              "Consume the Part 1 observation contract, preserve sampling QA and compare compatible features. Explain within-band, collecting-evidence, review-required and unavailable states. Later failed QA cannot silently clear an existing review."
+            ],
+            [
+              "C — operator and test integration",
+              "Present exact-frame evidence, allow attributed acknowledgement and actual-action records, and export the session. Show follow-up on distinct subsequent vials; a recorded action alone does not establish recovery."
+            ]
+          ],
+          [
+            131,
+            381
+          ]
+        ],
+        [
+          "small",
+          "Agree Part 2 owners in the meeting. These workstreams extend the current model teams; they do not replace their assignments or reassign approved label/timing decisions."
+        ],
+        [
+          "h",
+          "Use the twin to exercise the complete behavior"
+        ],
+        [
+          "p",
+          "Feed rendered RGB through the actual models and operator interface. Test nominal fills, strong/weak mismatch scenarios, glare, missing masks, wrong/stale context and vial transitions. Keep simulator-private composition and geometry on the evaluation side. Pre-rendered camera footage supports smooth playback while inference still runs on sampled frames."
+        ],
+        [
+          "h",
+          "Select a dependable test deployment"
+        ],
+        [
+          "p",
+          "Recommended for Monday: local inference with an approved camera/file source and a frozen fallback. The experimental persistent worker measured local HTTP median/p95 148/169 ms versus 272/323 ms on the existing request path. It is not yet deployed. The measured GB10 VPN/browser path was 556/675 ms, and tested live rendering plus inference reached 1.81 frames/s. Remote deployment is a separate candidate, not a prerequisite for the visit."
+        ],
+        [
+          "small",
+          "These are different measured boundaries on development inputs; they do not establish physical camera latency or model accuracy. Integrate a candidate only after output/QA agreement and a full rehearsal."
+        ],
+        [
+          "small",
+          "Confirmed hackathon boundary: an operator interface with no direct existing sensor/actuator communication or Teledyne database updates. CSI executes approved physical actions. The system records advisory evidence and human responses; physical product acceptance follows the established CSI process."
+        ]
+      ]
+    },
+    {
+      "kicker": "READINESS TARGET / MONDAY, OCTOBER 26",
+      "title": "Freeze, rehearse and test",
+      "sub": "A connected, measurable test is the milestone; CSI booking remains to be confirmed",
+      "blocks": [
+        [
+          "table",
+          [
+            "Checkpoint",
+            "Required outcome"
+          ],
+          [
+            [
+              "Thursday 22 / meeting",
+              "Name one integration owner and a contact for each module. Share artifact locations and agree the common frame contract. Confirm CSI slot, attendees, video/export arrangement and approved human-response procedure."
+            ],
+            [
+              "Friday 23 / connect",
+              "Run all three modules on one shared source. Review a bounded onset/mask batch. Compare candidates with the frozen baseline on matched evidence; keep the baseline where improvement is unsupported."
+            ],
+            [
+              "Saturday 24 / rehearse",
+              "Exercise early/established fill, a vial transition, an oversized/missing mask, unavailable context and an operator review/export. Measure displayed-result age and dropped samples."
+            ],
+            [
+              "Sunday 25 / freeze",
+              "Pin models, configuration and environment; preserve a tested fallback. Rehearse without internet. Pack originals/storage, references, recording tools, forms, charging and the source inventory tool."
+            ],
+            [
+              "Monday 26 / if confirmed",
+              "Verify approved input and framing first. Collect acceptable reference fills, then separate prospective evaluation fills. Record recipe/vial identity, native timestamps, independent outcomes and all attempted cases."
+            ]
+          ],
+          [
+            121,
+            391
+          ]
+        ],
+        [
+          "h",
+          "Suggested supervised session priorities"
+        ],
+        [
+          "p",
+          "Start with a short capture/export check. Obtain independently acceptable examples of CSI-selected recipes; fix reference and evaluation roles before scoring. Observe a CSI-approved recipe change if feasible, preserving every vial and outcome. An optional approved intervention follows only if time and supervision allow. Reserve the end of the session for original-file export, clock/source checks and missing-field review."
+        ],
+        [
+          "h",
+          "What makes the test useful"
+        ],
+        [
+          "p",
+          "Show one connected camera view with exact-frame masks, usable/unavailable evidence, recipe/vial context and operator response history. Report perception onset/mask results separately from recipe assessment. For recipe advice, report eligible coverage over all attempted vials, warnings among independently acceptable/unacceptable vials, and warning lead relative to a confirmed action deadline. Zero independently unacceptable vials means defect sensitivity was not measured."
+        ],
+        [
+          "p",
+          "If a live feed is not approved, process original exported recordings locally. If compatible acceptable references are missing, test perception and operator workflow while recipe assessment stays unavailable. Preserve failed captures and unknown outcomes. Success is a usable evidence set and clear limitations; no genuine defect or recovery benefit is guaranteed."
+        ],
+        [
+          "small",
+          "Preparation sources: original Team Architecture Implementation Brief and Team Data Guide (team-data-v1.0.0); Cameron’s team-3 progress PDF at 5d15423; local CSI-SESSION-PACKET, EARLY-FILL-HANDOFF and GB10-STATION-BENCHMARK; organizer clarification supplied by Austin. Existing development runs are not a blind final test."
+        ],
+        [
+          "small",
+          "Team data and original briefs: github.com/ALL-Applied-AI-Network/msoe-ai-club-rockwell-automation-nvidia-hackath-austin-koske-s-team-8e90f213c6/tree/main/team_handoff. Event library: msoe-maic.com/library/?nav=Competitions&article=Rockwell-NVIDIA-Fall-2026."
+        ]
+      ]
+    }
+  ]
+}

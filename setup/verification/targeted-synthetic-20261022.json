@@ -1,0 +1,60 @@
+{
+  "schema": "targeted-synthetic-transfer/v1",
+  "prepared": "2026-10-22",
+  "branch": "austin-work",
+  "artifact_root": "/mnt/c/Users/Austin/ai-club-tools/results/targeted-synthetic-20261022",
+  "summary_sha256": "f07aa97083e91ff99a60db65ecfe771f82defa8119c6dde551d078f9863d1042",
+  "summary_completion_sha256": "0bad652645c3e4ac668435379492ca643848fb855dab3f5ce2fb12da1215ea64",
+  "source_assets_unchanged": true,
+  "original_real_image_label_pairs_rechecked": 162,
+  "review_cases": 7,
+  "human_review_zip_sha256": "d2ad9f5f59381958fbe788b9effbae07b2db6010acfacbf487f94f5c188d42f1",
+  "new_render_images": 192,
+  "synthetic_train_images_per_epoch": 614,
+  "fixed_epochs": 3,
+  "new_model_hashes": {
+    "fasterrcnn-paired-v1": "5e27615440c96eb4f1be47018f24c7cd28895154e5fe4cfc6801555b14ced696",
+    "fasterrcnn-roi-v1": "08c497490b50646401fe2642bd577d82d47687d3ed70974fb7cd31f457eb9844"
+  },
+  "raw_real_pipeline_qa_passes": {
+    "baseline": 61,
+    "paired": 20,
+    "crop": 23,
+    "basal": 59
+  },
+  "pipeline_attempts": 1110,
+  "source_clocks_and_rgb_matched": true,
+  "qa_config_and_implementation_unchanged": true,
+  "checks": [
+    "Frozen plans/helpers/checkpoints and completion artifact hashes verified.",
+    "Each fit: three epochs,154 steps/epoch; frozen-model marker precedes real predictions.",
+    "Counterfactual train/dev families and image hashes disjoint; synthetic-only sample origins.",
+    "ROI geometry round-trip, exclusion of upper label and missing-vial abstention passed.",
+    "Portable human review ZIP CRC and all seven source image hashes verified.",
+    "Original assets and162 real image/label source pairs retained unchanged.",
+    "Experiment Python compilation passed."
+  ],
+  "visuals_inspected": [
+    "review-v1/paired-synthetic-examples.png",
+    "review-v1/real-camera-before-after.png",
+    "roi-review-v1/real-camera-before-after.png",
+    "basal-v1/basal-association-real-examples.png",
+    "summary-v2/targeted-transfer-scorecard.png"
+  ],
+  "training_real_runs": [],
+  "selection_real_runs": [],
+  "run5_used": false,
+  "approved_real_labels_created": 0,
+  "app_changed": false,
+  "promoted": false,
+  "conclusion": "Synthetic small-body coverage improved; no successful real-transfer improvement or reviewed onset accuracy claimed.",
+  "helper_sources": {
+    "setup/vision/target_synthetic_transfer.py": "50cc16489ab254512d7872b48cbd6df6355658ea049604e36be28e7acb346b70",
+    "setup/vision/vial_basal_policy.py": "9765c696b59f307cf912bdac30a232dea93ce7c34a5b3a5fd5c44b97cadc8149",
+    "setup/vision/vial_input_view.py": "cded80d9052e3041f1b9d9dd93a05a16064c0fdcbf14e67fc127cadc45cf4fe6",
+    "setup/vision/review_targeted_transfer.py": "96c73900be268a0ccf54a3dafce88c914622c64af3821900cc6a868818940c8d",
+    "setup/vision/summarize_targeted_transfer.py": "2c1f7a47274cc813838ee7b891aad7d77d34bd2e1ea30b7a7f044f9d1c042cd5",
+    "setup/vision/train_synthetic_liquid_pilot.py": "a065725d33bca8e305d9336d28d2f7c509149e638ccfd3b91256b64a44332456",
+    "setup/vision/experiment_sim_real_robustness.py": "b323a7cee6c8e954b5892ccf95bb50449b0023efa404f5b0a46bf55a0ee1fc03"
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "schema": "proposed-cross-station-inspection/v1",
+  "status": "cross-station proposal; three-class synthetic pilot complete; real station footage available in Dataset2 cap_seal; reviewed slot labels/mapping and real accuracy unavailable",
+  "prepared": "2026-10-22",
+  "mentor_context": "Austin reported Brett suggested combining Dataset 1 and demonstrating the sim-to-real gap. This is user-reported direction, not a judging guarantee or validated result.",
+  "source": "https://msoe-maic.com/library?article=Rockwell-NVIDIA-Fall-2026-Vial-Inspection",
+  "source_repository_path": "unlisted/Rockwell-NVIDIA-Fall-2026-Vial-Inspection/Rockwell-NVIDIA-Fall-2026-Vial-Inspection.md",
+  "dataset1_role": "Final-fixture inspection of individual positions for cap/body issues and occupancy. Separate from filling-stage appearance assessment.",
+  "available_local_assets": [
+    "datasets/csi_digital_twin_v1/stations/tray_inspection/tray_inspection.usdc",
+    "datasets/csi_digital_twin_v1/cameras/CapSealCam.json",
+    "Dataset2 cap_seal contains real overhead final-fixture footage:1181 stills/5 videos;335 stills from Runs1-4. No reviewed per-slot labels or validated real slot mapping found."
+  ],
+  "training_policy": {
+    "domain_training": "Generate and train on synthetic imagery from the digital twin.",
+    "real_data": "Use real imagery for inspection/evaluation; do not fit weights on it.",
+    "disclosure": "Report generic pretrained backbone data separately from synthetic CSI-domain fine-tuning. Legacy real-trained comparators are not proof of a synthetic-only solution.",
+    "split_unit": "Keep complete rendered scene/seed and its crops together. Use separate synthetic development and test scenes; preserve a fresh source-disjoint physical evaluation."
+  },
+  "proposed_shared_observation": {
+    "source_identity": "session, station, camera/profile, source hash, decoded frame and native clock",
+    "target": "fixture ID, explicit target slot, crop-to-full-image transform and source dimensions",
+    "visual_evidence": "per-class proposal/score, unavailable reason, model/config IDs and exact image",
+    "occupancy_context": "expected placement progress or attributed order-complete context; unknown is allowed",
+    "physical_association": "confirmed physical vial-to-slot link with evidence and uncertainty, or explicitly unlinked"
+  },
+  "fusion_policy": [
+    "Display filling and final-fixture evidence in the same operator workflow while retaining separate station assessments.",
+    "Join an earlier fill assessment to a final slot only with a confirmed physical association. Color similarity, sequential track numbers and assumed timing are insufficient.",
+    "An empty future slot is not automatically a missed placement; missing progress makes that interpretation unavailable.",
+    "A visually acceptable cap does not clear an earlier mixture concern. A recognized color does not certify intended recipe correctness.",
+    "Keep fixture labels, observed physical routing and product acceptance separate; confirm current routing semantics with CSI.",
+    "The dashboard issues advice and records human responses. It does not send line sensor/actuator commands."
+  ],
+  "candidate_experiments": [
+    "Begin with one target-slot task and a bounded synthetic defect fixture. Compare raw rendered and visually reviewed appearance variations before scaling.",
+    "Evaluate a synthetic-trained lightweight crop classifier or reference-comparison model on complete held-out fixture scenes. Keep neighboring crops grouped by source scene.",
+    "Consider TAO Visual ChangeNet and Cosmos Reason as independent candidates with explicit image/reference alignment and content integrity checks; neither is integrated or validated by this proposal.",
+    "Report each defect class's misses and false alarms, confirmed-empty versus uncapped confusion, and whole-scene coverage. Choose operating settings without consuming the physical final test.",
+    "Measure performance on held-out simulation and fresh real scenes under the same target definition; quantify the gap and any reduction with identical evaluation cases and clearly separate development iterations."
+  ],
+  "current_assignments": {
+    "Josiah_Hayden": "Operator frontend/backend integration",
+    "Srijan": "Standard model observation pipeline and cross-module source identity",
+    "Zoe_Alayna_Reagan": "Evaluate NVIDIA candidates with synthetic training and honest real-transfer evidence",
+    "Cameron": "SAM2.1 module; coordinate existing asset authorship when requesting synthetic scene changes",
+    "Austin": "Local experiments and physical-test preparation"
+  },
+  "follow_up_experiment": {
+    "status": "completed first three-class synthetic fixture pilot; full extension remains unimplemented",
+    "protocol": "setup/vision/DATASET1-PILOT.md",
+    "classes": ["pass", "missing_cap", "no_vial"],
+    "synthetic_test_scenes": 12,
+    "synthetic_test_targets": 360,
+    "rgb_correct": 360,
+    "paired_reference_correct": 360,
+    "real_rgb_inference_completed": true,
+    "real_source_stills": 16,
+    "real_slot_frame_predictions": 480,
+    "real_probe_protocol": "setup/vision/DATASET1-REAL-TRANSFER.md",
+    "reviewed_real_labels": 0,
+    "real_accuracy": null,
+    "physical_vial_to_slot_link": false,
+    "operator_application_changed": false
+  },
+  "implemented_by_this_proposal": false,
+  "physical_test_approval_or_booking_established": false
+}

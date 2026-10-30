@@ -1,0 +1,246 @@
+{
+  "schema_version": 1,
+  "status": "passed",
+  "date": "2026-10-21",
+  "kind": "real-camera-replay-and-csi-preparation",
+  "local_root": "C:/Users/Austin/ai-club-tools/results/csi-preparation-20261021",
+  "real_camera_comparison": {
+    "native_decoded_frames": 9482,
+    "counts": {
+      "samples": 1581,
+      "startup_reference_not_yet_available": 25,
+      "paired_available": 1533,
+      "unhealthy_background_reference": 23
+    },
+    "raw_all": {
+      "qa_pass": 849,
+      "liquid_proposed": 943,
+      "mask_nonempty": 857
+    },
+    "raw_on_camera_eligible_frames": {
+      "qa_pass": 849,
+      "liquid_proposed": 928,
+      "mask_nonempty": 857
+    },
+    "corrected_on_camera_eligible_frames": {
+      "qa_pass": 849,
+      "liquid_proposed": 927,
+      "mask_nonempty": 857
+    },
+    "qa_disagreements": [
+      {
+        "source_frame": 462,
+        "seconds": 15.4,
+        "raw_qa": false,
+        "corrected_qa": true
+      },
+      {
+        "source_frame": 1806,
+        "seconds": 60.2,
+        "raw_qa": false,
+        "corrected_qa": true
+      },
+      {
+        "source_frame": 1848,
+        "seconds": 61.6,
+        "raw_qa": true,
+        "corrected_qa": false
+      },
+      {
+        "source_frame": 4224,
+        "seconds": 140.8,
+        "raw_qa": false,
+        "corrected_qa": true
+      },
+      {
+        "source_frame": 4428,
+        "seconds": 147.6,
+        "raw_qa": false,
+        "corrected_qa": true
+      },
+      {
+        "source_frame": 6258,
+        "seconds": 208.6,
+        "raw_qa": true,
+        "corrected_qa": false
+      },
+      {
+        "source_frame": 6312,
+        "seconds": 210.4,
+        "raw_qa": false,
+        "corrected_qa": true
+      },
+      {
+        "source_frame": 6324,
+        "seconds": 210.8,
+        "raw_qa": true,
+        "corrected_qa": false
+      },
+      {
+        "source_frame": 6954,
+        "seconds": 231.8,
+        "raw_qa": true,
+        "corrected_qa": false
+      },
+      {
+        "source_frame": 8250,
+        "seconds": 275.0,
+        "raw_qa": true,
+        "corrected_qa": false
+      },
+      {
+        "source_frame": 8448,
+        "seconds": 281.6,
+        "raw_qa": false,
+        "corrected_qa": true
+      },
+      {
+        "source_frame": 8958,
+        "seconds": 298.6,
+        "raw_qa": true,
+        "corrected_qa": false
+      }
+    ],
+    "paired_nonempty_union_mask_iou": {
+      "samples": 863,
+      "median": 0.9712368168744008,
+      "minimum": 0.0
+    },
+    "accuracy": null,
+    "onset_delay": null,
+    "mask_accuracy": null,
+    "limits": [
+      "Inspected Run 4 development recording; no injected shifts in this trial.",
+      "Model-output agreement and QA availability are not accuracy.",
+      "Camera-gate unavailability remains in total denominator; no raw fallback.",
+      "Fixed Run 4 background patches are not a portable commissioned camera profile.",
+      "No action/recipe policy or reference was commissioned."
+    ]
+  },
+  "independent_verification": {
+    "status": "passed",
+    "source_sha256": "e2de9cdf613817556f3de1edaaf8e5aa4c998cdfdbb7c4c2cee2e76d672db1b9",
+    "candidate_completion_sha256": "d1f6ff82a3f2a52257cbad2f2ff5f5320bd26ef4d19c6714a039853788342db0",
+    "native_frames": 9482,
+    "independently_verified_raw_rgb_clock_and_correction": 1581,
+    "recomputed_counts": {
+      "samples": 1581,
+      "startup_reference_not_yet_available": 25,
+      "paired_available": 1533,
+      "unhealthy_background_reference": 23
+    },
+    "qa_gains": 6,
+    "qa_losses": 6,
+    "difference_pngs": [
+      {
+        "path": "qa-difference-frame000462.png",
+        "sha256": "b92f230cede9065d2bf86b7afd28b4f01ea6c128f0ec96e5d206c20ce7de543c",
+        "source_frame": 462
+      },
+      {
+        "path": "qa-difference-frame001806.png",
+        "sha256": "8f134682a9eebd7ce48c0cdf0635d2d3dc3e7d788040c3acfb4399995835265b",
+        "source_frame": 1806
+      },
+      {
+        "path": "qa-difference-frame001848.png",
+        "sha256": "d4a47f8af89275ff7fe95ac5990974e5cb49c483afc69205c9d9ffd5eee0e229",
+        "source_frame": 1848
+      },
+      {
+        "path": "qa-difference-frame004224.png",
+        "sha256": "f8303286bbb702b876ffd76665d4d0bd223b9f1b48d03e974e3e4a4560e78965",
+        "source_frame": 4224
+      },
+      {
+        "path": "qa-difference-frame004428.png",
+        "sha256": "8ee153f457dd9294e64826b2622865ff08dd207407dc629f572fe4e23bf840e0",
+        "source_frame": 4428
+      },
+      {
+        "path": "qa-difference-frame006258.png",
+        "sha256": "511c04a97e07e83af6e23219ad6d97573cda70f2b5a9333b45a5866ba463fd47",
+        "source_frame": 6258
+      },
+      {
+        "path": "qa-difference-frame006312.png",
+        "sha256": "2e97ffcf99dc5966245647971d6f911fce5c10877e5d8f2f3c891e1fc4cb29d8",
+        "source_frame": 6312
+      },
+      {
+        "path": "qa-difference-frame006324.png",
+        "sha256": "3e85d259aea4ee5ca40d369f73078fd799205efa6b6ebcd039c4a639a3f34cc4",
+        "source_frame": 6324
+      },
+      {
+        "path": "qa-difference-frame006954.png",
+        "sha256": "7d29e2c3fe7cb37e9544da67d9b1ad60b111968f95df8829a6ab7864f82614cb",
+        "source_frame": 6954
+      },
+      {
+        "path": "qa-difference-frame008250.png",
+        "sha256": "2553f8ec5c0ae9dc321de1a87d0f7c7cbec8bc67a994fef31199f9c43c4bcccb",
+        "source_frame": 8250
+      },
+      {
+        "path": "qa-difference-frame008448.png",
+        "sha256": "7d372444c60b410c43f5de0ffab5320fb63b960bc121a4378ac0f3e877c9233a",
+        "source_frame": 8448
+      },
+      {
+        "path": "qa-difference-frame008958.png",
+        "sha256": "3006e87e296f1f6dc5066a3b1a2ff5b2db385adb726938f8d4e9f28f69232384",
+        "source_frame": 8958
+      }
+    ],
+    "run5_used": false,
+    "hardware_actions": 0,
+    "approved_onset_labels": 0,
+    "approved_masks": 0,
+    "helper_sha256": "0f1e1014043b15ca6276ed5a1f216c4c1323e2daf5c8149a6b87f3ccdbe9cf9c"
+  },
+  "recording_rehearsal": {
+    "native_decoded_frames": 9482,
+    "missing_pts": 0,
+    "nonincreasing_pts": 0,
+    "inventory_sha256": "7af96921acb0e98dbe7e8f02558637cfa455a8d2d0910847e064db70010da7f3"
+  },
+  "visit_packet": {
+    "pdf_pages": 4,
+    "pdf_sha256": "935d0254c5932a0a27e5423071528cbf755ae4a1ce51ae76777835d2d926bc80",
+    "zip_sha256": "fdf3b33346351bda7d7d01d8f9c5a04622f038bf1afdeca13de472addbc2aea3",
+    "verified_files": 17,
+    "blank_csv_forms": 8,
+    "proposed_dates": "October 26\u201328, 2026",
+    "booking_status": "unconfirmed",
+    "request_sent": false
+  },
+  "checks": {
+    "focused_tests_passed": 2,
+    "compilation_passed": true,
+    "git_diff_check_passed": true,
+    "packet_zip_bytes_match_manifest": true,
+    "pdf_all_pages_rendered_and_inspected": true
+  },
+  "human_review": {
+    "approved_onsets": 0,
+    "approved_masks": 0,
+    "returned_reviews_found": false,
+    "scope": "local results inventory only; team returns may exist elsewhere"
+  },
+  "baseline_promoted": false,
+  "camera_correction_promoted": false,
+  "training": false,
+  "run5_used": false,
+  "hardware_actions": 0,
+  "industrial_connections": 0,
+  "main_unchanged": true,
+  "main_commit": "1cb6a63987987e1d8f69e6adc8aaa6ba2357ec68",
+  "helpers_sha256": {
+    "evaluate_real_camera_preprocessing.py": "39161b3e56549465d0b93fb3e877c28e59408d9daf2bf4bdbaefaccd51fbf9f5",
+    "verify_real_camera_preprocessing.py": "0f1e1014043b15ca6276ed5a1f216c4c1323e2daf5c8149a6b87f3ccdbe9cf9c",
+    "inspect_csi_capture.py": "577ec69c76659b7d89db5d75dc2b2d4f8400931cf1c31d0e1f093b251ae7c01d",
+    "prepare_csi_session_packet.py": "cf33d83b2e5f445aa34ca320bad21ae82830632f803c617075170efb7a189b86",
+    "test_csi_preparation.py": "8252bdeef964a6ce8287536716566cf9bd6839c0dd3c75b6a95c721344595cb2"
+  }
+}

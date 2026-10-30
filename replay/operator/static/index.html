@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>First Vial — Operator station</title>
+  <link rel="stylesheet" href="/operator.css"><script src="/operator.js" defer></script>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <a class="brand" href="#workspace" aria-label="First Vial operator station">
+      <svg viewBox="0 0 36 40" width="30" height="34" aria-hidden="true"><path d="M11 3h14v5h-2v9l6 13a5 5 0 0 1-5 7H12a5 5 0 0 1-5-7l6-13V8h-2z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M11 27h14l3 6-3 3H11l-3-3z" fill="currentColor"/></svg>
+      <span>First Vial<small>RECIPE-AWARE INSPECTION</small></span>
+    </a>
+    <p class="nav-label">OPERATOR WORKSPACE</p>
+    <nav aria-label="Workspace navigation"><a class="nav-item active" href="#workspace"><span aria-hidden="true">◉</span> Observe &amp; review</a><a class="nav-item" href="#records"><span aria-hidden="true">▤</span> Vial records <span id="nav-count" class="nav-count">0</span></a><a class="nav-item" href="#session-evidence"><span aria-hidden="true">↗</span> Session evidence</a></nav>
+    <div class="sidebar-bottom"><span class="small-pill">RECORDED DEMONSTRATION</span><p>Practice the operator workflow with saved camera evidence.</p><div class="connection"><span class="dot"></span> No line connection</div><small>CSI · AI Club · Innovation Lab</small></div>
+  </aside>
+
+  <main id="workspace">
+    <header class="page-head"><div><p class="eyebrow">PART 2 / HUMAN-IN-THE-LOOP</p><h1>Operator station</h1><p class="subtle">Understand the evidence. Record the response.</p></div><div class="header-actions"><label class="operator-label">Operator name<input id="operator-name" placeholder="Your name" maxlength="80" autocomplete="name"></label><a id="export-header" class="button secondary" href="/api/export.json?at_s=0" download>↓ Export session</a></div></header>
+    <div id="page-error" class="message error" role="alert" hidden></div>
+    <div class="mode-strip"><div><span class="record-dot"></span><strong id="source-name">Loading recording…</strong><span class="strip-divider">/</span><span>Recorded evidence</span></div><span>Operator actions are saved locally</span></div>
+    <section class="metrics" aria-label="Current context">
+      <article><p>INTENDED RECIPE</p><strong id="metric-recipe">Not entered</strong><small id="metric-batch">Add context from the operator</small></article>
+      <article><p>PHYSICAL VIAL</p><strong id="metric-vial">Not linked</strong><small id="metric-identity">Visual IDs are separate</small></article>
+      <article><p>CURRENT SAMPLE</p><strong id="metric-qa">Waiting for evidence</strong><small id="metric-sample">Sampling checks, not recipe approval</small></article>
+      <article><p>FOLLOW-UP</p><strong id="metric-followup">No open reviews</strong><small id="metric-action">0 operator actions recorded</small></article>
+    </section>
+
+    <div class="workspace-grid">
+      <section class="panel camera-panel" aria-label="Recorded camera evidence">
+        <div class="panel-head"><div><p class="eyebrow">01 / OBSERVE</p><h2>Vial fill camera</h2></div><span class="badge neutral">Saved recording</span></div>
+        <div class="video-wrap"><video id="video" src="/video.mp4" controls muted playsinline preload="metadata" aria-label="Recorded vial fill camera"></video></div>
+        <div class="video-meta"><span id="video-clock">00:00.0</span><span>Playback has no live line connection</span></div>
+        <div class="playback-toolbar"><label>Explore a sample<select id="sample-jump" aria-label="Explore a sample fill"><option value="">Choose a fill neighborhood</option></select></label><label>Speed<select id="speed" aria-label="Playback speed"><option value="0.5">½×</option><option value="1" selected>1×</option><option value="2">2×</option><option value="4">4×</option></select></label><button id="new-vial" class="button secondary">+ New vial record</button></div>
+        <div class="sample-strip"><div><span id="sample-dot" class="signal"></span><div><strong id="sample-status">Image sample unavailable</strong><small id="sample-caption">Source-aligned evidence will appear during playback.</small></div></div><span id="sample-phase" class="phase-chip">No phase signal</span></div>
+        <details id="sample-details" class="sample-details"><summary>Inspect the exact sampled pixels <span>Mask evidence</span></summary><div class="evidence-content"><div class="evidence-head"><span id="evidence-clock">—</span><select id="evidence-kind" aria-label="Evidence image"><option value="overlay">Sampling mask + vial proposal</option><option value="source">Original source frame</option><option value="mask">Binary sampling mask</option></select></div><img id="evidence-image" alt="Exact sampled source frame with the selected evidence view" hidden><p class="subtle">This frozen frame has its own timestamp. Cyan marks sampled pixels; blue outlines a vial proposal. Geometry remains unreviewed.</p></div></details>
+      </section>
+
+      <aside class="review-column">
+        <section class="panel assessment-panel" aria-label="Vial assessment and operator response">
+          <div class="panel-head"><div><p class="eyebrow">02 / ASSESS</p><h2>Current vial</h2></div><span id="case-badge" class="badge neutral">No record</span></div>
+          <div id="assessment-status" class="assessment-status neutral"><div class="status-icon" aria-hidden="true">i</div><p class="eyebrow" id="assessment-kicker">CONTEXT NEEDED</p><h3 id="assessment-title">Start with the intended recipe</h3><p id="assessment-reason">Create a vial record to connect this image with an operator-supplied recipe and physical vial.</p></div>
+          <div id="case-context" class="case-context" hidden><div><span>Recipe</span><strong id="case-recipe">—</strong></div><div><span>Batch / vial</span><strong id="case-vial">—</strong></div><div><span>Completion</span><strong id="case-completion">Not confirmed</strong></div></div>
+          <div id="comparison" class="comparison" hidden><div class="comparison-swatch"><canvas id="observed-swatch" width="28" height="28" aria-label="Observed sample color"></canvas><span>Observed<strong id="observed-value">—</strong></span></div><div class="comparison-swatch"><canvas id="reference-swatch" width="28" height="28" aria-label="Development reference color"></canvas><span>Reference<strong id="reference-value">Not available</strong></span></div><div class="distance"><span>Color distance</span><strong id="delta-value">—</strong><small>Development band <span id="delta-band">5.0</span></small></div></div>
+          <div id="primary-actions" class="primary-actions"><button id="start-vial" class="button primary">Create vial record</button><button id="complete-vial" class="button primary" hidden>Confirm fill complete</button><button id="ack-review" class="button primary" hidden>Acknowledge review</button><button id="record-action" class="button primary" hidden>Record operator action</button><button id="close-review" class="button secondary" hidden>Close follow-up</button><button id="request-review" class="button secondary" hidden>Request manual review</button></div>
+          <p id="historical-note" class="inline-note" hidden>Historical playback is read-only. Return to the latest saved source point to edit this record.</p>
+          <p class="boundary-note">Review requests notify the operator in this workspace. They do not stop equipment or change sorting.</p>
+          <details id="record-tools" class="record-tools" hidden><summary>Record &amp; reference options</summary><button id="save-reference" class="text-button">Save endpoint as a development reference</button><button id="abandon-vial" class="text-button">Close incomplete record as uncertain</button><p>Development references support practice comparisons. They are not CSI-approved standards or training labels.</p></details>
+        </section>
+
+        <section class="panel response-panel"><div class="panel-head"><div><p class="eyebrow">03 / RESPOND</p><h2>Operator activity</h2></div><span id="activity-count" class="subtle">No events</span></div><ol id="activity" class="activity"><li class="empty-activity">Acknowledgements and actual operator actions will appear here.</li></ol></section>
+      </aside>
+    </div>
+
+    <section id="records" class="panel records-panel"><div class="panel-head"><div><p class="eyebrow">SESSION LEDGER</p><h2>Vial records</h2><p class="subtle">Saved records available through the playhead. Recipe assessment and operator action stay separate.</p></div><a id="export-csv" class="button secondary" href="/api/export.csv?at_s=0" download>↓ Download CSV</a></div><div class="table-wrap"><table><thead><tr><th>Vial / batch</th><th>Intended recipe</th><th>Endpoint sample</th><th>Recipe assessment</th><th>Operator follow-up</th><th></th></tr></thead><tbody id="ledger"><tr><td colspan="6" class="empty-row">No vial records yet. Explore a fill neighborhood, then create a record.</td></tr></tbody></table></div></section>
+    <section id="session-evidence" class="session-evidence"><div><strong>Evidence stays with the decision.</strong><p>Practice records preserve source identity, frame time, manual context and operator history. Existing sorting labels are not recipe-quality truth.</p></div><details><summary>Source &amp; session details</summary><pre id="provenance">Loading…</pre><a id="export-json" href="/api/export.json?at_s=0" download>Download the complete visible audit record</a></details></section>
+    <footer><span>First Vial / Operator workspace</span><span>Recorded demonstration · no independently verified product outcomes</span></footer>
+  </main>
+</div>
+
+<dialog id="start-dialog" aria-labelledby="start-title"><form id="start-form"><div class="dialog-head"><div><p class="eyebrow">OPERATOR CONTEXT</p><h2 id="start-title">Create a vial record</h2></div><button type="button" class="icon-button" data-close="start-dialog" aria-label="Close vial form">×</button></div><p class="subtle">Use the intended recipe from the operator, never from the observed color. Playback pauses at the recorded source point.</p><label>Operator name<input id="start-actor" required maxlength="80" autocomplete="name"></label><div class="form-grid"><label>Intended recipe<input id="start-recipe" maxlength="80" placeholder="e.g. Recipe A — leave blank if unknown"></label><label>Batch identifier<input id="start-batch" maxlength="80" placeholder="Optional batch name"></label></div><label>Physical vial identifier<input id="start-physical" maxlength="80" placeholder="Leave blank if the physical vial is unknown"></label><label class="check-label"><input id="start-identity" type="checkbox"> I can associate this record with that physical vial.</label><label>Context source / note<textarea id="start-note" required maxlength="500" rows="2" placeholder="Where did the recipe and vial information come from?"></textarea></label><p class="form-error" role="alert" hidden></p><div class="dialog-actions"><button type="button" class="button secondary" data-close="start-dialog">Cancel</button><button class="button primary" type="submit">Save vial context</button></div></form></dialog>
+
+<dialog id="command-dialog" aria-labelledby="command-title"><form id="command-form"><div class="dialog-head"><div><p id="command-kicker" class="eyebrow">OPERATOR RECORD</p><h2 id="command-title">Record response</h2></div><button type="button" class="icon-button" data-close="command-dialog" aria-label="Close response form">×</button></div><p id="command-description" class="subtle"></p><label>Operator name<input id="command-actor" required maxlength="80" autocomplete="name"></label><div id="action-fields" hidden><label>Action performed<select id="action-type"><option value="reviewed_evidence">Reviewed the evidence</option><option value="set_aside_for_review">Set the vial aside for review</option><option value="notified_csi">Notified CSI / supervisor</option><option value="approved_procedure">CSI performed an approved procedure</option><option value="other">Other human action</option></select></label><label id="procedure-label" hidden>Approved procedure / receipt ID<input id="procedure-id" maxlength="200"></label><label>Reported existing station destination<select id="station-route"><option value="not_observed">Not observed</option><option value="labeled_good">Location labeled “good”</option><option value="labeled_scrap">Location labeled “scrap”</option><option value="other">Other / unclear</option></select></label><p class="field-hint">Destination labels do not establish intended-recipe correctness.</p></div><label id="command-note-label">Notes<textarea id="command-note" maxlength="500" rows="3"></textarea></label><label id="confirmation-label" class="check-label" hidden><input id="command-confirmed" type="checkbox"><span id="confirmation-text">I confirm this action.</span></label><p class="form-error" role="alert" hidden></p><div class="dialog-actions"><button type="button" class="button secondary" data-close="command-dialog">Cancel</button><button id="command-save" class="button primary" type="submit">Save</button></div></form></dialog>
+<div id="toast" class="toast" role="status" hidden>Saved</div>
+</body>
+</html>

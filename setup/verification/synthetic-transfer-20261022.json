@@ -1,0 +1,166 @@
+{
+  "schema": "synthetic-transfer-verification/v1",
+  "prepared": "2026-10-22",
+  "completed": true,
+  "report": "/mnt/c/Users/Austin/ai-club-tools/results/sim-real-robustness-20261022/summary-v1/comparison.json",
+  "report_sha256": "b94b5e81f277277e0b47d3381c984649b30a2eabc3e9536f98aeb0840918e7bf",
+  "summary_completion_sha256": "4c18b3398491d9f92ea21437b9dbba61d42e73069d4b014d3356c3f98e9a55a1",
+  "scored_inference_inputs": 5698,
+  "independent_physical_trials": null,
+  "new_fits": {
+    "fasterrcnn-v1": {
+      "checkpoint_sha256": "ebbe4b0fc38f99842de8005ac7b8dda4437ed65dec86eab8942470ba748a7b72",
+      "epochs": 3,
+      "train_images": 614,
+      "synthetic_development_images": 154,
+      "synthetic_geometric_ap50_95": 0.9579355398502152,
+      "real_machine_agreement": {
+        "targets": 89,
+        "ap50_101point": 0.6000409464949348,
+        "ap50_95_101point": 0.26500133307251955,
+        "confidence": 0.35,
+        "iou": 0.5,
+        "tp": 70,
+        "unmatched_boxes": 265,
+        "missed_targets": 19,
+        "precision": 0.208955223880597,
+        "recall": 0.7865168539325843,
+        "provisional_negative_frames_with_predictions": 68,
+        "target_height_strata": {
+          "height_le32": {
+            "targets": 0,
+            "detected": 0
+          },
+          "height_32_to64": {
+            "targets": 18,
+            "detected": 16
+          },
+          "height_gt64": {
+            "targets": 71,
+            "detected": 54
+          }
+        }
+      },
+      "plan_sha256": "080a82f5b8d53a0f1a7818d94327b960d1d5f41e2cc1c2f9cfe249dc51b46a80",
+      "augmentation": "none"
+    },
+    "fasterrcnn-aug-v1": {
+      "checkpoint_sha256": "586f2ec2436fbd034b4366565cc2f9c1b68888b1f28cf576c78e50e50ffd79a5",
+      "epochs": 3,
+      "train_images": 614,
+      "synthetic_development_images": 154,
+      "synthetic_geometric_ap50_95": 0.9670063806806312,
+      "real_machine_agreement": {
+        "targets": 89,
+        "ap50_101point": 0.5063306035540566,
+        "ap50_95_101point": 0.24960936398875228,
+        "confidence": 0.35,
+        "iou": 0.5,
+        "tp": 66,
+        "unmatched_boxes": 402,
+        "missed_targets": 23,
+        "precision": 0.14102564102564102,
+        "recall": 0.7415730337078652,
+        "provisional_negative_frames_with_predictions": 68,
+        "target_height_strata": {
+          "height_le32": {
+            "targets": 0,
+            "detected": 0
+          },
+          "height_32_to64": {
+            "targets": 18,
+            "detected": 14
+          },
+          "height_gt64": {
+            "targets": 71,
+            "detected": 52
+          }
+        }
+      },
+      "plan_sha256": "d9a72c625184f7bcb4586ded1e0f655cdd8e14b2bc24ef216012fbea7d177f5d",
+      "augmentation": "Uniform raw/exposure085/exposure115/green085/blur_sigma12/jpeg_q40 on synthetic training RGB only, Python RNG seed19; labels unchanged."
+    }
+  },
+  "completed_evidence": {
+    "C:\\Users\\Austin\\ai-club-tools\\results\\sim-real-robustness-20261022\\cpu-transfer-v2": {
+      "completed_sha256": "9857c9c149abf1451eb4e1609dce5006d368f690fd455b5ebcf73f1b4a93eddb",
+      "artifacts": 15
+    },
+    "C:\\Users\\Austin\\ai-club-tools\\results\\sim-real-robustness-20261022\\synthetic-pipeline-v1": {
+      "completed_sha256": "bc576c1715ed48a1013b4870c11d77d4de4c6bbfdf69273b086d27d7a6db9a42",
+      "artifacts": 7
+    },
+    "C:\\Users\\Austin\\ai-club-tools\\results\\sim-real-robustness-20261022\\synthetic-fasterrcnn-pipeline-v1": {
+      "completed_sha256": "b3dc064949ccebebc3f8800ff046f1947e750d64506d1aa9336c3d94029eb7ac",
+      "artifacts": 7
+    },
+    "C:\\Users\\Austin\\ai-club-tools\\results\\sim-real-robustness-20261022\\synthetic-fasterrcnn-aug-pipeline-v1": {
+      "completed_sha256": "8c8c45cd4d8aac632fa733eb20e8789104b086134babc16b8f5fcdc944ddda76",
+      "artifacts": 7
+    },
+    "C:\\Users\\Austin\\ai-club-tools\\results\\synthetic-liquid-20261022\\fasterrcnn-v1": {
+      "completed_sha256": "50061d254e1442115f4c13e17e78fa1de0256cd738663baa98c1f2c79e5a54f1",
+      "artifacts": 9
+    },
+    "C:\\Users\\Austin\\ai-club-tools\\results\\synthetic-liquid-20261022\\fasterrcnn-aug-v1": {
+      "completed_sha256": "bc2938266ed8cdacb0215c21f6cb3e7fd9b9f8338f560b995332046732144295",
+      "artifacts": 9
+    }
+  },
+  "checks": {
+    "all_completed_artifact_hashes": true,
+    "synthetic_train_development_image_hash_disjoint": true,
+    "training_and_selection_real_runs_empty": true,
+    "same_split_for_raw_and_augmented_fits": true,
+    "same_native_sources_for_three_pipeline_arms": true,
+    "legacy_run4_fixed_point_parity": true,
+    "retained_training_helpers": true,
+    "new_checkpoints_reloaded_by_full_pipeline": true,
+    "real_box_reference_status": "provisional_machine_labels",
+    "new_optical_mask_truth_produced": false,
+    "visuals_reviewed": [
+      "synthetic-transfer-scorecard.png",
+      "joint synthetic pipeline diagnostic examples",
+      "new synthetic Faster R-CNN diagnostic examples",
+      "short-pool detector comparison"
+    ],
+    "package_usability": {
+      "ultralytics_yaml_resolution": true,
+      "train_images": 614,
+      "val_images": 154,
+      "coco_exports_checked": 4,
+      "archive": "Dataset-2-Synthetic-Pilot-v1.1.zip"
+    }
+  },
+  "training_package": {
+    "schema": "synthetic-pilot-package/v1",
+    "archive": "C:\\Users\\Austin\\ai-club-tools\\results\\synthetic-liquid-20261022\\Dataset-2-Synthetic-Pilot-v1.1.zip",
+    "archive_sha256": "5141685ee13080f3d08abf8e30d611ed225e01f7673748d50fde0946515ed36f",
+    "archive_bytes": 158527412,
+    "image_count": 768,
+    "train_images": 614,
+    "development_images": 154,
+    "real_images": 0,
+    "code_files": 0,
+    "model_files": 0,
+    "annotation_status": "Geometric proxy boxes; not approved visible-pool truth",
+    "source_plan_sha256": "080a82f5b8d53a0f1a7818d94327b960d1d5f41e2cc1c2f9cfe249dc51b46a80",
+    "all_payload_hashes_verified": true,
+    "published": false
+  },
+  "human_approved_process_stop": {
+    "pid": 91932,
+    "observed_private_GiB": 190.91,
+    "reason": "Windows memory-commit pressure blocked CUDA warm-up",
+    "approved_by": "Austin in conversation",
+    "stopped": true,
+    "restarted": false,
+    "cause_of_memory_growth_established": false
+  },
+  "defaults_changed": false,
+  "labels_or_teammate_assets_changed": false,
+  "run5_used": false,
+  "published": false,
+  "physical_accuracy_established": false,
+  "conclusion": "Synthetic-only detector candidates now exist for the original Faster R-CNN stage, but high geometric synthetic AP does not transfer cleanly to provisional real targets. The tested RGB augmentation did not improve real agreement. QA availability is not mask correctness."
+}

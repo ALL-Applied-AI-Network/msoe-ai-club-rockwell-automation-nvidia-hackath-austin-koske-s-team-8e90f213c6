@@ -1,0 +1,52 @@
+{
+  "schema": "root-cause-pilot-verification/v1",
+  "date": "2026-10-26",
+  "development_branch": "austin-work",
+  "new_opt_in_module": true,
+  "app_defaults_changed": false,
+  "measurement_QA_changed": false,
+  "new_training": false,
+  "GPU_used": false,
+  "run5_used": false,
+  "physical_connections": false,
+  "independent_real_cause_accuracy": null,
+  "unit_tests_passed": 12,
+  "source_sha256": {
+    "replay/diagnostics.py": "357d4bbc023efd03f4f7248b217067e64822390a7dc504a755cf683860513de7",
+    "replay/tests/test_diagnostics.py": "6ea503cb20ae179d630a691aaa766a7a20169e41b277159e9a43eb02e1ff8590",
+    "setup/vision/experiment_root_cause.py": "826928ca8dd340162a6e978ff3990d5a5849746f74ba8e2e89d7d63c6723577a",
+    "setup/vision/verify_root_cause.py": "0d8ada45ef0e0c943b3e493ca7ace41dcf729b9f03ae12dcdfc3735cba29aae7",
+    "docs/root-cause-analysis.md": "8ec850ba2792af952802780e7e0af47ecfe963d5c1a1c97ad01fec2375d2149c"
+  },
+  "experiment_root": "C:/Users/Austin/ai-club-tools/results/root-cause-pilot-20261026-v2",
+  "summary_root": "C:/Users/Austin/ai-club-tools/results/root-cause-summary-20261026-v1",
+  "scenario_sequences": 1620,
+  "identical_input_cause_triplets": 162,
+  "counterexample_verification": {
+    "frozen_artifacts_verified": 30,
+    "scenario_counts_recomputed": true,
+    "scenario_sequences": 1620,
+    "identical_input_cause_triplets": 162,
+    "distinct_analytic_process_settings": 54,
+    "equivalent_endpoints": 216,
+    "max_ideal_RGB_difference": 1.4210854715202004e-14,
+    "mechanism_claim": "Equivalence under the stated analytic assumptions; no real optical/physical validation.",
+    "references_and_observations_share_optical_family": true,
+    "real_cause_accuracy": null,
+    "physical_cause_confirmed": false,
+    "GPU_used": false,
+    "helper_sha256": "0d8ada45ef0e0c943b3e493ca7ace41dcf729b9f03ae12dcdfc3735cba29aae7",
+    "plan_sha256": "e271fcc88f6d30aa6edac2e6ffd39b8bf2fb768c52431e32a6a728e1808ce827"
+  },
+  "real_input_audit": {
+    "frames": 264,
+    "QA_eligible_frames": 105,
+    "RCA_inputs_available": 0
+  },
+  "limitations": [
+    "Synthetic feature-model behavior, not real cause or product accuracy.",
+    "One noisy optical trace is not uniquely diagnostic of composition or cause.",
+    "Human/process inputs remain attributed and must be independently checked.",
+    "The dashboard/worker integration is not changed by this pilot."
+  ]
+}

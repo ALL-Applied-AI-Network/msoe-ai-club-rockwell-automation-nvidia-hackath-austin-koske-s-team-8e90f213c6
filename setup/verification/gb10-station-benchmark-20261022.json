@@ -1,0 +1,858 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-22",
+  "status": "passed",
+  "kind": "matched_local_GB10_station_benchmark",
+  "branch": "austin-work",
+  "pushed": false,
+  "main_unchanged": "1cb6a63987987e1d8f69e6adc8aaa6ba2357ec68",
+  "local_root": "C:/Users/Austin/ai-club-tools/results/gb10-station-benchmark-20261022",
+  "remote_root": "/home/hackathon8/ai-club-tools/experiments/gb10-station-benchmark-20261022",
+  "verification": {
+    "status": "passed",
+    "verified_model_rows": 2784,
+    "recomputed_sampling_colors": 2397,
+    "results": {
+      "local_offline": {
+        "status": "passed",
+        "mode": "offline",
+        "warmup_samples": 111,
+        "measured_samples": 222,
+        "selected_input_samples": 111,
+        "station_wall_ms": {
+          "count": 222,
+          "p50": 126.12904998240992,
+          "p95": 139.08423510729335,
+          "maximum": 218.80560007411987
+        },
+        "inference_ms": {
+          "count": 222,
+          "p50": 111.01849999977276,
+          "p95": 122.07744998158887,
+          "maximum": 202.05560000613332
+        },
+        "throughput_samples_s": 8.270013866889482,
+        "qa_valid": 144,
+        "samples_with_masks": 194,
+        "prompted_samples": 196,
+        "components_ms": {
+          "vial": {
+            "count": 222,
+            "p50": 10.70094999158755,
+            "p95": 12.362914980622008,
+            "maximum": 16.621200018562376
+          },
+          "liquid": {
+            "count": 222,
+            "p50": 21.234799991361797,
+            "p95": 24.267815047642216,
+            "maximum": 29.013299965299666
+          },
+          "prompting": {
+            "count": 222,
+            "p50": 3.357500012498349,
+            "p95": 5.611489969305691,
+            "maximum": 6.970499991439283
+          },
+          "sam": {
+            "count": 222,
+            "p50": 40.37405003327876,
+            "p95": 44.69861001125537,
+            "maximum": 50.72689999360591
+          },
+          "measurement_and_state": {
+            "count": 222,
+            "p50": 33.71315001277253,
+            "p95": 37.9365500935819,
+            "maximum": 121.65350001305342
+          },
+          "result_encoding": {
+            "count": 222,
+            "p50": 0.6922499742358923,
+            "p95": 0.809229991864413,
+            "maximum": 0.891899922862649
+          },
+          "processing": {
+            "count": 222,
+            "p50": 110.94009998487309,
+            "p95": 122.00849001528695,
+            "maximum": 201.92479994148016
+          }
+        },
+        "source_to_result_ms": null,
+        "skipped_input_samples": 0,
+        "unprocessed_tail_samples": 0,
+        "model_sha256": {
+          "vial": "10856c18a8a5c485e832adcc6b841b739e726a969dc043fe8db64c49163bb361",
+          "liquid": "9479fb13ed9c7ebd815c314e8219ba3b86c3ffa267f758f714a3058f9ac3a343",
+          "sam": "7402e0d864fa82708a20fbd15bc84245c2f26dff0eb43a4b5b93452deb34be69"
+        },
+        "source_video_sha256": "9a9d35612bd8c8f2cdd899334f7b7ce363820ad8da2ad6ed9eb6ebbd785a4045",
+        "hardware_commands": 0,
+        "cached_predictions": false,
+        "limits": [
+          "Station wall time includes actual inference, mask PNG encoding and local journal/log writes.",
+          "Images are predecoded before timed processing; no browser, network or camera capture is included.",
+          "Platform/runtime differences are recorded; this is not an architecture-only hardware comparison.",
+          "Paced run skips to the latest scheduled input; source-to-result age excludes browser display."
+        ]
+      },
+      "local_paced": {
+        "status": "passed",
+        "mode": "paced",
+        "warmup_samples": 111,
+        "measured_samples": 110,
+        "selected_input_samples": 111,
+        "station_wall_ms": {
+          "count": 110,
+          "p50": 149.65305000077933,
+          "p95": 164.47353501571342,
+          "maximum": 233.73270011506975
+        },
+        "inference_ms": {
+          "count": 110,
+          "p50": 134.49414999922737,
+          "p95": 147.60153996758163,
+          "maximum": 155.2250999957323
+        },
+        "throughput_samples_s": 7.067474723335913,
+        "qa_valid": 72,
+        "samples_with_masks": 97,
+        "prompted_samples": 98,
+        "components_ms": {
+          "vial": {
+            "count": 110,
+            "p50": 10.35285001853481,
+            "p95": 13.268170051742345,
+            "maximum": 21.280900109559298
+          },
+          "liquid": {
+            "count": 110,
+            "p50": 23.893000034149736,
+            "p95": 27.948239946272224,
+            "maximum": 39.85370008740574
+          },
+          "prompting": {
+            "count": 110,
+            "p50": 3.29949997831136,
+            "p95": 5.372280010487884,
+            "maximum": 6.584300077520311
+          },
+          "sam": {
+            "count": 110,
+            "p50": 63.34345001960173,
+            "p95": 66.9127500441391,
+            "maximum": 74.90609993692487
+          },
+          "measurement_and_state": {
+            "count": 110,
+            "p50": 32.326400047168136,
+            "p95": 35.54084508214146,
+            "maximum": 40.965499938465655
+          },
+          "result_encoding": {
+            "count": 110,
+            "p50": 0.6792500498704612,
+            "p95": 0.762024981668219,
+            "maximum": 0.9118999587371945
+          },
+          "processing": {
+            "count": 110,
+            "p50": 134.43044997984543,
+            "p95": 147.49001504969783,
+            "maximum": 155.10390000417829
+          }
+        },
+        "source_to_result_ms": {
+          "count": 110,
+          "p50": 148.3333333473027,
+          "p95": 169.6666666461777,
+          "maximum": 237.00000003445876
+        },
+        "skipped_input_samples": 1,
+        "unprocessed_tail_samples": 0,
+        "model_sha256": {
+          "vial": "10856c18a8a5c485e832adcc6b841b739e726a969dc043fe8db64c49163bb361",
+          "liquid": "9479fb13ed9c7ebd815c314e8219ba3b86c3ffa267f758f714a3058f9ac3a343",
+          "sam": "7402e0d864fa82708a20fbd15bc84245c2f26dff0eb43a4b5b93452deb34be69"
+        },
+        "source_video_sha256": "9a9d35612bd8c8f2cdd899334f7b7ce363820ad8da2ad6ed9eb6ebbd785a4045",
+        "hardware_commands": 0,
+        "cached_predictions": false,
+        "limits": [
+          "Station wall time includes actual inference, mask PNG encoding and local journal/log writes.",
+          "Images are predecoded before timed processing; no browser, network or camera capture is included.",
+          "Platform/runtime differences are recorded; this is not an architecture-only hardware comparison.",
+          "Paced run skips to the latest scheduled input; source-to-result age excludes browser display."
+        ]
+      },
+      "gb10_offline": {
+        "status": "passed",
+        "mode": "offline",
+        "warmup_samples": 111,
+        "measured_samples": 222,
+        "selected_input_samples": 111,
+        "station_wall_ms": {
+          "count": 222,
+          "p50": 113.45920350868255,
+          "p95": 115.60451743134763,
+          "maximum": 173.51307498756796
+        },
+        "inference_ms": {
+          "count": 222,
+          "p50": 101.01435199612752,
+          "p95": 102.61389902152587,
+          "maximum": 160.54283000994474
+        },
+        "throughput_samples_s": 9.410807705960918,
+        "qa_valid": 144,
+        "samples_with_masks": 194,
+        "prompted_samples": 196,
+        "components_ms": {
+          "vial": {
+            "count": 222,
+            "p50": 4.631439020158723,
+            "p95": 4.912051156861708,
+            "maximum": 4.971079993993044
+          },
+          "liquid": {
+            "count": 222,
+            "p50": 23.14565997221507,
+            "p95": 23.88660440046806,
+            "maximum": 24.53507896279916
+          },
+          "prompting": {
+            "count": 222,
+            "p50": 1.9503950024954975,
+            "p95": 2.7050223812693726,
+            "maximum": 3.0481329886242747
+          },
+          "sam": {
+            "count": 222,
+            "p50": 53.52798095555045,
+            "p95": 54.35920044546947,
+            "maximum": 54.766021959949285
+          },
+          "measurement_and_state": {
+            "count": 222,
+            "p50": 16.920155001571402,
+            "p95": 17.460442322771996,
+            "maximum": 76.00887201260775
+          },
+          "result_encoding": {
+            "count": 222,
+            "p50": 0.6596969906240702,
+            "p95": 0.679618603317067,
+            "maximum": 0.687041028868407
+          },
+          "processing": {
+            "count": 222,
+            "p50": 100.95217596972361,
+            "p95": 102.53676540160086,
+            "maximum": 160.4482859838754
+          }
+        },
+        "source_to_result_ms": null,
+        "skipped_input_samples": 0,
+        "unprocessed_tail_samples": 0,
+        "model_sha256": {
+          "vial": "10856c18a8a5c485e832adcc6b841b739e726a969dc043fe8db64c49163bb361",
+          "liquid": "9479fb13ed9c7ebd815c314e8219ba3b86c3ffa267f758f714a3058f9ac3a343",
+          "sam": "7402e0d864fa82708a20fbd15bc84245c2f26dff0eb43a4b5b93452deb34be69"
+        },
+        "source_video_sha256": "9a9d35612bd8c8f2cdd899334f7b7ce363820ad8da2ad6ed9eb6ebbd785a4045",
+        "hardware_commands": 0,
+        "cached_predictions": false,
+        "limits": [
+          "Station wall time includes actual inference, mask PNG encoding and local journal/log writes.",
+          "Images are predecoded before timed processing; no browser, network or camera capture is included.",
+          "Platform/runtime differences are recorded; this is not an architecture-only hardware comparison.",
+          "Paced run skips to the latest scheduled input; source-to-result age excludes browser display."
+        ]
+      },
+      "gb10_paced": {
+        "status": "passed",
+        "mode": "paced",
+        "warmup_samples": 111,
+        "measured_samples": 111,
+        "selected_input_samples": 111,
+        "station_wall_ms": {
+          "count": 111,
+          "p50": 111.59237602259964,
+          "p95": 113.46867799875326,
+          "maximum": 164.15037703700364
+        },
+        "inference_ms": {
+          "count": 111,
+          "p50": 99.25456304335967,
+          "p95": 100.47569900052622,
+          "maximum": 102.10244503105059
+        },
+        "throughput_samples_s": 9.564814238443887,
+        "qa_valid": 72,
+        "samples_with_masks": 97,
+        "prompted_samples": 98,
+        "components_ms": {
+          "vial": {
+            "count": 111,
+            "p50": 4.5515139936469495,
+            "p95": 4.874000005656853,
+            "maximum": 5.067654012236744
+          },
+          "liquid": {
+            "count": 111,
+            "p50": 22.770497016608715,
+            "p95": 23.686261993134394,
+            "maximum": 24.421526002697647
+          },
+          "prompting": {
+            "count": 111,
+            "p50": 1.8603370408527553,
+            "p95": 2.5803704920690507,
+            "maximum": 2.966440049931407
+          },
+          "sam": {
+            "count": 111,
+            "p50": 53.07271098718047,
+            "p95": 53.8512829807587,
+            "maximum": 54.02411596151069
+          },
+          "measurement_and_state": {
+            "count": 111,
+            "p50": 16.205514024477452,
+            "p95": 16.715053003281355,
+            "maximum": 17.180497001390904
+          },
+          "result_encoding": {
+            "count": 111,
+            "p50": 0.5834350013174117,
+            "p95": 0.6012590019963682,
+            "maximum": 0.6164429942145944
+          },
+          "processing": {
+            "count": 111,
+            "p50": 99.13425799459219,
+            "p95": 100.33055552048609,
+            "maximum": 101.94303805474192
+          }
+        },
+        "source_to_result_ms": {
+          "count": 111,
+          "p50": 114.32491702726111,
+          "p95": 118.18575535629172,
+          "maximum": 166.1982199875638
+        },
+        "skipped_input_samples": 0,
+        "unprocessed_tail_samples": 0,
+        "model_sha256": {
+          "vial": "10856c18a8a5c485e832adcc6b841b739e726a969dc043fe8db64c49163bb361",
+          "liquid": "9479fb13ed9c7ebd815c314e8219ba3b86c3ffa267f758f714a3058f9ac3a343",
+          "sam": "7402e0d864fa82708a20fbd15bc84245c2f26dff0eb43a4b5b93452deb34be69"
+        },
+        "source_video_sha256": "9a9d35612bd8c8f2cdd899334f7b7ce363820ad8da2ad6ed9eb6ebbd785a4045",
+        "hardware_commands": 0,
+        "cached_predictions": false,
+        "limits": [
+          "Station wall time includes actual inference, mask PNG encoding and local journal/log writes.",
+          "Images are predecoded before timed processing; no browser, network or camera capture is included.",
+          "Platform/runtime differences are recorded; this is not an architecture-only hardware comparison.",
+          "Paced run skips to the latest scheduled input; source-to-result age excludes browser display."
+        ]
+      },
+      "local_default": {
+        "status": "passed",
+        "mode": "offline_http",
+        "persistent_worker": false,
+        "warmup_samples": 111,
+        "measured_samples": 222,
+        "input_samples": 111,
+        "post_to_ack_ms": {
+          "count": 222,
+          "p50": 272.27304998086765,
+          "p95": 322.78932000044733,
+          "maximum": 461.22749999631196
+        },
+        "throughput_samples_s": 3.664273927787188,
+        "source_to_ack_ms": null,
+        "skipped_input_samples": 0,
+        "unprocessed_tail_samples": 0,
+        "video_sha256": "9a9d35612bd8c8f2cdd899334f7b7ce363820ad8da2ad6ed9eb6ebbd785a4045",
+        "hardware_commands": 0,
+        "cached_predictions": false,
+        "limits": [
+          "POST timing includes request transport, PNG decode, actual model processing, overlays, journal writes and acknowledgement.",
+          "No browser video/mask display is timed; any SSH/VPN transport is identified separately in the experiment report.",
+          "A persistent inference thread is an experimental benchmark adapter; app defaults are unchanged."
+        ]
+      },
+      "local_worker": {
+        "status": "passed",
+        "mode": "offline_http",
+        "persistent_worker": true,
+        "warmup_samples": 111,
+        "measured_samples": 222,
+        "input_samples": 111,
+        "post_to_ack_ms": {
+          "count": 222,
+          "p50": 147.63769996352494,
+          "p95": 169.14546997868456,
+          "maximum": 237.40430001635104
+        },
+        "throughput_samples_s": 6.955188152257303,
+        "source_to_ack_ms": null,
+        "skipped_input_samples": 0,
+        "unprocessed_tail_samples": 0,
+        "video_sha256": "9a9d35612bd8c8f2cdd899334f7b7ce363820ad8da2ad6ed9eb6ebbd785a4045",
+        "hardware_commands": 0,
+        "cached_predictions": false,
+        "limits": [
+          "POST timing includes request transport, PNG decode, actual model processing, overlays, journal writes and acknowledgement.",
+          "No browser video/mask display is timed; any SSH/VPN transport is identified separately in the experiment report.",
+          "A persistent inference thread is an experimental benchmark adapter; app defaults are unchanged."
+        ]
+      },
+      "gb10_default": {
+        "status": "passed",
+        "mode": "offline_http",
+        "persistent_worker": false,
+        "warmup_samples": 111,
+        "measured_samples": 222,
+        "input_samples": 111,
+        "post_to_ack_ms": {
+          "count": 222,
+          "p50": 130.35424548434094,
+          "p95": 148.34465988969896,
+          "maximum": 207.81395898666233
+        },
+        "throughput_samples_s": 7.845635115771494,
+        "source_to_ack_ms": null,
+        "skipped_input_samples": 0,
+        "unprocessed_tail_samples": 0,
+        "video_sha256": "9a9d35612bd8c8f2cdd899334f7b7ce363820ad8da2ad6ed9eb6ebbd785a4045",
+        "hardware_commands": 0,
+        "cached_predictions": false,
+        "limits": [
+          "POST timing includes request transport, PNG decode, actual model processing, overlays, journal writes and acknowledgement.",
+          "No browser video/mask display is timed; any SSH/VPN transport is identified separately in the experiment report.",
+          "A persistent inference thread is an experimental benchmark adapter; app defaults are unchanged."
+        ]
+      },
+      "gb10_worker": {
+        "status": "passed",
+        "mode": "offline_http",
+        "persistent_worker": true,
+        "warmup_samples": 111,
+        "measured_samples": 222,
+        "input_samples": 111,
+        "post_to_ack_ms": {
+          "count": 222,
+          "p50": 119.58306850283407,
+          "p95": 121.84772104374133,
+          "maximum": 181.62743299035355
+        },
+        "throughput_samples_s": 8.91656108822697,
+        "source_to_ack_ms": null,
+        "skipped_input_samples": 0,
+        "unprocessed_tail_samples": 0,
+        "video_sha256": "9a9d35612bd8c8f2cdd899334f7b7ce363820ad8da2ad6ed9eb6ebbd785a4045",
+        "hardware_commands": 0,
+        "cached_predictions": false,
+        "limits": [
+          "POST timing includes request transport, PNG decode, actual model processing, overlays, journal writes and acknowledgement.",
+          "No browser video/mask display is timed; any SSH/VPN transport is identified separately in the experiment report.",
+          "A persistent inference thread is an experimental benchmark adapter; app defaults are unchanged."
+        ]
+      }
+    },
+    "runtimes": {
+      "local_offline": {
+        "python": "3.12.12 (main, Nov 19 2025, 22:43:30) [MSC v.1944 64 bit (AMD64)]",
+        "platform": "Windows-11-10.0.26200-SP0",
+        "machine": "AMD64",
+        "versions": {
+          "torch": "2.11.0+cu128",
+          "torchvision": "0.26.0+cu128",
+          "ultralytics": "8.4.182",
+          "numpy": "2.5.2",
+          "av": "19.0.1",
+          "scikit-image": "0.26.0",
+          "Pillow": "12.3.0"
+        },
+        "opencv": "5.0.0",
+        "torch_threads": 4,
+        "opencv_threads": 4,
+        "cuda": "12.8",
+        "gpu": "NVIDIA GeForce RTX 4080 SUPER",
+        "capability": [
+          8,
+          9
+        ],
+        "cudnn_benchmark": false,
+        "cudnn_allow_tf32": true,
+        "matmul_allow_tf32": false,
+        "gpu_status": "NVIDIA GeForce RTX 4080 SUPER, 1 %, 28.37 W",
+        "model_load_ms": 10359.158999985084,
+        "model_sha256": {
+          "vial": "10856c18a8a5c485e832adcc6b841b739e726a969dc043fe8db64c49163bb361",
+          "liquid": "9479fb13ed9c7ebd815c314e8219ba3b86c3ffa267f758f714a3058f9ac3a343",
+          "sam": "7402e0d864fa82708a20fbd15bc84245c2f26dff0eb43a4b5b93452deb34be69"
+        }
+      },
+      "local_paced": {
+        "python": "3.12.12 (main, Nov 19 2025, 22:43:30) [MSC v.1944 64 bit (AMD64)]",
+        "platform": "Windows-11-10.0.26200-SP0",
+        "machine": "AMD64",
+        "versions": {
+          "torch": "2.11.0+cu128",
+          "torchvision": "0.26.0+cu128",
+          "ultralytics": "8.4.182",
+          "numpy": "2.5.2",
+          "av": "19.0.1",
+          "scikit-image": "0.26.0",
+          "Pillow": "12.3.0"
+        },
+        "opencv": "5.0.0",
+        "torch_threads": 4,
+        "opencv_threads": 4,
+        "cuda": "12.8",
+        "gpu": "NVIDIA GeForce RTX 4080 SUPER",
+        "capability": [
+          8,
+          9
+        ],
+        "cudnn_benchmark": false,
+        "cudnn_allow_tf32": true,
+        "matmul_allow_tf32": false,
+        "gpu_status": "NVIDIA GeForce RTX 4080 SUPER, 0 %, 26.47 W",
+        "model_load_ms": 4349.474999937229,
+        "model_sha256": {
+          "vial": "10856c18a8a5c485e832adcc6b841b739e726a969dc043fe8db64c49163bb361",
+          "liquid": "9479fb13ed9c7ebd815c314e8219ba3b86c3ffa267f758f714a3058f9ac3a343",
+          "sam": "7402e0d864fa82708a20fbd15bc84245c2f26dff0eb43a4b5b93452deb34be69"
+        }
+      },
+      "gb10_offline": {
+        "python": "3.12.15 (main, Oct 14 2026, 01:04:59) [Clang 23.1.3 ]",
+        "platform": "Linux-7.0.0-1019-nvidia-aarch64-with-glibc2.39",
+        "machine": "aarch64",
+        "versions": {
+          "torch": "2.11.0+cu130",
+          "torchvision": "0.26.0+cu130",
+          "ultralytics": "8.4.182",
+          "numpy": "2.5.2",
+          "av": "19.0.1",
+          "scikit-image": "0.26.0",
+          "Pillow": "12.3.0"
+        },
+        "opencv": "5.0.0",
+        "torch_threads": 4,
+        "opencv_threads": 4,
+        "cuda": "13.0",
+        "gpu": "NVIDIA GB10",
+        "capability": [
+          12,
+          1
+        ],
+        "cudnn_benchmark": false,
+        "cudnn_allow_tf32": true,
+        "matmul_allow_tf32": false,
+        "gpu_status": "NVIDIA GB10, 0 %, 7.07 W",
+        "model_load_ms": 2034.2451600008644,
+        "model_sha256": {
+          "vial": "10856c18a8a5c485e832adcc6b841b739e726a969dc043fe8db64c49163bb361",
+          "liquid": "9479fb13ed9c7ebd815c314e8219ba3b86c3ffa267f758f714a3058f9ac3a343",
+          "sam": "7402e0d864fa82708a20fbd15bc84245c2f26dff0eb43a4b5b93452deb34be69"
+        }
+      },
+      "gb10_paced": {
+        "python": "3.12.15 (main, Oct 14 2026, 01:04:59) [Clang 23.1.3 ]",
+        "platform": "Linux-7.0.0-1019-nvidia-aarch64-with-glibc2.39",
+        "machine": "aarch64",
+        "versions": {
+          "torch": "2.11.0+cu130",
+          "torchvision": "0.26.0+cu130",
+          "ultralytics": "8.4.182",
+          "numpy": "2.5.2",
+          "av": "19.0.1",
+          "scikit-image": "0.26.0",
+          "Pillow": "12.3.0"
+        },
+        "opencv": "5.0.0",
+        "torch_threads": 4,
+        "opencv_threads": 4,
+        "cuda": "13.0",
+        "gpu": "NVIDIA GB10",
+        "capability": [
+          12,
+          1
+        ],
+        "cudnn_benchmark": false,
+        "cudnn_allow_tf32": true,
+        "matmul_allow_tf32": false,
+        "gpu_status": "NVIDIA GB10, 0 %, 7.90 W",
+        "model_load_ms": 2013.2393820094876,
+        "model_sha256": {
+          "vial": "10856c18a8a5c485e832adcc6b841b739e726a969dc043fe8db64c49163bb361",
+          "liquid": "9479fb13ed9c7ebd815c314e8219ba3b86c3ffa267f758f714a3058f9ac3a343",
+          "sam": "7402e0d864fa82708a20fbd15bc84245c2f26dff0eb43a4b5b93452deb34be69"
+        }
+      }
+    },
+    "paired_output_agreement": {
+      "local_offline:gb10_offline": {
+        "paired_samples": 222,
+        "QA_equal": 222,
+        "exact_masks": 216,
+        "both_nonempty": 194,
+        "mask_iou_median": 1.0,
+        "mask_iou_min": 0.9611542730299667
+      },
+      "local_default:local_worker": {
+        "paired_samples": 222,
+        "QA_equal": 222,
+        "exact_masks": 222,
+        "both_nonempty": 194,
+        "mask_iou_median": 1.0,
+        "mask_iou_min": 1.0
+      },
+      "gb10_default:gb10_worker": {
+        "paired_samples": 222,
+        "QA_equal": 222,
+        "exact_masks": 222,
+        "both_nonempty": 194,
+        "mask_iou_median": 1.0,
+        "mask_iou_min": 1.0
+      }
+    },
+    "network_paced": {
+      "status": "passed",
+      "mode": "paced_http",
+      "persistent_worker": true,
+      "warmup_samples": 111,
+      "measured_samples": 102,
+      "input_samples": 111,
+      "post_to_ack_ms": {
+        "count": 102,
+        "p50": 212.12685003411025,
+        "p95": 246.9258400204125,
+        "maximum": 285.83330009132624
+      },
+      "throughput_samples_s": 4.677508296024322,
+      "source_to_ack_ms": {
+        "count": 102,
+        "p50": 319.99999994877635,
+        "p95": 410.2833332606433,
+        "maximum": 435.66666659122967
+      },
+      "skipped_input_samples": 9,
+      "unprocessed_tail_samples": 0,
+      "video_sha256": "9a9d35612bd8c8f2cdd899334f7b7ce363820ad8da2ad6ed9eb6ebbd785a4045",
+      "hardware_commands": 0,
+      "cached_predictions": false,
+      "limits": [
+        "POST timing includes request transport, PNG decode, actual model processing, overlays, journal writes and acknowledgement.",
+        "No browser video/mask display is timed; any SSH/VPN transport is identified separately in the experiment report.",
+        "A persistent inference thread is an experimental benchmark adapter; app defaults are unchanged."
+      ]
+    },
+    "network_browser": {
+      "status": "passed",
+      "input_samples": 111,
+      "delivered_samples": 93,
+      "displayed_unique_samples": 84,
+      "skipped_input_samples": 17,
+      "post_to_ack_ms": {
+        "count": 93,
+        "p50": 228.2862999709323,
+        "p95": 278.04815999697894,
+        "maximum": 310.43910002335906
+      },
+      "source_to_ack_ms": {
+        "count": 93,
+        "p50": 317.67496744791606,
+        "p95": 439.6290690104167,
+        "maximum": 485.6796875
+      },
+      "source_to_loaded_browser_image_ms": {
+        "count": 84,
+        "p50": 556.4778645833339,
+        "p95": 675.4278645833322,
+        "maximum": 734.3111979166679
+      },
+      "stream_id": "browser-link-f4e780d0761444ffa0bb63b9d0876d9b",
+      "source_video_sha256": "9a9d35612bd8c8f2cdd899334f7b7ce363820ad8da2ad6ed9eb6ebbd785a4045",
+      "hardware_commands": 0,
+      "browser_errors": [],
+      "limits": [
+        "Cached input scheduled at native source times; actual inference runs remotely on GB10.",
+        "PNG input upload, server processing, VPN/SSH, dashboard polling and decoded overlay image load are included.",
+        "Source schedule and browser clocks are on the same Windows machine; no remote clock synchronization is assumed.",
+        "Image loaded in a headless browser is measured, not camera exposure-to-physical-monitor latency.",
+        "This is the sampled-CV view, not a 30 fps encoded video streaming benchmark."
+      ],
+      "artifacts_sha256": {
+        "delivered.json": "42773616cf711deff154ca080dab4a092b7b9e2ff82561adc5c8c28311f42de7",
+        "displayed.json": "fd1875eff0cd52dd678f8ddce7e9223edbb45479fbcee69a694f13613c582614",
+        "remote-sampled-mask.png": "8c80f936b575229727b3d8798c85bd8e3d54222bce873fc60955d0afb59164a7"
+      }
+    },
+    "network_browser_unprocessed_tail_samples": 1,
+    "render": {
+      "render-only-gb10-v2": {
+        "status": "passed",
+        "mode": "render_only",
+        "rendered_frames": 37,
+        "warmup_frames": 5,
+        "measured_frames": 32,
+        "render_ms": {
+          "count": 32,
+          "p50": 359.5030290016439,
+          "p95": 696.5757540252525,
+          "maximum": 700.3527189954184
+        },
+        "publish_inference_ms": null,
+        "step_ms": {
+          "count": 32,
+          "p50": 359.5030290016439,
+          "p95": 696.5757540252525,
+          "maximum": 700.3527189954184
+        },
+        "sequential_steps_s": 2.3706759961215544,
+        "isaac_version": [
+          "6.0.0",
+          "rc.59",
+          "6",
+          "0",
+          "0",
+          "rc",
+          "59",
+          "release.41464.5f2772bc.gl"
+        ],
+        "semantic_API_compatibility": false,
+        "source_assets_sha256": {
+          "ORIGINAL_README.md": "6a4114d4978a3266fc1e09eea75790ea2a18552d943a8cf4f0df57001bff9b06",
+          "cameras/FillCam.json": "11966571ffa71a979297a0c6c730c739f33d86a0578fe0b4b890dd4a7ce1c936",
+          "stations/fill_station/fill_station.usda": "5f58540c187ac16c4426bffb3ebbe559e62d6d63ff359afdb08867fc24b60af9",
+          "stations/fill_station/geometry/fill_station.usdc": "57f578fd047d3a5f2ee25712d841f836272fc745a89c5dfbcc301f0c199191db",
+          "stations/fill_station/geometry/textures/color_B7C6CE.exr": "7b3ff7cc6c709d4b5ae34c40b60277db472b1c7d483a744cf0990ab7023d61cc"
+        },
+        "source_assets_unchanged": true,
+        "hardware_commands": 0,
+        "limits": [
+          "RGB-only path: 8 spp, two subframes, two settled captures per input frame; no private geometric-label captures.",
+          "Sequential renderer waits for inference acknowledgement, matching the current native source behavior.",
+          "Different Isaac versions/hardware may produce different RGB; this is a timing test, not image-quality equivalence.",
+          "PNG persistence is outside render/step timing; network is loopback and excludes remote browser display."
+        ]
+      },
+      "render-inference-gb10-v2": {
+        "status": "passed",
+        "mode": "render_plus_inference",
+        "rendered_frames": 37,
+        "warmup_frames": 5,
+        "measured_frames": 32,
+        "render_ms": {
+          "count": 32,
+          "p50": 365.007477987092,
+          "p95": 756.6489809250925,
+          "maximum": 772.6594600244425
+        },
+        "publish_inference_ms": {
+          "count": 32,
+          "p50": 119.80134400073439,
+          "p95": 122.47286092606373,
+          "maximum": 122.9493060382083
+        },
+        "step_ms": {
+          "count": 32,
+          "p50": 484.89035849343054,
+          "p95": 876.8832430709153,
+          "maximum": 894.2066650488414
+        },
+        "sequential_steps_s": 1.8101341471086558,
+        "isaac_version": [
+          "6.0.0",
+          "rc.59",
+          "6",
+          "0",
+          "0",
+          "rc",
+          "59",
+          "release.41464.5f2772bc.gl"
+        ],
+        "semantic_API_compatibility": false,
+        "source_assets_sha256": {
+          "ORIGINAL_README.md": "6a4114d4978a3266fc1e09eea75790ea2a18552d943a8cf4f0df57001bff9b06",
+          "cameras/FillCam.json": "11966571ffa71a979297a0c6c730c739f33d86a0578fe0b4b890dd4a7ce1c936",
+          "stations/fill_station/fill_station.usda": "5f58540c187ac16c4426bffb3ebbe559e62d6d63ff359afdb08867fc24b60af9",
+          "stations/fill_station/geometry/fill_station.usdc": "57f578fd047d3a5f2ee25712d841f836272fc745a89c5dfbcc301f0c199191db",
+          "stations/fill_station/geometry/textures/color_B7C6CE.exr": "7b3ff7cc6c709d4b5ae34c40b60277db472b1c7d483a744cf0990ab7023d61cc"
+        },
+        "source_assets_unchanged": true,
+        "hardware_commands": 0,
+        "limits": [
+          "RGB-only path: 8 spp, two subframes, two settled captures per input frame; no private geometric-label captures.",
+          "Sequential renderer waits for inference acknowledgement, matching the current native source behavior.",
+          "Different Isaac versions/hardware may produce different RGB; this is a timing test, not image-quality equivalence.",
+          "PNG persistence is outside render/step timing; network is loopback and excludes remote browser display."
+        ]
+      }
+    },
+    "input_plan_sha256": "abd6a850286cbcd14a1f8e2dd4129dafe3b251c8e595c2694d60d23e4e32398c",
+    "input_video_sha256": "9a9d35612bd8c8f2cdd899334f7b7ce363820ad8da2ad6ed9eb6ebbd785a4045",
+    "hardware_commands": 0,
+    "run5_used": false,
+    "training": false,
+    "app_defaults_changed": false,
+    "benchmark_adapters": [
+      "Existing per-request model processor",
+      "Experimental bounded persistent inference worker"
+    ],
+    "failures_preserved": [
+      {
+        "path": "gb10-http-render/render-only-gb10-v1.log",
+        "reason": "First native render launch omitted the already-onboarded EULA environment flag and stopped before rendering; fresh v2 used existing launch guidance."
+      }
+    ],
+    "limits": [
+      "Same RGB, model hashes, QA and four-thread settings; Windows/Linux and CUDA 12.8/13.0 differ.",
+      "Paired mask/QA agreement measures numerical consistency, not reviewed accuracy.",
+      "Warm core timing, loopback POST timing, remote ACK age and loaded browser image age are separate boundaries.",
+      "Network test uploads PNGs over the campus VPN/SSH; co-located camera ingestion and encoded 30 fps streaming were not benchmarked.",
+      "RGB-only render uses 8 spp, two subframes and two settled captures; no private label captures.",
+      "Persistent worker tested in isolated observers only; the existing operator app remains on its original path."
+    ]
+  },
+  "verified_model_rows": 2784,
+  "recomputed_sampling_colors": 2397,
+  "source_sha256": {
+    "setup/vision/benchmark_station_compute.py": "d973560d9854774479f5f49785ecd2a646a0c231a0ea63398a8b0ed9b1a5ad60",
+    "setup/vision/benchmark_station_http.py": "1818cee01081806b9fda5cc18e14473fd2a933bbbfa1b47dcfe9e3b1dc1ac266",
+    "setup/vision/benchmark_station_link.py": "4c56222abc7fdb32f7e7232a9b7d9b915b28b311c7761d4db557da544918035b"
+  },
+  "evidence_sha256": {
+    "verification-v1.json": "46e37302bbda2529922ca296324e70458d5139c97835ea254823e214abaf3369",
+    "input-plan.json": "abd6a850286cbcd14a1f8e2dd4129dafe3b251c8e595c2694d60d23e4e32398c",
+    "baseline-results.tar.gz": "cd77635e2d9d3973e77a82effe87240a99c4cdb1dca47ddba0106b654611d952",
+    "http-render-results.tar.gz": "76c5cb1a9a2dfe78c2320e35465dd343caa9b60bbb4096c1510574edb40d8313",
+    "network-worker-vpn-v1/completed.json": "92e5ba16a38bd41366e8f9167c1e18b6f3f5afcabf91584d93e6480cf1d59649",
+    "network-browser-v1/completed.json": "75cbbac111f4a56085a37491388c0361f2efb5167f777dc2ceff51d50df90f46"
+  },
+  "cleanup": {
+    "gb10_compute_processes_remaining": 0,
+    "team_gpu_lock_released": true,
+    "benchmark_ssh_tunnel_closed": true,
+    "local_simulator_pause_restored": true,
+    "local_app_original_path_preserved": true,
+    "shared_environments_replaced": false
+  },
+  "limits": [
+    "Same RGB, model hashes, QA and four-thread settings; Windows/Linux and CUDA 12.8/13.0 differ.",
+    "Paired mask/QA agreement measures numerical consistency, not reviewed accuracy.",
+    "Warm core timing, loopback POST timing, remote ACK age and loaded browser image age are separate boundaries.",
+    "Network test uploads PNGs over the campus VPN/SSH; co-located camera ingestion and encoded 30 fps streaming were not benchmarked.",
+    "RGB-only render uses 8 spp, two subframes and two settled captures; no private label captures.",
+    "Persistent worker tested in isolated observers only; the existing operator app remains on its original path.",
+    "Benchmark browser screenshot retains the generic native-source UI label; during that test cached PNGs were uploaded and inferred live. Native rendering was measured separately."
+  ]
+}

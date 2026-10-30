@@ -1,0 +1,20 @@
+{
+  "source": "/mnt/c/git/FDS-Dark/ALL-Applied-AI-Network/msoe-ai-club-rockwell-automation-nvidia-hackath-austin-koske-s-team-8e90f213c6/team_handoff/integration/brief-20261022.json",
+  "source_sha256": "7674cde1f801fdc002276237e64cf7ce18c983ff5dfbdc5081be3ece0b16787e",
+  "builder_sha256": "d40ea5443b65eb8be4b939fa124b1d8d07a511317a46aab22cfef3a003d42126",
+  "pdf": "/mnt/c/Users/Austin/ai-club-tools/results/team-integration-brief-20261022/release-v2/Team-Integration-and-Physical-Test-Brief.pdf",
+  "pdf_sha256": "b977c2ee7bc1b4e9aec0134e1a56526be0432fe74c668d936b2697662d48edba",
+  "zip": "/mnt/c/Users/Austin/ai-club-tools/results/team-integration-brief-20261022/release-v2.zip",
+  "zip_sha256": "90e5591058251304837731776f141edcfb1445437fbe3075aaea8fd34cadbfff",
+  "pdf_pages": 5,
+  "code_free": true,
+  "published": false,
+  "schema": "team-integration-brief-verification/v2",
+  "changes": "Clarifies synthetic-only CSI-domain training, real imagery for inspection/evaluation and legacy comparator status.",
+  "checks": {
+    "five_page_layout": true,
+    "page3_visual_review": true,
+    "original_release_retained": true,
+    "no_code_in_zip": true
+  }
+}

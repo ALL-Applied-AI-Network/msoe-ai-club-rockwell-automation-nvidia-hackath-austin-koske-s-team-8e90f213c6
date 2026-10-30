@@ -1,0 +1,219 @@
+{
+  "schema_version": 1,
+  "kind": "live_twin_ablation_and_adaptive_replay",
+  "source_root": "C:/Users/Austin/ai-club-tools/results/twin-experiments-20261021",
+  "live_frames": 803,
+  "source_evidence_hashes": 1680,
+  "source_assets_unchanged": true,
+  "live_diagnostic_summary": {
+    "exact_raw": {
+      "nominal": {
+        "cases": 10,
+        "warned": 1,
+        "cases_with_comparisons": 8,
+        "comparisons": 169
+      },
+      "residue": {
+        "cases": 6,
+        "warned": 2,
+        "cases_with_comparisons": 5,
+        "comparisons": 85
+      },
+      "purge": {
+        "cases": 1,
+        "warned": 0,
+        "cases_with_comparisons": 1,
+        "comparisons": 25
+      },
+      "appearance_probe": {
+        "cases": 3,
+        "warned": 2,
+        "cases_with_comparisons": 3,
+        "comparisons": 51
+      }
+    },
+    "metered_raw": {
+      "nominal": {
+        "cases": 10,
+        "warned": 1,
+        "cases_with_comparisons": 8,
+        "comparisons": 200
+      },
+      "residue": {
+        "cases": 6,
+        "warned": 4,
+        "cases_with_comparisons": 5,
+        "comparisons": 112
+      },
+      "purge": {
+        "cases": 1,
+        "warned": 0,
+        "cases_with_comparisons": 1,
+        "comparisons": 25
+      },
+      "appearance_probe": {
+        "cases": 3,
+        "warned": 2,
+        "cases_with_comparisons": 3,
+        "comparisons": 51
+      }
+    },
+    "metered_normalized": {
+      "nominal": {
+        "cases": 10,
+        "warned": 0,
+        "cases_with_comparisons": 8,
+        "comparisons": 200
+      },
+      "residue": {
+        "cases": 6,
+        "warned": 4,
+        "cases_with_comparisons": 5,
+        "comparisons": 112
+      },
+      "purge": {
+        "cases": 1,
+        "warned": 0,
+        "cases_with_comparisons": 1,
+        "comparisons": 25
+      },
+      "appearance_probe": {
+        "cases": 3,
+        "warned": 2,
+        "cases_with_comparisons": 3,
+        "comparisons": 51
+      }
+    },
+    "metered_normalized_guarded": {
+      "nominal": {
+        "cases": 10,
+        "warned": 0,
+        "cases_with_comparisons": 8,
+        "comparisons": 184
+      },
+      "residue": {
+        "cases": 6,
+        "warned": 4,
+        "cases_with_comparisons": 5,
+        "comparisons": 112
+      },
+      "purge": {
+        "cases": 1,
+        "warned": 0,
+        "cases_with_comparisons": 1,
+        "comparisons": 25
+      },
+      "appearance_probe": {
+        "cases": 3,
+        "warned": 2,
+        "cases_with_comparisons": 3,
+        "comparisons": 51
+      }
+    }
+  },
+  "adaptive_replay_summary": {
+    "nominal": {
+      "cases": 10,
+      "cases_with_comparisons": 10,
+      "warned": 0,
+      "comparisons": 238
+    },
+    "residue": {
+      "cases": 6,
+      "cases_with_comparisons": 6,
+      "warned": 5,
+      "comparisons": 139
+    },
+    "purge": {
+      "cases": 1,
+      "cases_with_comparisons": 1,
+      "warned": 0,
+      "comparisons": 25
+    },
+    "appearance_probe": {
+      "cases": 3,
+      "cases_with_comparisons": 3,
+      "warned": 2,
+      "comparisons": 51
+    }
+  },
+  "adaptive_replay_frames": 803,
+  "adaptive_replay_counts": {
+    "processed": 787,
+    "blocked": 16
+  },
+  "independently_recomputed_live_diagnostics": 803,
+  "independently_verified_adaptive_frames": 803,
+  "artifacts": {
+    "verification-v1/verification.json": "cf5ba12bf4a9dcbf0cc76848989a1c4265f63eefae525cd2a5383d0a4fc2606b",
+    "analysis-v1/comparison.json": "6986339a333c351d0bce6202f0242f90529c88985ac5ac0ded2d43b01f9ed0b7",
+    "analysis-v1/completed.json": "e5a8c8bda55dbc09b332ef92b1f3fb3d4023a592a3f993a15c3b52d859ce61b6",
+    "preprocess-replay-v1/completed.json": "75ae52cbaf0c78237be9bf1cabf54c7662172e63ec88d5128a74dc0d588eb3d5",
+    "preprocess-analysis-v2/comparison.json": "21923bfcfc9158412e069ede6a96815850440c9f2a03a855abccc93d30a384bf",
+    "preprocess-analysis-v2/completed.json": "fda708107b18b9665ea10fc05c33a55bacc7faa1969daf350e618da0651b480b",
+    "published-media-verification-v2.json": "3276e10ec7ba368481a14f7765f4f27a5d8c242d6c5a3b20ec4ee42c084e1e0e"
+  },
+  "published_videos": [
+    {
+      "path": "analysis-v1/twin-experiment-examples.mp4",
+      "sha256": "b5918c971a3c4fdf2641311dee3cff1cfa03e6d33689232f21fb02c529fecc19",
+      "full_decode_passed": true,
+      "codec_name": "h264",
+      "width": 1280,
+      "height": 720,
+      "r_frame_rate": "5/1",
+      "nb_read_frames": "166"
+    },
+    {
+      "path": "preprocess-analysis-v2/corrected-pipeline-examples.mp4",
+      "sha256": "2e1a5e34147ad24fa66cb3da149ddec332a78f4b86e64b26240eb87584051e4d",
+      "full_decode_passed": true,
+      "codec_name": "h264",
+      "width": 960,
+      "height": 720,
+      "r_frame_rate": "5/1",
+      "nb_read_frames": "120"
+    }
+  ],
+  "transfer_input_preparation_sha256": "f03233d8700d3ababdf50b2eda49906d395bf6dacf526c5ba3117acb8b86138f",
+  "transfer_access": {
+    "checked_utc": "2026-10-21T06:59:44.614832+00:00",
+    "token_present": true,
+    "checkpoints": [
+      {
+        "model": "nvidia/Cosmos-Transfer2.5-2B",
+        "revision": "ce8440327c632d8313c3bde69db13b627ba5cae1",
+        "file": "general/edge/61f5694b-0ad5-4ecd-8ad7-c8545627d125_ema_bf16.pt",
+        "status": 403,
+        "accessible": false,
+        "error_code": "GatedRepo"
+      },
+      {
+        "model": "nvidia/Cosmos-Guardrail1",
+        "revision": "d6d4bfa899a71454a700907664f3e88f503950cf",
+        "file": "video_content_safety_filter/safety_filter.pt",
+        "status": 403,
+        "accessible": false,
+        "error_code": "GatedRepo"
+      }
+    ],
+    "all_accessible": false,
+    "downloaded_weights": false
+  },
+  "transfer_generated_videos": 0,
+  "focused_tests_passed": 13,
+  "hardware_actions": 0,
+  "run5_used": false,
+  "real_defect_accuracy": null,
+  "limits": [
+    "Adaptive development replay on the same 21 cases, not an independent new live study.",
+    "Model predictions are retained actual replay inference; this verifier recomputes pixels and diagnostics, not neural inference.",
+    "No real defect/mask/onset accuracy or commissioned recipe references; all operational decisions unavailable.",
+    "Predeclared deterministic development cases, one trajectory per condition, not independent production trials.",
+    "Initial residue is a known model perturbation, not a product acceptance criterion.",
+    "Optical profiles are separate perception probes, not nominal quality controls or certified liquid properties.",
+    "Three-frame warnings are provisional; deployed models, QA and stream thresholds are unchanged.",
+    "No carrier departure is simulated, so completed-vial lifecycle cannot be validated by EOF."
+  ],
+  "publication_note": "preprocess-analysis-v2 corrects scorecard margins; comparison and source trace identical to v1"
+}

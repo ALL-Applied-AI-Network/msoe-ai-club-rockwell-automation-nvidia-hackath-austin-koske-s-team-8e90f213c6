@@ -1,0 +1,36 @@
+{
+  "checked_utc": "2026-10-23T03:57:53.274594+00:00",
+  "branch": "austin-work",
+  "pdf": "/mnt/c/Users/Austin/ai-club-tools/results/final-presentation-20261022/release-v1/Synthetic-Training-and-Digital-Twin-Presentation.pdf",
+  "pdf_sha256": "03a67aa5f0c857f4d7bc691f435c3ee2d140b7098a6d81d475d90402093ff5f8",
+  "zip": "/mnt/c/Users/Austin/ai-club-tools/results/final-presentation-20261022/release-v1.zip",
+  "zip_sha256": "e1d0dd5aa597bc83256039f89e10223b2f1c59b9c68643ebe29ba3e2203ef9c4",
+  "pages": 8,
+  "visually_inspected_pages": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "text_bounds_checked": true,
+  "artifact_hashes_checked": 19,
+  "zip_files": 12,
+  "zip_matches_directory": true,
+  "contains_code_or_weights": false,
+  "source_sha256": "15df9d5f81ac99c631e1983c3b8a4a7f69dd1c83717e0fdad0fd47fb562fa8c5",
+  "comparison_sha256": "ec9e82f1b9d44dc55aa74839c8514ac723fc9afc4377a363dcd270e28f806d92",
+  "new_experiments": false,
+  "dataset1_implemented": false,
+  "dataset1_assets_confirmed": [
+    "datasets/csi_digital_twin_v1/stations/tray_inspection/tray_inspection.usdc",
+    "datasets/csi_digital_twin_v1/cameras/CapSealCam.json"
+  ],
+  "human_accuracy_available": false,
+  "pushed": false,
+  "main_changed": false,
+  "app_changed": false
+}

@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "kind": "part2-team-architecture-document",
+  "status": "passed",
+  "date": "2026-10-21",
+  "local_root": "C:/Users/Austin/ai-club-tools/results/stage2-team-handoff-20261021",
+  "current_package": "share-v3",
+  "pdf_pages": 5,
+  "package_files": 6,
+  "code_free": true,
+  "artifacts": {
+    "package-hashes.json": "c79cca6b683e6324cd5c14db10e4c628b6f3120c6ee13d0c0cd7cedd3017e213",
+    "Part-2-Architecture-Implementation-Brief.md": "25a525453bba6390e8c74ac169ad1ae95f4c2c9b3599b81b20ae748634e965c2",
+    "Part-2-Architecture-Implementation-Brief.pdf": "427d76a5d26f4ffc61aa1643df7b44b261c60a924783e0146995c17951ddd895",
+    "READ-ME.txt": "5bf80dc1d1995ec882c50df15d9eaaf0224270f0ae5dc723a3c49b0be45cc7db",
+    "stage2-architecture.png": "695af4c0219376fae40437bcea319062664bffe1e0e1855d6ba37baf5f723109",
+    "stage2-architecture.svg": "3c2cb08beb8d3255d9f3a918e3026bdaf2e85bcaf6be1cef56a270ee0e200168"
+  },
+  "zip_sha256": "6e048b9943e6aabf422b31e5ece838a578ee900e1e4d3dc1572d77a28d6b0930",
+  "source": "team_handoff/part2/README.md",
+  "source_sha256": "25a525453bba6390e8c74ac169ad1ae95f4c2c9b3599b81b20ae748634e965c2",
+  "evidence_report_sha256": {
+    "stage2-refinement-20261020.json": "1bf08fefc360ac64c9c80ca83f3fdb31d17a26d955a9687b8d9bcf706f05c80d",
+    "twin-experiments-20261021.json": "ee47adcfb8d8e9bdb6a9fd4e9e964715941f07d76d38eb6bf30264eccb1d04ec",
+    "pipeline-acceleration-20261020.json": "f4270bfa22e0c7bb13fbc8eb5e291108e83778a101bc966e12f43e267919a5a7",
+    "cosmos-transfer-20261021.json": "6489d39d89076f6112547e9f797b60e1701c4f13388e65274f5700120062c694",
+    "csi-preparation-20261021.json": "a0abf774ac0ae5ccc0336728811278858413e9e6843b8a5e8d6d17365b3eadd6"
+  },
+  "checks": {
+    "all_document_pages_rasterized_and_visually_inspected": true,
+    "no_body_text_overflow": true,
+    "zip_crc_and_all_member_bytes_verified": true,
+    "architecture_repo_and_share_bytes_identical": true,
+    "relative_repo_evidence_links_exist": true,
+    "quoted_metrics_match_verification_reports": true,
+    "builder_compilation_passed": true,
+    "git_diff_check_passed": true
+  },
+  "published": false,
+  "implementation_changed": false,
+  "models_trained": false,
+  "hardware_connections": 0,
+  "main_unchanged": true,
+  "main_commit": "1cb6a63987987e1d8f69e6adc8aaa6ba2357ec68"
+}

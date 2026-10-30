@@ -1,0 +1,35 @@
+{
+  "source": "/mnt/c/git/FDS-Dark/ALL-Applied-AI-Network/msoe-ai-club-rockwell-automation-nvidia-hackath-austin-koske-s-team-8e90f213c6/team_handoff/integration/brief-20261022.json",
+  "source_sha256": "723bc7517f7127a7c9ed48f0974b5766d1a5085a7af9c4378dc58ec63311ed33",
+  "builder_sha256": "d40ea5443b65eb8be4b939fa124b1d8d07a511317a46aab22cfef3a003d42126",
+  "pdf": "/mnt/c/Users/Austin/ai-club-tools/results/team-integration-brief-20261022/release-v1/Team-Integration-and-Physical-Test-Brief.pdf",
+  "pdf_sha256": "68b29bae343246d3850cdac98d2588787513fb5a8f488182143f890644e44bce",
+  "zip": "/mnt/c/Users/Austin/ai-club-tools/results/team-integration-brief-20261022/release-v1.zip",
+  "zip_sha256": "680f9d5eebb5cfa77d5c26d9407a57d408e4943d2d87da641cdac87543ed8b0e",
+  "pdf_pages": 5,
+  "code_free": true,
+  "published": false,
+  "schema": "team-integration-brief-verification/v1",
+  "checks": {
+    "five_page_layout": "passed",
+    "all_page_titles": "passed",
+    "text_bounds": "passed",
+    "key_claim_text": "passed",
+    "package_hashes": "passed",
+    "zip_readback": "passed",
+    "code_free_package": "passed",
+    "builder_compilation": "passed",
+    "visual_review": "All five draft pages reviewed together; final pages rendered with identical content and layout."
+  },
+  "rendered_pages": "/mnt/c/Users/Austin/ai-club-tools/results/team-integration-brief-20261022/verification-release-v1",
+  "package_files": [
+    "READ-ME.txt",
+    "Team-Integration-and-Physical-Test-Brief.pdf",
+    "Team-Integration-and-Physical-Test-Brief.txt",
+    "package-hashes.json",
+    "team-integration-architecture.png",
+    "team-integration-architecture.svg"
+  ],
+  "pdf_bytes": 248539,
+  "zip_bytes": 359145
+}

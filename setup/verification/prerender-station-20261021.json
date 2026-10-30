@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-21",
+  "status": "passed",
+  "mode": "optional_prerendered_input_with_live_CV",
+  "branch": "austin-work",
+  "main_unchanged": "1cb6a63987987e1d8f69e6adc8aaa6ba2357ec68",
+  "pushed": false,
+  "url": "http://127.0.0.1:8767",
+  "artifacts_root": "C:/Users/Austin/ai-club-tools/results/operator-prerender-20261021",
+  "cache": "cache-v1",
+  "render": "clip-v1",
+  "running_workspace": "station-v1",
+  "browser_report": "browser-v1/verification.json",
+  "independent_report": "independent-v1/verification.json",
+  "checks": {
+    "status": "passed",
+    "decoded_video_frames": 651,
+    "fps": 30,
+    "duration_s": 21.7,
+    "verified_video_input_samples": 111,
+    "cached_predictions": false,
+    "verified_live_CV_samples": 1046,
+    "joined_inference_acknowledgements": 1046,
+    "recomputed_sampling_colors": 849,
+    "skipped_input_samples_in_joined_deliveries": 406,
+    "source_assets_unchanged": true,
+    "native_source_toggle_stopped_cleanly": true,
+    "browser_checks": {
+      "video_plays_at_one_times_wall_clock": true,
+      "live_CV_progresses_independently": true,
+      "source_video_and_timestamped_CV_mask_are_separate": true,
+      "browser_video_range_requests": true,
+      "pause_freezes_video_clock": true,
+      "toggle_runs_native_Isaac_and_actual_inference": true,
+      "toggle_preserves_cases_and_operator_journal": true,
+      "reload_resumes_current_playback_clock": true,
+      "mobile_no_page_overflow": true
+    },
+    "browser_playback": {
+      "wall_seconds": 3.010799999952316,
+      "video_seconds": 3.0107800000000005,
+      "speed_ratio": 0.9999933572630809,
+      "presented_frames": 90,
+      "CV_samples": 10
+    },
+    "video_sha256": "9a9d35612bd8c8f2cdd899334f7b7ce363820ad8da2ad6ed9eb6ebbd785a4045",
+    "cache_manifest_sha256": "d029f771e412041a4961257cfc7d90674f708a3c25dc77063e754c995e39a103",
+    "browser_report_sha256": "aec063f59b7b156e6e6864762cf1aac2b5c44053bdeaacdf4369e05d0b9a27e4",
+    "snapshots": {
+      "frames.jsonl": {
+        "sha256": "3c0fcec3792f39ac0885633a7c86c146865066af79a00a05375327216ba44fb0",
+        "bytes": 11651263,
+        "excluded_incomplete_tail_bytes": 0,
+        "source_log_may_continue": true
+      },
+      "source-000-prerender\\delivery.jsonl": {
+        "sha256": "f768cd910e44545131eddd8eef9c6a62be30dccd9032a46b66f799b48558741c",
+        "bytes": 84751,
+        "excluded_incomplete_tail_bytes": 0,
+        "source_log_may_continue": true
+      },
+      "source-002-prerender\\delivery.jsonl": {
+        "sha256": "ffb94b503bd79e9f0a27186d38cc5e8828090ba60f96a32ef0ebf3d93bef8b85",
+        "bytes": 392321,
+        "excluded_incomplete_tail_bytes": 0,
+        "source_log_may_continue": true
+      }
+    },
+    "hardware_commands": 0,
+    "operational_recipe_assessment": "unavailable",
+    "limits": [
+      "30 fps playback is independent of sampled live CV throughput.",
+      "Input is a fixed repeating development simulation; no real camera or model-accuracy result.",
+      "Live log snapshots retain complete-line prefixes; later inference is outside this report."
+    ]
+  },
+  "tests": {
+    "passed": 24,
+    "command": "python -m unittest replay.tests.test_operator_workspace replay.tests.test_operator_twin replay.tests.test_inspection_station replay.tests.test_prerender_source -v",
+    "python_compile": "passed",
+    "javascript_syntax": "passed",
+    "powershell_parse": "passed",
+    "git_diff_check": "passed"
+  },
+  "source_sha256": {
+    "replay/operator/station.py": "dc0c26ff9c7f3f8cba2c425af2c8efb1d9fc96c5691c349f8082127ce6e01888",
+    "replay/operator/station_prerender.py": "0166573b9811625d2cf113f9bdbb67a20e630fb3e4598ed7dbeb6d83b33d1dc0",
+    "replay/operator/station_simulator.py": "cc17ea1c6419978f30367e33e7825ce85355af5706635d907aecc0a29c41a926",
+    "replay/operator/prerender.py": "b9e1fe7ddd55688832879d7ce6d9caac2d1e312031fe63c9f48dc2679ee5b87a",
+    "replay/operator/render_prerender.py": "5225e22c907ad6ef9b79bb75abfe1d66cf9de75821f8f0d40f98452573fa3b37",
+    "replay/operator/prepare_prerender_cache.py": "0071d533690b2ccd94770241f8e43a0378cbe37c78d6778001ee4c7370153cab",
+    "replay/operator/frame_input.py": "5b0e7932db095eb042ce3b7a563dab963b18a05d7cd4b978da12b72beacd09b3",
+    "replay/operator/twin_process.py": "99a755fbcad37c2975edacacd84d5389c10a551027fa0d09acfdd2ce3b2a9670",
+    "replay/operator/static/station.css": "acb052ce96c7de488245b0e665c94b27f2fce874a89983e70b6db9527a695a04",
+    "replay/operator/static/station.html": "1edb9ca6da6a529a2401d2447c3722ca0d4c8d18f067385f75fba217f10892f0",
+    "replay/operator/static/station.js": "76eb27145697e7df54edf04213ef37f5029b7a3173b0a11a6c540ac8442c4cf3",
+    "setup/vision/live_twin_isaac.py": "c9f44106ff29a7c060314a20e112d01124c4fb027c1b1a999e15e3037c9e9287",
+    "setup/run-operator-twin.ps1": "5d853f2ad25571b9f9aaddcf767e7412282644090fc6aba591ae45e9b16020b9",
+    "replay/tests/test_prerender_source.py": "5894efd97c084dcf27536af20d45a9d5f42e9ec72eb7164b7a2a34ddd28975db",
+    "replay/tests/verify_prerender_browser.py": "ae889ed90279b108f0aafc1b5d7dea4dc740065f08be0714a789a1cfa0bd12a6",
+    "replay/tests/verify_prerender_run.py": "bd0099f61bd5cfe3fc994c679e9f9e32195ee53c3ee6024f5e697695add7a5b8"
+  },
+  "source_snapshot_note": "Existing station launch helpers remain frozen. This report also pins prerender helpers and the later provenance-only launch-snapshot list update.",
+  "evidence_sha256": {
+    "independent-v1/verification.json": "6773275f83d0b63878e195d43b66ee7ec56b4454a6f19615770fbf1f86bc532c",
+    "browser-v1/verification.json": "aec063f59b7b156e6e6864762cf1aac2b5c44053bdeaacdf4369e05d0b9a27e4",
+    "clip-v1/render-completed.json": "d0d6ef4c818487f47877fb7f52c4bbcbaf8e40f49f2f09e4de740c9aa016653a",
+    "cache-v1/manifest.json": "d029f771e412041a4961257cfc7d90674f708a3c25dc77063e754c995e39a103"
+  },
+  "limits": [
+    "30 fps video playback; CV is sampled live, approximately 3.3 samples/s during the short browser timing check.",
+    "Three independent repeating simulated fills; operator actions cannot alter cached video.",
+    "Unreviewed geometry and development reference; real recipe acceptance unavailable.",
+    "No training, Run 5, hardware, camera, or industrial-network connection."
+  ]
+}

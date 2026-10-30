@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-22",
+  "status": "passed",
+  "kind": "part2-team-architecture-meeting-release",
+  "pages": 7,
+  "package_files": 9,
+  "code_free": true,
+  "source": "team_handoff/part2/MEETING-20261022.md",
+  "source_sha256": "4550a77367c3fa7a427b0b46b53752ea9306441073cb74be0780e5586cf7f7c9",
+  "local_artifacts_root": "C:/Users/Austin/ai-club-tools/results/part2-team-release-20261022",
+  "pdf": "release-v1/Part-2-Team-Architecture.pdf",
+  "zip": "release-v1.zip",
+  "pdf_sha256": "b06008b99e7114cc1f5428b23ab55aa0008f2186d4199acd9910e4ab8508e420",
+  "zip_sha256": "c7e8141d126b4899909fe2e279a109b650a3168074a3b36e17253f9dbe73ab2d",
+  "zip_bytes": 549480,
+  "checks": {
+    "all_seven_pages_rendered_and_visually_inspected": true,
+    "text_bounds_checked": true,
+    "page_titles_checked": true,
+    "pdf_links_checked": true,
+    "metric_claims_checked_against_original_reports": true,
+    "all_package_hashes_checked": true,
+    "zip_fully_read_and_checked": true,
+    "no_code_weights_or_data_in_zip": true,
+    "previous_releases_preserved": true
+  },
+  "evidence_report_sha256": {
+    "stage2-refinement-20261020.json": "1bf08fefc360ac64c9c80ca83f3fdb31d17a26d955a9687b8d9bcf706f05c80d",
+    "twin-experiments-20261021.json": "ee47adcfb8d8e9bdb6a9fd4e9e964715941f07d76d38eb6bf30264eccb1d04ec",
+    "pipeline-acceleration-20261020.json": "f4270bfa22e0c7bb13fbc8eb5e291108e83778a101bc966e12f43e267919a5a7",
+    "csi-preparation-20261021.json": "a0abf774ac0ae5ccc0336728811278858413e9e6843b8a5e8d6d17365b3eadd6",
+    "station-visibility-20261021.json": "f0cd474b3042df3650f6decb083f690c3f7d205a258716ef9cda73d344ec76cb",
+    "prerender-station-20261021.json": "3693235d5aa59a825640492291196b6c5f76c617ba5a181e90e98b9251ed8c66"
+  },
+  "official_sources": [
+    {
+      "title": "NVIDIA DGX Spark hardware",
+      "url": "https://docs.nvidia.com/dgx/dgx-spark/hardware.html",
+      "accessed": "2026-10-22"
+    },
+    {
+      "title": "NVIDIA Isaac Sim optimization handbook",
+      "url": "https://docs.isaacsim.omniverse.nvidia.com/latest/reference_material/sim_performance_optimization_handbook.html",
+      "accessed": "2026-10-22"
+    }
+  ],
+  "gb10": {
+    "new_benchmark": false,
+    "read_only_connection_check": "Native Windows SSH: spark8.ai.msoe.edu did not resolve",
+    "layout": "Proposed co-located ingestion, GPU inference, CPU Part 2, and remote browser display; rendering shares the GPU only in live twin tests."
+  },
+  "published": false,
+  "pushed": false,
+  "main_unchanged": "1cb6a63987987e1d8f69e6adc8aaa6ba2357ec68",
+  "new_training": false,
+  "hardware_connections": 0,
+  "limits": [
+    "Architecture and responsibilities are a team proposal, not new owner assignments.",
+    "No approved physical recipe references or real defect-accuracy claim.",
+    "CSI visit and approved video arrangement remain unconfirmed.",
+    "No claim of GB10 speedup; compare like-for-like before deployment."
+  ]
+}

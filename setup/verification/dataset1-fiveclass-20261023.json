@@ -1,0 +1,533 @@
+{
+  "checked_utc": "2026-10-23T06:51:25.144035+00:00",
+  "branch": "austin-work",
+  "completed": true,
+  "synthetic_only_fit_count": 8,
+  "models": {
+    "dataset1-fiveclass-20261023/rgb": {
+      "selected_epoch": 35,
+      "checkpoint_sha256": "a3813a6d38a8c0abe2703e85dc39def20bed5de94b30a80e4d30a0fe006553a4",
+      "channels": 3
+    },
+    "dataset1-fiveclass-20261023/target_paired": {
+      "selected_epoch": 23,
+      "checkpoint_sha256": "c905f864f677ff9180e2e82b7806446e9e2e6b029e211fdd500710b3de81317c",
+      "channels": 7
+    },
+    "dataset1-fiveclass-20261023/target_rgb": {
+      "selected_epoch": 13,
+      "checkpoint_sha256": "60cfa9911a944fa89e9e64fdd6aa60a162a0779739128db0fad23bc4ad29abd7",
+      "channels": 4
+    },
+    "dataset1-detail-20261023/detail_paired": {
+      "selected_epoch": 16,
+      "checkpoint_sha256": "31a01205d4d1ce31b947af67265b94be0cc2a5106f4253eba091daae1ef59ee2",
+      "channels": 10
+    },
+    "dataset1-detail-20261023/detail_rgb": {
+      "selected_epoch": 10,
+      "checkpoint_sha256": "0d9d0f3c4c43cc936d6df9f105e6d3eb6a50f0ff92fd9ce931924cda1f5c43ea",
+      "channels": 4
+    },
+    "dataset1-normals-20261023/detail_paired": {
+      "selected_epoch": 22,
+      "checkpoint_sha256": "48aeaca7510b6909433d1d2e3605ae9f72cec17e551d89a3d93758e3063a412c",
+      "channels": 10
+    },
+    "dataset1-normals-20261023/detail_rgb": {
+      "selected_epoch": 25,
+      "checkpoint_sha256": "bbb6c2a233c7bc65024fb7c84cbff830023071d5fa4033519226b6ca20d89dce",
+      "channels": 4
+    },
+    "dataset1-cap-state-20261023": {
+      "selected_epoch": 39,
+      "checkpoint_sha256": "05fea80bfcba0f1ec477eaeb5f2e40ad55669a6d093ece442f72a3b2a2da7091",
+      "thresholds": {
+        "1.0": 0.0,
+        "0.99": 0.029073119163513184,
+        "0.95": 0.9789090771228075
+      }
+    }
+  },
+  "gpu": "NVIDIA GB10",
+  "gpu_jobs_finished": true,
+  "gpu_utilization_percent_at_final_check": 0,
+  "gpu_lock_free": true,
+  "local_gpu_used": false,
+  "archive_sha256": {
+    "dataset1-fiveclass-20261023": "2a214de9bad8bb2cffec506e0879089222b2001506b2672ed2382e6347eabff6",
+    "dataset1-detail-20261023": "9b2f825282cb383e7f2a51a7c82be5b4ecbf90945467191a2600631171f83dfc",
+    "dataset1-visibility-20261023": "b1ed4c422cb7d392776a5f7a628933e35eb7383721f1f22fd7fbdb930eacd3c7",
+    "dataset1-normals-20261023": "7fcdcf3315900922223fbad34824107edc977c189e8a5a7b493beb00d9edf8d3",
+    "dataset1-cap-state-20261023": "376e7e1ec106516e2ffdd174e1e9ae8f9a50b688e8416246773067a6a7038b8b",
+    "dataset1-cap-confirmation-20261023": "f4a315f056807112ced0d4731155413e66ccb1ce75a1643aebe186609df9f34b"
+  },
+  "source_metric_verification": {
+    "report_sha256": "db3e3d22c9c857c72a1b21f6396984f54ea2009e636dd1168cae04ddb373ce2b",
+    "verified_predictions": 34560,
+    "decoded_video_frames": 576,
+    "helper_sha256": "dbef3e0e01acc813f090b0d71c87f99aca6710b481ff0e88855a150049323465"
+  },
+  "baseline_separately_verified_predictions": 4320,
+  "trained_on_real_CSI": false,
+  "run5_used_for_fitting_or_selection": false,
+  "real_accuracy": null,
+  "human_reviews_supplied": 0,
+  "full_dataset1_task_solved": false,
+  "body_damage_solved": false,
+  "authored_lying_S_pose_coverage_established": false,
+  "automatic_alignment_validity_detector_established": false,
+  "app_defaults_changed": false,
+  "measurement_QA_changed": false,
+  "industrial_connections": false,
+  "hardware_commands": 0,
+  "physical_vials_linked": false,
+  "research_pushed": false,
+  "research_merged_to_main": false,
+  "app_starter_separately_authorized_main_commit": "1ec7cbc56eadd3740ebc2c6f08ffc33b0d29248b",
+  "nominal_cap_fresh_confirmation": {
+    "metrics": {
+      "targets": 720,
+      "accuracy": 0.9875,
+      "macro_recall": 0.9407894736842105,
+      "classes": [
+        "seated_cap",
+        "missing_cap",
+        "crooked_cap",
+        "no_vial"
+      ],
+      "confusion": [
+        [
+          608,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          36,
+          2,
+          0
+        ],
+        [
+          4,
+          2,
+          31,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          36
+        ]
+      ],
+      "per_class": {
+        "seated_cap": {
+          "targets": 608,
+          "correct": 608,
+          "recall": 1.0
+        },
+        "missing_cap": {
+          "targets": 38,
+          "correct": 36,
+          "recall": 0.9473684210526315
+        },
+        "crooked_cap": {
+          "targets": 38,
+          "correct": 31,
+          "recall": 0.8157894736842105
+        },
+        "no_vial": {
+          "targets": 36,
+          "correct": 36,
+          "recall": 1.0
+        }
+      },
+      "complete_scenes": 12,
+      "all_60_correct_scenes": 8,
+      "complete_fixtures": 24,
+      "all_30_correct_fixtures": 18,
+      "body_condition": "unassessed",
+      "quality_release_authorized": false
+    },
+    "normal_exact": {
+      "targets": 360,
+      "accuracy": 1.0,
+      "macro_recall": 1.0,
+      "classes": [
+        "seated_cap",
+        "missing_cap",
+        "crooked_cap",
+        "no_vial"
+      ],
+      "confusion": [
+        [
+          360,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "per_class": {
+        "seated_cap": {
+          "targets": 360,
+          "correct": 360,
+          "recall": 1.0
+        },
+        "missing_cap": {
+          "targets": 0,
+          "correct": 0,
+          "recall": null
+        },
+        "crooked_cap": {
+          "targets": 0,
+          "correct": 0,
+          "recall": null
+        },
+        "no_vial": {
+          "targets": 0,
+          "correct": 0,
+          "recall": null
+        }
+      },
+      "complete_scenes": 6,
+      "all_60_correct_scenes": 6,
+      "complete_fixtures": 12,
+      "all_30_correct_fixtures": 12,
+      "body_condition": "unassessed",
+      "quality_release_authorized": false
+    },
+    "gain_estimates": [
+      {
+        "available": true,
+        "gain": 1.0,
+        "usable_fraction": 0.5348723234953704,
+        "reason": null,
+        "reference_alignment_qualified": false,
+        "physical_reference_qualified": false
+      },
+      {
+        "available": true,
+        "gain": 1.0,
+        "usable_fraction": 0.5531557436342592,
+        "reason": null,
+        "reference_alignment_qualified": false,
+        "physical_reference_qualified": false
+      },
+      {
+        "available": true,
+        "gain": 1.0,
+        "usable_fraction": 0.5404712818287037,
+        "reason": null,
+        "reference_alignment_qualified": false,
+        "physical_reference_qualified": false
+      },
+      {
+        "available": true,
+        "gain": 1.0,
+        "usable_fraction": 0.5713415075231482,
+        "reason": null,
+        "reference_alignment_qualified": false,
+        "physical_reference_qualified": false
+      },
+      {
+        "available": true,
+        "gain": 1.0,
+        "usable_fraction": 0.5741174768518519,
+        "reason": null,
+        "reference_alignment_qualified": false,
+        "physical_reference_qualified": false
+      },
+      {
+        "available": true,
+        "gain": 1.0,
+        "usable_fraction": 0.5583351417824074,
+        "reason": null,
+        "reference_alignment_qualified": false,
+        "physical_reference_qualified": false
+      },
+      {
+        "available": true,
+        "gain": 1.0,
+        "usable_fraction": 0.5545229311342592,
+        "reason": null,
+        "reference_alignment_qualified": false,
+        "physical_reference_qualified": false
+      },
+      {
+        "available": true,
+        "gain": 1.0,
+        "usable_fraction": 0.565427879050926,
+        "reason": null,
+        "reference_alignment_qualified": false,
+        "physical_reference_qualified": false
+      },
+      {
+        "available": true,
+        "gain": 1.0,
+        "usable_fraction": 0.5563783998842593,
+        "reason": null,
+        "reference_alignment_qualified": false,
+        "physical_reference_qualified": false
+      },
+      {
+        "available": true,
+        "gain": 1.0,
+        "usable_fraction": 0.5722837094907407,
+        "reason": null,
+        "reference_alignment_qualified": false,
+        "physical_reference_qualified": false
+      },
+      {
+        "available": true,
+        "gain": 1.0,
+        "usable_fraction": 0.5744411892361111,
+        "reason": null,
+        "reference_alignment_qualified": false,
+        "physical_reference_qualified": false
+      },
+      {
+        "available": true,
+        "gain": 1.0,
+        "usable_fraction": 0.5583713107638889,
+        "reason": null,
+        "reference_alignment_qualified": false,
+        "physical_reference_qualified": false
+      }
+    ],
+    "policies": {
+      "1.0": {
+        "threshold": 0.0,
+        "seated_targets": 608,
+        "false_alarms": 608,
+        "per_class": {
+          "missing_cap": {
+            "targets": 38,
+            "missed": 0
+          },
+          "crooked_cap": {
+            "targets": 38,
+            "missed": 0
+          }
+        },
+        "empty_requires_progress_context": true,
+        "body_damage_not_assessed": true
+      },
+      "0.99": {
+        "threshold": 0.029073119163513184,
+        "seated_targets": 608,
+        "false_alarms": 4,
+        "per_class": {
+          "missing_cap": {
+            "targets": 38,
+            "missed": 0
+          },
+          "crooked_cap": {
+            "targets": 38,
+            "missed": 0
+          }
+        },
+        "empty_requires_progress_context": true,
+        "body_damage_not_assessed": true
+      },
+      "0.95": {
+        "threshold": 0.9789090771228075,
+        "seated_targets": 608,
+        "false_alarms": 0,
+        "per_class": {
+          "missing_cap": {
+            "targets": 38,
+            "missed": 2
+          },
+          "crooked_cap": {
+            "targets": 38,
+            "missed": 8
+          }
+        },
+        "empty_requires_progress_context": true,
+        "body_damage_not_assessed": true
+      }
+    },
+    "normal_policies": {
+      "1.0": {
+        "threshold": 0.0,
+        "seated_targets": 360,
+        "false_alarms": 360,
+        "per_class": {
+          "missing_cap": {
+            "targets": 0,
+            "missed": 0
+          },
+          "crooked_cap": {
+            "targets": 0,
+            "missed": 0
+          }
+        },
+        "empty_requires_progress_context": true,
+        "body_damage_not_assessed": true
+      },
+      "0.99": {
+        "threshold": 0.029073119163513184,
+        "seated_targets": 360,
+        "false_alarms": 0,
+        "per_class": {
+          "missing_cap": {
+            "targets": 0,
+            "missed": 0
+          },
+          "crooked_cap": {
+            "targets": 0,
+            "missed": 0
+          }
+        },
+        "empty_requires_progress_context": true,
+        "body_damage_not_assessed": true
+      },
+      "0.95": {
+        "threshold": 0.9789090771228075,
+        "seated_targets": 360,
+        "false_alarms": 0,
+        "per_class": {
+          "missing_cap": {
+            "targets": 0,
+            "missed": 0
+          },
+          "crooked_cap": {
+            "targets": 0,
+            "missed": 0
+          }
+        },
+        "empty_requires_progress_context": true,
+        "body_damage_not_assessed": true
+      }
+    }
+  },
+  "confirmation_families": 6,
+  "confirmation_targets_per_case": 720,
+  "followup_warning_policy_limit": "Development recall targets are pooled; per-defect and nominal false warnings reported separately. Synthetic tests do not establish real accuracy.",
+  "photometric_correction": "Fixed label-free scene gain; no alignment, physical reference qualification or liquid RGB change",
+  "native_tool": {
+    "package_manifest_files_verified": 79,
+    "mode": "manual",
+    "images": 2,
+    "unresolved_targets": 120,
+    "image_dimensions": [
+      1920,
+      1080
+    ],
+    "run_identity": "unspecified; excluded from fitting/selection",
+    "native_coordinates_reused_on_640": false
+  },
+  "expanded_review": {
+    "tasks": 960,
+    "priority": 192,
+    "human_accuracy": null,
+    "browser_verification": {
+      "tasks": 960,
+      "priority": 192,
+      "demonstration_download_reopen": true,
+      "raw_first": true,
+      "native_images": 2,
+      "native_unresolved_targets": 120,
+      "page_errors": []
+    }
+  },
+  "station_evidence": {
+    "observations": 960,
+    "checkpoint_sha256": "60cfa9911a944fa89e9e64fdd6aa60a162a0779739128db0fad23bc4ad29abd7",
+    "real_accuracy": null,
+    "qualified_product_decisions": 0,
+    "physical_vials_linked": false,
+    "observations_sha256": "41e27db37e531a5a90fc2f468af08ac48e5c110d6adf0a4f0ef4c25d52fda446",
+    "helper_sha256": "c6d8f8e13c86e3a5926ff75466dfe8cdc549ec5c7f3d7236ab8b243317a333e8",
+    "commissioning_helper_sha256": "80282696809bd79eab5e458bbcbf1b80f7d06acef07d4de9b452b7455430c5b4"
+  },
+  "focused_unit_tests_passed": 40,
+  "organizer_manual_tool_tests_passed": 11,
+  "javascript_syntax_check_passed": true,
+  "compilation_passed": true,
+  "git_diff_check_passed": true,
+  "PDF": {
+    "path": "/mnt/c/Users/Austin/ai-club-tools/results/dataset1-followups-20261023/summary-v1/brief-v2/Digital-Twin-Inspection-Results.pdf",
+    "pages": 3,
+    "all_pages_rendered_and_visually_inspected": true,
+    "sha256": "83124286fe2d5b5fa7e6c79c309e4b2dbaabb48cd3d3057fe3eda956dfcf88e2"
+  },
+  "single_panel_video": {
+    "path": "/mnt/c/Users/Austin/ai-club-tools/results/dataset1-followups-20261023/summary-v1/cap-preview-v1/cap-state-predictions.mp4",
+    "decoded_frames": 576,
+    "source_images": 24,
+    "fps": 24,
+    "native_video": false,
+    "live_latency_claim": false,
+    "sha256": "268861cb98e6e80dbba5469051b0b14340a4371ca617f414de4f1fbd38c56a3b"
+  },
+  "code_free_zip": {
+    "path": "/mnt/c/Users/Austin/ai-club-tools/results/dataset1-followups-20261023/team-release-v2.zip",
+    "files": 7,
+    "integrity_verified": true,
+    "sha256": "72daf917707bcfe43086cb19ea3469a8af55dcc68426d7dc81a34c8ef73618e9"
+  },
+  "report_path": "/mnt/c/Users/Austin/ai-club-tools/results/dataset1-followups-20261023/summary-v1/report.json",
+  "source_file_sha256": {
+    "setup/vision/dataset1_fiveclass.py": "42f297475e62fc14e50667fa2402a121600acd841f9ff399e5715500c97f79fd",
+    "setup/vision/train_dataset1_fiveclass.py": "2e59e598c478a222fa52a22f533ae063a81452eb74e2ab154f52b6472a4c7563",
+    "setup/vision/run_dataset1_fiveclass.py": "c8159b7e2cb5109209177d51598594ddfdaee6a6a894dc981b71edb403028550",
+    "setup/vision/finish_dataset1_fiveclass.py": "1a08e0284562698d551c3dfe28549d27bb21aa1b146dffd1d4a2674cd37dd46b",
+    "setup/vision/dataset1_fixture_geometry.py": "5e88018294bf0deeb70e2b9585b14748aed44f074e032c84d31b50f32270a350",
+    "setup/vision/dataset1_fiveclass_real.py": "29943920e2c75d1a8cb88e29ec5e1b1875961c172309325673f64f75524be886",
+    "setup/vision/prepare_fixture_placement_scenes.py": "027ca2db29c199f71f6b06015d7ff9a842897d306c984d004aab11007f0a749f",
+    "setup/vision/evaluate_fixture_placement_scenes.py": "b1efd156cec97dc4b59531bcfb640989c70da4671dfacd5fa454388402006846",
+    "setup/vision/summarize_dataset1_fiveclass.py": "d241acf63694b0d002960e4df6ae30c47ea603d29c16ee8c99fdf82624449422",
+    "setup/vision/export_fiveclass_observations.py": "c6d8f8e13c86e3a5926ff75466dfe8cdc549ec5c7f3d7236ab8b243317a333e8",
+    "setup/vision/experiment_dataset1_detail.py": "f21e1f546fbb05f7259e7fc35a12f4b628448ce64d3c8227234d2f10c11dec06",
+    "setup/vision/experiment_dataset1_normals.py": "17c4e333121cb2cecc2483cc34b0242d6861be3fe3422f3b21dd774fe4269b44",
+    "setup/vision/experiment_dataset1_cap_state.py": "ad143f2e97ab850d5f10ac39f6d8f7e070db2f6030660a1e5415399a3d6dde52",
+    "setup/vision/prepare_dataset1_visibility.py": "df1b3a50b0cb90f739e9701adc2d85f491c44e8d0b0c34c13b97d60b2c0b4c80",
+    "setup/vision/run_dataset1_visibility.py": "0388a0f401720892fa7e3c20ec14e6aed3e8fab0b004abcd102d022dac79007d",
+    "setup/vision/run_dataset1_normal_queue.py": "4ee906e84a379c8d4d1cd0abef2f6e2ae3a7121e46d10c7f995fde2b508a42f6",
+    "setup/vision/analyze_dataset1_visibility.py": "c8c6d480f5955caedddec2583c24380eecb7cdb3aa454e799b94cf2002f62a3a",
+    "setup/vision/evaluate_dataset1_visibility.py": "87a8c2a38676bacce401595cf518b1dc319f4ece2c26bd5360dc6d07048de4cf",
+    "setup/vision/dataset1_operating_points.py": "644f3a8bdc3392be1b78c29e2c8797a5116a1c510afdfb281d8160323bb56515",
+    "setup/vision/package_dataset1_followup.py": "d0875930c16a36bab9d69ad0fee036b977073f7c94daf74e8756567341c65263",
+    "setup/vision/audit_dataset1_authored_poses.py": "a93bf7ac17e5d048b15dbc38692b70cf30bd059c093c890f97c7158e3c297b9f",
+    "setup/vision/stress_dataset1_cap_reference.py": "c5bb734c01b785eb4a0f024b349cab3821a027f68786f44d8b7de772b2daa525",
+    "setup/vision/fixture_reference_preprocess.py": "0ff9038daf2527ef6dd5c39a2f3a4f9856632c3d8abc43c3079dd7880fade73a",
+    "setup/vision/evaluate_dataset1_cap_gain_correction.py": "9efa2ee02f9ec66282ea0b88515bd3d25421125e218fb837713864c2b64aa188",
+    "setup/vision/confirm_dataset1_cap.py": "8b5599379bc63921778d1298d4af850bb3d8e4fe99e9a676195247250dd0eeb4",
+    "setup/vision/summarize_dataset1_followups.py": "dbef3e0e01acc813f090b0d71c87f99aca6710b481ff0e88855a150049323465",
+    "setup/vision/prepare_dataset1_research_brief.py": "60e513f07493ec8f0984a45952c01d531717c0ab9f76791a78b0b2f172d642f8",
+    "setup/vision/export_dataset1_cap_preview.py": "16f54f20c42923d1b43662ae75c5f10b026cd37165b108ee3d8522e2395a75ab",
+    "setup/vision/test_dataset1_fiveclass.py": "16b7b28905e08280b7309801e58f870fb839360ff97a508e9586be9dba2ea3f8",
+    "setup/vision/test_dataset1_cap_state.py": "0b7d52c187457c018d2d1cc444a5f10a330625bc35d73a9f162ae425150f8835",
+    "setup/vision/test_fixture_reference_preprocess.py": "d2ed4bebb347c4dc7e58b32d2f7d78f66649b3bc6af941c948d1bd6bb1a7170a",
+    "setup/vision/DATASET1-FIVECLASS.md": "bbc5e42e604f60d0542f0bbe641b9f2563123ce2a3622ee5cd7a5224f93e0e20",
+    "annotation_review/slot_review.py": "35086eec4599a34ed04a3cf01bef8f38d54d75208719fac44a95d8fea6b4a277",
+    "annotation_review/static/slot_review.html": "1a54e0aa120a239d9ee45c170e8eeb7fd70032be3e9e7d5ba6883d45ab42e27e",
+    "annotation_review/static/slot_review.js": "d0ed8a12cf24f0820d8829a429d702a27d797725ade0fee57be818560d5e9a91",
+    "annotation_review/tests/test_slot_review.py": "c12985e7aca9ecaf37f54d97bd170137d51e7c3784c5b2a5b4bc97b80e85e839",
+    "replay/operator/fixture_placement.py": "5d8183515c169479a44cea2d3875db81d9d7c7b44e54ff81cda8a1eaeb538b5b",
+    "replay/operator/commissioning.py": "80282696809bd79eab5e458bbcbf1b80f7d06acef07d4de9b452b7455430c5b4",
+    "replay/tests/test_fixture_placement.py": "67a794056f7eaeb0c1d66f3c699e0edaef948d05b75cc397a76202c0fd93d6a9",
+    "replay/tests/test_commissioning.py": "edd2dfc018f84539be32fd666e9503706fe77428081649cb086f849303dd29a3"
+  }
+}

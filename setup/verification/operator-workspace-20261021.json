@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-21",
+  "status": "passed",
+  "branch": "austin-work",
+  "scope": "Recorded Run 4 operator-response workspace; no live station integration",
+  "unit_tests": {
+    "command": "data-windows/Scripts/python.exe -m unittest replay.tests.test_operator_workspace -v",
+    "passed": 9,
+    "failed": 0
+  },
+  "browser": {
+    "path": "C:/Users/Austin/ai-club-tools/results/operator-workspace-20261021/browser-v3",
+    "verification_sha256": "f3674017187ce1288350e20dfccf5df69cbbfabe426dd2b68ac9660befe2c365",
+    "checks": {
+      "actual_h264_video_decoded": true,
+      "operational_assessment_not_promoted": true,
+      "exact_source_sample_image_displayed": true,
+      "acknowledgement_does_not_close_review": true,
+      "browser_download_preserves_manual_context_history_and_limits": true,
+      "backward_seek_and_delayed_response_hide_future_context": true,
+      "browser_reload_restores_journal": true,
+      "mobile_no_page_overflow": true,
+      "all_page_requests_loopback_only": true
+    },
+    "errors": [],
+    "artifact_hashes": {
+      "executed_browser_check.py": "388d0c156c11fd18f8633006411cecba1517d13cbc1a359c1147accfda0b9991",
+      "operator-mobile.png": "5439092931b03feb8c398fe21cb101338088e2f5e4651452a1b9787435f65a46",
+      "operator-response-recorded.png": "41113b3d840eb078a695843035c7e4f09e262f0a970d617317b9efb5d7afd8d7",
+      "operator-review-requested.png": "4bbb8cf4ef533b489bbb758c02db935ace6fc4eb89858af77b23bf416710afeb",
+      "operator-session.json": "fca4da95b5e0522331ed6b299456b43b7c454c281db77116aa910866c816ae43",
+      "operator-vials.csv": "7c8edb2acf13a1ba1a874fd3bb5f3500ba2d5abbfc9c08bdc20782f6c64b4672",
+      "operator-workspace-overview.png": "f99fff38b6646de5bb5e83a20122c675d5a35236b874e322736b2f8ea1558013",
+      "server-stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "server-stdout.txt": "f860ddf81e601b6b7c18a340efd527467617e8caa98d781d7836e53d268aeac7"
+    }
+  },
+  "checks": {
+    "python_compilation": true,
+    "javascript_syntax": true,
+    "powershell_launcher_syntax": true,
+    "diff_whitespace": true,
+    "operator_processes_left_running": 0
+  },
+  "source_identity": {
+    "source_video_sha256": "e2de9cdf613817556f3de1edaaf8e5aa4c998cdfdbb7c4c2cee2e76d672db1b9",
+    "plan_sha256": "dcbace59e124984ec7971493d49025c1710d68f7ceef805d00d7faeb51b6f21a",
+    "inference_frames_sha256": "76f1351187c83cf0e59a2c9ef6a45111c488a9211a12dfc89a0b3bc7a2b0fe9e",
+    "measurement_profile": "c4b87646279ed603c4c3af28d6fe529f7fcf5f6135c3feb12240a78d36cc5599",
+    "arm": "pytorch-pass0",
+    "models": {
+      "vial": "10856c18a8a5c485e832adcc6b841b739e726a969dc043fe8db64c49163bb361",
+      "liquid": "9479fb13ed9c7ebd815c314e8219ba3b86c3ffa267f758f714a3058f9ac3a343",
+      "sam": "7402e0d864fa82708a20fbd15bc84245c2f26dff0eb43a4b5b93452deb34be69"
+    }
+  },
+  "semantics": {
+    "mode": "recorded_demonstration",
+    "context": "manual_recorded_demo",
+    "measurement_policy": "operator_endpoint_last_three_samples/v1",
+    "geometry": "unreviewed_model_proposals",
+    "references": "same_recording_development",
+    "operational_recipe_assessment": "unavailable",
+    "independent_quality_outcomes": false,
+    "product_release_authorized": false,
+    "hardware_commands_sent": 0,
+    "model_inference_rerun": false,
+    "existing_replay_defaults_changed": false,
+    "existing_measurement_qa_changed": false,
+    "station_destination_semantics": "unconfirmed"
+  },
+  "preserved_main": "1cb6a63987987e1d8f69e6adc8aaa6ba2357ec68",
+  "source_files": {
+    "replay/operator/__init__.py": "f9c9821ce96f29eacc442e609a42a3986948b34301a979eb48932c404ef325fb",
+    "replay/operator/__main__.py": "d505864dd62bff09e91409e91295e08db4692cce70cc65cfbca5dc75e73ba35e",
+    "replay/operator/evidence.py": "ac244bb583fd60f68c2af27ed68b67d716193b134253b54da964efcff436705d",
+    "replay/operator/server.py": "e65cf4970c1dce64ff09ffa5c985dcc31109d76cf96f2607175bb18badf920fb",
+    "replay/operator/static/index.html": "beb5b1a46ee05dec3a96ff323dd43a25658edd611e0bb7e97861debe0723fa9a",
+    "replay/operator/static/operator.css": "74764811ab3af9796c03d18216010a2628814b9d1409db6641bcc2c857348461",
+    "replay/operator/static/operator.js": "814fcffc7409e4a8dcbbcf865118b98499f04ece24b124b796a9711db667661e",
+    "replay/operator/store.py": "e15396d6e0160f7169c3a472de3dbcf186addf9bc5ae9e8956550f7a2d16d11e",
+    "replay/tests/test_operator_workspace.py": "ffce67911cbba3cf8e1c5352bca5ba195a417d6840e0eec8e9be0192cc809282",
+    "replay/tests/verify_operator_browser.py": "388d0c156c11fd18f8633006411cecba1517d13cbc1a359c1147accfda0b9991",
+    "setup/run-operator.ps1": "79ad06f968f73a58aed26a93d93e1656d9f3c8d591f7f4bd6c708f0ca315bd66"
+  },
+  "limitations": [
+    "Not a commissioned live station interface",
+    "No approved-reference input adapter yet",
+    "No authenticated multi-user identity or tamper-proof audit",
+    "Completion and physical-vial/recipe associations require explicit operator input",
+    "Same-recording practice comparisons do not establish recipe acceptance"
+  ]
+}

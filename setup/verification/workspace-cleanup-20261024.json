@@ -1,0 +1,15 @@
+{
+  "schema": "workspace-cleanup/v1",
+  "removed_registered_worktrees": 1,
+  "remaining_worktrees": "worktree /mnt/c/git/FDS-Dark/ALL-Applied-AI-Network/msoe-ai-club-rockwell-automation-nvidia-hackath-austin-koske-s-team-8e90f213c6\nHEAD bbb6fca23a52613f720f42ce40ee3d185e802fa7\nbranch refs/heads/austin-work\n\n",
+  "retained_branch": "team/app-starter",
+  "retained_commit": "edd4fb69bdd8e8dac2dd694003041c813ea6aa3c",
+  "generated_directories_preserved": 10,
+  "recovery": "/mnt/c/Users/Austin/ai-club-tools/recovery/workspace-cleanup-20261024-v1",
+  "main_unchanged": true,
+  "primary_changes_preserved": true,
+  "force_used": false,
+  "branches_deleted": [],
+  "pushed": false,
+  "recovery_inventory_sha256": "3fb43cfc522310c14327d0315f24b18aeb31b42f401c64f6fbeda436c09a6ce1"
+}

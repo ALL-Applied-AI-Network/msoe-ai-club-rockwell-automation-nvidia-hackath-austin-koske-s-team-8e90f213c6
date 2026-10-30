@@ -1,0 +1,82 @@
+{
+  "real_stills": 1181,
+  "videos": 5,
+  "index_counts": {
+    "1": 5,
+    "2": 78,
+    "3": 95,
+    "4": 157,
+    "5": 845,
+    "unassigned": 1
+  },
+  "runs1_to4_stills": 335,
+  "reviewed_defect_labels_found": false,
+  "numbered_real_slot_mapping_found": false,
+  "confirmed_view": "Overhead robot/final-fixture station; matches supplied tray twin layout and documented CapSealCam source.",
+  "selected": [
+    {
+      "filename": "cap_seal_20260922_192609_126406.jpg",
+      "timestamp": "2026-09-22 19:26:09.126406",
+      "video_id": "2",
+      "path": "datasets/dataset2/csi-vial-fill-dataset/cap_seal/images/cap_seal_20260922_192609_126406.jpg",
+      "sha256": "1adcd343a097f466f313117d6b7bc274e1790cb8f4d7aee29c1f12cba29fba79",
+      "dimensions": [
+        640,
+        480
+      ]
+    },
+    {
+      "filename": "cap_seal_20260922_192843_993721.jpg",
+      "timestamp": "2026-09-22 19:28:43.993721",
+      "video_id": "2",
+      "path": "datasets/dataset2/csi-vial-fill-dataset/cap_seal/images/cap_seal_20260922_192843_993721.jpg",
+      "sha256": "ba6e92dc1d8da7096ebc0f31a549f7549987ba7d7949157142770baa9f8a8eec",
+      "dimensions": [
+        640,
+        480
+      ]
+    },
+    {
+      "filename": "cap_seal_20260923_191017_576908.jpg",
+      "timestamp": "2026-09-23 19:10:17.576908",
+      "video_id": "4",
+      "path": "datasets/dataset2/csi-vial-fill-dataset/cap_seal/images/cap_seal_20260923_191017_576908.jpg",
+      "sha256": "d5247758039c5a2a3adc2920bbc7143aab50db4a168d3b3d56ac37509bad8ecf",
+      "dimensions": [
+        640,
+        480
+      ]
+    },
+    {
+      "filename": "cap_seal_20260923_191531_327911.jpg",
+      "timestamp": "2026-09-23 19:15:31.327911",
+      "video_id": "4",
+      "path": "datasets/dataset2/csi-vial-fill-dataset/cap_seal/images/cap_seal_20260923_191531_327911.jpg",
+      "sha256": "c173c8c89c77b7130044f78e09c2f3858b205e61569a29595e8297cea4ec1280",
+      "dimensions": [
+        640,
+        480
+      ]
+    }
+  ],
+  "run5_pixels_inspected": false,
+  "model_inference_run": false,
+  "training_run": false,
+  "boundary": "Real footage is available; formal Dataset1 labeled crop/coordinate package remains unlocated. These images can support transfer inspection and new human evaluation labels, not real training.",
+  "checked_utc": "2026-10-23T04:17:21.743585+00:00",
+  "image_index_sha256": "77c7e551e82d6b22ac500bd5def480edf389882cfe8e319a3b7b769c3ed9d7cb",
+  "all_indexed_stills_present": true,
+  "media_hashes": {
+    "real-cap-seal-contact.png": "fc2f2fb4f3240d587104a54cc606147b509a4b139765f4137384a5ac118d64dd",
+    "real-vs-tray-twin.png": "489faa86d544ca8a31f91491a3a82c2f98a64a91eb3bd0ea3cb44982a61312c9"
+  },
+  "video4_metadata": {
+    "width": 640,
+    "height": 480,
+    "fps": "30/1",
+    "duration_seconds": 316.066667
+  },
+  "source_labels_changed": false,
+  "app_changed": false,
+  "pushed": false
+}

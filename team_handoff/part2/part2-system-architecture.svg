@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="650" viewBox="0 0 1500 650"><rect width="1500" height="650" fill="white"/>
+<rect x="5" y="5" width="440" height="185" rx="14" fill="#EAF4F4" stroke="#9EB5BF" stroke-width="2"/>
+<text x="23" y="48" fill="#142B40" font-family="Lato,Arial,sans-serif" font-size="32" font-weight="700">SOURCE / CAMERA</text>
+<text x="23" y="93" fill="#142B40" font-family="Lato,Arial,sans-serif" font-size="28" font-weight="400">Approved video or file</text>
+<text x="23" y="130" fill="#142B40" font-family="Lato,Arial,sans-serif" font-size="28" font-weight="400">OR Isaac test RGB</text>
+<text x="23" y="167" fill="#142B40" font-family="Lato,Arial,sans-serif" font-size="28" font-weight="400">Original clock + identity</text>
+<rect x="520" y="5" width="440" height="185" rx="14" fill="#EAF0F9" stroke="#9EB5BF" stroke-width="2"/>
+<text x="538" y="48" fill="#142B40" font-family="Lato,Arial,sans-serif" font-size="32" font-weight="700">PART 1 / GPU</text>
+<text x="538" y="93" fill="#142B40" font-family="Lato,Arial,sans-serif" font-size="28" font-weight="400">Vial + liquid localization</text>
+<text x="538" y="130" fill="#142B40" font-family="Lato,Arial,sans-serif" font-size="28" font-weight="400">Proposed liquid mask</text>
+<text x="538" y="167" fill="#142B40" font-family="Lato,Arial,sans-serif" font-size="28" font-weight="400">Exact-frame appearance</text>
+<rect x="1035" y="5" width="455" height="185" rx="14" fill="#EFF5F7" stroke="#9EB5BF" stroke-width="2"/>
+<text x="1053" y="48" fill="#142B40" font-family="Lato,Arial,sans-serif" font-size="32" font-weight="700">MEASUREMENT QA / CPU</text>
+<text x="1053" y="93" fill="#142B40" font-family="Lato,Arial,sans-serif" font-size="28" font-weight="400">Geometry + sampling checks</text>
+<text x="1053" y="130" fill="#142B40" font-family="Lato,Arial,sans-serif" font-size="28" font-weight="400">Usable / unavailable</text>
+<text x="1053" y="167" fill="#142B40" font-family="Lato,Arial,sans-serif" font-size="28" font-weight="400">Reasons + source identity</text>
+<polyline points="445,95 520,95" fill="none" stroke="#087F83" stroke-width="4"/>
+<polygon points="520.0,95.0 506.0,87.0 506.0,103.0" fill="#087F83"/>
+<polyline points="960,95 1035,95" fill="none" stroke="#087F83" stroke-width="4"/>
+<polygon points="1035.0,95.0 1021.0,87.0 1021.0,103.0" fill="#087F83"/>
+<rect x="5" y="270" width="440" height="185" rx="14" fill="#EAF4F4" stroke="#9EB5BF" stroke-width="2"/>
+<text x="23" y="313" fill="#142B40" font-family="Lato,Arial,sans-serif" font-size="32" font-weight="700">CONTEXT + REFERENCE</text>
+<text x="23" y="358" fill="#142B40" font-family="Lato,Arial,sans-serif" font-size="28" font-weight="400">Intended recipe + vial link</text>
+<text x="23" y="395" fill="#142B40" font-family="Lato,Arial,sans-serif" font-size="28" font-weight="400">Compatible accepted reference</text>
+<text x="23" y="432" fill="#142B40" font-family="Lato,Arial,sans-serif" font-size="28" font-weight="400">Progress only when qualified</text>
+<rect x="520" y="270" width="440" height="185" rx="14" fill="#EFF5F7" stroke="#9EB5BF" stroke-width="2"/>
+<text x="538" y="313" fill="#142B40" font-family="Lato,Arial,sans-serif" font-size="32" font-weight="700">PART 2 / CPU</text>
+<text x="538" y="358" fill="#142B40" font-family="Lato,Arial,sans-serif" font-size="28" font-weight="400">Reference match + comparison</text>
+<text x="538" y="395" fill="#142B40" font-family="Lato,Arial,sans-serif" font-size="28" font-weight="400">Pending / confirmed evidence</text>
+<text x="538" y="432" fill="#142B40" font-family="Lato,Arial,sans-serif" font-size="28" font-weight="400">Keep unavailable explicit</text>
+<rect x="1035" y="270" width="455" height="185" rx="14" fill="#FFF3E5" stroke="#9EB5BF" stroke-width="2"/>
+<text x="1053" y="313" fill="#142B40" font-family="Lato,Arial,sans-serif" font-size="32" font-weight="700">OPERATOR / BROWSER</text>
+<text x="1053" y="358" fill="#142B40" font-family="Lato,Arial,sans-serif" font-size="28" font-weight="400">Exact image + reason + lag</text>
+<text x="1053" y="395" fill="#142B40" font-family="Lato,Arial,sans-serif" font-size="28" font-weight="400">Review + human response</text>
+<text x="1053" y="432" fill="#142B40" font-family="Lato,Arial,sans-serif" font-size="28" font-weight="400">Recorded follow-up</text>
+<polyline points="445,360 520,360" fill="none" stroke="#087F83" stroke-width="4"/>
+<polygon points="520.0,360.0 506.0,352.0 506.0,368.0" fill="#087F83"/>
+<polyline points="960,360 1035,360" fill="none" stroke="#087F83" stroke-width="4"/>
+<polygon points="1035.0,360.0 1021.0,352.0 1021.0,368.0" fill="#087F83"/>
+<polyline points="1260,190 1260,230 740,230 740,270" fill="none" stroke="#087F83" stroke-width="4"/>
+<polygon points="740.0,270.0 732.0,256.0 748.0,256.0" fill="#087F83"/>
+<rect x="5" y="525" width="1485" height="110" rx="14" fill="#EFF5F7" stroke="#9EB5BF" stroke-width="2"/>
+<text x="23" y="568" fill="#142B40" font-family="Lato,Arial,sans-serif" font-size="32" font-weight="700">AUDIT + INDEPENDENT EVALUATION</text>
+<text x="23" y="613" fill="#142B40" font-family="Lato,Arial,sans-serif" font-size="28" font-weight="400">Source, context and reference versions; private truth stays outside perception.</text>
+<polyline points="1260,455 1260,525" fill="none" stroke="#087F83" stroke-width="4"/>
+<polygon points="1260.0,525.0 1252.0,511.0 1268.0,511.0" fill="#087F83"/>
+</svg>

@@ -1,0 +1,119 @@
+{
+  "title": "From digital twin to visible liquid",
+  "edition": "October 22, 2026 / experimental results",
+  "pages": [
+    {
+      "title": "From digital twin to visible liquid",
+      "subtitle": "Presentation brief: synthetic training, real-video transfer and an operator-facing inspection pipeline.",
+      "blocks": [
+        ["lead", "We used the supplied factory digital twin to generate paired liquid scenes, trained a compact segmentation model on synthetic images, and applied the frozen model to real filling recordings."],
+        ["h", "The problem"],
+        ["p", "Identify accumulated liquid as soon as it is visibly distinguishable at the vial bottom. Avoid treating the entire transparent vial, reflections or the falling stream as the pool. Then determine whether the image supports a reliable color sample."],
+        ["h", "The result to show"],
+        ["p", "The reference-based liquid model visually follows pool growth in six real development clips. The direct vial-to-mask-to-QA path took 16.61 ms median on GB10 in a matched cached-frame test, about six times faster than our detector-to-SAM comparators. Optional SAM refinement increased QA-eligible samples from 105 to 185 of the same 264 frames."],
+        ["h", "A useful division of work"],
+        ["table", ["Layer", "Role"], [["Digital twin", "Generate controlled examples and stress conditions."], ["Vision", "Locate the vial and propose visible-pool masks."], ["Evidence", "Qualify raw-image samples and retain exact source identity."], ["Operator", "Review recipe-related evidence and record a human response."]], [105, 407]],
+        ["callout", "Current claim: promising synthetic-to-real visual transfer plus measured processing and sampling availability. Reviewed real mask accuracy, first-visible detection delay and physical recipe accuracy remain unmeasured."],
+        ["small", "Scope: Dataset 2 filling station. Dataset 1 final-fixture inspection remains a proposed extension. The experimental model composition has not automatically replaced the application defaults."]
+      ],
+      "speaker": "Open with the real-video demo. Say: We are trying to see the first accumulated pool, then decide whether there is enough trustworthy evidence for an operator. We used simulation to build the training set and real recordings to inspect transfer. Do not describe the demo as a completed production deployment."
+    },
+    {
+      "title": "How we made the training data",
+      "subtitle": "A controlled image-generation experiment using the supplied scene and camera geometry.",
+      "blocks": [
+        ["image", "synthetic-states.png", "One actual rendered training family: empty, stream-only, early pool and established pool. The crops enlarge the fixed liquid region."],
+        ["p", "Isaac Sim rendered the station with procedural liquid geometry and a session-layer refractive vial material. We varied lighting, glass roughness, paper brightness, camera translation, liquid color/absorption and pool size. Original team scene assets were preserved."],
+        ["table", ["Data decision", "Executed design"], [["Total", "192 renders = 48 families × four states."], ["Training / development", "36 families / 144 images; 12 families / 48 images. All four related states stay in one split."], ["Liquid target", "Accumulated liquid body. Empty and stream-only are negative for that target."], ["Supervision", "Synthetic geometric body masks and presence labels; no real CSI images used to fit this liquid model."], ["Visibility boundary", "Geometric masks are proxies. Refraction and weak contrast can make the visible pool boundary different."]], [135, 377]],
+        ["callout", "This is a rendered optical/process fixture, not validated computational fluid dynamics. Neither synthetic volume nor geometric mask pixels establish real measured volume or optically correct boundaries."],
+        ["small", "Additional 36 optical-control renders were inspected separately; they were marked review-only and were not added to the training set. The displayed family is an example, not a physically matched real/sim pair."]
+      ],
+      "speaker": "Explain why each family contains four states: the learner must distinguish the pool from the vial and the stream. The split unit is the complete family, not an individual image. We controlled appearance in the twin; we did not claim that the twin accurately simulates all fluid physics."
+    },
+    {
+      "title": "The tested model architecture",
+      "subtitle": "Fast presence and segmentation, with a separately tested refinement option.",
+      "blocks": [
+        ["image", "architecture.png", "Solid paths: tested direct branch. Dashed path: exploratory SAM refinement, tested with cached upstream outputs."],
+        ["table", ["Component", "Version and training provenance"], [["Vial geometry", "YOLO11n: 768 unique synthetic CSI images, repeated/translated sampling, 12 fixed epochs. Generic COCO initialization."], ["Liquid presence + mask", "Custom GroupNorm U-Net, channels 16/32/64/128. Random initialization; 144 synthetic training images."], ["Optional mask refinement", "SAM2.1 Hiera Tiny, generic pretrained weights; no CSI fine-tuning. Current/past-frame box/point guidance, not SAM video propagation."], ["Runtime", "GB10; native PyTorch 2.11.0+cu130 and Ultralytics 8.4.182. CPU orchestration/QA; GPU model inference."]], [135, 377]],
+        ["p", "Current and earlier-reference RGB use a fixed 112 × 192 station ROI. Background-anchor gain correction precedes three signed and three absolute difference channels. The U-Net predicts presence and a mask; both thresholds stay at 0.5. YOLO supports later association and QA; it does not select the U-Net crop."],
+        ["small", "Color is always sampled from original RGB, never from normalized/difference features. This is a paired-frame model with an explicit reference, not a recurrent network. Reference qualification, reset and alignment remain integration requirements."]
+      ],
+      "speaker": "Whiteboard this as two parallel paths from one exact frame: YOLO for vial geometry; current plus reference for liquid segmentation. Join them at QA. SAM can refine a temporal proposal without Faster R-CNN. A model mask and a usable color sample are different outputs."
+    },
+    {
+      "title": "What the experiments taught us",
+      "subtitle": "Better synthetic scores alone did not guarantee better real-video behavior.",
+      "blocks": [
+        ["table", ["Liquid input", "Selected epoch", "Synthetic presence", "Positive mask IoU"], [["Current RGB", "45 / 60", "47 / 48", "0.8763"], ["Reference difference", "50 / 60", "48 / 48", "0.8929"], ["Difference + gain correction", "40 / 60", "48 / 48", "0.8933"]], [195, 92, 115, 110]],
+        ["p", "All three compact models trained for 60 epochs with AdamW, learning rate 0.001, batch 8 and seed 19. Synthetic augmentation included gain, bias, noise and reference shifts up to one pixel. Every five epochs, selection used synthetic presence accuracy plus positive geometric IoU, with earliest ties. The gain-corrected candidate was selected and frozen before real inference."],
+        ["h", "The useful change"],
+        ["p", "The current-RGB model proposed liquid throughout the 264 real frames and yielded zero QA-eligible samples. Temporal inputs visually followed bottom-pool growth and yielded 101/264 samples without gain correction and 105/264 with it. These counts describe sampling availability, not human accuracy."],
+        ["h", "The attempts we did not promote"],
+        ["p", "Longer synthetic Faster R-CNN fitting improved synthetic geometry while worsening provisional real agreement: the original-corpus control fell from 23.40% to 14.50% AP50–95 between epochs 3 and 15. The real references are machine-generated development annotations, not reviewed truth. Crop and geometry-filter experiments also had tradeoffs rather than a clear transfer win."],
+        ["p", "Cosmos Transfer was tested as an appearance generator, but its trial altered liquid/hue on nominally empty input. Those outputs were not accepted as label-preserving training data. TensorRT showed benefits in an earlier pipeline; the new temporal measurements here are native PyTorch, not a TensorRT result."],
+        ["callout", "Defensible lesson: the successful direction changed the input representation to emphasize change at the liquid station. It did not establish that one architecture is universally superior or that the sim-to-real gap is closed."],
+        ["small", "Synthetic scores above reuse the development set for checkpoint selection. Real clips were inspected during development; there is no blind final physical test. Run 5 was excluded from this round."]
+      ],
+      "speaker": "Own the negative experiments. A convincing engineering story includes what failed and why that changed our next hypothesis. Real imagery guided problem diagnosis, but no real weights, real checkpoint selection or real threshold tuning were used for these new candidates. Do not call the development scores an independent synthetic test."
+    },
+    {
+      "title": "The measured comparison",
+      "subtitle": "Same 264 native Run 4 frames, six correlated clips, same vial model and unchanged sampling QA.",
+      "blocks": [
+        ["table", ["System", "CV median / p95", "QA samples / 264"], [["Legacy real-trained R-CNN → SAM", "99.24 / 101.09 ms", "185"], ["Synthetic R-CNN → SAM", "99.84 / 101.38 ms", "210"], ["Synthetic temporal direct", "16.61 / 25.08 ms", "105"]], [235, 150, 127]],
+        ["p", "Each arm ran a full 264-frame warm-up and two measured passes: 528 timed samples per arm, reversing arm order on the second pass. Same-frame vial outputs matched across arms. Repeated masks, final sampling masks, measured colors and QA outcomes reproduced exactly."],
+        ["h", "Temporal proposals → actual SAM refinement"],
+        ["p", "An exploratory fourth composition retained the frozen temporal presence gate and prompted SAM without R-CNN. It increased QA availability from 105/264 to 185/264: 80 previously unavailable frames gained a qualified sample, and none of the original 105 lost one. SAM ran on 188 frames; temporal supplied 189 proposals."],
+        ["table", ["What we measured", "Meaning"], [["Direct path ~6× faster", "Matched cached-input CV processing. Excludes decode, rendering, serialization, network and browser."], ["Refinement: 72.62 / 73.55 ms", "Incremental median / p95 for guidance + SAM + QA. Upstream outputs were cached; full hybrid latency is unmeasured."], ["185 QA-eligible frames", "Passed existing sampling checks. Does not mean 185 correct masks or correct recipe decisions."]], [170, 342]],
+        ["callout", "The synthetic R-CNN/SAM arm has the most QA passes, but inspected early masks can follow glass. Availability cannot rank segmentation accuracy. A shared 72-frame human review packet is ready; real accuracy and first-visible delay remain pending."],
+        ["small", "This compares practical systems with different training corpora and pretraining, not an architecture-only ablation. The legacy real-trained arm is a comparator, not the synthetic-trained competition solution. Six clips are not 264 independent physical trials."]
+      ],
+      "speaker": "Say the denominator aloud: 264 source frames, not 264 vials or independent factory trials. The 80 gains are paired sampling outcomes. The roughly six-times speed result belongs to the direct branch; do not attach it to the hybrid or claim camera-to-dashboard real-time performance."
+    },
+    {
+      "title": "The twin is also a test bench",
+      "subtitle": "Separate model training, image sensitivity tests and simulated process decisions.",
+      "blocks": [
+        ["table", ["Test layer", "What it establishes"], [["Rendered synthetic holdout", "Can the frozen model handle new synthetic families and known geometric states?"], ["Digital real-image perturbations", "How much do predictions change under controlled image/reference edits? This measures stability, not accuracy."], ["Process/advisory simulator", "Does warning logic behave under known injections, pauses, missing samples and camera problems?"], ["Fresh supervised physical test", "Still required: actual pool masks/onset, known recipe references, reference resets and end-to-end operation."]], [160, 352]],
+        ["h", "Reference handling is a measured dependency"],
+        ["p", "On the 264 real development frames, digitally darkening current RGB to 70% changed 2 proposal decisions, with 0.993 mean mask overlap against the clean prediction on 189 clean-positive frames. A five-pixel reference shift changed 12 decisions; a deliberately later reference changed 126. These are sensitivity results, not ground-truth IoU."],
+        ["h", "Separate Stage 2 process simulation"],
+        ["table", ["Scenario", "Simulated warning outcomes"], [["Normal episodes", "0 / 24 warned"], ["Two-mL injections", "72 / 72 detected"], ["Half-mL injections", "45 / 72 detected"]], [210, 302]],
+        ["p", "Those process figures came from fresh simulator seeds with flow/pause/camera/dropout variation. References and observations share an analytic family, and the simulator supplies ideal truthful metered process cues. This does not establish real defect detection, a production false-alarm rate or access to live line meters."],
+        ["callout", "Our hackathon interface must work with an operator. Approved video, operator-entered context and qualified references are the intended boundary; direct existing sensor/actuator access is unavailable. Simulator-only signals must not silently become assumed live inputs."],
+        ["small", "Isaac RGB rendering and analytic process-policy tests are different evidence layers. We have not calibrated a fluid-dynamics twin against measured plant physics."]
+      ],
+      "speaker": "Describe two uses of the twin: make training examples; inject controlled problems into a test environment. Then distinguish the analytic policy simulator from Isaac image rendering. Explain the 0/24 as no warnings on 24 nominal simulated episodes, not zero error on real vials."
+    },
+    {
+      "title": "Where Dataset 1 fits",
+      "subtitle": "A planned second inspection station, not a completed integration.",
+      "blocks": [
+        ["lead", "Dataset 2 is the implemented filling experiment. Dataset 1 would add final-fixture inspection for slot occupancy and cap/body issues, presented alongside filling evidence."],
+        ["table", ["Status", "What we actually have"], [["Available", "Local tray-inspection digital twin and camera configuration; a written cross-station observation/fusion proposal."], ["Not implemented", "Dataset 1 synthetic training, final-fixture classifier evaluation and confirmed physical vial-to-slot association."], ["Not available in known local inputs", "Dataset 1 real labeled fixture crops for independent real-transfer evaluation. Dataset 2 cap_seal images are not automatically that ground truth."]], [155, 357]],
+        ["h", "We can start without waiting for real training images"],
+        ["p", "Use the provided twin to render one bounded slot task, then train a synthetic-only classifier or detector. Keep complete scenes/seeds and their crops in one split. Freeze its weights and settings on synthetic criteria, then evaluate on fresh real fixture images when available."],
+        ["h", "Integration must preserve physical identity"],
+        ["p", "Each station emits source/frame/clock identity, target geometry, model/config identity and evidence or an unavailable reason. Join a filling assessment to a fixture slot only with a confirmed physical association. Color similarity or sequential track IDs are insufficient. Unlinked observations can still be displayed separately."],
+        ["callout", "A good-looking cap cannot clear a mixture concern. An empty future slot is not a missed placement without completion context. The dashboard advises and records an operator response; it does not command the line."],
+        ["small", "Dataset 1 asset discovery and architecture planning are complete. Training, transfer metrics and cross-station integration are future work. No Dataset 1 performance number belongs in this presentation."]
+      ],
+      "speaker": "Answer directly if asked: No, Dataset 1 is not integrated yet. We have its twin assets and a design. Real fixture data is needed for real validation, not as a prerequisite to begin synthetic training. Keep this as an extension after validating the current station."
+    },
+    {
+      "title": "How to present the result",
+      "subtitle": "A short narrative, an actual demo and a concrete next proof.",
+      "blocks": [
+        ["table", ["Presentation beat", "Suggested wording"], [["1 / Problem", "The first visible pool is small, transparent and surrounded by glass and reflections."], ["2 / Digital twin", "We rendered controlled empty, stream-only, early and established states, keeping related scenes together in the split."], ["3 / Training", "Our compact liquid model learned from synthetic images only; generic pretrained YOLO/SAM components are disclosed separately."], ["4 / Transfer demo", "Here is the frozen model on real development recordings. The useful change was comparing current appearance with a reference."], ["5 / Evidence", "The direct CV path was about six times faster in a matched GB10 test. Optional SAM refinement recovered 80 sampling opportunities on these frames."], ["6 / Next proof", "We will score reviewed pool masks and first-visible timing, validate reference resets and test qualified operator decisions in a supervised physical session."]], [125, 387]],
+        ["h", "Demo order"],
+        ["p", "Start with temporal-pool-candidate.mp4: one panel, 48 seconds of real source clips with actual frozen-model output. Use the separate temporal-versus-SAM video only if explaining refinement. Both are development demonstrations, not a blind physical acceptance test."],
+        ["h", "Division of delivery"],
+        ["p", "Srijan: standard model pipeline and reference/source contracts. Josiah/Hayden: operator frontend/backend and response history. Cameron: SAM2.1 coordination. Zoe/Alayna/Reagan: NVIDIA candidates with label/content-integrity checks. Austin: experiment evidence and supervised-test preparation. Human review and CSI approval remain explicit team tasks."],
+        ["callout", "Use: synthetic-trained liquid model, promising real-video transfer, measured processing, qualified sampling. Avoid: closed sim-to-real gap, proven earliest detection, production accuracy, autonomous line control or completed Dataset 1 integration."],
+        ["small", "The companion README lists editable source, exact evidence, model hashes and local videos. Results are an October 22 development snapshot; presentation conclusions should be updated after human review and physical testing."]
+      ],
+      "speaker": "Close on what the experiment made possible and the next measurable gate. If asked for accuracy, distinguish synthetic geometric validation from unavailable reviewed real accuracy. If asked whether all components are synthetic-only, distinguish our CSI-domain fitting from generic COCO/SAM pretraining and the explicitly legacy real-trained comparator."
+    }
+  ]
+}

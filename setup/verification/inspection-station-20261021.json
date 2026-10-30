@@ -1,0 +1,105 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-21",
+  "status": "passed",
+  "branch": "austin-work",
+  "behavior": "Continuous source -> actual frozen CV/QA -> source-aligned observations and retained reviews -> human response journal",
+  "default_entrypoint": "pwsh -File setup/run-operator-twin.ps1",
+  "historical_guided_option": "-Walkthrough",
+  "independent_source_verification": {
+    "path": "C:/Users/Austin/ai-club-tools/results/operator-station-20261021/verification-v1/verification.json",
+    "sha256": "b5f030fe63ac3a416de34820ecc25e7901fdd1edaac115892f78415d1e6422a2",
+    "verified_live_rgb_ack_frames": 86,
+    "recomputed_sampling_colors": 72,
+    "retained_review_verified": true,
+    "source_assets_unchanged": true,
+    "model_sha256": {
+      "vial": "10856c18a8a5c485e832adcc6b841b739e726a969dc043fe8db64c49163bb361",
+      "liquid": "9479fb13ed9c7ebd815c314e8219ba3b86c3ffa267f758f714a3058f9ac3a343",
+      "sam": "7402e0d864fa82708a20fbd15bc84245c2f26dff0eb43a4b5b93452deb34be69"
+    }
+  },
+  "browser_verification": {
+    "path": "C:/Users/Austin/ai-club-tools/results/operator-station-20261021/browser-v2/verification.json",
+    "sha256": "1ba59c947fd735cf6b77afc1115f66087180caf856292cdf7931f61e94a5873a",
+    "frames_observed": 82,
+    "checks": {
+      "frames_arrive_without_operator_start_or_scenario_controls": true,
+      "captured_review_stays_fixed_while_live_feed_advances": true,
+      "acknowledgement_does_not_clear_review": true,
+      "operator_response_does_not_pause_or_command_frame_source": true,
+      "operator_context_is_explicit_and_separate_from_source_identity": true,
+      "manual_request_pins_the_clicked_frame_while_notes_are_entered": true,
+      "paused_source_is_not_presented_as_fresh_evidence": true,
+      "browser_reload_preserves_operator_history": true,
+      "mobile_no_page_overflow": true,
+      "all_browser_requests_loopback": true
+    },
+    "errors": []
+  },
+  "external_producer": {
+    "path": "C:/Users/Austin/ai-club-tools/results/operator-station-20261021/external-input-check.json",
+    "sha256": "f229410b69f12a4dce93d411a50980bb8ebd2c652b5753e6189a6a584303126e",
+    "actual_inference_frames": 3,
+    "input": "saved local PNG through FramePublisher with Isaac disabled",
+    "native_pts_and_time_base_verified": true,
+    "unknown_recipe_progress_reference_preserved": true,
+    "camera_connected": false
+  },
+  "tests": {
+    "total_passed": 20,
+    "failed": 0,
+    "station_tests": 7,
+    "previous_operator_tests": 13,
+    "station_checks_repeated_after_open_queue_retention_change": true
+  },
+  "checks": {
+    "python_compilation": true,
+    "javascript_syntax": true,
+    "powershell_launcher_syntax": true,
+    "diff_whitespace": true,
+    "manual_review_pins_clicked_frame": true,
+    "open_reviews_retained_after_100_source_windows": true,
+    "raw_frame_backpressure_bounded": true
+  },
+  "live_session": {
+    "url": "http://127.0.0.1:8767",
+    "status": "live",
+    "source": {
+      "source_id": "local-fillcam",
+      "kind": "isaac",
+      "status": "live",
+      "age_s": 0.625,
+      "paused": false,
+      "error": null,
+      "ingest_fps": 1.4064697609374472
+    },
+    "session_id": "inspection-61f800389be8",
+    "processed_frames_at_check": 5,
+    "hardware_commands_sent": 0
+  },
+  "source_file_sha256": {
+    "replay/operator/frame_input.py": "b4fd2252cf8c3a1ca336997ad3daee16cfa36090a6c0a5508fa22e7884d9f688",
+    "replay/operator/static/station.css": "354fcfe3fd6a29681c32806cd7ce441d7fc18864517666571f69367a2ea2a3c1",
+    "replay/operator/static/station.html": "391965d312f646a094704f172936667d740e324ddddaa29944b40c2a2be93386",
+    "replay/operator/static/station.js": "ed7e86e5eb0d5eda8cd827edfd467f04739a3e1fe53ab586b7936f099e01295c",
+    "replay/operator/station.py": "a034a379134165518e60e8fbe3f9336aee5b356c5cff0a6e7834b856fafd6dd6",
+    "replay/operator/station_simulator.py": "8faf64c48627314eadccca435846e09f30fad79f7958f44afa2992b07562085b",
+    "replay/tests/test_inspection_station.py": "049ab7e5a17c6d7388c9ebdd748659b840e8044ef4626d129fa1042f6c51757a",
+    "replay/tests/verify_inspection_station_browser.py": "10d5868458a85079473219c85ec76cf323d1d852525602a91ad2b4e4c5053694",
+    "replay/tests/verify_inspection_station_run.py": "d45de41d86956cb0bd6f59684591d7078bf56ffcbaebe5e77d4c9c53e5523053",
+    "setup/run-operator-twin.ps1": "64f64493029f00e1ece79159ca865357bf4a2d369ee481777cb7d7fab4429613"
+  },
+  "preserved_main": "1cb6a63987987e1d8f69e6adc8aaa6ba2357ec68",
+  "hardware_commands_sent": 0,
+  "run5_used": false,
+  "operational_recipe_assessment": "unavailable",
+  "limits": [
+    "No industrial network/device/camera connection was made.",
+    "A future approved camera connector must publish the documented image/provenance contract.",
+    "Current frozen measurement profile expects 640x480 and 5 Hz sampling; camera commissioning is still required.",
+    "External frames cannot imply recipe, physical identity, phase, meter progress or reference approval.",
+    "Current geometry/references are unreviewed/development-only; no real defect or product acceptance result.",
+    "Continuous Isaac source cycles independent development scenes; operator actions do not change it."
+  ]
+}

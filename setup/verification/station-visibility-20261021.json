@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-21",
+  "status": "passed",
+  "branch": "austin-work",
+  "main_unchanged": "1cb6a63987987e1d8f69e6adc8aaa6ba2357ec68",
+  "pushed": false,
+  "cause": [
+    "Cached source defaulted to raw video and hid analyzed-mask preview in collapsed details.",
+    "Above-threshold readings were labelled within band until three consecutive QA-valid samples confirmed a warning.",
+    "Current-frame QA failure took display priority over a previously confirmed observation alert.",
+    "Dashboard polling repeated full historical mask arrays."
+  ],
+  "changes": [
+    "Mask preview open beside real-time video, stacked on mobile, with timestamp, lag and mask-pixel/QA status.",
+    "Immediate pending display for actual valid readings above 5 dE; unchanged three-sample confirmed-warning policy.",
+    "Confirmed observation alert remains visible on failed-QA frames; failed measurement is still unavailable.",
+    "Compact dashboard summaries; exact PNGs, full logs and JSON exports preserve original evidence."
+  ],
+  "tests": {
+    "passed": 26,
+    "command": "python -m unittest replay.tests.test_operator_workspace replay.tests.test_operator_twin replay.tests.test_inspection_station replay.tests.test_prerender_source -v",
+    "python_compile": "passed",
+    "javascript_syntax": "passed",
+    "git_diff_check": "passed"
+  },
+  "browser": {
+    "status": "passed",
+    "observed_live_samples": 173,
+    "actual_pending_readings": 6,
+    "confirmed_alert_samples": 38,
+    "confirmed_alerts_retained_on_failed_QA": 13,
+    "samples_with_masks": 146,
+    "masks_visible_without_expanding": true,
+    "dashboard_poll_bytes": 19460,
+    "full_mask_evidence_preserved_in_export": true,
+    "mobile_no_overflow": true,
+    "playback": {
+      "wall_seconds": 3.012999999999998,
+      "speed_ratio": 1.0000000000000007,
+      "presented_frames": 90,
+      "CV_samples": 11
+    },
+    "browser_errors": [],
+    "hardware_commands_sent": 0,
+    "artifacts_sha256": {
+      "confirmed-alert-with-failed-QA.png": "617f74143ce259a4296c002b0c1a52e4a96ae73134008a789204b6386b7969b3",
+      "confirmed-alert.png": "a94169ab4788813f62beccf5fad61a4df8ca0dc1a09c39a1815842ff99a22843",
+      "mobile-visible-mask.png": "453aa1cb40e6f69c28738276a2e1958dfec28b6e2b44eda837c14b4ef303244a",
+      "observed-samples.json": "45b338fbeff32e80f5a2d6592bf0beb17940b614074ff99715c8dbb8ac4a9888",
+      "pending-deviation.png": "2a1f1e6f03845075286274ebb4dc63c23812447e1382601ba50dfc9260fcbaef",
+      "sampling-usable.png": "545cb46b2db913a80bab64458f294e440c9ca824013e1b2c86326c3ab1fd1c6f",
+      "unavailable.png": "198020567c10d6529712fcef9405757c3f8c91a64e6558fe35f9cfa9ee787034"
+    }
+  },
+  "independent": {
+    "status": "passed",
+    "verified_frames": 292,
+    "recomputed_sampling_colors": 242,
+    "pending_readings": 10,
+    "confirmed_alerts_on_failed_QA": 20,
+    "joined_browser_samples": 173,
+    "unchanged_threshold_de2000": 5,
+    "unchanged_required_consecutive_samples": 3,
+    "unchanged_frozen_model_hashes": true,
+    "full_rows_sha256": "513e40b20320bd6ad11b0c2f26bce1a8b24a80dc87cd4bfc413a15507ecf0948",
+    "excluded_incomplete_tail_bytes": 0,
+    "source_log_may_continue": true,
+    "hardware_commands_sent": 0
+  },
+  "local": {
+    "url": "http://127.0.0.1:8767",
+    "mode": "prerender",
+    "artifacts_root": "C:/Users/Austin/ai-club-tools/results/operator-prerender-20261021",
+    "running_workspace": "station-v3",
+    "previous_workspace": "station-v1",
+    "previous_export": "diagnosis-v2/previous-session-export.json",
+    "interrupted_launch": "station-v2",
+    "interrupted_launch_note": "Windows detached launch exited with forrtl window-CLOSE event; output preserved. Fresh CREATE_NO_WINDOW launch verified live.",
+    "browser": "browser-v2",
+    "independent": "diagnosis-v2/independent-verification.json"
+  },
+  "source_sha256": {
+    "replay/operator/station.py": "c698f4de08a333a014211674e8e93bf5a49bf6d47369c1e6bee4f5821371b065",
+    "replay/operator/static/station.css": "f727cff210fffa3a4ed6ca00bbcd0e2169b137a14bf1b520405856f82183bac2",
+    "replay/operator/static/station.html": "5c8601732eb87d7e22082c3d4514b5d0f40ad7d1197dab958e90d95f67a32511",
+    "replay/operator/static/station.js": "f9bbc1a472288ff3d3dfd450c47435e43ad5f3eed3a54a9b37964ad1ec4e965e",
+    "replay/tests/test_inspection_station.py": "3b1df392eb9ad190eb05c7bab441eff8795358b2c6aba158c5b6cc13c2e90410",
+    "replay/tests/verify_station_visibility_browser.py": "34fd3de0d8875f529c03ecd8cb9289086d4fbb0816d510c69ea0e378df7eabbb",
+    "replay/tests/verify_prerender_browser.py": "755775f3e09d2eea891c1798e29c42269598641f5fc0ac06a77ad37df4947694"
+  },
+  "evidence_sha256": {
+    "browser-v2/verification.json": "a35c9a70aa5940be84490b9e169f6496adb938cdbf5b84aa50b83f00c4d4a9ae",
+    "diagnosis-v2/independent-verification.json": "63aeafd0acd1b0bc753706b566e04c727e0b9cad0e74f4bd23a5e8bbd2c30094",
+    "diagnosis-v2/previous-session-export.json": "471bcfd3cc5fe19d3a6d44a184926756df646441996b9247102ea48a34f5b5fc"
+  },
+  "limits": [
+    "Development simulation, not a real product-accuracy result.",
+    "No changed model weights, thresholds, QA gates or three-consecutive-sample confirmation.",
+    "Cached video is fixed input; operator actions do not alter it.",
+    "Previous session is preserved separately; restart starts a fresh workspace."
+  ]
+}

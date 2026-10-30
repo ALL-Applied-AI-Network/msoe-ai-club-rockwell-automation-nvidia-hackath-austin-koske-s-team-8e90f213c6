@@ -1,0 +1,98 @@
+{
+  "checked_utc": "2026-10-23T14:54:16.739495+00:00",
+  "branch": "austin-work",
+  "completed": true,
+  "mode": "completed-model-output replay with running operator API",
+  "interactive_url": "http://127.0.0.1:8870",
+  "windows_loopback_HTTP_status": 200,
+  "interactive_workspace_initial_reviews": 0,
+  "source_counts": {
+    "fill_frames": 72,
+    "cap_states": 12,
+    "direct_qa": 27,
+    "sam_qa": 53
+  },
+  "model_names": [
+    "YOLO11n",
+    "Temporal U-Net",
+    "SAM2.1 Hiera Tiny",
+    "Dual-branch reference cap-state CNN"
+  ],
+  "source_bundle_sha256": "2a781e321603465c4c4a21314609b2630158736cd8b7852bee6cf3af71dc541c",
+  "source_model_links_verified": true,
+  "source_domains": [
+    "real filling Run4",
+    "synthetic cap fixture"
+  ],
+  "new_inference": false,
+  "training": false,
+  "local_GPU_models_run": false,
+  "source_clocks_joined": false,
+  "physical_vials_linked": false,
+  "body_damage_assessed": false,
+  "real_recipe_acceptance_available": false,
+  "hardware_commands": 0,
+  "existing_app_defaults_changed": false,
+  "measurement_QA_changed": false,
+  "mentees_api_client_changed": false,
+  "main_changed": false,
+  "pushed": false,
+  "backend_unit_tests_passed": 4,
+  "browser_verification": {
+    "checks": {
+      "review_frame_pinned_while_source_advances": true,
+      "closure_blocked_before_response": true,
+      "actual_backend_export_has_two_domains_and_native_source_identity": true,
+      "acknowledgement_not_resolution_and_no_release": true,
+      "browser_reload_preserves_server_journal": true,
+      "mobile_no_horizontal_overflow": true,
+      "no_browser_errors_or_external_requests": true
+    },
+    "counts": {
+      "fill_frames": 72,
+      "cap_states": 12,
+      "direct_qa": 27,
+      "sam_qa": 53
+    },
+    "browser_errors": [],
+    "network_requests": 49,
+    "new_inference": false,
+    "training": false,
+    "physical_vials_linked": false,
+    "demonstration": true,
+    "product_release_authorized": false,
+    "hardware_commands": 0
+  },
+  "python_compilation_passed": true,
+  "javascript_syntax_passed": true,
+  "video": {
+    "path": "/mnt/c/Users/Austin/ai-club-tools/results/full-app-demo-20261023/First-Vial-Full-App-Demo.mp4",
+    "duration_seconds": 47.6,
+    "decoded_frames": 1190,
+    "width": 1600,
+    "height": 1200,
+    "fps": 25,
+    "sha256": "e138d2769406e47f8060a604c9bed42811589942a2c50cd5564ba5c87cff1301",
+    "actual_browser_recording": true
+  },
+  "retained_partial_runs": [
+    "bundle-v1: path-type error at manifest generation; preserved; recovered into bundle-v2",
+    "browser-v1: recording harness expression incompatible with CSP; preserved; corrected without relaxing app policy",
+    "browser-v2: launched before recording server was ready; preserved; browser-v3 completed"
+  ],
+  "recording_servers_stopped": [
+    8871,
+    8872
+  ],
+  "interactive_server_left_running": 8870,
+  "source_file_sha256": {
+    "replay/operator/full_demo.py": "cb6393e988850457c994b969f6279a58e03442b1426a45a70fd364d25c5f02f0",
+    "replay/operator/static/full_demo.html": "97da71128a8e4593adc48f820ba642557bd85d5d671042b1b726ef5275e5d4d0",
+    "replay/operator/static/full_demo.js": "332aa5a1ba029b9a0f1aa53bc5056e61711bbbe60dbebc692f7111d837d77e2e",
+    "replay/operator/static/full_demo.css": "f02997e27de74509b2f3526f29db26b4ff59a3030d77b53a7ceeb014e505e92f",
+    "replay/tests/test_full_app_demo.py": "c111292b4f63022d89b38da8983f72260ce1222199e378a384eb9848ec2760c0",
+    "replay/tests/record_full_app_demo.py": "5264e6edd096f927ac9399898673de87ef5b51e40b2f945c1d22b4deb501d064",
+    "setup/vision/prepare_full_app_demo.py": "a5c8f531d47b675cd056a73ac4cab2848564404a9c85b7f2bc4a066ce9ba1943",
+    "replay/operator/FULL-APP-DEMO.md": "5d3c53dbfc71556ed86d2927db70f441b7dc52767e5c0d0bf4d6064905b4df7e"
+  }
+}

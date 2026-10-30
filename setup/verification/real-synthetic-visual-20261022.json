@@ -1,0 +1,76 @@
+{
+  "schema": "real-synthetic-visual-review/v1",
+  "prepared": "2026-10-22",
+  "completion_sha256": "b76fc36df28c778d4ab8622fa68477a1df315249d8f4c3705a1b033a34767468",
+  "path": "/mnt/c/Users/Austin/ai-club-tools/results/real-vs-synthetic-20261022/review-v1",
+  "model_sha256": "ebbe4b0fc38f99842de8005ac7b8dda4437ed65dec86eab8942470ba748a7b72",
+  "fresh_inference_images": 8,
+  "original_scale": [
+    640,
+    480
+  ],
+  "enlarged_crop": [
+    270,
+    230,
+    350,
+    430
+  ],
+  "no_pixel_enhancement": true,
+  "reviewed_visuals": [
+    "01-real-vs-synthetic.png",
+    "02-lower-vial-closeups.png",
+    "03-same-model-predictions.png",
+    "04-target-scope-mismatch.png",
+    "05-rgb-vs-geometric-mask.png"
+  ],
+  "proposal_counts_at_035": {
+    "vial_fill_20260923_191017_576908": 2,
+    "00-empty": 0,
+    "vial_fill_20260923_191029_656060": 4,
+    "02-tiny-blue": 1,
+    "vial_fill_20260923_184720_822117": 2,
+    "03-tiny-pale": 1,
+    "vial_fill_20260922_170600_743982": 1,
+    "07-mid-blue": 1
+  },
+  "tiny_masks": {
+    "02-tiny-blue": {
+      "mask_sha256": "bf03591046c59bf41557c310d5b9fd223e8ee009a701b94961df6f7a491037a5",
+      "pixels": 1158,
+      "box": [
+        289,
+        381,
+        333,
+        417
+      ]
+    },
+    "03-tiny-pale": {
+      "mask_sha256": "bf03591046c59bf41557c310d5b9fd223e8ee009a701b94961df6f7a491037a5",
+      "pixels": 1158,
+      "box": [
+        289,
+        381,
+        333,
+        417
+      ]
+    },
+    "04-tiny-clear-proxy": {
+      "mask_sha256": "bf03591046c59bf41557c310d5b9fd223e8ee009a701b94961df6f7a491037a5",
+      "pixels": 1158,
+      "box": [
+        289,
+        381,
+        333,
+        417
+      ]
+    }
+  },
+  "training": false,
+  "run5_used": false,
+  "labels_changed": false,
+  "physically_matched_pairs": false,
+  "approved_new_labels": false,
+  "reviewed_accuracy_claim": false,
+  "all_artifact_hashes_passed": true,
+  "published": false
+}

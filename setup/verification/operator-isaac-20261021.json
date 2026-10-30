@@ -1,0 +1,148 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-21",
+  "status": "passed",
+  "branch": "austin-work",
+  "objective": "Native local Isaac Sim with actual frozen inference and a complete operator-directed recovery walkthrough",
+  "evidence_report": {
+    "path": "C:/Users/Austin/ai-club-tools/results/operator-isaac-20261021/verification-v2/verification.json",
+    "sha256": "5e4050abf2e268e328bd460406dc66638d960151327f109c604f646d536f63c7",
+    "files_pinned": 365
+  },
+  "actual_live_frames": 111,
+  "episodes": [
+    {
+      "episode_id": "cycle-01-reference",
+      "role": "reference",
+      "frames": 37,
+      "qa_pass": 26,
+      "comparisons": 0,
+      "max_delta_e2000": null,
+      "warning": false,
+      "seconds_wall": 23.25,
+      "operational_recipe_assessment": "unavailable"
+    },
+    {
+      "episode_id": "cycle-01-test",
+      "role": "test",
+      "frames": 37,
+      "qa_pass": 21,
+      "comparisons": 21,
+      "max_delta_e2000": 12.028467558133558,
+      "warning": true,
+      "seconds_wall": 21.936999999918044,
+      "operational_recipe_assessment": "unavailable"
+    },
+    {
+      "episode_id": "cycle-01-recovery",
+      "role": "recovery",
+      "frames": 37,
+      "qa_pass": 26,
+      "comparisons": 26,
+      "max_delta_e2000": 1.010478584667324,
+      "warning": false,
+      "seconds_wall": 21.703000000095926,
+      "operational_recipe_assessment": "unavailable"
+    }
+  ],
+  "isaac_version": [
+    "6.1.0",
+    "rc.26",
+    "6",
+    "1",
+    "0",
+    "rc",
+    "26",
+    "main.0.7c206f75.local"
+  ],
+  "model_sha256": {
+    "vial": "10856c18a8a5c485e832adcc6b841b739e726a969dc043fe8db64c49163bb361",
+    "liquid": "9479fb13ed9c7ebd815c314e8219ba3b86c3ffa267f758f714a3058f9ac3a343",
+    "sam": "7402e0d864fa82708a20fbd15bc84245c2f26dff0eb43a4b5b93452deb34be69"
+  },
+  "process_trace_and_mass_balance": true,
+  "retained_path_after_operator_flush_verified": true,
+  "all_RGB_and_ACK_hashes_verified": true,
+  "private_truth_received_by_inference": false,
+  "source_assets_unchanged": true,
+  "operational_recipe_assessment": "unavailable",
+  "simulated_action": "Human-requested hypothetical 8 mL constituent-0 prime to drain",
+  "hardware_commands_sent": 0,
+  "run5_used": false,
+  "unit_tests": {
+    "passed": 13,
+    "failed": 0,
+    "commands": [
+      "data-windows Python -m unittest replay.tests.test_operator_workspace replay.tests.test_operator_twin -v",
+      "Four twin checks repeated after shutdown-handling changes"
+    ]
+  },
+  "browser": {
+    "report_path": "C:/Users/Austin/ai-club-tools/results/operator-isaac-20261021/browser-v2/verification.json",
+    "report_sha256": "1a4d8a2b41c1ba8610e897a2b6dfaa21eef465349dff4ca46a0857114a21f511",
+    "checks": {
+      "live_RGB_display": true,
+      "source_overlay_mask_views": true,
+      "acknowledgement_keeps_review_open": true,
+      "intervention_receipt_before_recovery": true,
+      "review_latched_through_recovery": true,
+      "reload_preserves_state": true,
+      "mobile_no_page_overflow": true,
+      "all_page_requests_loopback": true
+    },
+    "uncaught_errors": []
+  },
+  "media": {
+    "kind": "full_application_browser_walkthrough",
+    "source": "/mnt/c/Users/Austin/ai-club-tools/results/operator-isaac-20261021/browser-v2/browser-video/page@bee1f6fbf740b9379ee20fedd386ce77.webm",
+    "source_sha256": "5b5e9d3523deaa8450fb590d0fb519b4166a0b5e70e6c2d70b31a63e719143df",
+    "output": "/mnt/c/Users/Austin/ai-club-tools/results/operator-isaac-20261021/media-v1/operator-isaac-walkthrough.mp4",
+    "sha256": "74c4967f445591ee5c3a30341bbf1b8fa08491f577cdc2d9e3fd64a04bc4210a",
+    "codec": "h264",
+    "width": 1440,
+    "height": 1080,
+    "fps": 25,
+    "duration_seconds": 77.56,
+    "fully_decoded_frames": 1939,
+    "decode_errors": 0,
+    "captured_mode": "actual_live_simulation_and_operator_UI",
+    "speed_change": false
+  },
+  "checks": {
+    "python_compilation": true,
+    "javascript_syntax": true,
+    "powershell_launcher_syntax": true,
+    "diff_whitespace": true,
+    "archived_simulator_stop": "graceful_and_verified"
+  },
+  "local_session": {
+    "status": "ready",
+    "url": "http://127.0.0.1:8767",
+    "session_id": "operator-twin-1b6607f44126",
+    "step": "ready_reference",
+    "operator_name_validation_visible": true,
+    "fresh_session_unmodified": true
+  },
+  "source_file_sha256": {
+    "replay/operator/static/twin.css": "dd1d04c45a2f30641fa645892f3721c48bffb0a60e0b036a289ac98089efa5ae",
+    "replay/operator/static/twin.html": "2bc0226468725d117f8e9e8df2d74daee94140df2c5584b793968625f9e537b5",
+    "replay/operator/static/twin.js": "d585ce1ae17f7653d8d4bb431998bccbb6f69ee724f2a01084e280d12e311692",
+    "replay/operator/twin.py": "50ac9c3c1ae0fbd7a312b7014093495b712c0e8e870b4be7095436f8797cfd40",
+    "replay/operator/twin_process.py": "db22096139abdacadce005034d0cfdecd25b70382954db0548293a2c7c1625fb",
+    "replay/operator/twin_simulator.py": "f0068a1b412aacd71af3e9362daef6933c904354d18b5f7d2e38f1031706542b",
+    "replay/tests/test_operator_twin.py": "372db8f5cee68621e0a32595853c7ae1d9faca596616a1a7fbee04f415b8252d",
+    "replay/tests/verify_operator_twin_browser.py": "a1acd673160f6b11e909d266e5bb8c1d57ba32bd4d1e415d88f05b32255978aa",
+    "replay/tests/verify_operator_twin_run.py": "10bc448a40c56d383873558ac9011272c73f13612002457e086a293bfad738ac",
+    "setup/run-operator-twin.ps1": "ccd5f2aef1b96d86d41a4fa5efd996f1545f1f1100e3b864f91565b2cd9bcb85"
+  },
+  "main_unchanged": "1cb6a63987987e1d8f69e6adc8aaa6ba2357ec68",
+  "limits": [
+    "One scenario walkthrough, not a statistical accuracy study.",
+    "Nominal reference and optical/process assumptions are not physically calibrated.",
+    "Geometric masks are evaluator evidence, not reviewed human masks.",
+    "Operator-directed software simulation; no industrial output or approved procedure.",
+    "Operational recipe assessment stays unavailable.",
+    "Final recovery sample remains QA-unavailable; valid intermediate comparisons are not completed-vial acceptance.",
+    "A live restart requires a fresh workspace; browser reload retains the active session."
+  ]
+}

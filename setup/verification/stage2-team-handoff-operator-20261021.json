@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "kind": "part2-operator-scope-revision",
+  "status": "passed",
+  "date": "2026-10-21",
+  "source_of_clarification": "Reply relayed by Austin in chat; sender/original timestamp not supplied",
+  "scope": {
+    "direct_existing_line_sensors": false,
+    "direct_existing_line_actuators": false,
+    "teledyne_database_updates": false,
+    "physical_operator_interface": true,
+    "live_meter_feed_assumed": false,
+    "physical_endpoint_mode": "Operator recipe/completion + confirmed vial association + compatible acceptable endpoint reference",
+    "during_fill_metered_mode": "Unavailable without qualified process evidence; supported in simulation/offline logs when supplied",
+    "plc_integration": "post-hackathon possibility",
+    "good_scrap_mapping": "unconfirmed; reply differs from previous guide"
+  },
+  "package": "C:/Users/Austin/ai-club-tools/results/stage2-team-handoff-20261021/share-v5.zip",
+  "pdf_pages": 5,
+  "package_files": 7,
+  "zip_sha256": "16b266492ca2249bffe27469ddad1cebc26384e45fc29824dddcc3891dbf6ea2",
+  "artifacts": {
+    "OPERATOR-CLARIFICATION.md": "64fca449e2c2815ba48a73f4dcab810cff2b803acfe8255e1a14a46ebd8acca0",
+    "package-hashes.json": "939504fefd1c44bdecb8763ddeec653d174384e4e33e9eac6b85d3cef9d23ec0",
+    "Part-2-Architecture-Implementation-Brief.md": "6eb5c0879243899d72fe012d0bb03c8dffa12c675b85d023abcea2c62e529456",
+    "Part-2-Architecture-Implementation-Brief.pdf": "77efda00014205260647c853b131364035f9782fab06471bbbea8ab1d4670738",
+    "READ-ME.txt": "cfc2fe046d8fe3d1250b2e34ac60fd4b1af667d816683a7725da201e43bde71c",
+    "stage2-architecture.png": "5f49a435bfe09f9fd0158d9bf660c740c5bb4a3da8fbd940deecef9bc8921e62",
+    "stage2-architecture.svg": "c5d4d6b21a948dcab9040780fa9076ae591fc8fa32c284408bac0eb1be4231dd"
+  },
+  "source_sha256": "6eb5c0879243899d72fe012d0bb03c8dffa12c675b85d023abcea2c62e529456",
+  "checks": {
+    "all_pages_rendered_and_visually_inspected": true,
+    "no_text_overflow": true,
+    "zip_crc_and_member_bytes_verified": true,
+    "code_free": true,
+    "source_and_included_clarification_hashes_verified": true,
+    "builder_compilation_passed": true,
+    "git_diff_check_passed": true
+  },
+  "earlier_packages_preserved": true,
+  "external_messages_sent": 0,
+  "industrial_connections": 0,
+  "runtime_or_model_changes": false,
+  "main_unchanged": true,
+  "main_commit": "1cb6a63987987e1d8f69e6adc8aaa6ba2357ec68"
+}

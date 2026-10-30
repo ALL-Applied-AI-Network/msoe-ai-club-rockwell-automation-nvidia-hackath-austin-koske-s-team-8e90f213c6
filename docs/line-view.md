@@ -119,6 +119,10 @@ reference, so its vials are HOLD until one is set:
    Every later vial of that recipe is judged against it.
 3. A vial without a QA-valid colour does not count; CREATE stays on for the next one.
 
+**RECREATE** redoes it for a recipe that already has a reference (the button reads
+**RECREATE reference from next vial**): the current reference is used until the next decided vial
+replaces it, and the replaced one is kept in the recipe's `reference_history`.
+
 The reference vial itself is not judged. CREATE takes the very next decided vial, whatever the
 order says, so arm it just before that vial; after a recipe change, run a vial or two first
 (the first vial after a change can still hold the previous recipe). Recipes and references

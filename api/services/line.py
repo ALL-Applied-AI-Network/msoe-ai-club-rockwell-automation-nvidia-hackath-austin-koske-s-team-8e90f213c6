@@ -166,13 +166,17 @@ class LineRuns:
         return self.capture
 
     def save_reference(self, event, run_id):
-        """Persist a reference set in CREATE mode, with where it came from; disarm."""
+        """Persist a reference set in CREATE mode, with where it came from; disarm. A recipe that
+        already had one (RECREATE) keeps the replaced reference in reference_history."""
         with self._site_lock:
             recipes = self.site_recipes()
             recipe = next((r for r in recipes if str(r["id"]) == event["recipe_id"]), None)
             if recipe is None:      # a shipped recipe: copy it into the site file, the shipped file stays as it was
                 recipe = dict(next(r for r in self.library(self.manifest(LIVE))["recipes"] if str(r["id"]) == event["recipe_id"]))
                 recipes.append(recipe)
+            if recipe.get("reference"):   # RECREATE: the replaced reference is kept, not lost
+                recipe.setdefault("reference_history", []).append(
+                    {**recipe["reference"], "replaced_at": datetime.now().isoformat(timespec="seconds")})
             recipe["reference"] = {"lab": event["lab"], "from": f"{event['from']} in {run_id}",
                                    "session": run_id, "vial": event["seq"], "video_t_s": round(event["t"], 2),
                                    "set_at": datetime.now().isoformat(timespec="seconds"), "mode": "operator CREATE"}

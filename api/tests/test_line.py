@@ -190,3 +190,16 @@ def test_create_mode_reference_is_saved_with_provenance(tmp_path):
         [9.0, 8.0, 7.0], "live-20261030-090000", 3, "operator CREATE")
     assert runs.capture is None
     assert json.loads(library.read_text())["recipes"][0]["reference"]["lab"] == [1.0, 2.0, 3.0]
+
+
+def test_recreate_replaces_the_reference_and_keeps_the_old_one(tmp_path):
+    library = tmp_path / "library.json"
+    library.write_text(json.dumps({"recipes": [{"id": "5", "reference": None}]}))
+    (tmp_path / "station.json").write_text(json.dumps({"fill_camera": "/dev/video9", "library": str(library)}))
+    runs = LineRuns(None, station=tmp_path / "station.json", site=tmp_path / "site-recipes.json")
+    for seq, lab in ((1, [1.0, 1.0, 1.0]), (7, [2.0, 2.0, 2.0])):
+        runs.arm("5")
+        runs.save_reference({"recipe_id": "5", "seq": seq, "t": 1.0, "lab": lab, "from": "x"}, "live-1")
+    recipe = runs.recipes()["recipes"][0]
+    assert recipe["reference"]["lab"] == [2.0, 2.0, 2.0] and recipe["reference"]["vial"] == 7
+    assert [h["lab"] for h in recipe["reference_history"]] == [[1.0, 1.0, 1.0]]

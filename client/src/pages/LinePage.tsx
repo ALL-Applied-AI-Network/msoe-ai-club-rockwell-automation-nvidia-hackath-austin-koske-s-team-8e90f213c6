@@ -205,7 +205,7 @@ export default function LinePage() {
       const armed = await setLineCapture(capture ? null : draftRecipeId);
       await recipeLibrary.refetch();
       const name = recipeLibrary.data?.recipes.find((recipe) => recipe.id === armed)?.name ?? armed;
-      setRecipeMessage(armed ? `CREATE mode: the next vial the live cameras decide sets the reference for ${name}.` : "CREATE mode off.");
+      setRecipeMessage(armed ? `The next vial the live cameras decide sets the reference for ${name}.` : "CREATE mode off.");
     } catch (captureError) {
       setRecipeMessage(captureError instanceof Error ? captureError.message : "CREATE mode could not be changed");
     }
@@ -455,14 +455,23 @@ export default function LinePage() {
                 disabled={!newRecipe.name.trim() || !(newRecipe.t100_ml + newRecipe.t200_ml + newRecipe.t400_ml)}>Create recipe</button>
             </div>
           )}
-          <div className={`ln-create-mode${capture ? " armed" : ""}`}>
-            <p>{capture
-              ? <><b>CREATE MODE</b> · the next vial the live cameras decide sets the reference for <b>{recipeLibrary.data?.recipes.find((r) => r.id === capture)?.name ?? capture}</b>.</>
-              : <>CREATE mode: send a vial of the selected recipe through and its measured colour becomes that recipe's reference.</>}</p>
-            <button type="button" className={capture ? "" : "ln-primary"} onClick={() => void toggleCapture()} disabled={!capture && !draftRecipeId}>
-              {capture ? "Cancel CREATE" : "CREATE reference from next vial"}
-            </button>
-          </div>
+          {(() => {
+            const armed = recipeLibrary.data?.recipes.find((r) => r.id === capture);
+            const selected = recipeLibrary.data?.recipes.find((r) => r.id === draftRecipeId);
+            const recreate = Boolean((armed ?? selected)?.reference);
+            return (
+              <div className={`ln-create-mode${capture ? " armed" : ""}`}>
+                <p>{capture
+                  ? <><b>{recreate ? "RECREATE MODE" : "CREATE MODE"}</b> · the next vial the live cameras decide {recreate ? "replaces" : "sets"} the reference for <b>{armed?.name ?? capture}</b>{recreate ? " (the current one is used until then, and kept in its history)" : ""}.</>
+                  : recreate
+                    ? <>{selected?.name} has a reference ({selected?.reference?.from}). RECREATE replaces it with the next vial's colour.</>
+                    : <>CREATE mode: send a vial of the selected recipe through and its measured colour becomes that recipe's reference.</>}</p>
+                <button type="button" className={capture ? "" : "ln-primary"} onClick={() => void toggleCapture()} disabled={!capture && !draftRecipeId}>
+                  {capture ? `Cancel ${recreate ? "RECREATE" : "CREATE"}` : `${recreate ? "RECREATE" : "CREATE"} reference from next vial`}
+                </button>
+              </div>
+            );
+          })()}
           <div className="ln-recipe-draft">
             {selectedPlan.isLoading && !newRecipeOrder ? <p>Loading selected recipe order…</p> : null}
             {!selectedPlan.isLoading && !recipeDraft.length ? <p>No vials in this order yet. Select a recipe above and add it.</p> : null}

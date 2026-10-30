@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Linewatch Architecture</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+<style>
+  :root {
+    --bg: #ffffff; --ink: #262626; --muted: #5e5e5e; --line: #3d3d3d; --card: #ffffff;
+    --border: #cfcfcf; --group: #f7f7f7; --nv: #76b900; --nv-soft: #f3f9e6;
+    --learned: #55761c; --learned-soft: #eef4e3; --rule: #3d3d3d; --rule-soft: #ececec;
+    --ai: #1f6f8f; --ai-soft: #e6f1f5; --alert: #d93a2b;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--ink); font-family: "Century Gothic", "URW Gothic", sans-serif; }
+  #root { display: flex; justify-content: center; padding: 16px; overflow-x: auto; }
+  .canvas { position: relative; width: 1600px; height: 960px; flex: none; background: var(--bg); }
+  .group, .card { position: absolute; border-radius: 12px; }
+  .group { border: 1.5px solid var(--border); background: var(--group); }
+  .group.nv { border: 2px solid var(--nv); background: var(--nv-soft); }
+  .group-head { display: flex; align-items: center; gap: 10px; padding: 12px 16px 0; }
+  .group-title { font-weight: 800; font-size: 17px; letter-spacing: -0.01em; }
+  .group-sub { font-size: 12.5px; color: var(--muted); padding: 2px 16px 0; }
+  .nvmark { display: flex; align-items: center; gap: 6px; font-weight: 800; font-size: 15px; letter-spacing: 0.04em; color: #111; }
+  .card { display: flex; flex-direction: column; justify-content: center; background: var(--card); border: 1.5px solid var(--border); padding: 10px 12px; box-shadow: 0 1px 2px rgba(20,24,31,.06); }
+  .card h4 { margin: 0; font-size: 14.5px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+  .card p { margin: 4px 0 0; font-size: 12px; line-height: 1.35; color: var(--muted); }
+  .card ul { margin: 6px 0 0; padding-left: 16px; font-size: 12px; line-height: 1.45; color: var(--ink); }
+  .card.learned { border-color: var(--learned); }
+  .card.rule { border-color: var(--rule); }
+  .card.ai { border-color: var(--ai); }
+  .badge { position: absolute; top: -9px; right: 10px; font: 700 9.5px/1 "JetBrains Mono", monospace; letter-spacing: .06em;
+           padding: 4px 6px; border-radius: 5px; color: #fff; }
+  .badge.learned { background: var(--learned); } .badge.rule { background: var(--rule); } .badge.ai { background: var(--ai); }
+  .badge.nv { background: var(--nv); color: #111; }
+  .center { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+  .label { position: absolute; font-size: 11.5px; color: var(--muted); background: #ffffff; padding: 1px 5px; border-radius: 4px; white-space: nowrap; }
+  .label.on-group { background: var(--group); } .label.on-nv { background: var(--nv-soft); }
+  .alerts { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; justify-content: center; }
+  .alerts span { font: 700 10px/1 "JetBrains Mono", monospace; padding: 4px 6px; border-radius: 4px; border: 1px solid; }
+  .legend { display: flex; flex-direction: column; gap: 7px; font-size: 12.5px; color: var(--muted); }
+  .legend div { display: flex; align-items: center; gap: 8px; }
+  .swatch { width: 14px; height: 14px; border-radius: 4px; border: 2px solid; }
+  svg.edges { position: absolute; inset: 0; pointer-events: none; overflow: visible; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>window.ICONS = {"nvidia": {"path": "M8.948 8.798v-1.43a6.7 6.7 0 0 1 .424-.018c3.922-.124 6.493 3.374 6.493 3.374s-2.774 3.851-5.75 3.851c-.398 0-.787-.062-1.158-.185v-4.346c1.528.185 1.837.857 2.747 2.385l2.04-1.714s-1.492-1.952-4-1.952a6.016 6.016 0 0 0-.796.035m0-4.735v2.138l.424-.027c5.45-.185 9.01 4.47 9.01 4.47s-4.08 4.964-8.33 4.964c-.37 0-.733-.035-1.095-.097v1.325c.3.035.61.062.91.062 3.957 0 6.82-2.023 9.593-4.408.459.371 2.34 1.263 2.73 1.652-2.633 2.208-8.772 3.984-12.253 3.984-.335 0-.653-.018-.971-.053v1.864H24V4.063zm0 10.326v1.131c-3.657-.654-4.673-4.46-4.673-4.46s1.758-1.944 4.673-2.262v1.237H8.94c-1.528-.186-2.73 1.245-2.73 1.245s.68 2.412 2.739 3.11M2.456 10.9s2.164-3.197 6.5-3.533V6.201C4.153 6.59 0 10.653 0 10.653s2.35 6.802 8.948 7.42v-1.237c-4.84-.6-6.492-5.936-6.492-5.936z", "color": "#76B900"}, "react": {"path": "M14.23 12.004a2.236 2.236 0 0 1-2.235 2.236 2.236 2.236 0 0 1-2.236-2.236 2.236 2.236 0 0 1 2.235-2.236 2.236 2.236 0 0 1 2.236 2.236zm2.648-10.69c-1.346 0-3.107.96-4.888 2.622-1.78-1.653-3.542-2.602-4.887-2.602-.41 0-.783.093-1.106.278-1.375.793-1.683 3.264-.973 6.365C1.98 8.917 0 10.42 0 12.004c0 1.59 1.99 3.097 5.043 4.03-.704 3.113-.39 5.588.988 6.38.32.187.69.275 1.102.275 1.345 0 3.107-.96 4.888-2.624 1.78 1.654 3.542 2.603 4.887 2.603.41 0 .783-.09 1.106-.275 1.374-.792 1.683-3.263.973-6.365C22.02 15.096 24 13.59 24 12.004c0-1.59-1.99-3.097-5.043-4.032.704-3.11.39-5.587-.988-6.38-.318-.184-.688-.277-1.092-.278zm-.005 1.09v.006c.225 0 .406.044.558.127.666.382.955 1.835.73 3.704-.054.46-.142.945-.25 1.44-.96-.236-2.006-.417-3.107-.534-.66-.905-1.345-1.727-2.035-2.447 1.592-1.48 3.087-2.292 4.105-2.295zm-9.77.02c1.012 0 2.514.808 4.11 2.28-.686.72-1.37 1.537-2.02 2.442-1.107.117-2.154.298-3.113.538-.112-.49-.195-.964-.254-1.42-.23-1.868.054-3.32.714-3.707.19-.09.4-.127.563-.132zm4.882 3.05c.455.468.91.992 1.36 1.564-.44-.02-.89-.034-1.345-.034-.46 0-.915.01-1.36.034.44-.572.895-1.096 1.345-1.565zM12 8.1c.74 0 1.477.034 2.202.093.406.582.802 1.203 1.183 1.86.372.64.71 1.29 1.018 1.946-.308.655-.646 1.31-1.013 1.95-.38.66-.773 1.288-1.18 1.87-.728.063-1.466.098-2.21.098-.74 0-1.477-.035-2.202-.093-.406-.582-.802-1.204-1.183-1.86-.372-.64-.71-1.29-1.018-1.946.303-.657.646-1.313 1.013-1.954.38-.66.773-1.286 1.18-1.868.728-.064 1.466-.098 2.21-.098zm-3.635.254c-.24.377-.48.763-.704 1.16-.225.39-.435.782-.635 1.174-.265-.656-.49-1.31-.676-1.947.64-.15 1.315-.283 2.015-.386zm7.26 0c.695.103 1.365.23 2.006.387-.18.632-.405 1.282-.66 1.933-.2-.39-.41-.783-.64-1.174-.225-.392-.465-.774-.705-1.146zm3.063.675c.484.15.944.317 1.375.498 1.732.74 2.852 1.708 2.852 2.476-.005.768-1.125 1.74-2.857 2.475-.42.18-.88.342-1.355.493-.28-.958-.646-1.956-1.1-2.98.45-1.017.81-2.01 1.085-2.964zm-13.395.004c.278.96.645 1.957 1.1 2.98-.45 1.017-.812 2.01-1.086 2.964-.484-.15-.944-.318-1.37-.5-1.732-.737-2.852-1.706-2.852-2.474 0-.768 1.12-1.742 2.852-2.476.42-.18.88-.342 1.356-.494zm11.678 4.28c.265.657.49 1.312.676 1.948-.64.157-1.316.29-2.016.39.24-.375.48-.762.705-1.158.225-.39.435-.788.636-1.18zm-9.945.02c.2.392.41.783.64 1.175.23.39.465.772.705 1.143-.695-.102-1.365-.23-2.006-.386.18-.63.406-1.282.66-1.933zM17.92 16.32c.112.493.2.968.254 1.423.23 1.868-.054 3.32-.714 3.708-.147.09-.338.128-.563.128-1.012 0-2.514-.807-4.11-2.28.686-.72 1.37-1.536 2.02-2.44 1.107-.118 2.154-.3 3.113-.54zm-11.83.01c.96.234 2.006.415 3.107.532.66.905 1.345 1.727 2.035 2.446-1.595 1.483-3.092 2.295-4.11 2.295-.22-.005-.406-.05-.553-.132-.666-.38-.955-1.834-.73-3.703.054-.46.142-.944.25-1.438zm4.56.64c.44.02.89.034 1.345.034.46 0 .915-.01 1.36-.034-.44.572-.895 1.095-1.345 1.565-.455-.47-.91-.993-1.36-1.565z", "color": "#149ECA"}, "fastapi": {"path": "M12 .0387C5.3729.0384.0003 5.3931 0 11.9988c-.001 6.6066 5.372 11.9628 12 11.9625 6.628.0003 12.001-5.3559 12-11.9625-.0003-6.6057-5.3729-11.9604-12-11.96m-.829 5.4153h7.55l-7.5805 5.3284h5.1828L5.279 18.5436q2.9466-6.5444 5.892-13.0896", "color": "#009688"}, "python": {"path": "M14.25.18l.9.2.73.26.59.3.45.32.34.34.25.34.16.33.1.3.04.26.02.2-.01.13V8.5l-.05.63-.13.55-.21.46-.26.38-.3.31-.33.25-.35.19-.35.14-.33.1-.3.07-.26.04-.21.02H8.77l-.69.05-.59.14-.5.22-.41.27-.33.32-.27.35-.2.36-.15.37-.1.35-.07.32-.04.27-.02.21v3.06H3.17l-.21-.03-.28-.07-.32-.12-.35-.18-.36-.26-.36-.36-.35-.46-.32-.59-.28-.73-.21-.88-.14-1.05-.05-1.23.06-1.22.16-1.04.24-.87.32-.71.36-.57.4-.44.42-.33.42-.24.4-.16.36-.1.32-.05.24-.01h.16l.06.01h8.16v-.83H6.18l-.01-2.75-.02-.37.05-.34.11-.31.17-.28.25-.26.31-.23.38-.2.44-.18.51-.15.58-.12.64-.1.71-.06.77-.04.84-.02 1.27.05zm-6.3 1.98l-.23.33-.08.41.08.41.23.34.33.22.41.09.41-.09.33-.22.23-.34.08-.41-.08-.41-.23-.33-.33-.22-.41-.09-.41.09zm13.09 3.95l.28.06.32.12.35.18.36.27.36.35.35.47.32.59.28.73.21.88.14 1.04.05 1.23-.06 1.23-.16 1.04-.24.86-.32.71-.36.57-.4.45-.42.33-.42.24-.4.16-.36.09-.32.05-.24.02-.16-.01h-8.22v.82h5.84l.01 2.76.02.36-.05.34-.11.31-.17.29-.25.25-.31.24-.38.2-.44.17-.51.15-.58.13-.64.09-.71.07-.77.04-.84.01-1.27-.04-1.07-.14-.9-.2-.73-.25-.59-.3-.45-.33-.34-.34-.25-.34-.16-.33-.1-.3-.04-.25-.02-.2.01-.13v-5.34l.05-.64.13-.54.21-.46.26-.38.3-.32.33-.24.35-.2.35-.14.33-.1.3-.06.26-.04.21-.02.13-.01h5.84l.69-.05.59-.14.5-.21.41-.28.33-.32.27-.35.2-.36.15-.36.1-.35.07-.32.04-.28.02-.21V6.07h2.09l.14.01zm-6.47 14.25l-.23.33-.08.41.08.41.23.33.33.23.41.08.41-.08.33-.23.23-.33.08-.41-.08-.41-.23-.33-.33-.23-.41-.08-.41.08z", "color": "#3776AB"}, "pytorch": {"path": "M12.005 0L4.952 7.053a9.865 9.865 0 000 14.022 9.866 9.866 0 0014.022 0c3.984-3.9 3.986-10.205.085-14.023l-1.744 1.743c2.904 2.905 2.904 7.634 0 10.538s-7.634 2.904-10.538 0-2.904-7.634 0-10.538l4.647-4.646.582-.665zm3.568 3.899a1.327 1.327 0 00-1.327 1.327 1.327 1.327 0 001.327 1.328A1.327 1.327 0 0016.9 5.226 1.327 1.327 0 0015.573 3.9z", "color": "#EE4C2C"}, "docker": {"path": "M13.983 11.078h2.119a.186.186 0 00.186-.185V9.006a.186.186 0 00-.186-.186h-2.119a.185.185 0 00-.185.185v1.888c0 .102.083.185.185.185m-2.954-5.43h2.118a.186.186 0 00.186-.186V3.574a.186.186 0 00-.186-.185h-2.118a.185.185 0 00-.185.185v1.888c0 .102.082.185.185.185m0 2.716h2.118a.187.187 0 00.186-.186V6.29a.186.186 0 00-.186-.185h-2.118a.185.185 0 00-.185.185v1.887c0 .102.082.185.185.186m-2.93 0h2.12a.186.186 0 00.184-.186V6.29a.185.185 0 00-.185-.185H8.1a.185.185 0 00-.185.185v1.887c0 .102.083.185.185.186m-2.964 0h2.119a.186.186 0 00.185-.186V6.29a.185.185 0 00-.185-.185H5.136a.186.186 0 00-.186.185v1.887c0 .102.084.185.186.186m5.893 2.715h2.118a.186.186 0 00.186-.185V9.006a.186.186 0 00-.186-.186h-2.118a.185.185 0 00-.185.185v1.888c0 .102.082.185.185.185m-2.93 0h2.12a.185.185 0 00.184-.185V9.006a.185.185 0 00-.184-.186h-2.12a.185.185 0 00-.184.185v1.888c0 .102.083.185.185.185m-2.964 0h2.119a.185.185 0 00.185-.185V9.006a.185.185 0 00-.184-.186h-2.12a.186.186 0 00-.186.186v1.887c0 .102.084.185.186.185m-2.92 0h2.12a.185.185 0 00.184-.185V9.006a.185.185 0 00-.184-.186h-2.12a.185.185 0 00-.184.185v1.888c0 .102.082.185.185.185M23.763 9.89c-.065-.051-.672-.51-1.954-.51-.338.001-.676.03-1.01.087-.248-1.7-1.653-2.53-1.716-2.566l-.344-.199-.226.327c-.284.438-.49.922-.612 1.43-.23.97-.09 1.882.403 2.661-.595.332-1.55.413-1.744.42H.751a.751.751 0 00-.75.748 11.376 11.376 0 00.692 4.062c.545 1.428 1.355 2.48 2.41 3.124 1.18.723 3.1 1.137 5.275 1.137.983.003 1.963-.086 2.93-.266a12.248 12.248 0 003.823-1.389c.98-.567 1.86-1.288 2.61-2.136 1.252-1.418 1.998-2.997 2.553-4.4h.221c1.372 0 2.215-.549 2.68-1.009.309-.293.55-.65.707-1.046l.098-.288Z", "color": "#2496ED"}, "sqlite": {"path": "M21.678.521c-1.032-.92-2.28-.55-3.513.544a8.71 8.71 0 0 0-.547.535c-2.109 2.237-4.066 6.38-4.674 9.544.237.48.422 1.093.544 1.561a13.044 13.044 0 0 1 .164.703s-.019-.071-.096-.296l-.05-.146a1.689 1.689 0 0 0-.033-.08c-.138-.32-.518-.995-.686-1.289-.143.423-.27.818-.376 1.176.484.884.778 2.4.778 2.4s-.025-.099-.147-.442c-.107-.303-.644-1.244-.772-1.464-.217.804-.304 1.346-.226 1.478.152.256.296.698.422 1.186.286 1.1.485 2.44.485 2.44l.017.224a22.41 22.41 0 0 0 .056 2.748c.095 1.146.273 2.13.5 2.657l.155-.084c-.334-1.038-.47-2.399-.41-3.967.09-2.398.642-5.29 1.661-8.304 1.723-4.55 4.113-8.201 6.3-9.945-1.993 1.8-4.692 7.63-5.5 9.788-.904 2.416-1.545 4.684-1.931 6.857.666-2.037 2.821-2.912 2.821-2.912s1.057-1.304 2.292-3.166c-.74.169-1.955.458-2.362.629-.6.251-.762.337-.762.337s1.945-1.184 3.613-1.72C21.695 7.9 24.195 2.767 21.678.521m-18.573.543A1.842 1.842 0 0 0 1.27 2.9v16.608a1.84 1.84 0 0 0 1.835 1.834h9.418a22.953 22.953 0 0 1-.052-2.707c-.006-.062-.011-.141-.016-.2a27.01 27.01 0 0 0-.473-2.378c-.121-.47-.275-.898-.369-1.057-.116-.197-.098-.31-.097-.432 0-.12.015-.245.037-.386a9.98 9.98 0 0 1 .234-1.045l.217-.028c-.017-.035-.014-.065-.031-.097l-.041-.381a32.8 32.8 0 0 1 .382-1.194l.2-.019c-.008-.016-.01-.038-.018-.053l-.043-.316c.63-3.28 2.587-7.443 4.8-9.791.066-.069.133-.128.198-.194Z", "color": "#003B57"}, "opencv": {"path": "M11.8992.8525C8.735.8525 6.17 3.4175 6.17 6.5817c0 2.102 1.1321 3.9398 2.8198 4.9366l1.6412-2.7849c.0411-.0699.0176-.1593-.0495-.2048-.6233-.4227-1.0328-1.137-1.0328-1.947 0-1.298 1.0524-2.3504 2.3505-2.3504 1.2981 0 2.3505 1.0524 2.3505 2.3505 0 .8098-.4095 1.5242-1.0328 1.947-.0671.0454-.0907.1348-.0495.2047l1.6414 2.785c1.6878-.9969 2.8199-2.8346 2.8199-4.9367 0-3.1642-2.5653-5.7292-5.7295-5.7292zm-6.17 10.8366C2.565 11.6891 0 14.2541 0 17.4183c0 3.1642 2.565 5.7292 5.7292 5.7292 3.1798 0 5.8074-2.6995 5.7275-5.8762H8.2313c-.0847 0-.1513.0717-.1519.1564-.0082 1.266-1.0644 2.3411-2.3502 2.3411-1.2981 0-2.3505-1.0524-2.3505-2.3505 0-1.2982 1.0524-2.3505 2.3505-2.3505.34 0 .663.0724.9547.2022.0713.0318.1566.0077.1962-.0595l1.6464-2.7935c-.8273-.4636-1.7815-.7279-2.7973-.7279zm15.4424.7614l-1.6366 2.7878c-.041.07-.0172.1594.05.2048.624.4217 1.0348 1.1354 1.0363 1.9452.0022 1.298-1.0483 2.352-2.3465 2.3542-1.298.0023-2.3523-1.0482-2.3545-2.3462-.0015-.8098.4068-1.5248 1.0294-1.9486.067-.0457.0905-.1353.0492-.2051l-1.6464-2.7818c-1.6859.9998-2.8146 2.8394-2.811 4.9415.0056 3.1641 2.575 5.7248 5.7393 5.7192 3.1641-.0054 5.7246-2.575 5.7192-5.7392-.0037-2.1022-1.139-3.938-2.8284-4.9318z", "color": "#5C3EE8"}};</script>
+<script type="text/babel" data-presets="react">
+const { Fragment } = React;
+
+function Brand({ name, size = 22, color }) {
+  const icon = window.ICONS[name];
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" aria-label={name}>
+      <path d={icon.path} fill={color || icon.color} />
+    </svg>
+  );
+}
+
+const glyph = {
+  camera: "M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3zM12 17a4 4 0 1 0 0-8 4 4 0 0 0 0 8z",
+  user: "M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z",
+  db: "M4 6c0-1.7 3.6-3 8-3s8 1.3 8 3-3.6 3-8 3-8-1.3-8-3zm0 0v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3",
+  list: "M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01",
+  siren: "M7 18v-6a5 5 0 1 1 10 0v6M5 21a1 1 0 0 1-1-1v-1a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v1a1 1 0 0 1-1 1zM21 12h1M18.5 4.5 18 5M2 12h1M12 2v1M4.93 4.93l.71.71",
+  tray: "M3 3h18v18H3zM3 9h18M3 15h18M9 3v18M15 3v18",
+  box: "M21 8 12 3 3 8v8l9 5 9-5V8zM3 8l9 5 9-5M12 13v8",
+};
+function Glyph({ name, size = 20, color = "currentColor", stroke = 1.8 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={stroke}
+         strokeLinecap="round" strokeLinejoin="round"><path d={glyph[name]} /></svg>
+  );
+}
+
+function NvidiaMark({ product }) {
+  return (
+    <span className="nvmark"><Brand name="nvidia" size={26} /> NVIDIA{product && <span style={{ fontWeight: 600, letterSpacing: 0 }}>{product}</span>}</span>
+  );
+}
+
+function Group({ x, y, w, h, nv, title, sub, right, children }) {
+  return (
+    <div className={`group${nv ? " nv" : ""}`} style={{ left: x, top: y, width: w, height: h }}>
+      <div className="group-head">{title}{right && <span style={{ marginLeft: "auto" }}>{right}</span>}</div>
+      {sub && <div className="group-sub">{sub}</div>}
+      {children}
+    </div>
+  );
+}
+
+function Card({ x, y, w, h, kind, badge, icon, title, children, center }) {
+  return (
+    <div className={`card ${kind || ""}${center ? " center" : ""}`} style={{ left: x, top: y, width: w, height: h }}>
+      {badge && <span className={`badge ${badge[0]}`}>{badge[1]}</span>}
+      {(icon || title) && <h4>{icon}{title}</h4>}
+      {children}
+    </div>
+  );
+}
+
+// Orthogonal edge through the given points, arrowhead at the end (and the start when both).
+function Edge({ pts, dashed, both, color = "var(--line)" }) {
+  const d = pts.map(([x, y], i) => `${i ? "L" : "M"}${x},${y}`).join(" ");
+  const id = color.replace(/[^a-z]/gi, "");
+  return (
+    <g>
+      <path d={d} fill="none" stroke={color} strokeWidth={2} strokeDasharray={dashed ? "7 6" : undefined}
+            markerEnd={`url(#arrow-${id})`} markerStart={both ? `url(#arrow-${id})` : undefined} />
+    </g>
+  );
+}
+
+function Label({ x, y, on, children }) {
+  return <div className={`label${on ? " on-" + on : ""}`} style={{ left: x, top: y }}>{children}</div>;
+}
+
+const ALERTS = [["SCRAP", "#d93a2b"], ["FLUSH", "#c46a00"], ["STOP", "#a01d4b"], ["HOLD", "#5b6573"], ["EARLY WARNING", "#b58300"]];
+const W = 1400, H = 700;
+
+function Pill({ children }) {
+  return <span style={{ font: "700 11.5px/1 'Century Gothic'", padding: "5px 8px", borderRadius: 6, background: "var(--rule-soft)", color: "var(--rule)" }}>{children}</span>;
+}
+
+function Diagram() {
+  const colors = ["var(--line)", "var(--ai)", "var(--learned)"];
+  return (
+    <div className="canvas" style={{ width: W, height: H }}>
+      {/* ---------- groups ---------- */}
+      <Group x={30} y={20} w={800} h={130} nv title={<NvidiaMark />}
+             right={<span className="badge nv" style={{ position: "static" }}>OFFLINE · SYNTHETIC DATA ONLY</span>} />
+      <Group x={30} y={190} w={180} h={450} title={<span className="group-title">CSI Station 3</span>} />
+      <Group x={250} y={190} w={810} h={450} nv title={<NvidiaMark product="GB10" />}
+             right={<span style={{ display: "flex", gap: 8, alignItems: "center", fontSize: 12.5, color: "var(--muted)", fontWeight: 600 }}>
+               <Brand name="docker" /> DGX Spark · on site, at the line</span>} />
+      <Group x={1100} y={190} w={270} h={190} nv title={<NvidiaMark product="NIM API" />} />
+
+      <div className="legend" style={{ position: "absolute", left: 870, top: 48, width: 500 }}>
+        <div><span className="swatch" style={{ borderColor: "var(--learned)", background: "var(--learned-soft)" }} />Learned (Isaac Sim–trained)</div>
+        <div><span className="swatch" style={{ borderColor: "var(--rule)", background: "var(--rule-soft)" }} />Fixed rules</div>
+        <div><span className="swatch" style={{ borderColor: "var(--ai)", background: "var(--ai-soft)" }} />Generative AI, advisory</div>
+      </div>
+
+      {/* ---------- edges (under the cards) ---------- */}
+      <svg className="edges" width={W} height={H}>
+        <defs>
+          {colors.map(c => (
+            <marker key={c} id={`arrow-${c.replace(/[^a-z]/gi, "")}`} viewBox="0 0 10 10" refX="9" refY="5"
+                    markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill={c} />
+            </marker>
+          ))}
+        </defs>
+        <Edge pts={[[260, 102], [298, 102]]} />
+        <Edge pts={[[530, 102], [568, 102]]} />
+        <Edge pts={[[690, 127], [690, 168], [455, 168], [455, 248]]} dashed color="var(--learned)" />
+        <Edge pts={[[190, 345], [273, 345]]} />
+        <Edge pts={[[190, 535], [508, 535]]} />
+        <Edge pts={[[475, 345], [508, 345]]} />
+        <Edge pts={[[680, 345], [718, 345]]} />
+        <Edge pts={[[680, 432], [718, 432]]} />
+        <Edge pts={[[790, 450], [790, 498]]} />
+        <Edge pts={[[680, 535], [718, 535]]} />
+        <Edge pts={[[475, 595], [718, 595]]} both />
+        <Edge pts={[[860, 560], [893, 560]]} />
+        <Edge pts={[[1035, 560], [1098, 560]]} />
+        <Edge pts={[[835, 498], [835, 475], [1080, 475], [1080, 300], [1118, 300]]} dashed both color="var(--ai)" />
+        <Edge pts={[[1235, 640], [1235, 672], [120, 672], [120, 642]]} dashed />
+      </svg>
+      <Label x={455} y={159}>model weights</Label>
+      <Label x={940} y={466}>Explain with AI</Label>
+      <Label x={520} y={663}>operator acts · no PLC control</Label>
+
+      {/* ---------- training ---------- */}
+      <Card x={50} y={77} w={210} h={50} kind="learned" icon={<Brand name="nvidia" size={18} />} title="Isaac Sim renders" />
+      <Card x={300} y={77} w={230} h={50} kind="learned" icon={<Brand name="pytorch" size={18} />} title="Train on NVIDIA GPUs" />
+      <Card x={570} y={77} w={240} h={50} icon={<Glyph name="box" size={18} />} title="Model release" />
+
+      {/* ---------- station ---------- */}
+      <Card x={50} y={295} w={140} h={100} center title="">
+        <Glyph name="camera" size={34} color="var(--ink)" /><h4 style={{ marginTop: 6 }}>Fill camera</h4>
+      </Card>
+      <Card x={50} y={485} w={140} h={100} center title="">
+        <Glyph name="tray" size={30} color="var(--ink)" /><h4 style={{ marginTop: 6 }}>Tray camera</h4>
+      </Card>
+
+      {/* ---------- GB10 ---------- */}
+      <div className="group" style={{ left: 275, top: 250, width: 200, height: 190, background: "#fff", borderStyle: "dashed", borderColor: "var(--learned)" }}>
+        <div className="group-head" style={{ fontSize: 13, fontWeight: 700, color: "var(--learned)" }}>
+          <Brand name="pytorch" size={16} /> Perception · CUDA
+        </div>
+      </div>
+      <Card x={290} y={290} w={170} h={60} kind="learned" title="YOLO11n vial" />
+      <Card x={290} y={365} w={170} h={60} kind="learned" title="Temporal U-Net" />
+
+      <Card x={510} y={315} w={170} h={60} kind="rule" title="Measurement QA" />
+      <Card x={510} y={402} w={170} h={60} kind="rule" icon={<Glyph name="list" size={17} />} title="Recipe schedule" />
+      <Card x={720} y={250} w={315} h={200} kind="rule" badge={["rule", "DETERMINISTIC"]} title="Decision rules">
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 12 }}>
+          <Pill>ΔE2000 vs reference</Pill><Pill>Carryover direction</Pill><Pill>Early warning</Pill>
+          <Pill>Actions + deadlines</Pill><Pill>Root cause</Pill>
+        </div>
+      </Card>
+      <Card x={510} y={505} w={170} h={60} kind="rule" icon={<Glyph name="tray" size={16} />} title="Tray check" />
+      <Card x={290} y={565} w={185} h={60} icon={<Brand name="sqlite" size={18} />} title="Ledger" />
+      <Card x={720} y={500} w={140} h={125} center title="">
+        <Brand name="fastapi" size={40} /><h4 style={{ marginTop: 8 }}>FastAPI</h4>
+      </Card>
+      <Card x={895} y={500} w={140} h={125} center title="">
+        <Brand name="react" size={44} /><h4 style={{ marginTop: 8 }}>Linewatch app</h4>
+      </Card>
+
+      {/* ---------- Nemotron ---------- */}
+      <Card x={1120} y={262} w={230} h={80} kind="ai" badge={["ai", "ADVISORY"]} title="Nemotron 3 Ultra">
+        <p>root-cause explanation</p>
+      </Card>
+
+      {/* ---------- operator ---------- */}
+      <Card x={1100} y={480} w={270} h={160} center title="">
+        <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+          <Glyph name="user" size={34} color="var(--ink)" /><Glyph name="siren" size={32} color="var(--alert)" />
+        </div>
+        <h4 style={{ marginTop: 6 }}>Operator</h4>
+        <div className="alerts">
+          {ALERTS.map(([t, c]) => <span key={t} style={{ color: c, borderColor: c }}>{t}</span>)}
+        </div>
+      </Card>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<Diagram />);
+</script>
+</body>
+</html>

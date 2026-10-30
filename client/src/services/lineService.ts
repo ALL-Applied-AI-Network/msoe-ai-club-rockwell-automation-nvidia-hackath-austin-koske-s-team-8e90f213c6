@@ -11,6 +11,7 @@ export interface LineMeta {
   line: { band_de2000: number; direction_cos: number; scrap_deadline_s: number };
   roi: [number, number, number, number];
   good_slots: [number, number][];
+  tray_slots: { good: [number, number][]; bad: [number, number][] };
   trays: Record<string, [number, number, number, number]>;
   transit_window_s: [number, number];
 }
@@ -23,6 +24,10 @@ export interface LineSample {
   qa_valid: boolean;
   lab: Lab | null;
   presence: number;
+  vial_boxes: number;
+  yolo_vial_boxes: number;
+  vial_geometry_source: "yolo" | "station_profile_candidate";
+  flags: string[];
 }
 
 export interface LineVial {
@@ -128,7 +133,7 @@ export function videoUrl(runId: string, camera: "fill" | "tray"): string {
   return `${api.defaults.baseURL}/line/runs/${encodeURIComponent(runId)}/video/${camera}`;
 }
 
-export function previewUrl(key: string, camera: "fill" | "tray"): string {
+export function previewUrl(key: string, camera: "fill" | "fill_mask" | "tray" | "tray_detection"): string {
   return `${api.defaults.baseURL}/line/preview/${encodeURIComponent(key)}/${camera}`;
 }
 

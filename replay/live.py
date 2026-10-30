@@ -23,19 +23,26 @@ import cv2
 
 from replay.decide import DEFAULT_LINE, as_dict, decide, proactive_flush
 from replay.line import FillTracker, ledger_row, load_schedule, segment
-from replay.tray import EXPECTED_TRAY, GOOD_SLOTS, TRANSIT_WINDOW, TRAYS, CapTracker, SlotTracker, TrayScanner
+from replay.tray import (EXPECTED_TRAY, TRANSIT_WINDOW, TRAYS, CapTracker, SlotTracker,
+                         TrayScanner, render_overlay, validate_tray_slots)
 
 ROI = (256, 240, 368, 432)          # x0, y0, x1, y1: the fill-station vial region
 
 
 class LiveLine:
-    def __init__(self, schedule, library, line=None, runtime=None, fps=30.0):
+    def __init__(self, schedule, library, line=None, runtime=None, fps=30.0, fallback_vial_box=None,
+                 tray_slots=None, tray_clear_thumbnail=None, tray_empty_slot_gray=None):
         self.schedule, self.library = list(schedule), library
         self.line = {**DEFAULT_LINE, **(line or {})}
         self.fps = fps
-        self.fill = FillTracker(runtime, fps)
+        self.fill = FillTracker(runtime, fps, fallback_vial_box=fallback_vial_box)
+        self.tray_slots = validate_tray_slots(tray_slots)
+        self.tray_clear_thumbnail = tray_clear_thumbnail
+        self.tray_empty_slot_gray = tray_empty_slot_gray
         self.scanner = None
-        self.caps, self.slots = CapTracker(), SlotTracker()
+        self.caps = CapTracker()
+        self.slots = {tray: SlotTracker(tray, centers) for tray, centers in self.tray_slots.items()}
+        self.tray_preview_bgr = None
         self.vials, self.flushed, self.waiting = [], set(), []
         # What the engine saw from frames, so a live session can be saved and reviewed later.
         self.dwells, self.tray_samples = [], []
@@ -43,7 +50,8 @@ class LiveLine:
     def meta(self):
         references = {str(r["id"]): r.get("reference") and r["reference"]["lab"] for r in self.library["recipes"]}
         return {"type": "meta", "t": 0.0, "schedule": self.schedule, "scheduled_vials": len(self.schedule),
-                "references": references, "line": self.line, "roi": ROI, "good_slots": GOOD_SLOTS,
+                "references": references, "line": self.line, "roi": ROI,
+                "good_slots": self.tray_slots["good"], "tray_slots": self.tray_slots,
                 "trays": TRAYS, "transit_window_s": TRANSIT_WINDOW}
 
     def set_schedule(self, schedule, t):
@@ -83,7 +91,11 @@ class LiveLine:
             elif kind == "sample":
                 out.append({"type": "sample", "t": payload["t"], "frame": payload["frame"],
                             "liquid_px": payload["liquid_px"], "qa_valid": payload["qa_valid"],
-                            "lab": payload["lab"], "presence": payload["presence"]})
+                            "lab": payload["lab"], "presence": payload["presence"],
+                            "vial_boxes": payload.get("vial_boxes", 0),
+                            "yolo_vial_boxes": payload.get("yolo_vial_boxes", payload.get("vial_boxes", 0)),
+                            "vial_geometry_source": payload.get("vial_geometry_source", "yolo"),
+                            "flags": payload.get("flags", [])})
             else:
                 out.extend(self._dwell_end(payload))
         return out
@@ -110,15 +122,25 @@ class LiveLine:
     # Tray camera.
     def tray_frame(self, index, bgr):
         if self.scanner is None:
-            self.scanner = TrayScanner(self.fps, empty_frame=index)
+            self.scanner = TrayScanner(self.fps, empty_frame=index, tray_slots=self.tray_slots,
+                                       clear_thumbnail=self.tray_clear_thumbnail,
+                                       empty_slot_gray=self.tray_empty_slot_gray)
         sample = self.scanner.push(index, bgr)
         if sample:
             self.tray_samples.append(sample)
-        return self.tray_sample(sample) if sample else []
+        events = self.tray_sample(sample) if sample else []
+        self.tray_preview_bgr = render_overlay(
+            bgr, self.slots, baseline_ready=self.scanner.empty is not None, sample=sample)
+        return events
 
     def tray_sample(self, s):
-        found = [e for e in self.slots.push(s) if e["kind"] == "arrival"]
-        found += [e for e in self.caps.push(s) if e["kind"] == "arrival" and e["tray"] == "bad"]
+        cap_events = self.caps.push(s)
+        found = [e for e in self.slots["good"].push(s) if e["kind"] == "arrival"]
+        if "bad_slots" in s:
+            found += [e for e in self.slots["bad"].push(s) if e["kind"] == "arrival"]
+        else:
+            # Compatibility with historical samples recorded before the Bad grid existed.
+            found += [e for e in cap_events if e["kind"] == "arrival" and e["tray"] == "bad"]
         out = []
         for arrival in sorted(found, key=lambda e: e["t"]):
             out.append(self._arrival(arrival, s["t"]))

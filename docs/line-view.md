@@ -74,6 +74,15 @@ person at the machine.
   recorder's vial log; keep that by hand if it is needed. Recorded runs have the recorder's
   timestamp burned in at the bottom left; live frames do not. It lies outside the vial region
   and the tray slots.
+- **Both sorting grids are observed.** The tray preview tracks 30 Good slots and 30 Bad slots
+  independently. `DETECTIONS ON` draws thin labeled station-profile regions for both sides and
+  solid boxes only around committed occupied slots. Profiles with `tray_empty_slot_gray`
+  initialize each open slot independently and do not wait for the entire scene or both trays to
+  be empty. Legacy profiles show `WAITING FOR CLEAR VIEW OF BOTH SORT TRAYS` until their global
+  baseline exists. Both grids come from `tray_slots` in the station manifest. The current
+  coordinates are a reviewable CSI profile candidate, not model-detected calibration.
+  Existing vials may occupy arbitrary slots at Start: `tray_empty_slot_gray` reserves those
+  positions as inventory, and only later changes can become arrivals.
 
 **Configure the station** with `APP__LINE_STATION=station.json`. The CSI file is
 [setup/csi-station.json](../setup/csi-station.json), with the recorder's camera names:
@@ -117,15 +126,17 @@ person at the machine.
 
 ## Recipe order
 
-The line runner needs the intended recipe of every vial, in order. At CSI we copy each order
-from their machine into the app: in the **Monitor** recipe plan (Josiah's ordering panel),
-enter the same recipe and tank amounts (T100–T400 mL, dispense order) in the same order.
-The LINE page's **Recipe order** picker then uses that inspection run's plan. The run's
-`schedule.csv` file is only a fallback.
+The line runner needs the intended recipe of every vial, in order. At CSI, use **Recipe setup**
+directly on the **LINE** page: select the recipe, enter how many consecutive vials the station
+will make, add each batch in production order, then choose **Save & use on line**. The editor
+uses the recipe library's tank amounts and dispense order and persists the same inspection-run
+plan used by Monitor. Existing plans can still be created or reviewed in **Monitor**, and the
+LINE page's **Recipe order** picker selects among them. The run's `schedule.csv` is only a
+fallback.
 
-- **While a run is active, the Monitor saves the plan whenever it changes.** A live line
-  session re-reads it every second, so vials ordered mid-run are picked up. The panel shows
-  "not in the recipe order yet" for a vial beyond the end of the plan.
+- **While a run is active, save changes from the LINE recipe editor.** A live line session
+  re-reads its selected plan every second, so vials added mid-run are picked up. The panel
+  shows "not in the recipe order yet" for a vial beyond the end of the plan.
 - **Matching to the recipe library** ([recipes_order.py](../replay/recipes_order.py)), first
   match wins:
   1. the same id;
@@ -153,6 +164,8 @@ The LINE page's **Recipe order** picker then uses that inspection run's plan. Th
   - **Finished tray:** in tray, in transit, should have been diverted, missing caps.
 - **Tray camera:**
   - each arrived vial boxed in its slot, coloured by our verdict; NO CAP in magenta;
+  - the first new vial may appear in any open slot; capped vials already present in the first
+    arm-free baseline are treated as existing inventory, not arrivals from this run;
   - a banner for each arrival.
 - **Ledger:** the vials decided so far, with tray status.
 
@@ -244,7 +257,7 @@ paths.
 | `GET /api/v1/line/runs/{id}/events?order=RUN` | Every event of the recorded run (Review), optionally with an inspection run's recipe plan |
 | `GET /api/v1/line/runs/{id}/video/{fill\|tray}` | The recording, with range requests |
 | `GET /api/v1/line/orders` | Inspection runs with a recipe plan, newest first |
-| `GET /api/v1/line/preview/{key}/{fill\|tray}` | MJPEG stream of a live camera session's feed |
+| `GET /api/v1/line/preview/{key}/{fill\|fill_mask\|tray\|tray_detection}` | Raw or evidence-overlay MJPEG stream of a live camera session |
 | `WS /api/v1/line/runs/{id}/live?source=recorded\|video\|camera&speed=N&start=S&order=RUN&simulate=RUN` | `meta`, then `events` and `clock` messages, then `end`. Send `{"speed": N}` or `{"paused": true}` |
 
 ## Not yet

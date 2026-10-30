@@ -347,3 +347,59 @@ QA-eligible samples, but supplies zero qualified completed-vial RCA inputs.
 The [Investigation panel](investigation.md) exposes this uncertainty, source
 bindings and missing evidence. Its examples stay synthetic and separate from run
 records. Cause confirmation, product quality and hardware commands remain unset.
+
+## CSI live-camera transfer check (2026-10-29)
+
+The completed live-camera recording `live-20261029-230248/fill.mp4` is transfer
+evidence only; it was not used to train or fit either model. On all 944 saved
+model samples, the released vial YOLO returned zero boxes. It also returned no
+box on three representative vial frames with confidence reduced to 0.001, so a
+confidence adjustment does not recover this camera domain.
+
+The station profile now supplies candidate vial geometry `[278, 75, 358, 420]`
+in native 640x480 coordinates only when YOLO returns no box. The UI and saved
+samples identify this as `station_profile_candidate`; it is not presented as a
+model detection. On a source-matched transfer replay using the 45 s empty-vial
+reference, all 61 half-second samples from 50--80 s received profile geometry,
+59 produced a liquid proposal, and 59 passed measurement QA. The replay output
+and four visual overlays are under
+`results/station-onboarding/csi-live-20261029/transfer-01/`.
+
+This is an integration check, not detection accuracy: the recording has no
+source-matched human vial boxes or liquid masks. Operator review of the profile
+box and human transfer labels remain required before approving it as a station
+profile. The MP4 uses the recorder's generated constant-frame time grid; native
+USB capture timestamps are unavailable.
+
+### Dual finished-sort profile candidate
+
+The current tray-camera view contains two physically separate 5×6 grids. The previous live path
+used slot occupancy only for the Good grid and cap blobs for the Bad region, so an uncapped Bad
+vial had no occupancy observation. The station profile now contains 30 independently measured
+slot centers for each grid. A solid UI box means the corresponding slot changed from its clear
+session baseline for five arm-free seconds; thin outer rectangles are labeled profile regions,
+not detections.
+
+On the real evaluation-only recording `live-20261029-230248/tray.mp4`, the candidate established
+a baseline, produced 1,434 samples, held 12 arm-occluded samples, and localized the visible capped
+Good-tray placement at 468.3 s to R3C6. No Bad-tray placement occurs in the available recordings,
+so Bad positive accuracy is unavailable. Synthetic unit observations exercise capped and uncapped
+arrivals in arbitrary slots on both grids, but they are not physical accuracy evidence. The
+review package is under `results/station-onboarding/csi-live-20261029/tray-dual-grid-05/`. A second
+recording with the robot remaining over the grids never qualifies a baseline and correctly emits
+no slot observations instead of turning the later clear holes into false vial boxes.
+
+The inventory-baseline update was also replayed on the live MJPEG frame that previously remained
+in `WAITING FOR CLEAR VIEW`. It established the robot-free baseline, reserved 8 Good and 6 Bad
+starting slots and emitted zero arrival events. This is a profile-behavior check without human
+slot labels, so occupancy accuracy remains unavailable. Evidence is under
+`results/station-onboarding/csi-live-20261029/tray-inventory-01/`.
+
+The subsequent open-slot update removes that profile's global-clear dependency entirely. Each
+slot is classified against its empty-hole signature; changed slots initialize as inventory and
+open slots initialize as available. Five seconds of stable per-slot evidence are still required
+for later arrival/vacancy events, so ordinary short gripper visits do not become vial arrivals.
+The operator then identified Good R1C6 and R2C6 as empty in a live frame; their previously bright
+empty signatures were corrected from that attributed evidence. Replay of the same frame changed
+Good from two boxes to zero while retaining the two visible Bad inventory boxes. This is a narrow
+profile correction, not a full human-labeled accuracy evaluation.

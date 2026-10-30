@@ -32,6 +32,7 @@ import secrets
 import sys
 import threading
 import time
+from collections import deque
 from datetime import datetime
 from pathlib import Path
 
@@ -42,6 +43,7 @@ if str(REPO) not in sys.path:
 CLOCK_S = 0.2           # wall seconds between clock messages
 ORDER_S = 1.0           # wall seconds between re-reads of a followed recipe plan
 SPEEDS = (0.5, 1, 2, 4, 8, 16, 32)
+FRAME_BUFFER_S = 180    # fill-camera frames kept so a decided vial gets its end-of-fill photo
 MAX_SESSIONS = 4
 
 
@@ -62,6 +64,7 @@ class LineRuns:
         self._runtime_lock = threading.Lock()
         self._review = {}
         self.previews = {}      # preview key -> {camera: latest JPEG bytes}
+        self.current = None     # the newest camera session: its decisions so far and each vial's photo
 
     def _roots(self):
         return [r for r in (self.recordings, self.root) if r is not None and r.is_dir()]
@@ -113,11 +116,40 @@ class LineRuns:
             raise KeyError(camera)
         return Path(path)
 
+    def live_events(self):
+        """The newest camera session's events so far (no per-frame samples), while it runs and after."""
+        current = self.current
+        if current is None:
+            return {"run_id": None, "active": False, "events": []}
+        return {"run_id": current["run_id"], "active": current["active"], "events": list(current["events"])}
+
+    def frame(self, run_id: str, camera: str, t: float) -> bytes:
+        """JPEG of the recorded video's frame at t seconds. For the live session: the photo kept for
+        the decided vial whose fill ended nearest t."""
+        if run_id == LIVE:
+            photos = list((self.current or {}).get("photos", {}).values())
+            if camera != "fill" or not photos:
+                raise KeyError(t)
+            end, jpeg = min(photos, key=lambda p: abs(p[0] - t))
+            if abs(end - t) > 2:
+                raise KeyError(t)
+            return jpeg
+        import cv2
+        capture = cv2.VideoCapture(str(self.video(run_id, camera)))
+        try:
+            capture.set(cv2.CAP_PROP_POS_MSEC, max(0.0, t) * 1000)
+            ok, image = capture.read()
+        finally:
+            capture.release()
+        if not ok:
+            raise KeyError(t)
+        return cv2.imencode(".jpg", image, [cv2.IMWRITE_JPEG_QUALITY, 85])[1].tobytes()
+
     def library(self, manifest):
         """The manifest's recipe library with the site recipes over it (same id: site wins), and
         the reference fill trajectories (early warning) from reference-trajectories.json beside it
         for references taken from the same vial."""
-        path = Path(manifest["library"])
+        path = self._library_path(manifest)
         library = json.loads(path.read_text())
         trajectories = path.parent / "reference-trajectories.json"
         if trajectories.is_file():
@@ -129,6 +161,15 @@ class LineRuns:
         site = {str(r["id"]): r for r in self.site_recipes()}
         library["recipes"] = [site.pop(str(r["id"]), r) for r in library["recipes"]] + list(site.values())
         return library
+
+    def _library_path(self, manifest):
+        """The manifest's library file; a saved session whose library has since moved uses the station's."""
+        path = Path(manifest["library"])
+        if not path.is_file() and self.station is not None:
+            station = self.manifest(LIVE)
+            if station.get("library"):
+                return Path(station["library"])
+        return path
 
     def site_recipes(self):
         if self.site is None or not self.site.is_file():
@@ -217,7 +258,7 @@ class LineRuns:
         if not manifest.get("fill_samples"):
             raise ValueError("Review needs stored samples (fill_samples) in the run manifest")
         schedule = self.schedule(manifest, plan)
-        stamp = max(Path(manifest[k]).stat().st_mtime for k in ("fill_samples", "library"))
+        stamp = max(path.stat().st_mtime for path in (Path(manifest["fill_samples"]), self._library_path(manifest)))
         key = (run_id, stamp, tuple(schedule))
         if key not in self._review:
             live = self.engine(manifest, schedule=schedule)
@@ -340,6 +381,8 @@ class LineRuns:
         run_id = datetime.now().strftime("live-%Y%m%d-%H%M%S")
         folder = (self.recordings / run_id) if self.recordings is not None else None
         writers = {}
+        current = self.current = {"run_id": run_id, "active": True, "events": [live.meta()], "photos": {}}
+        recent = deque()        # (t, fill JPEG) over the last FRAME_BUFFER_S
         send(live.meta())
         send({"type": "preview", "key": key, "cameras": [c.camera for c in cameras.cameras], "run_id": run_id})
         last_order = last_clock = time.monotonic()
@@ -363,6 +406,15 @@ class LineRuns:
                     ok, jpeg = _encode(bgr)
                     if ok:
                         self.previews[key][camera] = jpeg
+                        if camera == "fill":
+                            recent.append((t, jpeg))
+                            while recent[0][0] < t - FRAME_BUFFER_S:
+                                recent.popleft()
+                for event in events:
+                    if event["type"] == "vial" and recent:
+                        end = event["vial"]["fill_end_s"]
+                        current["photos"][event["vial"]["seq"]] = (end, min(recent, key=lambda r: abs(r[0] - end))[1])
+                current["events"].extend(e for e in events if e["type"] != "sample")
                 if camera == "fill" and live.fill.preview_bgr is not None and any(
                         event.get("type") == "sample" for event in camera_events):
                     ok, jpeg = _encode(live.fill.preview_bgr)
@@ -383,9 +435,11 @@ class LineRuns:
                           "paused": False, "cameras": cameras.stats()})
                     last_clock = time.monotonic()
             tail = live.finish()
+            current["events"].extend(e for e in tail if e["type"] != "sample")
             if tail:
                 send({"type": "events", "events": tail})
         finally:
+            current["active"] = False
             cameras.stop()
             for writer in writers.values():
                 writer.close()
@@ -400,9 +454,14 @@ class LineRuns:
         (folder / "frames.jsonl").write_text("".join(json.dumps(d) + "\n" for d in live.dwells))
         (folder / "tray-samples.jsonl").write_text("".join(json.dumps(s) + "\n" for s in live.tray_samples))
         (folder / "schedule.csv").write_text("seq,recipe_id\n" + "".join(f"{i},{r}\n" for i, r in enumerate(live.schedule, 1)))
+        # The run keeps its own copy of the library (and reference trajectories), so it still reviews if those move.
+        library = Path(library_source["library"])
+        (folder / "recipe-library.json").write_bytes(library.read_bytes())
+        if (library.parent / "reference-trajectories.json").is_file():
+            (folder / "reference-trajectories.json").write_bytes((library.parent / "reference-trajectories.json").read_bytes())
         manifest = {"title": f"{station.get('title', 'Live')} · {run_id[5:]}" + (f" (simulated from {simulate})" if simulate and simulate != MOCK else ""),
                     "fill_samples": f"{run_id}/frames.jsonl", "schedule": f"{run_id}/schedule.csv",
-                    "library": library_source["library"], "recorded_from_s": start}
+                    "library": f"{run_id}/recipe-library.json", "recorded_from_s": start}
         if station.get("fill_vial_box") is not None:
             manifest["fill_vial_box"] = station["fill_vial_box"]
         if station.get("tray_slots") is not None:

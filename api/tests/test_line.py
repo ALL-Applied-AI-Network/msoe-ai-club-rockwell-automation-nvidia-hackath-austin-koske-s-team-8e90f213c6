@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -203,3 +204,49 @@ def test_recreate_replaces_the_reference_and_keeps_the_old_one(tmp_path):
     recipe = runs.recipes()["recipes"][0]
     assert recipe["reference"]["lab"] == [2.0, 2.0, 2.0] and recipe["reference"]["vial"] == 7
     assert [h["lab"] for h in recipe["reference_history"]] == [[1.0, 1.0, 1.0]]
+
+
+def test_saved_session_keeps_its_library_and_reviews_after_it_moves(client, tmp_path):
+    data = tmp_path / "data"
+    (tmp_path / "station.json").write_text(json.dumps({"title": "CSI", "fill_camera": "/dev/video9", "library": str(data / "library.json")}))
+    runs = LineRuns(None, station=tmp_path / "station.json", recordings=tmp_path / "recordings")
+    live = SimpleNamespace(dwells=[json.loads(line) for line in (data / "frames.jsonl").read_text().splitlines()],
+                           tray_samples=[], schedule=["1", "1"])
+    runs._save_live("live-1", tmp_path / "recordings" / "live-1", live, runs.manifest("live"), runs.manifest("live"), None, 0)
+    assert json.loads((tmp_path / "recordings" / "live-1" / "recipe-library.json").read_text())["recipes"][0]["id"] == "1"
+    assert [e["vial"]["verdict"] for e in runs.review("live-1") if e["type"] == "vial"] == ["IN_SPEC", "IN_SPEC"]
+
+    # A run saved before runs kept their own copy, whose library has since moved, uses the station's.
+    (tmp_path / "recordings" / "live-0.json").write_text(json.dumps({
+        "title": "old", "fill_samples": "live-1/frames.jsonl", "schedule": "live-1/schedule.csv",
+        "library": str(tmp_path / "gone" / "library.json")}))
+    assert sum(e["type"] == "vial" for e in runs.review("live-0")) == 2
+
+
+def test_frame_returns_one_jpeg_of_the_recorded_video(client, tmp_path):
+    cv2 = pytest.importorskip("cv2")
+    import numpy as np
+    writer = cv2.VideoWriter(str(tmp_path / "data" / "fill.mp4"), cv2.VideoWriter_fourcc(*"mp4v"), FPS, (64, 48))
+    for k in range(20):
+        writer.write(np.full((48, 64, 3), k * 10, np.uint8))
+    writer.release()
+    response = client.get("/api/v1/line/runs/demo/frame/fill", params={"t": 0.2})
+    assert response.status_code == 200 and response.headers["content-type"] == "image/jpeg"
+    assert cv2.imdecode(np.frombuffer(response.content, np.uint8), cv2.IMREAD_COLOR).shape == (48, 64, 3)
+    assert client.get("/api/v1/line/runs/demo/frame/fill", params={"t": 99}).status_code == 404
+    assert client.get("/api/v1/line/runs/demo/frame/side", params={"t": 0}).status_code == 404
+
+
+def test_live_events_and_photos_of_the_running_camera_session(tmp_path):
+    (tmp_path / "station.json").write_text(json.dumps({"title": "CSI", "fill_camera": "/dev/video9"}))
+    runs = LineRuns(None, station=tmp_path / "station.json")
+    app.dependency_overrides[get_line_runs] = lambda: runs
+    with TestClient(app) as test_client:
+        assert test_client.get("/api/v1/line/runs/live/events").json() == {"run_id": None, "active": False, "events": []}
+        vial = {"type": "vial", "t": 40.0, "vial": {"seq": 1, "fill_end_s": 30.0}}
+        runs.current = {"run_id": "live-1", "active": True, "events": [{"type": "meta"}, vial], "photos": {1: (30.1, b"jpeg")}}
+        body = test_client.get("/api/v1/line/runs/live/events").json()
+        assert (body["run_id"], body["active"], [e["type"] for e in body["events"]]) == ("live-1", True, ["meta", "vial"])
+        assert test_client.get("/api/v1/line/runs/live/frame/fill", params={"t": 30.0}).content == b"jpeg"
+        assert test_client.get("/api/v1/line/runs/live/frame/fill", params={"t": 50.0}).status_code == 404
+    app.dependency_overrides.clear()

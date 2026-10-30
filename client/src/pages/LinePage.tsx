@@ -4,7 +4,6 @@ import PageChrome from "@/components/PageChrome";
 import type { RecipeContext } from "@/models/inspection";
 import { createInspectionSession, listRecipePlan, replaceRecipePlan } from "@/services/inspectionService";
 import { deltaE2000, loadRecipeLibrary, recipeSummary, type RecipeDefinition } from "@/services/recipeCheck";
-import { Link } from "react-router-dom";
 import {
   listLineOrders, listLineRuns, liveSocket, previewUrl, reviewEvents, videoUrl,
   type LineAction, type LineEvent, type LineSource, type LineVial, type LiveMessage, type TrayArrival,
@@ -500,7 +499,7 @@ export default function LinePage() {
         </section>
 
         <p className="ln-hint">
-          Recipe orders saved here also remain available in the <Link to="/monitor">Monitor</Link> and run history. Operator intent stays
+          Recipe orders saved here also remain available in run history. Operator intent stays
           separate from measured color evidence.
         </p>
         {runs.isError && <p className="ln-banner">Could not load line runs: {(runs.error as Error).message}</p>}

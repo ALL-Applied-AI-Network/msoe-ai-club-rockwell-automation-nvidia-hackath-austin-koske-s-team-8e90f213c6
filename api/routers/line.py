@@ -5,7 +5,7 @@ from pathlib import Path
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisconnect
-from fastapi.responses import FileResponse, StreamingResponse
+from fastapi.responses import FileResponse, Response, StreamingResponse
 from pydantic import BaseModel, Field
 
 from dependencies import get_explainer, get_inspection_service, get_line_runs
@@ -89,6 +89,9 @@ async def review_events(run_id: str, order: str | None = None, runs=Depends(get_
                         service=Depends(get_inspection_service)):
     """All events of a recorded run at once, for scrubbing. Same engine and events as live.
     With order=<inspection run id>, the recipe order comes from that run's recipe plan."""
+    if run_id == LIVE:
+        # The camera session running now (or the last one): what it has decided so far.
+        return runs.live_events()
     try:
         plan = await recipe_plan(service, order) if order else None
         return {"events": await asyncio.to_thread(runs.review, run_id, plan)}
@@ -137,6 +140,18 @@ async def video(run_id: str, camera: str, runs=Depends(get_line_runs)):
         return FileResponse(runs.video(run_id, camera), media_type="video/mp4")
     except KeyError as error:
         raise HTTPException(404, "Video not found") from error
+
+
+@router.get("/runs/{run_id}/frame/{camera}")
+async def frame(run_id: str, camera: str, t: float, runs=Depends(get_line_runs)):
+    """One JPEG frame of a run's recorded video at time t (seconds), e.g. a vial at the end of its fill."""
+    if camera not in ("fill", "tray"):
+        raise HTTPException(404, "Unknown camera")
+    try:
+        jpeg = await asyncio.to_thread(runs.frame, run_id, camera, t)
+    except KeyError as error:
+        raise HTTPException(404, "Frame not found") from error
+    return Response(jpeg, media_type="image/jpeg", headers={"Cache-Control": "max-age=3600"})
 
 
 @router.get("/preview/{key}/{camera}")

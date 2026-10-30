@@ -7,6 +7,7 @@
 | [Architecture](architecture.md) | Components, model inputs, measurement QA and the recipe-first vial check |
 | [Line view](line-view.md) | The LINE page: live cameras, MOCK, recipe setup and CREATE mode, review |
 | [CSI session](csi-session.md) | On-site setup, trial checklist, recording and data handling |
+| [One-hour visit](csi-visit-3-recipes.md) | Run sheet: recipes 5, 6, 7 (clear, orange, blue), references, then a locked 12-vial run |
 | [Plan](plan.md) | Pipeline design: inputs, stages, actions, RCA, metrics |
 | [Data and models](data.md) | Downloads, checksums, splits and the training/evaluation policy |
 | [Compute](compute.md) | Compute hosts, GPU-hours used and synthetic data volumes |

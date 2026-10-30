@@ -137,6 +137,16 @@ export function videoUrl(runId: string, camera: "fill" | "tray"): string {
   return `${api.defaults.baseURL}/line/runs/${encodeURIComponent(runId)}/video/${camera}`;
 }
 
+/** The live camera session's decisions so far (also the last session's, once it has stopped). */
+export async function liveEvents(): Promise<{ run_id: string | null; active: boolean; events: LineEvent[] }> {
+  return (await api.get<{ run_id: string | null; active: boolean; events: LineEvent[] }>("/line/runs/live/events")).data;
+}
+
+/** One JPEG frame of a run's recorded video at t seconds (live: the photo kept for the vial decided nearest t). */
+export function frameUrl(runId: string, camera: "fill" | "tray", t: number): string {
+  return `${api.defaults.baseURL}/line/runs/${encodeURIComponent(runId)}/frame/${camera}?t=${t.toFixed(2)}`;
+}
+
 export function previewUrl(key: string, camera: "fill" | "fill_mask" | "tray" | "tray_detection"): string {
   return `${api.defaults.baseURL}/line/preview/${encodeURIComponent(key)}/${camera}`;
 }

@@ -18,10 +18,13 @@
 .rc-row header .rc-gap { color: var(--warning); }
 .rc-vials { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
 .rc-vial { margin: 0; display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 10px; padding: 8px; border: 1px solid var(--line); background: var(--surface); }
-.rc-vial img { width: 96px; height: 170px; object-fit: cover; display: block; }
-.rc-row-compact .rc-vial img { height: 110px; }
+.rc-frame { position: relative; width: 96px; height: 170px; overflow: hidden; background: #000; }
+.rc-frame img { position: absolute; max-width: none; }
+.rc-pick { display: inline-flex; gap: 8px; align-items: center; margin: 0 0 10px; font: 11px var(--mono); color: var(--muted); }
+.rc-pick select { max-width: min(520px, 80vw); }
 .rc-vial.rc-failure { border-color: var(--failure); }
 .rc-vial.rc-signal { border-color: rgba(116, 231, 183, .5); }
+.rc-vial.rc-warning { border-color: rgba(243, 188, 102, .5); }
 .rc-vial figcaption { display: grid; align-content: start; gap: 6px; min-width: 0; font-size: 13px; }
 .rc-vial figcaption p { margin: 0; color: var(--text); }
 .rc-vial-head { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
@@ -31,6 +34,7 @@
 .rc-chip-failure { color: var(--failure); }
 .rc-chip-signal { color: var(--signal); }
 .rc-chip-muted { color: var(--muted); }
+.rc-chip-warning { color: var(--warning); }
 .rc-toward { color: var(--warning) !important; font-size: 12px; }
 
 .rc-chart { padding: 18px; border: 1px solid var(--line); background: var(--surface-raised); }
@@ -42,9 +46,8 @@
 .rc-bar span { position: absolute; top: -16px; left: 0; right: 0; text-align: center; font: 10px var(--mono); }
 .rc-bar-col small { margin-top: 4px; color: var(--muted); font: 10px var(--mono); position: absolute; bottom: -18px; }
 .rc-bar-col { position: relative; }
-.rc-pos-1 { background: var(--failure); }
-.rc-pos-2 { background: var(--warning); }
-.rc-pos-3 { background: var(--muted); }
+.rc-tone-failure { background: var(--failure); }
+.rc-tone-signal { background: var(--signal); }
 .rc-legend { margin: 26px 0 0; color: var(--muted); font-size: 12px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 .rc-legend i { display: inline-block; width: 10px; height: 10px; }
 

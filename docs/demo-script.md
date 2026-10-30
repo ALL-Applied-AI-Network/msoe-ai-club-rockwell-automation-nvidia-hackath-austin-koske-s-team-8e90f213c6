@@ -47,7 +47,7 @@ yet on the CSI GB10's cameras; run step 1 well before presenting.
 | 3:20 | Recipe 6 → drop `run5-vial05-recipe6.mp4` | "Second vial: closer, still shifted toward recipe 5. The line is recovering." |
 | 3:50 | Type your name → **CONFIRM** | "The action is simulated: nothing goes to the PLC or sorter. The operator confirms or overrides, and that decision is saved." |
 | 4:10 | Optional: **Custom amounts…** | "A new recipe has no reference yet, so the first vial is held; the operator can accept it as the reference for the next ones." |
-| 4:40 | **RECIPE CHECK** page | "Across the whole organizer run, all five measurable first-vials-after-change diverged; most second vials recovered." |
+| 4:40 | **RECIPE CHECK** page | "Across the whole Run 5 recording, all five first vials of a recipe that we could measure were out of spec, 4 of 7 second vials were back in spec, and 7 out-of-spec vials reached the Good tray." |
 | 5:30 | Close | "Operator in the loop today; the same signal can drive a scrap divert once PLC integration is approved." |
 
 ## Verified talking points

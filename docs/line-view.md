@@ -1,7 +1,7 @@
 # Line view (LINE page)
 
 The LINE page is the app's landing page (`/`; `/line` also works). The single-vial MONITOR page
-moved to `/monitor`. With a station configured it opens on the station's live cameras.
+is hidden from the navigation for now; it still opens at `/monitor`. With a station configured it opens on the station's live cameras.
 
 The LINE page shows the fill-station camera, the finished-vial tray camera and an operator panel.
 Each vial's verdict, actions and tray arrival appear when the engine produces them. It is the
@@ -334,7 +334,9 @@ paths.
 | --- | --- |
 | `GET /api/v1/line/runs` | Runs with their available sources |
 | `GET /api/v1/line/runs/{id}/events?order=RUN` | Every event of the recorded run (Review), optionally with an inspection run's recipe plan |
+| `GET /api/v1/line/runs/live/events` | `{run_id, active, events}`: what the running (or last) camera session has decided so far, without per-frame samples (Recipe check, polled every 2 s) |
 | `GET /api/v1/line/runs/{id}/video/{fill\|tray}` | The recording, with range requests |
+| `GET /api/v1/line/runs/{id}/frame/{fill\|tray}?t=S` | One JPEG frame of the recording at S seconds (Recipe check's vial photos); for `live`, the end-of-fill photo kept for the decided vial nearest S |
 | `GET /api/v1/line/orders` | Inspection runs with a recipe plan, newest first |
 | `GET /api/v1/line/preview/{key}/{fill\|fill_mask\|tray\|tray_detection}` | Raw or evidence-overlay MJPEG stream of a live camera session |
 | `GET /api/v1/line/explain` | The explainer model and whether a key is configured |

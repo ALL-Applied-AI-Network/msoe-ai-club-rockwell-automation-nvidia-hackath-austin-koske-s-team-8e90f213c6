@@ -62,7 +62,7 @@ Demo clips are the `run5-vial*.mp4` assets of the release (one Run5 vial each, c
 Green overlay is the liquid proposal; blue is the region QA sampled. Frames where QA
 withholds colour still show their reasons. **Advanced setup** holds the sampling interval,
 reference upload, raw QA evidence and the recipe timeline/CSV import. **RECIPE CHECK** shows
-the full Run5 evidence. Run review keeps source, rendered and mask artifacts, accepts
+the live line's decisions grouped by recipe change, filling in as the cameras decide each vial (saved and recorded runs can be picked instead). Run review keeps source, rendered and mask artifacts, accepts
 per-frame responses and contains the Investigation panel.
 
 A new camera requires its own camera profile; the app rejects geometry outside the released

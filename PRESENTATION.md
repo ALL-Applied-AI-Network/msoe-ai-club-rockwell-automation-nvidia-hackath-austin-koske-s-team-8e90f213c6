@@ -184,3 +184,143 @@ Details: [compute](docs/compute.md).
       November 1, 11:59 p.m. CT. Any teammate can edit until then.
 - [ ] Finalist invitations: accept by Wednesday, November 4. Finals: Thursday, November 5, Diercks
       Hall (posters 4:00 p.m.).
+
+---
+
+## Answers to the submission questions
+
+Each question from the organizers' brief, answered directly. Numbers are from
+[evaluation](docs/evaluation.md) and the records in `setup/verification/`.
+
+### Executive summary questions
+
+**What are your goals?**
+Find off-recipe vials, mainly carryover after a recipe change, before they reach the sorter.
+Tell the operator what to do and by when (scrap, flush, stop and check dosing, hold), and why.
+Do it with the station's existing cameras and a GB10 at the line, with vision models trained only
+on simulation, and measure honestly what works and what doesn't.
+
+**What data did you collect or generate?**
+- **Collected (evaluation only, never training):** 10 LINE sessions on CSI's GB10 with the
+  station's fill and tray cameras (about 50 min of fill video, 5,859 model samples, 14 vials).
+  6 CSI-recorded flush clips with mL metadata.
+- **Supplied by the organizers:** CSI Dataset 2, Runs 1–5. Runs 1–4 set the rules; Run 5 (30
+  labelled vials, 28 min) was scored once with frozen settings.
+- **Generated:**
+  - 192 Isaac Sim renders of the station digital twin for the liquid model.
+  - 14,400 Isaac Sim carryover renders on Brev (4,800 changeovers, 600 scene families).
+  - 1,620 analytic fault sequences for the diagnosis pilot.
+  - 300 simulated recipe queues for the scheduler.
+- **Compute:** about 16 GPU-hours (Rosie 2.65, GB10 about 4, Brev 9.7).
+
+**What is your approach?**
+A recipe-aware inspection pipeline. For each vial:
+1. A YOLO11n vial detector and a temporal U-Net liquid segmenter find the liquid. Measurement QA
+   then gives a colour only when it can trust one.
+2. The finished colour is compared with the recipe's reference (ΔE2000). An out-of-band vial
+   whose colour points toward the previous recipe is carryover.
+3. Rules turn that into an action with a deadline: SCRAP before the sorter (120 s), FLUSH before
+   the next fill, STOP & CHECK DOSING after 3 non-carryover deviations, or HOLD.
+4. The tray camera confirms where each vial landed. The cause is explained by rules; Cosmos,
+   Qwen, Jev and the OpenAI Decisions API were evaluated against them.
+
+New recipes get a reference at the line through CREATE mode. Everything runs on a GB10 as a
+self-tested kit.
+
+**What manufacturing problem are you solving?**
+The station's colour check is not told which recipe was ordered, so an off-recipe vial passes
+whenever its colour is a known colour. The first vial after a recipe change often still holds the
+previous recipe. In Run 5, all 5 measurable first vials after a change were 6–24.5 ΔE off recipe
+(vial 4: 24.5 from recipe 6, 1.6 from recipe 5). All 26 vials that reached the trays went to Good.
+
+**How does your project use physical AI?**
+- **Simulation-only training:** both vision models were trained on Isaac Sim renders of a digital
+  twin of the station, with no real training labels.
+- **Simulated carryover:** 14,400 renders on Brev L40S GPUs to study carryover and set
+  thresholds.
+- **Edge inference at the line:** real-time on a GB10 with live cameras.
+- **Physical reasoning models:** Cosmos-Reason1-7B and Qwen2.5-VL-7B were evaluated on the GB10
+  as cause explainers.
+- **Physical actions:** every perception result becomes a physical line action with a deadline.
+
+**How did you use the CSI equipment?**
+- **The GB10:** we installed our kit on CSI's GB10, and the self-test passed 40/40 twice.
+- **Live sessions:** we ran 10 LINE sessions on the station's fill and tray cameras: 5,859 model
+  samples, 14 vials decided, 4 tray arrivals.
+- **Camera transfer:** we measured it on the new camera. The vial detector found 0 of 944
+  vials; a fixed station vial region recovered 59/61 samples.
+- **Tray profile:** we set up the dual Good/Bad tray profile on the live tray camera.
+- **Flush recordings:** CSI staff recorded water-flush sequences for us. They show the line
+  behaves like a one-vial lag.
+
+**What evidence shows your solution works?**
+- **Run 5 offline:** with only the recipe order, 30/30 vials found, 0 false positives, and 30/30
+  assigned the right recipe. All 5 measurable first vials after a change were flagged; 9/9 SCRAPs
+  went out before the 120 s deadline and 5/5 FLUSHes before the next fill.
+- **Run 5 through the live camera path in real time (28 min):** the same 30/30 verdicts, 0 of
+  50,941 frames dropped, never more than 0.2 s behind.
+- **Explanations:** the rule explainer was consistent with the evidence on 20/20 vials, against
+  6–9/20 for zero-shot Cosmos and 5/20 for Qwen.
+- **Carryover (synthetic held-out families):** thresholds tuned on synthetic data flag 74% of
+  10–30% residue, against 22% for the current rule, at 2.4–2.7% false alarms.
+- **On CSI hardware:** self-test 40/40 and the 10 live sessions above.
+
+### Video questions
+
+**Show your solution running on the CSI hardware.**
+The demo is filmed on the LINE page on CSI's GB10 with the station cameras (demo script above).
+An on-site screen recording from 2026-10-30 already exists
+(`results/screen-recordings/linewatch-FINAL-20261030-000437.mp4` in the CSI handoff). If the line
+is idle, MOCK plays Run 5 through the same camera path on the same GB10.
+
+**What specific problem does it solve, and why does it matter?**
+It catches the vial that is the wrong recipe even though its colour looks normal, mostly the
+first vial after a recipe change. It tells the operator to scrap it about 2 minutes before it
+reaches the sorter, and to flush the line. Today that vial ships as Good. That costs a customer
+complaint or a recall, and finding it later costs inspection labour.
+
+**How would it help other manufacturers?**
+It needs only a camera on the fill point, the production order and one accepted vial per recipe
+(CREATE mode). No PLC integration is required. That fits any batch process with recipe changeovers
+and a visible product: paint and coatings, beverages, chemical dosing, cosmetics, pharma fill-finish.
+
+| Cost | How Linewatch reduces it | Our evidence |
+| --- | --- | --- |
+| **Scrap** | Flush only when the colour shows carryover, not after every change; order recipes so the next one tolerates what the line holds | Synthetic queues (predicted): the current flush rule uses 2.62 flushes per 18 vials; reordering needs 0.48 at f = 0.2, with fewer scraps (0.20 → 0.03) |
+| **Rework and returns** | Off-recipe units are diverted before the sorter, not found downstream | Run 5: 9/9 SCRAPs issued at least 100 s before the vial reached the tray |
+| **Downtime** | STOP & CHECK DOSING after 3 consecutive non-carryover deviations, instead of finding a dosing fault at the end of a batch | Synthetic diagnosis pilot: persistent wrong recipe reported as persistent deviation in 162/162 cases |
+| **Labour** | Every vial is checked automatically, and the operator gets an action, a deadline and a reason instead of inspecting by eye | Live path: decision a median 8.4 s after fill end, 24–86 ms per model sample |
+
+**What are your measured results against a baseline?**
+See [Results against baselines](#results-against-baselines). In short:
+- **The line as recorded** passed every vial to Good. Linewatch flagged all 5 measurable
+  off-recipe first vials and scrapped 9 vials in time.
+- **The current carryover rule** flags 22% of 10–30% residue; the tuned rule flags 74%.
+- **Lab projection** residue error is 0.053; the CNN's is 0.026–0.028.
+- **The rule explainer** is consistent with the evidence on 20/20 vials, against 5–9/20 for
+  zero-shot vision models.
+- **x86 CPU** takes about 300 ms per frame; the GB10 takes 86 ms.
+
+**Where does it fall short?**
+- **No outcome truth:** no dataset records what each vial actually was, so real-data results are
+  detection counts against proxy references, not accuracy.
+- **Camera transfer:** the vial detector did not transfer to CSI's current camera, and the fixed
+  vial region needs operator approval.
+- **One-vial lag:** CSI's flush clips suggest the line lags about one vial, which the scheduler's
+  model doesn't capture yet, and one water vial may not clear a change.
+- **Synthetic thresholds:** not frozen, because synthetic noise is below real noise.
+- **Missing references:** 5 of Run 5's 10 first vials can't be checked, because those recipes have
+  no reference.
+
+### Links to supporting material
+
+- Repository: <https://github.com/ALL-Applied-AI-Network/msoe-ai-club-rockwell-automation-nvidia-hackath-austin-koske-s-team-8e90f213c6> (`main`)
+- [Evaluation](docs/evaluation.md), [architecture](docs/architecture.md), [line view](docs/line-view.md), [compute](docs/compute.md), [data](docs/data.md)
+- Records:
+  - Run 5 line runner: [`line-runner-run5-20261027.json`](setup/verification/line-runner-run5-20261027.json)
+  - Tray reconciliation: [`tray-reconciliation-20261028.json`](setup/verification/tray-reconciliation-20261028.json)
+  - Cause explainers: [`rca-explainers-run5-20261028.json`](setup/verification/rca-explainers-run5-20261028.json), [`rca-jev-run5-20261028.json`](setup/verification/rca-jev-run5-20261028.json), [`rca-openai-decisions-run5-20261028.json`](setup/verification/rca-openai-decisions-run5-20261028.json)
+  - Synthetic carryover: [`carryover-synthetic-20261029.json`](setup/verification/carryover-synthetic-20261029.json)
+  - GB10 native run: [`gb10-native-20261027.json`](setup/verification/gb10-native-20261027.json)
+  - Model release: [`temporal-cnn-release-20261026.json`](setup/verification/temporal-cnn-release-20261026.json)
+- Releases: [`temporal-cnn-v1.0.0`](https://github.com/ALL-Applied-AI-Network/msoe-ai-club-rockwell-automation-nvidia-hackath-austin-koske-s-team-8e90f213c6/releases/tag/temporal-cnn-v1.0.0) (models, training renders) and the `linewatch-gb10` kit

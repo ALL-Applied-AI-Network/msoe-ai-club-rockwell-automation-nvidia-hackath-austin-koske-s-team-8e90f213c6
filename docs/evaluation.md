@@ -551,6 +551,11 @@ The subsequent open-slot update removes that profile's global-clear dependency e
 slot is classified against its empty-hole signature; changed slots initialize as inventory and
 open slots initialize as available. Five seconds of stable per-slot evidence are still required
 for later arrival/vacancy events, so ordinary short gripper visits do not become vial arrivals.
+The live 2026-10-30 transfer exposed a further camera auto-exposure failure mode: a common grey
+shift made unchanged empty holes cross the occupancy threshold and appear as uncapped arrivals.
+The profile comparison now subtracts the median signed shift across each 30-slot grid. Replay of
+the two affected sessions removed the spurious Good-grid arrivals while retaining localized slot
+changes; this is a targeted transfer check, not a labelled physical-accuracy result.
 The operator then identified Good R1C6 and R2C6 as empty in a live frame; their previously bright
 empty signatures were corrected from that attributed evidence. Replay of the same frame changed
 Good from two boxes to zero while retaining the two visible Bad inventory boxes. This is a narrow

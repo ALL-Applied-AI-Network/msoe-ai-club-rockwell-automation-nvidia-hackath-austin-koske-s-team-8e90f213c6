@@ -196,22 +196,37 @@ def baseline_inventory(bgr, tray_slots, empty_slot_gray):
     grey = cv2.cvtColor(bgr, cv2.COLOR_BGR2GRAY)
     out = {}
     for tray, centers in tray_slots.items():
-        current = [float(np.median(grey[y - 5:y + 5, x - 5:x + 5])) for x, y in centers]
-        out[tray] = [abs(value - expected) > BASELINE_INVENTORY_GRAY
-                     for value, expected in zip(current, empty_slot_gray[tray])]
+        # Auto-exposure changes every empty hole in the same direction.  Remove that common
+        # shift before deciding which individual slots differ from the commissioned profile;
+        # otherwise an untouched empty grid can turn into a row of uncapped-vial detections.
+        differences = profile_gray_differences(grey, centers, empty_slot_gray[tray])
+        out[tray] = [difference > BASELINE_INVENTORY_GRAY for difference in differences]
     return out
+
+
+def profile_gray_differences(grey, centers, expected_gray):
+    """Per-slot residual after removing the tray's common illumination/exposure shift."""
+    current = np.asarray(
+        [float(np.median(grey[y - 5:y + 5, x - 5:x + 5])) for x, y in centers],
+        dtype=np.float32,
+    )
+    signed = current - np.asarray(expected_gray, dtype=np.float32)
+    # Fewer than half the slots are expected to change at once during a six-vial run, making
+    # the median a robust estimate even while the robot or several vials are in the grid.
+    illumination_shift = float(np.median(signed))
+    return np.abs(signed - illumination_shift)
 
 
 def profile_slots(bgr, centers, expected_gray):
     """Per slot: direct difference from the station empty-hole signature and yellow fraction."""
     grey = cv2.cvtColor(bgr, cv2.COLOR_BGR2GRAY)
     hsv = cv2.cvtColor(bgr, cv2.COLOR_BGR2HSV)
+    differences = profile_gray_differences(grey, centers, expected_gray)
     out = []
-    for (x, y), expected in zip(centers, expected_gray):
-        current = float(np.median(grey[y - 5:y + 5, x - 5:x + 5]))
+    for (x, y), difference in zip(centers, differences):
         window = np.s_[y - SLOT_HALF:y + SLOT_HALF, x - SLOT_HALF:x + SLOT_HALF]
         yellow = float((cv2.inRange(hsv[window], *YELLOW) > 0).mean())
-        out.append((round(abs(current - expected), 1), round(yellow, 2)))
+        out.append((round(float(difference), 1), round(yellow, 2)))
     return out
 
 

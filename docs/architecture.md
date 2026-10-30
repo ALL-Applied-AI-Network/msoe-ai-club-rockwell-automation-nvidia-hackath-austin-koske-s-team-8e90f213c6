@@ -286,7 +286,9 @@ library:
 `replay.tray` reads the cap/seal camera on the same clock. It requires a clear view of both
 profiled 5×6 sorting grids before establishing the session baseline, reserves arbitrary starting inventory
 already present, and detects the first new arrival in any open slot in either grid rather than
-assuming R1C1. Large connected changes relative to that baseline hold detections while the robot
+assuming R1C1. Per-grid median illumination correction removes camera-wide exposure shifts before
+individual holes are compared with their empty-slot profile, so an unchanged empty grid does not
+become a set of uncapped vials. Large connected changes relative to that baseline hold detections while the robot
 arm occludes the trays. It matches arrivals to departures in the ledger, then reports routing,
 escapes, vials in transit and missing caps. The deployed CSI grids are an explicit station-profile
 candidate; their coordinates and transfer evidence do not establish source-matched accuracy.

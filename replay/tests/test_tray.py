@@ -3,7 +3,8 @@ import unittest
 import numpy as np
 
 from replay.tray import (BAD_SLOTS, GOOD_SLOTS, SLOT_STABLE, STABLE, TRAY_SLOTS, CapTracker,
-                         TrayScanner, align, arm_over_trays, baseline_inventory, clear_view, slot_events)
+                         TrayScanner, align, arm_over_trays, baseline_inventory, clear_view,
+                         profile_slots, slot_events)
 
 
 def sample(t, occupied, yellow=0.6, arm=False):
@@ -59,6 +60,24 @@ class SlotTest(unittest.TestCase):
         inventory = baseline_inventory(frame, TRAY_SLOTS, expected)
         self.assertEqual([index for index, occupied in enumerate(inventory["bad"]) if occupied], [29])
         self.assertFalse(any(inventory["good"]))
+
+    def test_profile_ignores_uniform_camera_exposure_shift(self):
+        frame = np.full((480, 640, 3), 90, dtype=np.uint8)
+        expected = {tray: [50.0] * 30 for tray in TRAY_SLOTS}
+        inventory = baseline_inventory(frame, TRAY_SLOTS, expected)
+        self.assertFalse(any(inventory["good"]))
+        self.assertFalse(any(inventory["bad"]))
+        self.assertTrue(all(diff == 0.0 for diff, _ in profile_slots(
+            frame, GOOD_SLOTS, expected["good"])))
+
+    def test_profile_keeps_local_slot_change_after_exposure_correction(self):
+        frame = np.full((480, 640, 3), 90, dtype=np.uint8)
+        x, y = GOOD_SLOTS[17]
+        frame[y - 5:y + 5, x - 5:x + 5] = 180
+        expected = {tray: [50.0] * 30 for tray in TRAY_SLOTS}
+        inventory = baseline_inventory(frame, TRAY_SLOTS, expected)
+        self.assertEqual([index for index, occupied in enumerate(inventory["good"]) if occupied], [17])
+        self.assertFalse(any(inventory["bad"]))
 
     def test_slot_profile_initializes_without_global_clear_scene(self):
         frame = np.zeros((480, 640, 3), dtype=np.uint8)

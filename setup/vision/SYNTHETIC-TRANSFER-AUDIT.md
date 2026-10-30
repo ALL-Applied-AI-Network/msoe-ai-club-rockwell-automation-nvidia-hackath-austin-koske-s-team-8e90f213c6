@@ -1,5 +1,189 @@
 # Synthetic liquid transfer: inspection before another fit
 
+## Targeted follow-up — paired rendering, basal association and vial crop
+
+[Completed protocol and results](TARGETED-SYNTHETIC-TRANSFER.md). Generated 192
+new paired scenes with an isolated refractive-glass material, small pools and
+lighting/paper/camera variation; original USDs unchanged. Two new synthetic-only
+fits retained 614 training samples/epoch, three fixed epochs and COCO initialization.
+Paired-render held-out geometric AP improved 42.47%→74.40%, including small-body
+matches 0/7→5/7. Real provisional AP worsened 26.50%→23.18%; a lower-vial crop fit
+scored 8.44%. Basal filtering reduced unmatched boxes 265→88 but matches 70→61.
+Actual real raw QA availability was 61/111 baseline, 20/111 paired, 23/111 crop,
+59/111 basal. These are availability/provisional agreement metrics, not reviewed
+accuracy. No candidate is promoted and no Run 5 input was used.
+
+Verified scorecard/CSV/JSON:
+`C:/Users/Austin/ai-club-tools/results/targeted-synthetic-20261022/summary-v2/`.
+Seven unchanged source images/questions are in `Human-Target-Scope-Review.zip`.
+Target-scope approval and controlled empty/known-fill optical calibration remain
+needed; neither additional appearance variation nor geometric filtering closed
+the real-transfer gap in these pilots.
+
+## October 22 follow-up — synthetic-only competition direction
+
+Austin reaffirmed that new CSI-domain training must use generated imagery. Real
+data supports inspection/evaluation, not weight fitting. The real-trained demo
+remains a legacy development comparator; it is not the synthetic-trained
+competition solution. Generic COCO/SAM pretraining and prior real-informed
+camera/prompt development are disclosed separately. Current team assignments
+are in [the team handoff](../../team_handoff/README.md#current-assignments--october-22).
+The October 19 audit below is preserved as historical evidence.
+
+**October 22 source-image comparison:** five new PNG boards are under
+`C:/Users/Austin/ai-club-tools/results/real-vs-synthetic-20261022/review-v1/`.
+They show raw real/render RGB at native scale, identical lower-vial crops,
+eight fresh frozen-model predictions, unchanged target scopes and native masks.
+Pairs are illustrative, not matched recipes/volumes; real Run 1/3/4 images were
+not used to train this synthetic-only model. Synthetic train/val status is shown.
+
+The selected shallow-blue real example gets a plausible bottom-pool proposal
+at 0.988 **plus three additional proposals** over vial/label regions, versus
+one proposal on the rendered example. A real image with no supplied liquid
+target gets two high-confidence proposals; its rendered empty counterpart gets
+none. An established blue example gets a single visually localized body box in
+both domains. This is partial transfer with spurious proposals, not evidence that
+the pipeline cannot find any real liquid. No reviewed accuracy is inferred from
+these selected examples.
+
+The real source `vial_fill_20260922_171633_379025` has a 20px provisional liquid
+target near the holder, not a box spanning the dark lower region visible in RGB.
+Its small box is not evidence of a first shallow pool. Other unchanged real boxes
+switch between stream-plus-body and body-only scope. Therefore the proxy AP gap
+mixes visual transfer and reference-semantic differences; it cannot be attributed
+entirely to rendering. The three tiny blue/pale/clear render examples each have
+the same 1,158-pixel native body mask despite different RGB visibility. Flag
+these target/visibility cases for human review; no labels were replaced.
+
+Priority for the next controlled iteration: agree visible-pool scope and a
+reviewed real evaluation set; match empty glass, label placement, lighting and
+camera geometry with varied synthetic hard negatives; then add realistic first
+pool/optical variation. These are evidence-based hypotheses to test, not an
+isolated causal diagnosis or permission to fit on real images.
+
+Local root: `C:/Users/Austin/ai-club-tools/results/sim-real-robustness-20261022`.
+The verified combined report and chart are `summary-v1/comparison.json` and
+`summary-v1/synthetic-transfer-scorecard.png`. New model roots are
+`C:/Users/Austin/ai-club-tools/results/synthetic-liquid-20261022/fasterrcnn-v1`
+and `fasterrcnn-aug-v1`. No candidate was promoted and no original labels or
+teammate scene assets were edited.
+
+### Completed local work
+
+- **CPU transfer/robustness:** 2,412 fresh detector evaluations: three frozen
+  YOLO checkpoints × 157 original Run 4 stills plus 111 cached Isaac samples ×
+  raw/green-gain/blur conditions. This is 268 source images repeated across arms,
+  not 2,412 independent trials. The legacy operating point reproduces the
+  previous Run 4 audit's 69 matches / 12 unmatched boxes / 20 missed targets.
+- **New synthetic-only Faster R-CNN fits:** two fixed three-epoch pilots,
+  identical COCO initialization and disjoint image-hash split, 614 synthetic
+  train / 154 synthetic development images. One uses raw rendered RGB; the
+  other samples encoded exposure/color-gain/blur/JPEG variation during training.
+  Both freeze the final epoch before opening real Run 4 evaluation images.
+- **Actual detector → SAM → QA:** synthetic-trained joint YOLO on six conditions
+  (1,332 samples), then synthetic YOLO vial + each new Faster R-CNN liquid model
+  + generic SAM2.1 on raw/green/JPEG conditions (666 samples each). All use the
+  same original RGB/clock joins and frozen prompt/QA rules. No recorded model
+  predictions are substituted for inference. Real input is three predeclared
+  37-sample windows; simulation uses all 111 cached frames.
+
+### What the new detector scores say
+
+All real scores below compare with **89 provisional liquid boxes on 157 Run 4
+images**, including 68 provisional label-absence images. They are not human
+accuracy or confirmed-empty false-alarm rates. AP uses confidence-ordered
+one-to-one matching and 101-point precision-envelope averaging; the integration
+differs slightly from previous Ultralytics AP, so do not compare the AP decimals
+as if the implementations were identical. All rows here use the same new scorer.
+
+| Model / CSI-domain fine-tuning | Run 4 liquid AP50–95 | Precision at .35 | Recall at .35 | Unmatched boxes |
+| --- | ---: | ---: | ---: | ---: |
+| Legacy real-trained YOLO comparator | 50.21% | 85.19% | 77.53% | 12 |
+| Original synthetic-only YOLO, 768 scenes | 26.45% | 55.08% | 73.03% | 53 |
+| Prior revised synthetic-only YOLO, 18 scenes | 10.59% | 11.64% | 24.72% | 167 |
+| New synthetic-only Faster R-CNN | 26.50% | 20.90% | 78.65% | 265 |
+| New synthetic-only Faster R-CNN + RGB variation | 24.96% | 14.10% | 74.16% | 402 |
+
+The new Faster R-CNN raw/augmentation arms score **95.79% / 96.70%** on held-out
+synthetic geometry but **26.50% / 24.96%** on provisional real targets. That is
+a proxy generalization failure, not a calibrated physical accuracy gap: source
+distributions and target semantics differ. The three-epoch budget, one seed and
+different older YOLO training budgets also prevent an architecture superiority
+claim. This RGB-augmentation recipe did **not** improve real agreement.
+
+### Full-pipeline availability exposes a second transfer problem
+
+| Synthetic-trained detector path → generic SAM2.1 | Real raw QA / 111 | Real green-gain QA / 111 | Real JPEG QA / 111 |
+| --- | ---: | ---: | ---: |
+| Joint YOLO vial/liquid | 31 | 30 | 22 |
+| YOLO vial + new Faster R-CNN liquid | 61 | 60 | 32 |
+| YOLO vial + augmented Faster R-CNN liquid | 55 | 56 | 31 |
+
+These are **availability counts, not correctly segmented frames**. More passes
+cannot establish improved localization or recipe decisions without reviewed
+mask/visibility truth. For the raw Faster R-CNN arm, JPEG retained **31/61**
+previously usable real samples versus **72/73** simulated ones. Masks compared
+with raw predictions had mean self-IoU **0.599 real / 0.936 simulated**. The
+domains are different scenes and trajectories, so this is a diagnostic mismatch
+in nuisance response, not a controlled causal estimate of the sim-to-real gap.
+It identifies a failure the current simulated scenes do not expose equally.
+
+### What should change in the next generated batch
+
+The byte-verified corpus audit (`synthetic-corpus-audit-v2.json`) checks all 768
+original and 18 revised source image/label pairs. Each corpus has **one native
+vial-box geometry**. Original positive body boxes start at **36 pixels high**;
+none is ≤32 pixels. The revised set has five ≤32-pixel boxes, but only 18 unique
+scenes repeated 91–151 times each in its 2,210-sample training epoch. Neither
+original fit had a held-out synthetic scene split; its training-set validation
+was resubstitution. The new Faster R-CNN pilots fix the split, not the optics.
+
+Prioritize a bounded, reviewed fixture spanning first localized pools, pale/clear
+RGB observability, meniscus/refraction, glass/label appearance, camera variation
+and real encoding sensitivity. Preserve distinct pool/stream/glass targets and
+raw geometric masks; do not upgrade geometric masks to approved visible-pool
+truth. Hold scene/seed families out before fitting. Increasing repeated-image
+counts or adding generic RGB variation alone is not evidence of better transfer.
+No new 3D scenes were rendered in these October 22 experiments.
+
+For a defensible sim-to-real claim, report a synthetic-trained model against
+reviewed real onset/mask/defect references, then demonstrate improvement on fixed
+development cases and confirm it on a fresh independent physical sequence. Keep
+all missed, uncertain and unavailable cases. Real first-visible-pool and recipe
+defect accuracy remain unmeasured. Run 5 was not used.
+
+### Dataset 1 extension and operational boundary
+
+The official [Dataset 1 page](https://msoe-maic.com/library?article=Rockwell-NVIDIA-Fall-2026-Vial-Inspection)
+describes per-position final-fixture inspection and synthetic training. Our local
+tray-inspection USD/camera assets are available, but its real labeled fixture
+crops were not located. Dataset 2 cap-seal context is not automatically Dataset 1
+evaluation truth. The [extension proposal](../../team_handoff/integration/dataset1-extension-20261022.json)
+keeps station evidence separate unless a physical vial-to-slot link is confirmed.
+Expected placement progress is needed to distinguish a missed placement from an
+unfilled future position. The operator workflow can present both stations without
+inventing that link. No industrial connection or control action is implemented.
+
+### Reproduction and preserved failures
+
+Use `experiment_sim_real_cpu.py` for the frozen CPU probe,
+`train_synthetic_liquid_pilot.py prepare` then `fit` for new synthetic-only fits,
+and `experiment_sim_real_robustness.py --arm synthetic_fasterrcnn
+--synthetic-rcnn MODEL_ROOT --conditions raw green_085 jpeg_q40` for the model-to-QA
+comparison. Each requires a fresh output. Retained plans/helpers pin the executed
+bytes; `summarize_synthetic_transfer.py` verifies completed artifacts, disjoint
+synthetic image splits, matched source clocks and legacy fixed-point parity.
+
+The first GPU attempt failed at warm-up near the Windows memory-commit limit.
+Austin approved closing existing Isaac/Python PID 91932, which held about 191 GiB
+private memory; GPU inference then completed. This does not diagnose the cause of
+that process's memory growth. CPU attempt v1 had a reporting error; its replacement
+v2 completed. Partial directories are retained and are not scored results. The
+verified summary uses only completion-marked runs. No process or UI was deployed
+as a production station by these experiments.
+
+---
+
 October 19, 2026. This is a diagnostic of the frozen 768-image GB10 pilot,
 not a new model, reviewed label set, optical calibration or renderer change.
 The evidence shows **both inconsistent target scope and a visible rendering

@@ -1,5 +1,14 @@
 # Early liquid review: Run 4 development batch
 
+Status checked October 21 against the October 20 verification: locally prepared,
+not included in the published student data release. The verified package contains
+zero approved onsets or masks; no new returned reviews are incorporated here.
+
+Download/share location on Austin's machine:
+`C:/Users/Austin/ai-club-tools/results/pipeline-acceleration-20261020/early-fill-review-v1.zip`
+(26,316,258 bytes). SHA256:
+`4cfba5c723943b62edd64d92aa9486c4bef52dd5e202f41da17bd6c06951767d`.
+
 This is a new, unreviewed batch for Aleyna, Zoe and Reagan. It does not replace
 the existing Run 3 assignments or modify any prior review workspace. Cases remain
 unassigned so the team can schedule them alongside its current milestone.

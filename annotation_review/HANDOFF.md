@@ -1,4 +1,27 @@
-# Data-review handoff — October 19, target October 20
+# Data-review handoff — current status October 21, 2026
+
+Aleyna, Zoe and Reagan are now working together on YOLO active-vial detection
+and box review. The [student data guide](../team_handoff/README.md#find-the-yolo-images-and-boxes)
+identifies the training JPEGs and matching vial-only TXT files. The existing
+review package below retains its original assignments; the October 20 milestone
+was a target, not evidence that reviewers completed it.
+
+Keep three deliverables distinct:
+
+- **Training starter:** published in `team-data-v1.0.0`; provisional vial-only
+  labels live under `starter/labels/`. Pictures do not contain drawn-on boxes.
+- **Original review package:** published in `annotation-review-v0.2.0`; 179 cases,
+  beginning with 95 Run 3 stills. It exports correction JSON, not training TXT.
+- **New early-fill package:** six Run 4 clips and 72 PNGs, locally prepared and
+  unreviewed/unassigned. See [its separate handoff](EARLY-FILL-HANDOFF.md).
+  It has not been added to the student data release.
+
+After human review, corrections still need an explicit validated conversion into
+a new training-data revision. Preserve source/class mapping, splits, translation
+ancestry and reviewer provenance. The existing editor does not import arbitrary
+YOLO TXT files or automatically regenerate `starter/labels/`.
+
+## Original package and review plan
 
 The first milestone is Run 3 vial-fill review. Tank and cap/seal prelabels remain
 available, but neither blocks this milestone. All machine suggestions start
@@ -36,7 +59,8 @@ and explicitly mark native PTS unavailable.
 
 The queue's Assigned filter contains these assignments. Start with the **Run 3**
 cohort. Use the first five images to agree on vial/liquid box conventions, then
-finish your assigned Run 3 stills by October 20. Mark difficult cases uncertain
+finish your assigned Run 3 stills (original target: October 20). Confirm current
+progress and scheduling with the team. Mark difficult cases uncertain
 instead of guessing. Aleyna gathers QA questions; Zoe compares first/later recipe
 examples; Reagan collects proposed clock landmarks for separate timing review.
 Video anchors and QA windows follow after the Run 3 checkpoint. For each image, correct vial/liquid

@@ -233,6 +233,15 @@ masks, not the line's segmentation, and the app stores only reference colours, n
 crops, so the line keeps the projection. Above about 50% a vial is mostly the previous recipe and
 is reported as a possible schedule or switching problem rather than a carryover percentage.
 
+**Hybrid** (`setup/vision/eval_carryover_hybrid.py`, balanced checkpoints, same dev changeovers):
+report the projection when a gate reads at or above a cutoff fixed in advance (0.3 or 0.5),
+otherwise the CNN. Gated by the projection's own estimate it is worse than the CNN alone (all
+vials 0.039–0.044), because the projection over-reads many light vials (209 switched at 0.3, against
+138 true vials above 30%). Gated by the CNN's estimate at 0.5 (86–88 vials switched) it is the
+best of the three: all vials 0.025–0.026, 50–100% 0.058–0.061, no change below 50%. A 0.3 cutoff
+loses at 30–50% (0.078–0.083). Still synthetic only, with the CNN epoch and the comparison both on
+the dev families, so it does not change the line.
+
 Annotated video: `python -m replay.annotate --video V --run DIR --library L --out annotated.mp4`
 redraws the run from its saved outputs (about 2 min for Run 5, no models): the vial region,
 fill phase, measured vs reference colour with live ΔE, the verdict, an action log with deadline

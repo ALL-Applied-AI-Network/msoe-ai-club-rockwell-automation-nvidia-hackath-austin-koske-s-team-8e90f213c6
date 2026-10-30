@@ -182,6 +182,51 @@ Details: [compute](docs/compute.md).
 
 ---
 
+## Impact numbers for the slides (sourced)
+
+**The cost of the problem**
+- **Cost of poor quality:** commonly put at about **15–20% of sales** for manufacturers, and up to
+  40% at the worst performers. These are ASQ-attributed estimates, as quoted by
+  [ReliaMag](https://reliamag.com/articles/cost-of-poor-quality-scrap-rework-returns/); an IISE
+  article gives about 15% on average, in a 5–35% range
+  ([IISE](https://iise.org/details.aspx?id=22118)).
+- **Food and beverage recalls:** about **$10M in direct costs** on average
+  ([FMI/GMA study, via Food Safety](https://www.food-safety.com/signature-series/recall-the-food-industrys-biggest-threat-to-profitability/)).
+  Allianz puts a significant food and beverage recall at about €8M (about $9.5M), and **$12M** across
+  all sectors, for 2012–2017
+  ([Allianz via FoodNavigator](https://www.foodnavigator.com/Article/2017/12/13/Product-recall-risks-growing-in-size-and-number-Allianz),
+  [Business Insurance](https://www.businessinsurance.com/Product-recalls-cost-companies-$12-million-on-average-Allianz-/)).
+- **Pharma fill-finish:** a single failed biologic or parenteral batch is put at **$0.5M to several
+  million**. That figure comes from vendor estimates, not a peer-reviewed benchmark
+  ([iFactory](https://ifactoryapp.com/industries/manufacturing-plant/ai-pharma-batch-consistency-manufacturing)).
+- **Market:** industrial machine vision is about **$7–18B in 2026**, depending on scope, and quality
+  inspection is a main growth driver
+  ([GMI](https://www.gminsights.com/industry-analysis/industrial-machine-vision-market),
+  [Fortune Business Insights via GII](https://www.giiresearch.com/report/fbs2020111-machine-vision-market-size-share-growth-global.html)).
+
+**Where Linewatch applies:** any line that changes recipes and has a visible product, such as
+beverages and syrups, paints and coatings, chemical dosing, cosmetics, and pharma fill-finish.
+It needs a camera at the fill point, the production order and one accepted unit per recipe.
+
+**What our data says about the problem's size.** In Run 5, 10 of the 30 vials (1 in 3) were the
+first of a new recipe. All 5 that could be measured were off recipe, and all 26 vials that
+reached the trays went to Good.
+
+**What it cost to build** (all sponsor-provided):
+
+| Resource | Used | At list price |
+| --- | --- | --- |
+| Brev, 2× L40S (NVIDIA credits) | 9.7 instance-hours | about **$35** ($3.61/h) |
+| Rosie H100 (MSOE) | 2.65 GPU-hours | about **$5–18** at $2.00–6.88 per H100-hour on demand ([IntuitionLabs](https://intuitionlabs.ai/articles/h100-rental-prices-cloud-comparison)) |
+| GB10 / DGX Spark: spark8 plus CSI's unit at the line | about 4 GPU-hours, plus deployment | **$3,999 at launch, $6,950 now** per unit ([Tom's Hardware](https://www.tomshardware.com/desktops/mini-pcs/nvidia-dgx-spark-gets-18-percent-price-increase-as-memory-shortages-bite-founders-edition-now-usd4-699-up-from-usd3-999), [The Register](https://www.theregister.com/a/5300622)) |
+| build.nvidia.com hosted models | Nemotron and Llama vision explainers | free API tier |
+| **Total** | **about 16 GPU-hours** | **about $40–55 of cloud compute**, plus two GB10s worth about $14k at today's price |
+
+The slide line: *"Trained on about $50 of GPU time, entirely in simulation, and running on one
+desktop GB10 at the line."*
+
+---
+
 ## Submission checklist
 
 - [ ] Video, about 5 minutes: the 3-minute talk and 2-minute demo above, showing the CSI GB10 and

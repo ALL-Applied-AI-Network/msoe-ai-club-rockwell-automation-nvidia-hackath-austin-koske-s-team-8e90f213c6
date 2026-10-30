@@ -242,6 +242,26 @@ best of the three: all vials 0.025–0.026, 50–100% 0.058–0.061, no change b
 loses at 30–50% (0.078–0.083). Still synthetic only, with the CNN epoch and the comparison both on
 the dev families, so it does not change the line.
 
+**Carryover forecast and recipe order** (synthetic, no real input). `replay/carryover_forecast.py`
+forecasts a changeover's first vial from the two references and the true f, with no fitted
+parameters. On the 1,195 dev changeovers the optical-density mix is within 0.43 ΔE2000 (median;
+90th percentile 1.42) of the measured vial and agrees on out of band (ΔE 5) for 98.2%; the Lab
+mix gives 0.48 / 1.64 / 97.9%. The error is about the clean-vial noise floor (0.67). The fixture
+mixes dyes the same way, so real dyes may fit worse. `replay/schedule.py` uses that forecast as a
+line model (each vial is (1 - f) recipe + f line contents; a water vial costs half a scrap) to choose
+flushes and order recipe runs, or to re-plan from the last vial's measured colour.
+`replay/schedule_synthetic.py`: 300 random queues (6 runs, 18 vials each), scored with the same
+line model, so these are predicted savings:
+
+| f | Requested, no flush | Requested, current rule (flush if references > 15 ΔE apart) | Requested, best flushes | Reordered within 2 | Reordered freely |
+| --- | --- | --- | --- | --- | --- |
+| 0.1 | 0.33 scraps | 0 scraps, 2.62 flushes | 0 scraps, 0.33 flushes | 0, 0.03 | 0, 0 |
+| 0.2 | 1.52 | 0.20, 2.62 | 0.14, 1.38 | 0.03, 0.48 | 0, 0.16 |
+| 0.3 | 2.56 | 1.59, 2.62 | 1.31, 1.25 | 0.49, 0.75 | 0.21, 0.58 |
+
+The line's f is unknown and is not fitted to Run 5; whether CSI may reorder runs is a question for
+CSI. Neither is in the app yet.
+
 Annotated video: `python -m replay.annotate --video V --run DIR --library L --out annotated.mp4`
 redraws the run from its saved outputs (about 2 min for Run 5, no models): the vial region,
 fill phase, measured vs reference colour with live ΔE, the verdict, an action log with deadline

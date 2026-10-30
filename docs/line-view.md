@@ -125,6 +125,11 @@ reference, so its vials are HOLD until one is set:
    Every later vial of that recipe is judged against it.
 3. A vial without a QA-valid colour does not count; CREATE stays on for the next one.
 
+CREATE also keeps the reference vial's colour **trajectory** during its fill. Later vials of that
+recipe are compared with it as they fill, and three samples in a row outside the band raise an
+**EARLY WARNING** action (amber banner on the fill camera) before the fill ends
+([evaluation](evaluation.md#early-warning-during-the-fill-run-5-2026-10-30)).
+
 **RECREATE** redoes it for a recipe that already has a reference (the button reads
 **RECREATE reference from next vial**): the current reference is used until the next decided vial
 replaces it, and the replaced one is kept in the recipe's `reference_history`.

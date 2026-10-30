@@ -67,6 +67,8 @@ recipe order:
 - **Vials:** 30/30 found and 30/30 assigned the right recipe.
 - **First vials after a change:** all 5 measurable ones flagged.
 - **Timing:** 9/9 SCRAPs issued before the sorter deadline.
+- **Early warning:** off-recipe vials flagged *while still filling*, a median 18 s before the
+  endpoint decision (6/6 with a reference trajectory; 1/4 good vials falsely warned).
 - **Explanations:** the rule explainer was consistent with its evidence on 20/20 vials. The best
   zero-shot vision model managed 9/20.
 
@@ -85,6 +87,7 @@ It falls short in four places:
 | --- | --- | --- | --- |
 | Are off-recipe vials caught? (Run 5) | **The line as recorded:** a recipe-unaware colour check; all 26 vials that reached the trays went to Good, including first vials 6–24.5 ΔE off recipe | **5/5** measurable first vials after a change OUT OF SPEC; **9 SCRAP, all before the 120 s deadline** (each with ≥100 s to spare); FLUSH 5/5 before the next fill; vial 5 likely saved by the flush after vial 4 | No per-vial outcome labels. References are Run 5 proxy vials (3rd vial of each recipe; those vials are excluded from scoring). 5 first vials can't be checked: recipes 8, 9 and 13 have no reference |
 | Can it follow the line on its own? (Run 5) | **Organizers' hand labels** | **30/30** vials, 0 false positives, **30/30** right recipe; fill start/end within 1.2 s / 4.9 s (median); decision 8.4 s after fill end (median); 50,941 frames in 3 min 18 s on an RTX 4080 | Run 5 is one run. Settings were frozen on Runs 1–4 before it was scored |
+| Can it warn before the fill ends? (Run 5) | **Decide after the fill:** median 8.4 s after the fill ends | **6/6** bad vials that have a reference trajectory were warned *during* the fill, **median 18.2 s earlier** (16.5–32.6 s), as early as 2.5 s into the fill; 1/4 good vials warned | Rule changed twice after seeing Run 5 (disclosed); small sample; recipe 6 has no trajectory. Needs fresh CSI data |
 | Is the cause right? (20 Run 5 packets) | **Rule explainer** | Rule: 20/20 consistent with the evidence. Cosmos-Reason1-7B: 6–9/20; Qwen2.5-VL-7B: 5/20 (both call nearly everything carryover); OpenAI Decisions API: 20/20; Jev 1.14: 17/20 | No cause labels exist. The rules still decide; models only word the explanation |
 | Does carryover get flagged? (synthetic, held-out families) | **Current rule** (ΔE 5, direction 0.8): flags 0.5% of vials at 0–10% residue, 22% at 10–30% | Thresholds tuned on train families: **41% / 74%**, and 86–93% above 30% residue; 2.4–2.7% false alarms | Synthetic noise is lower than real noise, so these thresholds are **not frozen** |
 | How much residue? (synthetic) | **Lab colour projection:** 0.053 average error in residue fraction | **CNN (3 seeds): 0.026–0.028**; CNN switching to the projection above 50%: 0.025–0.026 | Worse than the projection above 50% residue (0.074 vs 0.052). Synthetic only |
@@ -121,6 +124,7 @@ if the line is not running. Open `http://127.0.0.1:8788`.
 | 0:15 | **MASKS ON** on the fill camera | "Green is the liquid the model sees; blue is what QA actually measures." |
 | 0:30 | **Recipe setup:** **New recipe** "Blue 50" (50 mL clear, 50 mL blue) → **Add to order** → **CREATE reference from next vial** | "New recipe, no reference yet. The next vial becomes its reference, with a record of where it came from." |
 | 0:55 | Vial decided → `REFERENCE SET` | "Every later vial of Blue 50 is judged against that colour." |
+| 1:05 | Next vial of the recipe starts filling off-colour → amber **EARLY WARNING** on the fill camera | "It hasn't even finished filling, and Linewatch already says it's off recipe." |
 | 1:10 | Recipe change: first vial after it → **OUT OF SPEC**, **SCRAP** with countdown, **FLUSH** | "First vial after the change still looks like the old recipe: scrap before the sorter, flush before the next fill." |
 | 1:35 | **DETECTIONS ON** on the tray camera; the arrival appears | "The tray camera confirms where it went." |
 | 1:50 | **Stop** → open the run in **Review** | "Every session is saved and can be reviewed frame by frame." |
@@ -257,6 +261,9 @@ previous recipe. In Run 5, all 5 measurable first vials after a change were 6–
 - **Run 5 offline:** with only the recipe order, 30/30 vials found, 0 false positives, and 30/30
   assigned the right recipe. All 5 measurable first vials after a change were flagged; 9/9 SCRAPs
   went out before the 120 s deadline and 5/5 FLUSHes before the next fill.
+- **Early warning (Run 5):** 6/6 off-recipe vials with a reference trajectory flagged during the
+  fill, a median 18.2 s before the endpoint decision; 1/4 good vials falsely warned. The rule was
+  adjusted twice after seeing Run 5, so this needs confirming on fresh CSI data.
 - **Run 5 through the live camera path in real time (28 min):** the same 30/30 verdicts, 0 of
   50,941 frames dropped, never more than 0.2 s behind.
 - **Explanations:** the rule explainer was consistent with the evidence on 20/20 vials, against

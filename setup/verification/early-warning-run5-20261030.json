@@ -1,0 +1,363 @@
+{
+ "schema": "linewatch-early-warning-eval/v1",
+ "run": "Run 5 (line-runner run5-v3 stored samples, live engine Review)",
+ "rule": "3 consecutive QA-valid samples > band (5) from the reference trajectory at the same time since fill start, within the reference fill duration",
+ "reference_trajectories": "client/public/data/run5/reference-trajectories.json",
+ "disclosure": "rule changed twice after looking at Run 5 (endpoint reference -> trajectory; ignore samples past the reference fill); band and count unchanged",
+ "excluded": "reference vials 3, 6, 9, 18, 20, 24, 30",
+ "rows": [
+  {
+   "seq": 1,
+   "recipe": "5",
+   "verdict": "OUT_OF_SPEC",
+   "de": 12.48,
+   "reference_vial": false,
+   "warned": true,
+   "into_fill_s": 2.5,
+   "before_fill_end_s": 21.0,
+   "before_decision_s": 23.8
+  },
+  {
+   "seq": 2,
+   "recipe": "5",
+   "verdict": "IN_SPEC",
+   "de": 2.84,
+   "reference_vial": false,
+   "warned": true,
+   "into_fill_s": 14.0,
+   "before_fill_end_s": 11.5,
+   "before_decision_s": 14.0
+  },
+  {
+   "seq": 3,
+   "recipe": "5",
+   "verdict": "IN_SPEC",
+   "de": 2.05,
+   "reference_vial": true,
+   "warned": false,
+   "into_fill_s": null,
+   "before_fill_end_s": null,
+   "before_decision_s": null
+  },
+  {
+   "seq": 4,
+   "recipe": "6",
+   "verdict": "OUT_OF_SPEC",
+   "de": 23.97,
+   "reference_vial": false,
+   "warned": false,
+   "into_fill_s": null,
+   "before_fill_end_s": null,
+   "before_decision_s": null
+  },
+  {
+   "seq": 5,
+   "recipe": "6",
+   "verdict": "OUT_OF_SPEC",
+   "de": 9.29,
+   "reference_vial": false,
+   "warned": false,
+   "into_fill_s": null,
+   "before_fill_end_s": null,
+   "before_decision_s": null
+  },
+  {
+   "seq": 6,
+   "recipe": "6",
+   "verdict": "IN_SPEC",
+   "de": 1.87,
+   "reference_vial": true,
+   "warned": false,
+   "into_fill_s": null,
+   "before_fill_end_s": null,
+   "before_decision_s": null
+  },
+  {
+   "seq": 7,
+   "recipe": "7",
+   "verdict": "OUT_OF_SPEC",
+   "de": 23.55,
+   "reference_vial": false,
+   "warned": true,
+   "into_fill_s": 7.5,
+   "before_fill_end_s": 4.0,
+   "before_decision_s": 16.5
+  },
+  {
+   "seq": 8,
+   "recipe": "7",
+   "verdict": "IN_SPEC",
+   "de": 1.06,
+   "reference_vial": false,
+   "warned": false,
+   "into_fill_s": null,
+   "before_fill_end_s": null,
+   "before_decision_s": null
+  },
+  {
+   "seq": 9,
+   "recipe": "7",
+   "verdict": "IN_SPEC",
+   "de": 2.34,
+   "reference_vial": true,
+   "warned": false,
+   "into_fill_s": null,
+   "before_fill_end_s": null,
+   "before_decision_s": null
+  },
+  {
+   "seq": 10,
+   "recipe": "8",
+   "verdict": "CANT_VERIFY",
+   "de": null,
+   "reference_vial": false,
+   "warned": false,
+   "into_fill_s": null,
+   "before_fill_end_s": null,
+   "before_decision_s": null
+  },
+  {
+   "seq": 11,
+   "recipe": "8",
+   "verdict": "CANT_VERIFY",
+   "de": null,
+   "reference_vial": false,
+   "warned": false,
+   "into_fill_s": null,
+   "before_fill_end_s": null,
+   "before_decision_s": null
+  },
+  {
+   "seq": 12,
+   "recipe": "8",
+   "verdict": "CANT_VERIFY",
+   "de": null,
+   "reference_vial": false,
+   "warned": false,
+   "into_fill_s": null,
+   "before_fill_end_s": null,
+   "before_decision_s": null
+  },
+  {
+   "seq": 13,
+   "recipe": "9",
+   "verdict": "CANT_VERIFY",
+   "de": null,
+   "reference_vial": false,
+   "warned": false,
+   "into_fill_s": null,
+   "before_fill_end_s": null,
+   "before_decision_s": null
+  },
+  {
+   "seq": 14,
+   "recipe": "9",
+   "verdict": "CANT_VERIFY",
+   "de": null,
+   "reference_vial": false,
+   "warned": false,
+   "into_fill_s": null,
+   "before_fill_end_s": null,
+   "before_decision_s": null
+  },
+  {
+   "seq": 15,
+   "recipe": "9",
+   "verdict": "CANT_VERIFY",
+   "de": null,
+   "reference_vial": false,
+   "warned": false,
+   "into_fill_s": null,
+   "before_fill_end_s": null,
+   "before_decision_s": null
+  },
+  {
+   "seq": 16,
+   "recipe": "10",
+   "verdict": "OUT_OF_SPEC",
+   "de": 13.52,
+   "reference_vial": false,
+   "warned": true,
+   "into_fill_s": 22.0,
+   "before_fill_end_s": 11.5,
+   "before_decision_s": 17.3
+  },
+  {
+   "seq": 17,
+   "recipe": "10",
+   "verdict": "IN_SPEC",
+   "de": 3.33,
+   "reference_vial": false,
+   "warned": false,
+   "into_fill_s": null,
+   "before_fill_end_s": null,
+   "before_decision_s": null
+  },
+  {
+   "seq": 18,
+   "recipe": "10",
+   "verdict": "IN_SPEC",
+   "de": 1.71,
+   "reference_vial": true,
+   "warned": false,
+   "into_fill_s": null,
+   "before_fill_end_s": null,
+   "before_decision_s": null
+  },
+  {
+   "seq": 19,
+   "recipe": "11",
+   "verdict": "OUT_OF_SPEC",
+   "de": 13.54,
+   "reference_vial": false,
+   "warned": true,
+   "into_fill_s": 25.5,
+   "before_fill_end_s": 4.0,
+   "before_decision_s": 16.9
+  },
+  {
+   "seq": 20,
+   "recipe": "11",
+   "verdict": "IN_SPEC",
+   "de": 2.31,
+   "reference_vial": true,
+   "warned": false,
+   "into_fill_s": null,
+   "before_fill_end_s": null,
+   "before_decision_s": null
+  },
+  {
+   "seq": 21,
+   "recipe": "11",
+   "verdict": "IN_SPEC",
+   "de": 3.3,
+   "reference_vial": false,
+   "warned": false,
+   "into_fill_s": null,
+   "before_fill_end_s": null,
+   "before_decision_s": null
+  },
+  {
+   "seq": 22,
+   "recipe": "12",
+   "verdict": "CANT_VERIFY",
+   "de": null,
+   "reference_vial": false,
+   "warned": true,
+   "into_fill_s": 4.5,
+   "before_fill_end_s": 20.5,
+   "before_decision_s": 37.9
+  },
+  {
+   "seq": 23,
+   "recipe": "12",
+   "verdict": "OUT_OF_SPEC",
+   "de": 5.45,
+   "reference_vial": false,
+   "warned": true,
+   "into_fill_s": 12.5,
+   "before_fill_end_s": 9.5,
+   "before_decision_s": 32.6
+  },
+  {
+   "seq": 24,
+   "recipe": "12",
+   "verdict": "IN_SPEC",
+   "de": 1.55,
+   "reference_vial": true,
+   "warned": false,
+   "into_fill_s": null,
+   "before_fill_end_s": null,
+   "before_decision_s": null
+  },
+  {
+   "seq": 25,
+   "recipe": "13",
+   "verdict": "CANT_VERIFY",
+   "de": null,
+   "reference_vial": false,
+   "warned": false,
+   "into_fill_s": null,
+   "before_fill_end_s": null,
+   "before_decision_s": null
+  },
+  {
+   "seq": 26,
+   "recipe": "13",
+   "verdict": "CANT_VERIFY",
+   "de": null,
+   "reference_vial": false,
+   "warned": false,
+   "into_fill_s": null,
+   "before_fill_end_s": null,
+   "before_decision_s": null
+  },
+  {
+   "seq": 27,
+   "recipe": "13",
+   "verdict": "CANT_VERIFY",
+   "de": null,
+   "reference_vial": false,
+   "warned": false,
+   "into_fill_s": null,
+   "before_fill_end_s": null,
+   "before_decision_s": null
+  },
+  {
+   "seq": 28,
+   "recipe": "14",
+   "verdict": "CANT_VERIFY",
+   "de": null,
+   "reference_vial": false,
+   "warned": false,
+   "into_fill_s": null,
+   "before_fill_end_s": null,
+   "before_decision_s": null
+  },
+  {
+   "seq": 29,
+   "recipe": "14",
+   "verdict": "OUT_OF_SPEC",
+   "de": 14.88,
+   "reference_vial": false,
+   "warned": true,
+   "into_fill_s": 4.0,
+   "before_fill_end_s": 14.5,
+   "before_decision_s": 19.1
+  },
+  {
+   "seq": 30,
+   "recipe": "14",
+   "verdict": "OUT_OF_SPEC",
+   "de": 9.95,
+   "reference_vial": true,
+   "warned": false,
+   "into_fill_s": null,
+   "before_fill_end_s": null,
+   "before_decision_s": null
+  }
+ ],
+ "summary": {
+  "out_of_spec_warned": "6/8",
+  "in_spec_warned": "1/4",
+  "lead_before_decision_s": [
+   16.5,
+   16.9,
+   17.3,
+   19.1,
+   23.8,
+   32.6
+  ],
+  "lead_before_fill_end_s": [
+   4.0,
+   4.0,
+   9.5,
+   11.5,
+   14.5,
+   21.0
+  ],
+  "warned_unverifiable": [
+   22
+  ]
+ }
+}

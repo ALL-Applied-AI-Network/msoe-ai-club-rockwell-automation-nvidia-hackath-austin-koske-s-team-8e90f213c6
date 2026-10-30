@@ -67,6 +67,7 @@ export function labToCss(lab: Lab | null | undefined): string {
 export const VERDICT_TONE: Record<string, string> = { IN_SPEC: "signal", OUT_OF_SPEC: "failure", CANT_VERIFY: "warning" };
 export const ACTION_TONE: Record<string, string> = {
   PASS: "signal", SCRAP: "failure", FLUSH: "cyan", FLUSH_RECOMMENDED: "cyan", STOP_CHECK_DOSING: "failure", HOLD: "warning",
+  EARLY_WARNING: "warning",
 };
 
 export function slotName(index: number): string {

@@ -114,8 +114,18 @@ class LineRuns:
         return Path(path)
 
     def library(self, manifest):
-        """The manifest's recipe library with the site recipes over it (same id: site wins)."""
-        library = json.loads(Path(manifest["library"]).read_text())
+        """The manifest's recipe library with the site recipes over it (same id: site wins), and
+        the reference fill trajectories (early warning) from reference-trajectories.json beside it
+        for references taken from the same vial."""
+        path = Path(manifest["library"])
+        library = json.loads(path.read_text())
+        trajectories = path.parent / "reference-trajectories.json"
+        if trajectories.is_file():
+            known = json.loads(trajectories.read_text())["recipes"]
+            for recipe in library["recipes"]:
+                entry, reference = known.get(str(recipe["id"])), recipe.get("reference")
+                if entry and reference and f"vial {entry['vial']} " in reference.get("from", "") + " ":
+                    reference["trajectory"] = entry["trajectory"]
         site = {str(r["id"]): r for r in self.site_recipes()}
         library["recipes"] = [site.pop(str(r["id"]), r) for r in library["recipes"]] + list(site.values())
         return library
@@ -179,7 +189,8 @@ class LineRuns:
                     {**recipe["reference"], "replaced_at": datetime.now().isoformat(timespec="seconds")})
             recipe["reference"] = {"lab": event["lab"], "from": f"{event['from']} in {run_id}",
                                    "session": run_id, "vial": event["seq"], "video_t_s": round(event["t"], 2),
-                                   "set_at": datetime.now().isoformat(timespec="seconds"), "mode": "operator CREATE"}
+                                   "set_at": datetime.now().isoformat(timespec="seconds"), "mode": "operator CREATE",
+                                   **({"trajectory": event["trajectory"]} if event.get("trajectory") else {})}
             self._write_site(recipes)
         if self.capture == event["recipe_id"]:
             self.capture = None

@@ -170,6 +170,30 @@ verdicts are partly circular; there is no per-vial outcome truth, so these are d
 accuracy. Vial 1 starts mid-fill at frame 0, so its reference is not empty. Vial 30's fill window
 is truncated at the end of the video.
 
+## Early warning during the fill (Run 5, 2026-10-30)
+
+`replay/early.py` compares each QA-valid sample during a fill with the recipe's reference vial at
+the same time since fill start (causal: first of three samples with ≥ 300 liquid px). Three
+samples in a row more than the line band (ΔE2000 5) away raise one `EARLY_WARNING` action, only
+within the reference's fill duration. Reference trajectories come from CREATE mode or, for Run 5,
+from its reference vials (`client/public/data/run5/reference-trajectories.json`; recipe 6's vial 6
+has too few QA-valid samples, so recipe 6 has none). Run through the live engine (Review of the
+stored samples), reference vials excluded:
+
+| Result | Value |
+| --- | --- |
+| Out-of-spec vials warned during the fill | 6 / 8 (the other 2 are recipe 6, without a trajectory); 6 / 6 with one |
+| Warning lead before the endpoint decision | 16.5, 16.9, 17.3, 19.1, 23.8, 32.6 s (median 18.2 s) |
+| Warning lead before the fill ends | 4.0–21.0 s; as early as 2.5 s into the fill (vial 1) |
+| In-spec vials warned (false warnings) | 1 / 4 (vial 2, ΔE 2.84 at the end) |
+
+Not a blind result: the rule was changed twice after looking at Run 5. Comparing with the final
+reference colour warned on 3 / 4 in-spec vials (mid-fill colour differs because tanks dispense in
+sequence), so the reference trajectory replaced it; then a warning after the reference's fill had
+ended (vial 17) was excluded as not early. Band and sample count were not changed. The sample is
+small and the references are Run 5 proxies; it needs fresh CSI recordings with CREATE references.
+[Per-vial record](../setup/verification/early-warning-run5-20261030.json).
+
 ## Run 5 evaluation protocol (from 2026-10-29)
 
 Run 5 is the only labelled run (30 vials, fill windows and recipe identity, no outcome or cause

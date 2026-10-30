@@ -22,6 +22,7 @@ from pathlib import Path
 import cv2
 
 from replay.decide import DEFAULT_LINE, as_dict, decide, proactive_flush
+from replay.early import EarlyWarning, trajectory
 from replay.line import FillTracker, ledger_row, load_schedule, segment
 from replay.tray import (EXPECTED_TRAY, TRANSIT_WINDOW, TRAYS, CapTracker, SlotTracker,
                          TrayScanner, render_overlay, validate_tray_slots)
@@ -46,6 +47,7 @@ class LiveLine:
         self.vials, self.flushed, self.waiting = [], set(), []
         # Operator CREATE mode: the recipe id whose reference the next decided vial sets.
         self.capture = None
+        self.early = EarlyWarning(self.line["band_de2000"])
         # What the engine saw from frames, so a live session can be saved and reviewed later.
         self.dwells, self.tray_samples = [], []
 
@@ -85,6 +87,7 @@ class LiveLine:
             if kind == "start":
                 t = payload["start_frame"] / self.fps
                 out.append({"type": "dwell_start", "t": t, "frame": payload["start_frame"]})
+                self.early.reset()
                 seq = len(self.vials) + 1
                 flush = seq not in self.flushed and proactive_flush(seq, self.schedule, self.library, self.line, t, None)
                 if flush:
@@ -98,6 +101,10 @@ class LiveLine:
                             "yolo_vial_boxes": payload.get("yolo_vial_boxes", payload.get("vial_boxes", 0)),
                             "vial_geometry_source": payload.get("vial_geometry_source", "yolo"),
                             "flags": payload.get("flags", [])})
+                seq = len(self.vials) + 1
+                warning = self.early.sample(payload, seq, self._recipe(seq))
+                if warning:
+                    out.append({"type": "action", "t": payload["t"], **as_dict(warning)})
             else:
                 out.extend(self._dwell_end(payload))
         return out
@@ -117,13 +124,18 @@ class LiveLine:
             "final_liquid_px": vial["final_liquid_px"], "reference_frame": vial["reference_frame"]}})
         out.extend({"type": "action", "t": t, **as_dict(a)} for a in verdict.actions)
         if self.capture:
-            out.append(self._capture(vial["seq"], verdict.endpoint_lab, t))
+            out.append(self._capture(vial["seq"], verdict.endpoint_lab, t,
+                                     trajectory(dwell["samples"], vial["fill_end_s"])))
         decision = next((k for k in ("SCRAP", "HOLD", "PASS") if k in [a.kind for a in verdict.actions]), None)
         self.waiting.append({"seq": vial["seq"], "departure_s": vial["departure_s"], "decision": decision,
                              "verdict": verdict.verdict, "recipe_id": verdict.recipe_id})
         return out
 
-    def _capture(self, seq, endpoint_lab, t):
+    def _recipe(self, seq):
+        recipe_id = self.schedule[seq - 1] if 0 < seq <= len(self.schedule) else None
+        return next((r for r in self.library["recipes"] if str(r["id"]) == str(recipe_id)), None)
+
+    def _capture(self, seq, endpoint_lab, t, fill_trajectory=None):
         """CREATE mode: this vial's measured endpoint becomes the armed recipe's reference, used
         for every later vial. Without a QA-valid endpoint the mode stays armed for the next vial."""
         recipe_id = self.capture
@@ -133,15 +145,17 @@ class LiveLine:
         self.capture = None
         lab = [round(float(v), 3) for v in endpoint_lab]
         source = f"vial {seq} endpoint, operator CREATE mode"
-        self.set_reference(recipe_id, lab, source)
-        return {"type": "reference", "t": t, "recipe_id": recipe_id, "seq": seq, "lab": lab, "from": source}
+        self.set_reference(recipe_id, lab, source, fill_trajectory)
+        return {"type": "reference", "t": t, "recipe_id": recipe_id, "seq": seq, "lab": lab, "from": source,
+                "trajectory": fill_trajectory or []}
 
-    def set_reference(self, recipe_id, lab, source):
+    def set_reference(self, recipe_id, lab, source, fill_trajectory=None):
+        reference = {"lab": lab, "from": source, **({"trajectory": fill_trajectory} if fill_trajectory else {})}
         for recipe in self.library["recipes"]:
             if str(recipe["id"]) == str(recipe_id):
-                recipe["reference"] = {"lab": lab, "from": source}
+                recipe["reference"] = reference
                 return
-        self.library["recipes"].append({"id": str(recipe_id), "name": str(recipe_id), "reference": {"lab": lab, "from": source}})
+        self.library["recipes"].append({"id": str(recipe_id), "name": str(recipe_id), "reference": reference})
 
     # Tray camera.
     def tray_frame(self, index, bgr):

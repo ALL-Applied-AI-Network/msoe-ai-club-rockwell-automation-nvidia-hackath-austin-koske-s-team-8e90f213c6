@@ -139,6 +139,28 @@ class FillTrackerPreviewTest(unittest.TestCase):
         self.assertEqual([e["type"] for e in events if e["type"].startswith("reference")], ["reference_failed"])
         self.assertEqual(live.capture, "new")
 
+    def test_early_warning_fires_during_the_fill_against_the_reference_trajectory(self):
+        trajectory = [[t, 50.0, 10.0, 10.0] for t in (0.0, 5.0, 10.0, 15.0)]
+        library = {"recipes": [{"id": "1", "reference": {"lab": [50.0, 10.0, 10.0], "trajectory": trajectory}}]}
+        live = LiveLine(["1", "1"], library, fps=FPS)
+        events = []
+        for _, source, item in recorded_items([dwell(0, [50.0, 10.0, 10.0]), dwell(30, [50.0, -40.0, 30.0])], []):
+            events.extend(feed(live, source, item))
+        warnings = [e for e in events if e["type"] == "action" and e["kind"] == "EARLY_WARNING"]
+        self.assertEqual([w["seq"] for w in warnings], [2])          # only the off-recipe vial
+        vial2 = next(e for e in events if e["type"] == "vial" and e["vial"]["seq"] == 2)
+        self.assertLess(warnings[0]["t"], vial2["vial"]["fill_end_s"])  # before the fill ended
+
+    def test_create_mode_keeps_the_reference_fill_trajectory(self):
+        live = LiveLine(["blue"], {"recipes": []}, fps=FPS)
+        live.capture = "blue"
+        events = []
+        for _, source, item in recorded_items([dwell(0, [40.0, 5.0, -30.0])], []):
+            events.extend(feed(live, source, item))
+        reference = next(e for e in events if e["type"] == "reference")
+        self.assertGreater(len(reference["trajectory"]), 3)
+        self.assertEqual(reference["trajectory"][0][1:], [40.0, 5.0, -30.0])
+
 
 if __name__ == "__main__":
     unittest.main()

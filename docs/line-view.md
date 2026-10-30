@@ -52,6 +52,12 @@ Run **Live cameras** (id `live`), source **Cameras (live, models now)**:
   0.08 s behind. Vials 1–3 were decided at 28.0, 74.5 and 121.0 s, with the batch verdicts:
   OUT OF SPEC ΔE 12.48, IN SPEC 2.84, IN SPEC 2.05.
 
+**Full Run 5 through MOCK (laptop, 2026-10-30):** `setup/gb10/e2e_mock.py` drove the operator path
+(recipe order → MOCK → Start) over all 28 minutes: 30/30 vials decided, 50,941 fill and 50,940
+tray frames with 0 dropped and 0 reconnects, at most 0.2 s behind real time, both previews served,
+the session saved and reopened in Review with 30 vials, and all 30 verdicts identical to the stored
+batch run (actions: PASS 10, SCRAP 9, FLUSH 5, FLUSH RECOMMENDED 4, HOLD 11).
+
 These runs used **simulated cameras**: the Run 5 videos played at real time through the same
 camera input. Real webcams have not been connected. The repository rules leave that to the
 person at the machine.

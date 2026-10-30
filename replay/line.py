@@ -42,9 +42,11 @@ class FillTracker:
     """Causal stage 2, one frame at a time. push() returns ("start" | "sample" | "end", payload)
     events as they happen: a dwell starts when the carrier stops and ends when it moves again."""
 
-    def __init__(self, runtime, fps):
+    def __init__(self, runtime, fps, fallback_vial_box=None):
         self.runtime, self.fps = runtime, fps
+        self.fallback_vial_box = fallback_vial_box
         self.prev, self.recent, self.dwell = None, [], None
+        self.preview_bgr = None
 
     def push(self, index, bgr):
         thumb = thumbnail(bgr)
@@ -74,12 +76,17 @@ class FillTracker:
         if self.reference is not None and k >= self.next_sample:
             self.next_sample = k + STEP - (k - SETTLE) % STEP
             rgb = cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB)
-            result, measured, boxes = self.runtime.infer(rgb, self.reference, self.qa)
+            result, measured, boxes = self.runtime.infer(
+                rgb, self.reference, self.qa, fallback_vial_box=self.fallback_vial_box)
+            self.preview_bgr = cv2.cvtColor(
+                self.runtime.render_overlay(rgb, result, measured, boxes), cv2.COLOR_RGB2BGR)
             sample = {
                 "frame": index, "t": index / self.fps,
                 "presence": float(result["presence"]),
                 "liquid_px": int(np.asarray(result["proposal_mask"]).sum()),
                 "vial_boxes": int(len(boxes)),
+                "yolo_vial_boxes": int(result.get("yolo_vial_boxes", len(boxes))),
+                "vial_geometry_source": result.get("vial_geometry_source", "yolo"),
                 "qa_valid": bool(measured["measurement_valid"]),
                 "flags": list(measured["quality_flags"]),
                 "lab": measured["lab"], "rgb": measured["rgb"],

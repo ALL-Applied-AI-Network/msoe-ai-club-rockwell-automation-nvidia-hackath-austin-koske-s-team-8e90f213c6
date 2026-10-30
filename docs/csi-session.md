@@ -38,8 +38,9 @@ The demo runs the LINE page (`/`) on the CSI GB10 with the station's two cameras
 4. Open http://127.0.0.1:8788. LINE → **Live** → *Cameras (live, models now)* →
    *Station cameras* → **Start**. The vial region and tray slots drawn on the feeds must cover the
    vial under the nozzle and the tray; re-aim the camera, not the overlay.
-5. Set the recipe order (MONITOR → recipe plan; LINE → **RECIPE ORDER**) before the first vial:
-   vial n takes recipe n, counted from **Start**.
+5. Set the recipe order with LINE → **RECIPE SETUP** → **SAVE & USE ON LINE** before the
+   first vial (or use an existing Monitor plan from LINE → **RECIPE ORDER**): vial n takes
+   recipe n, counted from **Start**.
 
 **If something fails:** no cameras → *Cameras* → a recorded run (Run 5 through the same input);
 kit fails → `--native` / `--docker` via `setup/gb10/onboard.sh`, or `linewatch-v1.1.0`; GB10

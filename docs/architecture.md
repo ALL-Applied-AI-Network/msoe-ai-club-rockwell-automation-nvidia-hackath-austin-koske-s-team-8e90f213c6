@@ -94,8 +94,8 @@ query the database or decide recipe compliance. The bridge owns API adaptation
 and per-run QA state; persistence owns evidence history; the React application
 displays those states to an operator. No component commands the PLC.
 
-The operator can arrange a planned vial order before a run, including recipe ID,
-name, an expected-color label/swatch and Tank 100/200/300/400 volumes in mL. The
+The operator can arrange a planned vial order directly on the LINE page or in Monitor,
+including recipe ID, name, an expected-color label/swatch and Tank 100/200/300/400 volumes in mL. The
 UI derives the displayed total from those tank amounts. The plan is durable run
 intent, not a vision result or calibrated acceptance reference. During an operator-led run,
 activating a planned vial creates the timestamped recipe boundary used by later
@@ -261,10 +261,13 @@ library:
 
 `--samples` reruns stages 4 and 5 from an earlier `frames.jsonl` without the models.
 
-`replay.tray` reads the cap/seal camera on the same clock. It matches arrivals in the finished
-tray to departures in the ledger, then reports routing, escapes, vials in transit and missing
-caps. Its slot grid and thresholds are pixel constants from the Run 5 view. They still need
-checking on other data.
+`replay.tray` reads the cap/seal camera on the same clock. It requires a clear view of both
+profiled 5×6 sorting grids before establishing the session baseline, reserves arbitrary starting inventory
+already present, and detects the first new arrival in any open slot in either grid rather than
+assuming R1C1. Large connected changes relative to that baseline hold detections while the robot
+arm occludes the trays. It matches arrivals to departures in the ledger, then reports routing,
+escapes, vials in transit and missing caps. The deployed CSI grids are an explicit station-profile
+candidate; their coordinates and transfer evidence do not establish source-matched accuracy.
 
 `replay.explain` scores RCA backends on the evidence packets. The rule baseline is the
 default and works offline. See [evaluation](evaluation.md) for the comparison.

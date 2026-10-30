@@ -115,7 +115,10 @@ class LineRuns:
     def engine(self, manifest, runtime=None, schedule=None):
         from replay.live import LiveLine
         return LiveLine(self.schedule(manifest) if schedule is None else schedule, self.library(manifest),
-                        manifest.get("line"), runtime)
+                        manifest.get("line"), runtime, fallback_vial_box=manifest.get("fill_vial_box"),
+                        tray_slots=manifest.get("tray_slots"),
+                        tray_clear_thumbnail=manifest.get("tray_clear_thumbnail"),
+                        tray_empty_slot_gray=manifest.get("tray_empty_slot_gray"))
 
     def review(self, run_id: str, plan=None):
         """Every event of the recorded run, computed by the live engine without pacing."""
@@ -250,11 +253,21 @@ class LineRuns:
                 if order and time.monotonic() - last_order >= ORDER_S:
                     last_order = time.monotonic()
                     events.extend(live.set_schedule(self.schedule(library_source, order()), t))
-                events.extend(live.fill_frame(index, bgr) if camera == "fill" else live.tray_frame(index, bgr))
+                camera_events = live.fill_frame(index, bgr) if camera == "fill" else live.tray_frame(index, bgr)
+                events.extend(camera_events)
                 if index % 2 == 0 or camera == "tray":
                     ok, jpeg = _encode(bgr)
                     if ok:
                         self.previews[key][camera] = jpeg
+                if camera == "fill" and live.fill.preview_bgr is not None and any(
+                        event.get("type") == "sample" for event in camera_events):
+                    ok, jpeg = _encode(live.fill.preview_bgr)
+                    if ok:
+                        self.previews[key]["fill_mask"] = jpeg
+                if camera == "tray" and live.tray_preview_bgr is not None:
+                    ok, jpeg = _encode(live.tray_preview_bgr)
+                    if ok:
+                        self.previews[key]["tray_detection"] = jpeg
                 if folder is not None:
                     writer = writers.get(camera) or writers.setdefault(camera, _Recorder(folder / f"{camera}.mp4", FPS))
                     writer.write(index - int(start * FPS), bgr)
@@ -286,6 +299,14 @@ class LineRuns:
         manifest = {"title": f"{station.get('title', 'Live')} · {run_id[5:]}" + (f" (simulated from {simulate})" if simulate else ""),
                     "fill_samples": f"{run_id}/frames.jsonl", "schedule": f"{run_id}/schedule.csv",
                     "library": library_source["library"], "recorded_from_s": start}
+        if station.get("fill_vial_box") is not None:
+            manifest["fill_vial_box"] = station["fill_vial_box"]
+        if station.get("tray_slots") is not None:
+            manifest["tray_slots"] = station["tray_slots"]
+        if station.get("tray_clear_thumbnail") is not None:
+            manifest["tray_clear_thumbnail"] = station["tray_clear_thumbnail"]
+        if station.get("tray_empty_slot_gray") is not None:
+            manifest["tray_empty_slot_gray"] = station["tray_empty_slot_gray"]
         if (folder / "fill.mp4").is_file():
             manifest["fill_video"] = f"{run_id}/fill.mp4"
         if live.tray_samples:

@@ -69,7 +69,7 @@ async def video(run_id: str, camera: str, runs=Depends(get_line_runs)):
 @router.get("/preview/{key}/{camera}")
 async def preview(key: str, camera: str, runs=Depends(get_line_runs)):
     """MJPEG stream of a live session's camera (the newest frame, as it arrives)."""
-    if key not in runs.previews or camera not in ("fill", "tray"):
+    if key not in runs.previews or camera not in ("fill", "fill_mask", "tray", "tray_detection"):
         raise HTTPException(404, "No such live preview")
 
     async def frames():

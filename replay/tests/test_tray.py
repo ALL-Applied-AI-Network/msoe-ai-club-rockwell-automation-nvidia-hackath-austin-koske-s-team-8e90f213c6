@@ -1,6 +1,9 @@
 import unittest
 
-from replay.tray import GOOD_SLOTS, SLOT_STABLE, align, slot_events
+import numpy as np
+
+from replay.tray import (BAD_SLOTS, GOOD_SLOTS, SLOT_STABLE, STABLE, TRAY_SLOTS, CapTracker,
+                         TrayScanner, align, arm_over_trays, baseline_inventory, clear_view, slot_events)
 
 
 def sample(t, occupied, yellow=0.6, arm=False):
@@ -33,6 +36,86 @@ class SlotTest(unittest.TestCase):
         self.assertEqual([(e["slot"], e["capped"]) for e in arrivals], [("R1C1", False)])
         self.assertEqual(arrivals[0]["t"], 30)
         self.assertEqual(occupied, 1)
+
+    def test_clear_reference_rejects_wrong_robot_scene(self):
+        clear = np.zeros((480, 640, 3), dtype=np.uint8)
+        self.assertTrue(clear_view(clear, TRAY_SLOTS, np.zeros((12, 16), dtype=np.uint8)))
+        self.assertFalse(clear_view(clear, TRAY_SLOTS, np.full((12, 16), 255, dtype=np.uint8)))
+
+    def test_arm_is_large_change_from_clear_baseline(self):
+        baseline = np.zeros((480, 640, 3), dtype=np.uint8)
+        vial = baseline.copy()
+        vial[150:170, 220:240] = 255
+        self.assertFalse(arm_over_trays(vial, baseline))
+        arm = baseline.copy()
+        arm[150:230, 220:320] = 255
+        self.assertTrue(arm_over_trays(arm, baseline))
+
+    def test_profile_reserves_arbitrary_starting_inventory(self):
+        frame = np.full((480, 640, 3), 100, dtype=np.uint8)
+        x, y = BAD_SLOTS[29]
+        frame[y - 5:y + 5, x - 5:x + 5] = 200
+        expected = {tray: [100.0] * 30 for tray in TRAY_SLOTS}
+        inventory = baseline_inventory(frame, TRAY_SLOTS, expected)
+        self.assertEqual([index for index, occupied in enumerate(inventory["bad"]) if occupied], [29])
+        self.assertFalse(any(inventory["good"]))
+
+    def test_slot_profile_initializes_without_global_clear_scene(self):
+        frame = np.zeros((480, 640, 3), dtype=np.uint8)
+        scanner = TrayScanner(30, tray_slots=TRAY_SLOTS,
+                              clear_thumbnail=np.full((12, 16), 255, dtype=np.uint8),
+                              empty_slot_gray={tray: [0.0] * 30 for tray in TRAY_SLOTS})
+        sample = scanner.push(0, frame)
+        self.assertIsNotNone(sample)
+        self.assertTrue(sample["slots_against_empty_profile"])
+        self.assertFalse(sample["arm"])
+
+    def test_arrival_can_start_in_any_open_slot_with_existing_inventory(self):
+        def arbitrary_slot_sample(t, new_vial=False):
+            slots = [(5.0, 0.0)] * len(GOOD_SLOTS)
+            slots[0] = (5.0, 0.6)       # capped vial present in the session baseline
+            if new_vial:
+                slots[17] = (60.0, 0.6)  # first new arrival is R3C6, not R1C1
+            return {"t": t, "frame": int(t * 30), "arm": False, "slots": slots}
+
+        samples = [arbitrary_slot_sample(i / 3) for i in range(6)]
+        samples += [arbitrary_slot_sample(10 + i / 3, new_vial=True) for i in range(SLOT_STABLE)]
+        events, occupied = slot_events(samples)
+        arrivals = [event for event in events if event["kind"] == "arrival"]
+        self.assertEqual([(event["slot"], event["capped"]) for event in arrivals], [("R3C6", True)])
+        self.assertEqual(occupied, 2)     # baseline inventory plus the new vial
+
+    def test_bad_tray_detects_uncapped_vial_in_any_slot(self):
+        def bad_sample(t, occupied=False):
+            values = [(5.0, 0.0)] * len(BAD_SLOTS)
+            if occupied:
+                values[29] = (60.0, 0.0)
+            return {"t": t, "frame": int(t * 30), "arm": False, "bad_slots": values}
+
+        samples = [bad_sample(i / 3) for i in range(6)]
+        samples += [bad_sample(10 + i / 3, occupied=True) for i in range(SLOT_STABLE)]
+        events, occupied = slot_events(samples, "bad")
+        arrivals = [event for event in events if event["kind"] == "arrival"]
+        self.assertEqual([(event["tray"], event["slot"], event["capped"]) for event in arrivals],
+                         [("bad", "R5C6", False)])
+        self.assertEqual(occupied, 1)
+
+
+class CapTest(unittest.TestCase):
+    def test_initial_bad_tray_caps_are_inventory_not_arrivals(self):
+        def cap_sample(t, points):
+            return {"t": t, "frame": int(t * 30), "arm": False,
+                    "good_count": 0, "good_caps": [],
+                    "bad_count": len(points), "bad_caps": points}
+
+        tracker = CapTracker()
+        initial = [(500.0, 300.0)]
+        events = [event for i in range(STABLE) for event in tracker.push(cap_sample(i / 3, initial))]
+        self.assertEqual(events, [])
+        after = initial + [(525.0, 300.0)]
+        events = [event for i in range(STABLE) for event in tracker.push(cap_sample(10 + i / 3, after))]
+        arrivals = [event for event in events if event["kind"] == "arrival"]
+        self.assertEqual([(event["tray"], event["tray_count"]) for event in arrivals], [("bad", 2)])
 
 
 if __name__ == "__main__":

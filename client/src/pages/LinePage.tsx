@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import PageChrome from "@/components/PageChrome";
-import { deltaE2000 } from "@/services/recipeCheck";
+import type { RecipeContext } from "@/models/inspection";
+import { createInspectionSession, listRecipePlan, replaceRecipePlan } from "@/services/inspectionService";
+import { deltaE2000, loadRecipeLibrary, recipeSummary, type RecipeDefinition } from "@/services/recipeCheck";
 import { Link } from "react-router-dom";
 import {
   listLineOrders, listLineRuns, liveSocket, previewUrl, reviewEvents, videoUrl,
@@ -17,13 +19,70 @@ const BANNER_S = 4;
 
 interface ServerClock { t: number; at: number; speed: number; paused: boolean }
 
+function recipeContext(recipe: RecipeDefinition, vialIndex: number): RecipeContext {
+  const amounts = [recipe.t100_ml, recipe.t200_ml, recipe.t400_ml].map((value) => value ?? 0);
+  return {
+    current_recipe_id: recipe.id,
+    current_recipe_name: recipe.name,
+    previous_recipe_id: null,
+    vial_index: vialIndex,
+    is_first_vial_after_change: false,
+    expected_color_name: recipe.note ?? null,
+    expected_color_hex: null,
+    t100_ml: amounts[0],
+    t200_ml: amounts[1],
+    t300_ml: 0,
+    t400_ml: amounts[2],
+    total_ml: amounts.reduce((sum, value) => sum + value, 0),
+    dispense_order: recipe.order,
+    color_purpose: "Recipe-library operator intent",
+  };
+}
+
+function normalizePlan(recipes: RecipeContext[]): RecipeContext[] {
+  return recipes.map((recipe, index) => {
+    const previous = index > 0 ? recipes[index - 1].current_recipe_id : null;
+    return {
+      ...recipe,
+      vial_index: index + 1,
+      previous_recipe_id: previous,
+      is_first_vial_after_change: previous !== recipe.current_recipe_id,
+      total_ml: [recipe.t100_ml, recipe.t200_ml, recipe.t300_ml, recipe.t400_ml]
+        .reduce<number>((sum, value) => sum + (value ?? 0), 0),
+    };
+  });
+}
+
 export default function LinePage() {
+  const queryClient = useQueryClient();
   const runs = useQuery({ queryKey: ["line-runs"], queryFn: listLineRuns });
   const [runId, setRunId] = useState<string | null>(null);
   // Recipe order: an inspection run's recipe plan (copied from CSI's machine), or "" for the run's file.
   const orders = useQuery({ queryKey: ["line-orders"], queryFn: listLineOrders, refetchInterval: 5000 });
   const [order, setOrder] = useState<string | null>(null);
   useEffect(() => { if (order === null && orders.data) setOrder(orders.data[0]?.session_id ?? ""); }, [order, orders.data]);
+  const recipeLibrary = useQuery({ queryKey: ["recipe-library"], queryFn: loadRecipeLibrary, staleTime: Infinity });
+  const selectedPlan = useQuery({
+    queryKey: ["line-order-plan", order],
+    queryFn: () => listRecipePlan(order!),
+    enabled: Boolean(order),
+    staleTime: Infinity,
+  });
+  const [recipeDraft, setRecipeDraft] = useState<RecipeContext[]>([]);
+  const [draftRecipeId, setDraftRecipeId] = useState("5");
+  const [draftVials, setDraftVials] = useState(1);
+  const [draftName, setDraftName] = useState("CSI live recipe order");
+  const [newRecipeOrder, setNewRecipeOrder] = useState(false);
+  const [recipeSaving, setRecipeSaving] = useState(false);
+  const [recipeMessage, setRecipeMessage] = useState<string | null>(null);
+  useEffect(() => {
+    if (newRecipeOrder || !order || !selectedPlan.data) return;
+    setRecipeDraft(normalizePlan(selectedPlan.data.map((item) => item.recipe)));
+  }, [newRecipeOrder, order, selectedPlan.data]);
+  useEffect(() => {
+    const first = recipeLibrary.data?.recipes[0];
+    if (first && !recipeLibrary.data?.recipes.some((recipe) => recipe.id === draftRecipeId)) setDraftRecipeId(first.id);
+  }, [draftRecipeId, recipeLibrary.data]);
   const [mode, setMode] = useState<Mode>("live");
   // The station's live cameras are the default; a run without them falls back to its first source.
   const [source, setSource] = useState<LineSource>("camera");
@@ -103,6 +162,67 @@ export default function LinePage() {
       setEventCount(events.current.length);
     };
     ws.onclose = () => setStatus((s) => (s === "live" || s === "connecting" ? "ended" : s));
+  }
+
+  function addRecipeToOrder() {
+    const recipe = recipeLibrary.data?.recipes.find((item) => item.id === draftRecipeId);
+    if (!recipe) return;
+    const additions = Array.from({ length: Math.max(1, Math.min(100, draftVials)) }, (_, index) =>
+      recipeContext(recipe, recipeDraft.length + index + 1));
+    setRecipeDraft((current) => normalizePlan([...current, ...additions]));
+    setRecipeMessage(null);
+  }
+
+  function moveRecipe(index: number, direction: -1 | 1) {
+    setRecipeDraft((current) => {
+      const next = [...current];
+      const target = index + direction;
+      if (target < 0 || target >= next.length) return current;
+      [next[index], next[target]] = [next[target], next[index]];
+      return normalizePlan(next);
+    });
+  }
+
+  function beginNewRecipeOrder() {
+    setNewRecipeOrder(true);
+    setRecipeDraft([]);
+    setDraftName(`CSI live order ${new Date().toLocaleString()}`);
+    setRecipeMessage("New order started. Add the recipes in the same sequence as the station.");
+  }
+
+  async function saveRecipeOrder() {
+    const recipes = normalizePlan(recipeDraft);
+    if (!recipes.length) { setRecipeMessage("Add at least one vial before saving the recipe order."); return; }
+    setRecipeSaving(true);
+    setRecipeMessage(null);
+    try {
+      let orderId = newRecipeOrder || !order ? null : order;
+      if (!orderId) {
+        const session = await createInspectionSession({
+          camera_id: "line-fill-camera",
+          station_name: "Fluid Mixing Station 3",
+          run_name: draftName.trim() || "CSI live recipe order",
+          source_mode: "live_camera",
+          source_name: "LINE page recipe setup",
+          recipe: recipes[0],
+        });
+        orderId = session.session_id;
+      }
+      await replaceRecipePlan(orderId, recipes);
+      setNewRecipeOrder(false);
+      setOrder(orderId);
+      await Promise.all([
+        orders.refetch(),
+        queryClient.invalidateQueries({ queryKey: ["line-order-plan", orderId] }),
+      ]);
+      setRecipeMessage(status === "live"
+        ? "Recipe order saved. The live line will pick up edits to its selected order; press Restart if this is a newly selected order."
+        : "Recipe order saved and selected. Press Start when the first vial is ready.");
+    } catch (saveError) {
+      setRecipeMessage(saveError instanceof Error ? saveError.message : "Recipe order could not be saved");
+    } finally {
+      setRecipeSaving(false);
+    }
   }
 
   /** Ask the server to end the session (a camera session then saves itself and says so), then close. */
@@ -186,7 +306,7 @@ export default function LinePage() {
             </select>
           </label>
           <label>Recipe order
-            <select value={order ?? ""} onChange={(e) => { stop(); setStatus("idle"); setOrder(e.target.value); }}>
+            <select value={order ?? ""} onChange={(e) => { stop(); setStatus("idle"); setNewRecipeOrder(false); setOrder(e.target.value); }}>
               {orders.data?.map((o) => (
                 <option key={o.session_id} value={o.session_id}>
                   {o.run_name || `Run ${o.session_id.slice(0, 8)}`} · {o.vials} vial{o.vials === 1 ? "" : "s"}
@@ -235,9 +355,65 @@ export default function LinePage() {
           </div>}
         </section>
 
+        <section className="ln-recipe-setup panel">
+          <div className="ln-recipe-heading">
+            <div>
+              <small>RECIPE SETUP · AT THE LINE</small>
+              <h2>Match the station recipe order</h2>
+              <p>Select what CSI is making and how many consecutive vials. LINE assigns vial 1 to row 1, vial 2 to row 2, and so on.</p>
+            </div>
+            <button type="button" onClick={beginNewRecipeOrder}>New order</button>
+          </div>
+          {newRecipeOrder && (
+            <label className="ln-order-name">Order name
+              <input value={draftName} maxLength={160} onChange={(event) => setDraftName(event.target.value)} />
+            </label>
+          )}
+          <div className="ln-recipe-picker">
+            <label>Recipe
+              <select value={draftRecipeId} onChange={(event) => setDraftRecipeId(event.target.value)} disabled={!recipeLibrary.data?.recipes.length}>
+                {recipeLibrary.data?.recipes.map((recipe) => (
+                  <option key={recipe.id} value={recipe.id}>
+                    {recipe.name} · {recipeSummary(recipe) || "amounts unavailable"}{recipe.reference ? "" : " · no color reference"}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>Consecutive vials
+              <input type="number" min={1} max={100} value={draftVials} onChange={(event) => setDraftVials(Math.max(1, Number(event.target.value) || 1))} />
+            </label>
+            <button className="ln-primary" type="button" onClick={addRecipeToOrder} disabled={!recipeLibrary.data}>Add to order</button>
+          </div>
+          <div className="ln-recipe-draft">
+            {selectedPlan.isLoading && !newRecipeOrder ? <p>Loading selected recipe order…</p> : null}
+            {!selectedPlan.isLoading && !recipeDraft.length ? <p>No vials in this order yet. Select a recipe above and add it.</p> : null}
+            {recipeDraft.map((recipe, index) => {
+              const definition = recipeLibrary.data?.recipes.find((item) => item.id === recipe.current_recipe_id);
+              return (
+                <div className="ln-recipe-row" key={`${index}-${recipe.current_recipe_id}`}>
+                  <strong>V{index + 1}</strong>
+                  <span><b>{recipe.current_recipe_name}</b><small>{definition ? recipeSummary(definition) : `${recipe.total_ml ?? 0} mL total`}</small></span>
+                  <em className={definition?.reference ? "ln-tone-signal" : "ln-tone-warning"}>{definition?.reference ? "REFERENCE READY" : "NO REFERENCE · HOLD"}</em>
+                  <div>
+                    <button type="button" disabled={index === 0} onClick={() => moveRecipe(index, -1)} aria-label={`Move vial ${index + 1} earlier`}>↑</button>
+                    <button type="button" disabled={index === recipeDraft.length - 1} onClick={() => moveRecipe(index, 1)} aria-label={`Move vial ${index + 1} later`}>↓</button>
+                    <button type="button" onClick={() => setRecipeDraft((current) => normalizePlan(current.filter((_, item) => item !== index)))} aria-label={`Remove vial ${index + 1}`}>×</button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <div className="ln-recipe-save">
+            <p>{recipeMessage ?? (newRecipeOrder ? "Building a new order." : order ? "Editing the recipe order selected above." : "Create an order for the live line.")}</p>
+            <button className="ln-primary" type="button" disabled={recipeSaving || !recipeDraft.length} onClick={() => void saveRecipeOrder()}>
+              {recipeSaving ? "Saving…" : "Save & use on line"}
+            </button>
+          </div>
+        </section>
+
         <p className="ln-hint">
-          Enter each order from CSI's machine in the <Link to="/monitor">Monitor</Link> recipe plan, same recipe and tank amounts, same
-          order. A live line run follows that plan as it changes.
+          Recipe orders saved here also remain available in the <Link to="/monitor">Monitor</Link> and run history. Operator intent stays
+          separate from measured color evidence.
         </p>
         {runs.isError && <p className="ln-banner">Could not load line runs: {(runs.error as Error).message}</p>}
         {runs.data && !runs.data.length && (
@@ -258,10 +434,12 @@ export default function LinePage() {
         {run && (
           <section className="ln-stage">
             <FillCamera view={view} runId={run.id} videoRef={fill} controls={!live}
-              preview={live && camera && preview ? previewUrl(preview, "fill") : undefined} />
+              preview={live && camera && preview ? previewUrl(preview, "fill") : undefined}
+              maskPreview={live && camera && preview ? previewUrl(preview, "fill_mask") : undefined} />
             <Panel view={view} />
             {run.has_tray && <TrayCamera view={view} runId={run.id} videoRef={tray}
-              preview={live && camera && preview ? previewUrl(preview, "tray") : undefined} />}
+              preview={live && camera && preview ? previewUrl(preview, "tray") : undefined}
+              detectionPreview={live && camera && preview ? previewUrl(preview, "tray_detection") : undefined} />}
           </section>
         )}
 
@@ -271,7 +449,8 @@ export default function LinePage() {
   );
 }
 
-function FillCamera({ view, runId, videoRef, controls, preview }: { view: LineView; runId: string; videoRef: React.RefObject<HTMLVideoElement | null>; controls: boolean; preview?: string }) {
+function FillCamera({ view, runId, videoRef, controls, preview, maskPreview }: { view: LineView; runId: string; videoRef: React.RefObject<HTMLVideoElement | null>; controls: boolean; preview?: string; maskPreview?: string }) {
+  const [showMasks, setShowMasks] = useState(true);
   const roi = view.meta?.roi;
   const last = view.vials[view.vials.length - 1];
   const justDecided = last && view.t - last.decision_s < BANNER_S;
@@ -280,11 +459,12 @@ function FillCamera({ view, runId, videoRef, controls, preview }: { view: LineVi
   const banner = recent[recent.length - 1];
   return (
     <figure className="ln-camera">
-      <figcaption>Fill station camera</figcaption>
+      <figcaption><span>Fill station camera</span>{maskPreview && <button type="button" className={showMasks ? "active" : ""} onClick={() => setShowMasks((current) => !current)}>{showMasks ? "MASKS ON" : "MASKS OFF"}</button>}</figcaption>
       <div className="ln-video">
         {preview ? <img src={preview} alt="Fill station camera, live" />
           : runId === "live" ? <div className="ln-no-feed">Camera feed appears when the live session starts</div>
           : <video ref={videoRef} src={videoUrl(runId, "fill")} muted playsInline preload="auto" controls={controls} />}
+        {showMasks && maskPreview && <img src={maskPreview} alt="Model masks and vial geometry over the live fill camera" />}
         <svg viewBox="0 0 640 480" aria-hidden="true">
           {roi && (view.dwell || justDecided) && (
             <rect x={roi[0]} y={roi[1]} width={roi[2] - roi[0]} height={roi[3] - roi[1]} className={`ln-roi ln-stroke-${tone}`} />
@@ -301,8 +481,9 @@ function FillCamera({ view, runId, videoRef, controls, preview }: { view: LineVi
   );
 }
 
-function TrayCamera({ view, runId, videoRef, preview }: { view: LineView; runId: string; videoRef: React.RefObject<HTMLVideoElement | null>; preview?: string }) {
-  const slots = view.meta?.good_slots ?? [];
+function TrayCamera({ view, runId, videoRef, preview, detectionPreview }: { view: LineView; runId: string; videoRef: React.RefObject<HTMLVideoElement | null>; preview?: string; detectionPreview?: string }) {
+  const [showDetections, setShowDetections] = useState(true);
+  const traySlots = view.meta?.tray_slots ?? { good: view.meta?.good_slots ?? [], bad: [] };
   const slotIndex = (name: string | null) => {
     const m = name?.match(/^R(\d)C(\d)$/);
     return m ? (Number(m[1]) - 1) * 6 + Number(m[2]) - 1 : -1;
@@ -311,15 +492,16 @@ function TrayCamera({ view, runId, videoRef, preview }: { view: LineView; runId:
   const showLatest = latest && view.t - latest.t < BANNER_S;
   return (
     <figure className="ln-camera">
-      <figcaption>Finished-vial tray camera</figcaption>
+      <figcaption><span>Finished-vial tray camera</span>{detectionPreview && <button type="button" className={showDetections ? "active" : ""} onClick={() => setShowDetections((current) => !current)}>{showDetections ? "DETECTIONS ON" : "DETECTIONS OFF"}</button>}</figcaption>
       <div className="ln-video">
         {preview ? <img src={preview} alt="Finished-vial tray camera, live" />
           : runId === "live" ? <div className="ln-no-feed">Camera feed appears when the live session starts</div>
           : <video ref={videoRef} src={videoUrl(runId, "tray")} muted playsInline preload="auto" />}
+        {showDetections && detectionPreview && <img src={detectionPreview} alt="Detected vials in the Good and Bad sorting trays" />}
         <svg viewBox="0 0 640 480" aria-hidden="true">
           {view.arrivals.map((a, i) => {
             const k = slotIndex(a.slot);
-            const [x, y] = k >= 0 ? slots[k] : a.position ?? [-100, -100];
+            const [x, y] = k >= 0 && traySlots[a.tray]?.[k] ? traySlots[a.tray][k] : a.position ?? [-100, -100];
             const tone = a.capped === false ? "nocap" : VERDICT_TONE[a.verdict ?? ""] ?? "muted";
             return (
               <g key={i} className={`ln-slot ln-stroke-${tone}`}>
@@ -356,6 +538,7 @@ function Panel({ view }: { view: LineView }) {
   const recipe = meta?.schedule[next - 1] ?? null;
   const reference = recipe ? meta?.references[recipe] ?? null : null;
   const samples = view.dwell?.samples ?? [];
+  const latestSample = samples[samples.length - 1];
   const valid = samples.filter((s) => s.qa_valid && s.lab);
   const measured = valid[valid.length - 1]?.lab ?? null;
   const typical = view.vials.length ? median(view.vials.map((v) => v.final_liquid_px)) : 5000;
@@ -378,6 +561,11 @@ function Panel({ view }: { view: LineView }) {
               <>
                 <h2>Vial {next} / {ordered} <span>{recipe ? `recipe ${recipe}` : "not in the recipe order yet"}</span></h2>
                 <p className="ln-phase">{phase(view)}</p>
+                {latestSample && <p className={`ln-detection ${latestSample.vial_boxes ? "ln-tone-signal" : "ln-tone-failure"}`}>
+                  {latestSample.vial_boxes
+                    ? `Vial geometry: ${latestSample.vial_geometry_source === "yolo" ? "YOLO" : "STATION PROFILE CANDIDATE"}${latestSample.yolo_vial_boxes ? "" : " · YOLO 0"}`
+                    : "VIAL NOT DETECTED · measurement unavailable"}
+                </p>}
                 <div className="ln-bar" aria-label="Liquid area"><span style={{ width: `${Math.min(100, (100 * area) / typical)}%` }} /></div>
                 <div className="ln-swatches">
                   <div><span style={{ background: labToCss(measured) }} className={measured ? "" : "ln-empty"} /><small>measured</small></div>

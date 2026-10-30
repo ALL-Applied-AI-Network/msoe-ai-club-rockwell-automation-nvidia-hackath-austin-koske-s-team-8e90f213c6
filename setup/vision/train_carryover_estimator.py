@@ -6,7 +6,10 @@ the train families; the epoch is chosen on the dev families (synthetic, held out
 families). The baseline is replay.carryover_synthetic's Lab projection on the same dev
 changeovers. No real image or Run 5 value is read.
 
-    python train_carryover_estimator.py RENDERS... --out DIR [--epochs 60] [--seed 29]
+    python train_carryover_estimator.py RENDERS... --out DIR [--epochs 60] [--seed 29] [--balance]
+
+--balance draws each epoch's train changeovers with equal weight per residue bin, so the few
+heavy-residue (v3) changeovers are not drowned out by the clean and light ones.
 """
 import argparse
 import json
@@ -75,6 +78,7 @@ def main():
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--epochs", type=int, default=60)
     parser.add_argument("--seed", type=int, default=29)
+    parser.add_argument("--balance", action="store_true", help="sample train changeovers equally per residue bin")
     args = parser.parse_args()
     if args.out.exists() and any(args.out.iterdir()):
         parser.error("Use a fresh output directory")
@@ -98,10 +102,13 @@ def main():
     sched = torch.optim.lr_scheduler.CosineAnnealingLR(opt, args.epochs)
     xt, yt = tensors["train"]
     xd, yd = (t.to(device) for t in tensors["dev"])
+    bins = torch.tensor([next(i for i, (low, high) in enumerate(BINS) if (f == 0 if high == 0 else low < f <= high))
+                         for f in yt.tolist()])
+    weights = 1 / torch.bincount(bins).float()[bins]
     history, best = [], None
     for epoch in range(1, args.epochs + 1):
         model.train()
-        order = torch.randperm(len(xt))
+        order = torch.multinomial(weights, len(xt), replacement=True) if args.balance else torch.randperm(len(xt))
         for i in range(0, len(xt), 64):
             idx = order[i:i + 64]
             x, y = xt[idx].to(device), yt[idx].to(device)
@@ -134,6 +141,7 @@ def main():
                                cnn_mae=float(np.abs(predicted[sel] - truth_f[sel]).mean()),
                                projection_mae=float(np.abs(projection[sel] - truth_f[sel]).mean())))
     result = dict(train_changeovers=len(xt), dev_changeovers=len(xd), seed=args.seed, epochs=args.epochs,
+                  sampling="equal per residue bin" if args.balance else "uniform",
                   device=torch.cuda.get_device_name() if device == "cuda" else "cpu",
                   best=best, projection_dev_mae=projection_mae, dev_by_bin=by_bin, seconds=time.time() - start,
                   selection="epoch with the lowest dev-family MAE (synthetic)", real_data_inputs=[],

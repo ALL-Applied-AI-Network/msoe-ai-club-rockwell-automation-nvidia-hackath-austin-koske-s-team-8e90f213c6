@@ -214,18 +214,21 @@ picked here would flag many real good vials unless synthetic measurement noise i
 
 **Residue estimate** (mean absolute error in residue fraction):
 
-| Residue | n | Lab projection | CNN (seeds 29 / 30 / 31) |
-| --- | --- | --- | --- |
-| 0 | 376 | 0.040 | 0.019 / 0.014 / 0.013 |
-| 0–10% | 203 | 0.035–0.073 | 0.015–0.023 |
-| 10–30% | 483 | 0.056–0.062 | 0.020–0.037 |
-| 30–50% | 43 | 0.085 | 0.075–0.085 |
-| 50–100% | 95 | **0.052** | 0.080–0.131 |
-| All | 1,200 | 0.053 | 0.036 / 0.026 / 0.029 |
+| Residue | n | Lab projection | CNN, uniform (seeds 29 / 30 / 31) | CNN, balanced (seeds 29 / 30 / 31) |
+| --- | --- | --- | --- | --- |
+| 0 | 376 | 0.040 | 0.019 / 0.014 / 0.013 | 0.021 / 0.018 / 0.020 |
+| 0–10% | 203 | 0.035–0.073 | 0.015–0.023 | 0.012–0.021 |
+| 10–30% | 483 | 0.056–0.062 | 0.020–0.037 | 0.021–0.027 |
+| 30–50% | 43 | 0.085 | 0.075–0.085 | 0.065–0.069 |
+| 50–100% | 95 | **0.052** | 0.080–0.131 | 0.074–0.076 |
+| All | 1,200 | 0.053 | 0.036 / 0.026 / 0.029 | 0.027 / 0.026 / 0.028 |
 
-The CNN (9-channel liquid crops of the three renders, about 3 minutes per seed on an RTX 4080
+The CNN (9-channel liquid crops of the three renders, about 3–4 minutes per seed on an RTX 4080
 SUPER) is 2–3× better up to 30% residue and worse above 50%, where training data is thin (v3
-only). Its epoch is selected on the dev families (best 52–56 of 60). It reads renderer liquid
+only). Uniform sampling, 60 epochs: best epochs 52–56. Balanced (`--balance`, each epoch draws
+train changeovers equally per residue bin; 120 epochs, best 117–119): heavier residue improves and
+the seeds agree closely, at a small cost on clean vials, but 50–100% is still worse than the
+projection. Epochs are selected on the dev families. It reads renderer liquid
 masks, not the line's segmentation, and the app stores only reference colours, not reference
 crops, so the line keeps the projection. Above about 50% a vial is mostly the previous recipe and
 is reported as a possible schedule or switching problem rather than a carryover percentage.

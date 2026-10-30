@@ -45,7 +45,7 @@ _inspection = InspectionService(
 )
 
 _line_runs = LineRuns(config.line_runs, config.model_assets, config.device, config.line_station,
-                      config.line_recordings or _data_dir / "line-recordings")
+                      config.line_recordings or _data_dir / "line-recordings", _data_dir / "site-recipes.json")
 
 
 def get_widget_service() -> WidgetService:

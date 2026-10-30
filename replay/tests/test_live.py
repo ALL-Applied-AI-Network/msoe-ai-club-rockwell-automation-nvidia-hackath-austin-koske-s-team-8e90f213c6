@@ -115,6 +115,30 @@ class FillTrackerPreviewTest(unittest.TestCase):
                          (1, 0, "station_profile_candidate"))
         self.assertIsNotNone(tracker.preview_bgr)
 
+    def test_create_mode_sets_the_reference_from_the_next_vial(self):
+        library = {"recipes": [{"id": "blue", "reference": None}]}
+        live = LiveLine(["blue", "blue", "blue"], library, fps=FPS)
+        live.capture = "blue"
+        events = []
+        for _, source, item in recorded_items([dwell(0, [40.0, 5.0, -30.0]), dwell(30, [41.0, 5.0, -30.0]),
+                                               dwell(60, [60.0, 5.0, -30.0])], []):
+            events.extend(feed(live, source, item))
+        reference = next(e for e in events if e["type"] == "reference")
+        self.assertEqual((reference["recipe_id"], reference["seq"], reference["lab"]), ("blue", 1, [40.0, 5.0, -30.0]))
+        self.assertIsNone(live.capture)
+        verdicts = [e["vial"]["verdict"] for e in events if e["type"] == "vial"]
+        self.assertEqual(verdicts[1:], ["IN_SPEC", "OUT_OF_SPEC"])   # later vials are judged against it
+
+    def test_create_mode_waits_for_a_vial_with_a_colour(self):
+        live = LiveLine(["new"], {"recipes": []}, fps=FPS)
+        live.capture = "new"
+        unmeasured = dwell(0, None)
+        events = []
+        for _, source, item in recorded_items([unmeasured], []):
+            events.extend(feed(live, source, item))
+        self.assertEqual([e["type"] for e in events if e["type"].startswith("reference")], ["reference_failed"])
+        self.assertEqual(live.capture, "new")
+
 
 if __name__ == "__main__":
     unittest.main()

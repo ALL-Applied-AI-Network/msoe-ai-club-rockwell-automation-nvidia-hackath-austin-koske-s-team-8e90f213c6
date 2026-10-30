@@ -5,6 +5,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.responses import FileResponse, StreamingResponse
+from pydantic import BaseModel, Field
 
 from dependencies import get_inspection_service, get_line_runs
 from services.line import LIVE, MAX_SESSIONS, MOCK, SPEEDS, SessionClock
@@ -16,6 +17,45 @@ _active = {"sessions": 0}
 @router.get("/runs")
 async def list_runs(runs=Depends(get_line_runs)):
     return runs.list()
+
+
+class NewRecipe(BaseModel):
+    name: str = Field(min_length=1, max_length=80)
+    t100_ml: float = Field(default=0, ge=0, le=1000)
+    t200_ml: float = Field(default=0, ge=0, le=1000)
+    t400_ml: float = Field(default=0, ge=0, le=1000)
+
+
+class Capture(BaseModel):
+    recipe_id: str | None = None
+
+
+@router.get("/recipes")
+async def recipes(runs=Depends(get_line_runs)):
+    """The live station's recipe library, with recipes created at the line, and CREATE mode."""
+    try:
+        return runs.recipes()
+    except KeyError as error:
+        raise HTTPException(404, "No live station configured") from error
+
+
+@router.post("/recipes", status_code=201)
+async def create_recipe(body: NewRecipe, runs=Depends(get_line_runs)):
+    try:
+        return runs.add_recipe(body.name.strip(), {"T100": body.t100_ml, "T200": body.t200_ml, "T400": body.t400_ml})
+    except KeyError as error:
+        raise HTTPException(404, "No live station configured") from error
+    except ValueError as error:
+        raise HTTPException(400, str(error)) from error
+
+
+@router.put("/recipes/capture")
+async def set_capture(body: Capture, runs=Depends(get_line_runs)):
+    """CREATE mode: the next vial a camera session decides sets this recipe's reference (null: off)."""
+    try:
+        return {"capture": runs.arm(body.recipe_id)}
+    except KeyError as error:
+        raise HTTPException(404, "Unknown recipe or no live station") from error
 
 
 async def recipe_plan(service, order: str):

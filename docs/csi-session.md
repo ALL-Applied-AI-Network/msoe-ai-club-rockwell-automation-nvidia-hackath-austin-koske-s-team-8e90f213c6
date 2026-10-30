@@ -68,6 +68,11 @@ setup/gb10/e2e_mock.py --schedule replay/examples/run5-schedule.csv --seconds 12
 offline wheels, the model assets and the two Run 5 videos (`vial_fill_video_5.mp4`,
 `cap_seal_video_5.mp4`, about 100 MB) for the rehearsal.
 
+**New recipes:** RECIPE SETUP → **New recipe** (name, mL per tank), add it to the order, then
+**CREATE reference from next vial** just before the vial that should become its reference
+([how](line-view.md#live-cameras-real-time)). Rehearse it once on MOCK. Write down which vial
+became each reference.
+
 **Enter every dispensed vial in the recipe order, water flushes included.** Vial n takes recipe
 n from **Start**; an unlisted flush shifts every later vial onto the wrong recipe.
 

@@ -1,5 +1,5 @@
 import { api } from "./api";
-import type { Lab } from "./recipeCheck";
+import type { Lab, RecipeDefinition } from "./recipeCheck";
 
 // Events from the live line engine (replay/live.py). "t" is the video time at which each is known.
 export interface LineMeta {
@@ -84,7 +84,9 @@ export type LineEvent =
   | { type: "dwell_start" | "dwell_end"; t: number; frame: number }
   | { type: "vial"; t: number; vial: LineVial }
   | { type: "tray_missed"; t: number; seq: number; decision: string | null }
-  | { type: "schedule"; t: number; schedule: string[]; scheduled_vials: number };
+  | { type: "schedule"; t: number; schedule: string[]; scheduled_vials: number }
+  | { type: "reference"; t: number; recipe_id: string; seq: number; lab: Lab; from: string }
+  | { type: "reference_failed"; t: number; recipe_id: string; seq: number; reason: string };
 
 export type LiveMessage =
   | LineMeta
@@ -147,4 +149,20 @@ export function liveSocket(runId: string, source: string, speed: number, start: 
   base.search = new URLSearchParams({ source, speed: String(speed), start: String(start), ...(order ? { order } : {}),
     ...(simulate ? { simulate } : {}) }).toString();
   return new WebSocket(base);
+}
+
+/** The live station's recipe library with recipes created at the line, and the recipe armed in CREATE mode. */
+export interface LineRecipes { recipes: RecipeDefinition[]; capture: string | null }
+
+export async function listLineRecipes(): Promise<LineRecipes> {
+  return (await api.get<LineRecipes>("/line/recipes")).data;
+}
+
+export async function createLineRecipe(name: string, ml: { t100_ml: number; t200_ml: number; t400_ml: number }) {
+  return (await api.post<RecipeDefinition>("/line/recipes", { name, ...ml })).data;
+}
+
+/** CREATE mode: the next vial the live cameras decide sets this recipe's reference (null turns it off). */
+export async function setLineCapture(recipeId: string | null): Promise<string | null> {
+  return (await api.put<{ capture: string | null }>("/line/recipes/capture", { recipe_id: recipeId })).data.capture;
 }

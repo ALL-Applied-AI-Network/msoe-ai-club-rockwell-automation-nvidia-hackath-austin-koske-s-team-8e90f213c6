@@ -33,7 +33,7 @@ def call(base, method, path, body=None):
 
 def enter_order(base, schedule):
     recipes = [line.split(",")[1].strip() for line in Path(schedule).read_text().splitlines()[1:] if line.strip()]
-    plan = [{"current_recipe_id": f"recipe-{int(r):02d}", "current_recipe_name": f"Recipe {r}", "vial_index": i}
+    plan = [{"current_recipe_id": r, "current_recipe_name": f"Recipe {r}", "vial_index": i}
             for i, r in enumerate(recipes, 1)]
     session = call(base, "POST", "/api/v1/sessions", {"source_mode": "live_camera", "run_name": "Recipe order (e2e mock)",
                                                       "recipe": plan[0]})

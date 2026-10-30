@@ -141,3 +141,8 @@
 .ln-no-feed { position: absolute; inset: 0; display: grid; place-items: center; color: var(--muted); font: 12px var(--mono); }
 .ln-banner-ok { border-color: var(--signal); background: rgba(116, 231, 183, .08); }
 .ln-link { padding: 0; border: 0; background: none; color: var(--cyan); text-decoration: underline; }
+
+.ln-create-mode { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 10px; padding: 8px 12px; border: 1px dashed currentColor; border-radius: 6px; opacity: 0.85; }
+.ln-create-mode p { margin: 0; }
+.ln-create-mode.armed { border-style: solid; border-color: #e0a100; background: rgba(224, 161, 0, 0.12); opacity: 1; }
+.ln-new-recipe { margin-top: 8px; }

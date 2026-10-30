@@ -108,6 +108,25 @@ person at the machine.
 - With `imageio-ffmpeg` installed, recordings are H.264 and play in the browser. Without it,
   they are OpenCV `mp4v`.
 
+**New recipes and CREATE mode.** RECIPE SETUP → **New recipe** takes a name and mL of clear
+(T100), orange (T200) and blue (T400), and adds it to the recipe list (`custom`). It has no colour
+reference, so its vials are HOLD until one is set:
+
+1. Select the recipe and press **CREATE reference from next vial**. An amber CREATE MODE banner
+   stays up.
+2. Send a vial of that recipe through. When the live cameras decide it, its measured endpoint
+   colour becomes the recipe's reference, the page shows `REFERENCE SET`, and CREATE turns off.
+   Every later vial of that recipe is judged against it.
+3. A vial without a QA-valid colour does not count; CREATE stays on for the next one.
+
+The reference vial itself is not judged. CREATE takes the very next decided vial, whatever the
+order says, so arm it just before that vial; after a recipe change, run a vial or two first
+(the first vial after a change can still hold the previous recipe). Recipes and references
+created this way are saved in the data folder (`site-recipes.json`) with their provenance
+(session, vial, video time, when), over the shipped library, which is not changed. Setting a
+reference for a shipped recipe copies it there. API: `GET`/`POST /api/v1/line/recipes`,
+`PUT /api/v1/line/recipes/capture {"recipe_id": ...}` (null turns CREATE off).
+
 **Mock cameras (rehearsal without a camera).** Start with recorded videos as mock cameras next
 to the real ones:
 

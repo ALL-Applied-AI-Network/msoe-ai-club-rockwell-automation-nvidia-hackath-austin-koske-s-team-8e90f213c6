@@ -126,7 +126,8 @@ def test_live_session_picks_up_vials_ordered_while_running(client):
 
 def station_client(tmp_path, station):
     (tmp_path / "station.json").write_text(json.dumps(station))
-    app.dependency_overrides[get_line_runs] = lambda: LineRuns(None, station=tmp_path / "station.json")
+    runs = LineRuns(None, station=tmp_path / "station.json", site=tmp_path / "site" / "site-recipes.json")
+    app.dependency_overrides[get_line_runs] = lambda: runs
     return TestClient(app)
 
 
@@ -153,3 +154,39 @@ def test_mock_cameras_need_a_mock_entry(client, tmp_path):
             while messages[-1]["type"] not in ("end", "error"):
                 messages.append(ws.receive_json())
         assert "No mock cameras" in messages[-1]["message"]
+
+
+def test_recipes_created_at_the_line_and_create_mode(client, tmp_path):
+    library = str(tmp_path / "data" / "library.json")
+    with station_client(tmp_path, {"title": "CSI", "fill_camera": "/dev/video9", "library": library}) as test_client:
+        created = test_client.post("/api/v1/line/recipes", json={"name": "Blue 50", "t400_ml": 50, "t100_ml": 50})
+        assert created.status_code == 201
+        recipe = created.json()
+        assert (recipe["id"], recipe["t100_ml"], recipe["t400_ml"], recipe["order"], recipe["reference"]) == (
+            "custom-blue-50", 50.0, 50.0, "T100>T400", None)
+        listed = test_client.get("/api/v1/line/recipes").json()
+        assert [r["id"] for r in listed["recipes"]] == ["1", "2", "custom-blue-50"] and listed["capture"] is None
+        assert test_client.post("/api/v1/line/recipes", json={"name": "Blue 50", "t400_ml": 50}).json()["id"] == "custom-blue-50-2"
+        assert test_client.post("/api/v1/line/recipes", json={"name": "Nothing"}).status_code == 400
+        assert test_client.put("/api/v1/line/recipes/capture", json={"recipe_id": "custom-blue-50"}).json() == {"capture": "custom-blue-50"}
+        assert test_client.get("/api/v1/line/recipes").json()["capture"] == "custom-blue-50"
+        assert test_client.put("/api/v1/line/recipes/capture", json={"recipe_id": "missing"}).status_code == 404
+        assert test_client.put("/api/v1/line/recipes/capture", json={"recipe_id": None}).json() == {"capture": None}
+    # The shipped library file is not changed; site recipes live in the data folder.
+    assert len(json.loads(Path(library).read_text())["recipes"]) == 2
+    assert (tmp_path / "site" / "site-recipes.json").is_file()
+
+
+def test_create_mode_reference_is_saved_with_provenance(tmp_path):
+    library = tmp_path / "library.json"
+    library.write_text(json.dumps({"recipes": [{"id": "5", "reference": {"lab": [1.0, 2.0, 3.0], "from": "shipped"}}]}))
+    (tmp_path / "station.json").write_text(json.dumps({"fill_camera": "/dev/video9", "library": str(library)}))
+    runs = LineRuns(None, station=tmp_path / "station.json", site=tmp_path / "site-recipes.json")
+    runs.arm("5")
+    runs.save_reference({"recipe_id": "5", "seq": 3, "t": 101.234, "lab": [9.0, 8.0, 7.0],
+                         "from": "vial 3 endpoint, operator CREATE mode"}, "live-20261030-090000")
+    reference = runs.recipes()["recipes"][0]["reference"]
+    assert (reference["lab"], reference["session"], reference["vial"], reference["mode"]) == (
+        [9.0, 8.0, 7.0], "live-20261030-090000", 3, "operator CREATE")
+    assert runs.capture is None
+    assert json.loads(library.read_text())["recipes"][0]["reference"]["lab"] == [1.0, 2.0, 3.0]

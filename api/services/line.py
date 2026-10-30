@@ -13,6 +13,11 @@ APP__LINE_RECORDINGS. An optional "mock" entry in the station names recorded vid
 ("file:PATH") that stand in for the cameras (simulate=mock), with their own framing: the
 station's vial box and tray slots are not applied to them.
 
+Site recipes: recipes created at the line (name and mL per tank) and references set in CREATE
+mode are kept in the data folder (site-recipes.json), over the station's recipe library; the
+shipped library file is never changed. In CREATE mode (capture) the next vial a camera session
+decides sets the armed recipe's reference, with its provenance.
+
 Relative paths resolve against the manifest's folder. `schedule` is optional: a session can
 instead follow an inspection run's recipe plan (the order copied from CSI's machine), which
 is re-read while the session runs so newly ordered vials are picked up. Source "recorded" replays stored model
@@ -48,9 +53,11 @@ GEOMETRY = ("fill_vial_box", "tray_slots", "tray_clear_thumbnail", "tray_empty_s
 
 class LineRuns:
     def __init__(self, root: Path | None, assets: Path | None = None, device: str = "cpu",
-                 station: Path | None = None, recordings: Path | None = None):
+                 station: Path | None = None, recordings: Path | None = None, site: Path | None = None):
         self.root, self.assets, self.device = root, assets, device
-        self.station, self.recordings = station, recordings
+        self.station, self.recordings, self.site = station, recordings, site
+        self.capture = None     # recipe id armed in CREATE mode, shared by the sessions
+        self._site_lock = threading.Lock()
         self._runtime = None
         self._runtime_lock = threading.Lock()
         self._review = {}
@@ -107,7 +114,71 @@ class LineRuns:
         return Path(path)
 
     def library(self, manifest):
-        return json.loads(Path(manifest["library"]).read_text())
+        """The manifest's recipe library with the site recipes over it (same id: site wins)."""
+        library = json.loads(Path(manifest["library"]).read_text())
+        site = {str(r["id"]): r for r in self.site_recipes()}
+        library["recipes"] = [site.pop(str(r["id"]), r) for r in library["recipes"]] + list(site.values())
+        return library
+
+    def site_recipes(self):
+        if self.site is None or not self.site.is_file():
+            return []
+        return json.loads(self.site.read_text())["recipes"]
+
+    def _write_site(self, recipes):
+        if self.site is None:
+            raise ValueError("No data folder for site recipes")
+        self.site.parent.mkdir(parents=True, exist_ok=True)
+        tmp = self.site.with_suffix(".tmp")
+        tmp.write_text(json.dumps({"schema": "linewatch-site-recipes/v1", "recipes": recipes}, indent=1))
+        tmp.replace(self.site)
+
+    def recipes(self):
+        """The live station's recipe library (with site recipes) and the CREATE mode state."""
+        return {"recipes": self.library(self.manifest(LIVE))["recipes"], "capture": self.capture}
+
+    def add_recipe(self, name, volumes):
+        """A recipe created at the line: name and mL per tank, no reference until CREATE mode sets one."""
+        from replay.recipes import recipe_definition
+        volumes = {tank: float(v) for tank, v in volumes.items() if v}
+        if not volumes:
+            raise ValueError("Enter at least one tank amount")
+        definition = recipe_definition(name, volumes, ">".join(sorted(volumes)))
+        with self._site_lock:
+            recipes = self.site_recipes()
+            taken = {str(r["id"]) for r in recipes} | {str(r["id"]) for r in self.library(self.manifest(LIVE))["recipes"]}
+            slug = "-".join("".join(c if c.isalnum() else " " for c in name.lower()).split())[:40] or "recipe"
+            recipe_id, n = f"custom-{slug}", 2
+            while recipe_id in taken:
+                recipe_id, n = f"custom-{slug}-{n}", n + 1
+            recipe = {"id": recipe_id, "name": definition["recipe_id"],
+                      **{f"{tank.lower()}_ml": definition["volumes_ml"][tank] or None for tank in definition["volumes_ml"]},
+                      "order": definition["dispense_order"], "note": "Created at the line", "custom": True,
+                      "created_at": datetime.now().isoformat(timespec="seconds"), "reference": None}
+            self._write_site(recipes + [recipe])
+        return recipe
+
+    def arm(self, recipe_id):
+        """CREATE mode on (a recipe id) or off (None)."""
+        if recipe_id is not None and str(recipe_id) not in {str(r["id"]) for r in self.library(self.manifest(LIVE))["recipes"]}:
+            raise KeyError(recipe_id)
+        self.capture = None if recipe_id is None else str(recipe_id)
+        return self.capture
+
+    def save_reference(self, event, run_id):
+        """Persist a reference set in CREATE mode, with where it came from; disarm."""
+        with self._site_lock:
+            recipes = self.site_recipes()
+            recipe = next((r for r in recipes if str(r["id"]) == event["recipe_id"]), None)
+            if recipe is None:      # a shipped recipe: copy it into the site file, the shipped file stays as it was
+                recipe = dict(next(r for r in self.library(self.manifest(LIVE))["recipes"] if str(r["id"]) == event["recipe_id"]))
+                recipes.append(recipe)
+            recipe["reference"] = {"lab": event["lab"], "from": f"{event['from']} in {run_id}",
+                                   "session": run_id, "vial": event["seq"], "video_t_s": round(event["t"], 2),
+                                   "set_at": datetime.now().isoformat(timespec="seconds"), "mode": "operator CREATE"}
+            self._write_site(recipes)
+        if self.capture == event["recipe_id"]:
+            self.capture = None
 
     def schedule(self, manifest, plan=None):
         """Recipe ids in order: from a recipe plan (list of recipe dicts) if given, else the manifest."""
@@ -267,7 +338,11 @@ class LineRuns:
                 if order and time.monotonic() - last_order >= ORDER_S:
                     last_order = time.monotonic()
                     events.extend(live.set_schedule(self.schedule(library_source, order()), t))
+                live.capture = self.capture
                 camera_events = live.fill_frame(index, bgr) if camera == "fill" else live.tray_frame(index, bgr)
+                for event in camera_events:
+                    if event["type"] == "reference":
+                        self.save_reference(event, run_id)
                 events.extend(camera_events)
                 if index % 2 == 0 or camera == "tray":
                     ok, jpeg = _encode(bgr)

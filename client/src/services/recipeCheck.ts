@@ -10,6 +10,8 @@ export interface RecipeDefinition {
   t400_ml: number | null;
   order: string;
   note?: string | null;
+  /** Created at the line (site recipe), not shipped in the library file. */
+  custom?: boolean;
   reference: { lab: Lab; from: string } | null;
 }
 

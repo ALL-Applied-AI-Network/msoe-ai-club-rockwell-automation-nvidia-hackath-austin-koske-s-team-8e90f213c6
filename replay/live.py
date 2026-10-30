@@ -44,6 +44,8 @@ class LiveLine:
         self.slots = {tray: SlotTracker(tray, centers) for tray, centers in self.tray_slots.items()}
         self.tray_preview_bgr = None
         self.vials, self.flushed, self.waiting = [], set(), []
+        # Operator CREATE mode: the recipe id whose reference the next decided vial sets.
+        self.capture = None
         # What the engine saw from frames, so a live session can be saved and reviewed later.
         self.dwells, self.tray_samples = [], []
 
@@ -114,10 +116,32 @@ class LiveLine:
             **row, "departure_s": round(vial["departure_s"], 2), "endpoint_lab": verdict.endpoint_lab,
             "final_liquid_px": vial["final_liquid_px"], "reference_frame": vial["reference_frame"]}})
         out.extend({"type": "action", "t": t, **as_dict(a)} for a in verdict.actions)
+        if self.capture:
+            out.append(self._capture(vial["seq"], verdict.endpoint_lab, t))
         decision = next((k for k in ("SCRAP", "HOLD", "PASS") if k in [a.kind for a in verdict.actions]), None)
         self.waiting.append({"seq": vial["seq"], "departure_s": vial["departure_s"], "decision": decision,
                              "verdict": verdict.verdict, "recipe_id": verdict.recipe_id})
         return out
+
+    def _capture(self, seq, endpoint_lab, t):
+        """CREATE mode: this vial's measured endpoint becomes the armed recipe's reference, used
+        for every later vial. Without a QA-valid endpoint the mode stays armed for the next vial."""
+        recipe_id = self.capture
+        if endpoint_lab is None:
+            return {"type": "reference_failed", "t": t, "recipe_id": recipe_id, "seq": seq,
+                    "reason": "no QA-valid endpoint colour; the next vial will be used"}
+        self.capture = None
+        lab = [round(float(v), 3) for v in endpoint_lab]
+        source = f"vial {seq} endpoint, operator CREATE mode"
+        self.set_reference(recipe_id, lab, source)
+        return {"type": "reference", "t": t, "recipe_id": recipe_id, "seq": seq, "lab": lab, "from": source}
+
+    def set_reference(self, recipe_id, lab, source):
+        for recipe in self.library["recipes"]:
+            if str(recipe["id"]) == str(recipe_id):
+                recipe["reference"] = {"lab": lab, "from": source}
+                return
+        self.library["recipes"].append({"id": str(recipe_id), "name": str(recipe_id), "reference": {"lab": lab, "from": source}})
 
     # Tray camera.
     def tray_frame(self, index, bgr):

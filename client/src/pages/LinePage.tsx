@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import {
   listLineOrders, listLineRuns, liveSocket, previewUrl, reviewEvents, videoUrl,
   type LineEvent, type LineSource, type LiveMessage, type TrayArrival,
+  createLineRecipe, listLineRecipes, setLineCapture,
 } from "@/services/lineService";
 import { ACTION_TONE, VERDICT_TONE, clock, labToCss, phase, viewAt, type LineView } from "@/services/lineState";
 import "./LinePage.css";
@@ -61,7 +62,16 @@ export default function LinePage() {
   const orders = useQuery({ queryKey: ["line-orders"], queryFn: listLineOrders, refetchInterval: 5000 });
   const [order, setOrder] = useState<string | null>(null);
   useEffect(() => { if (order === null && orders.data) setOrder(orders.data[0]?.session_id ?? ""); }, [order, orders.data]);
-  const recipeLibrary = useQuery({ queryKey: ["recipe-library"], queryFn: loadRecipeLibrary, staleTime: Infinity });
+  // The station's library with recipes created at the line (server), or the shipped file without a station.
+  const recipeLibrary = useQuery({
+    queryKey: ["recipe-library"],
+    queryFn: async () => {
+      try { return await listLineRecipes(); } catch { return { recipes: (await loadRecipeLibrary()).recipes, capture: null }; }
+    },
+    refetchInterval: (query) => (query.state.data?.capture ? 2000 : false),
+  });
+  const capture = recipeLibrary.data?.capture ?? null;
+  const [newRecipe, setNewRecipe] = useState<{ name: string; t100_ml: number; t200_ml: number; t400_ml: number } | null>(null);
   const selectedPlan = useQuery({
     queryKey: ["line-order-plan", order],
     queryFn: () => listRecipePlan(order!),
@@ -149,7 +159,19 @@ export default function LinePage() {
     ws.onmessage = (message) => {
       const data = JSON.parse(message.data) as LiveMessage;
       if (data.type === "meta") events.current = [data];
-      else if (data.type === "events") events.current = events.current.concat(data.events);
+      else if (data.type === "events") {
+        events.current = events.current.concat(data.events);
+        for (const event of data.events) {
+          const meta = events.current[0];
+          if (event.type === "reference") {
+            if (meta?.type === "meta") meta.references[event.recipe_id] = event.lab;
+            setRecipeMessage(`REFERENCE SET · ${event.recipe_id} from vial ${event.seq}.`);
+            void recipeLibrary.refetch();
+          } else if (event.type === "reference_failed") {
+            setRecipeMessage(`Vial ${event.seq} had no usable colour; CREATE mode stays on for the next vial.`);
+          }
+        }
+      }
       else if (data.type === "clock") {
         serverClock.current = { t: data.t, at: performance.now(), speed: data.speed, paused: data.paused };
         setLag(data.lag_s);
@@ -162,6 +184,31 @@ export default function LinePage() {
       setEventCount(events.current.length);
     };
     ws.onclose = () => setStatus((s) => (s === "live" || s === "connecting" ? "ended" : s));
+  }
+
+  async function createRecipe() {
+    if (!newRecipe) return;
+    try {
+      const { name, ...ml } = newRecipe;
+      const recipe = await createLineRecipe(name.trim(), ml);
+      await recipeLibrary.refetch();
+      setDraftRecipeId(recipe.id);
+      setNewRecipe(null);
+      setRecipeMessage(`${recipe.name} created. Add it to the order, then CREATE its reference from the next vial.`);
+    } catch (createError) {
+      setRecipeMessage(createError instanceof Error ? createError.message : "Recipe could not be created");
+    }
+  }
+
+  async function toggleCapture() {
+    try {
+      const armed = await setLineCapture(capture ? null : draftRecipeId);
+      await recipeLibrary.refetch();
+      const name = recipeLibrary.data?.recipes.find((recipe) => recipe.id === armed)?.name ?? armed;
+      setRecipeMessage(armed ? `CREATE mode: the next vial the live cameras decide sets the reference for ${name}.` : "CREATE mode off.");
+    } catch (captureError) {
+      setRecipeMessage(captureError instanceof Error ? captureError.message : "CREATE mode could not be changed");
+    }
   }
 
   function addRecipeToOrder() {
@@ -381,7 +428,7 @@ export default function LinePage() {
               <select value={draftRecipeId} onChange={(event) => setDraftRecipeId(event.target.value)} disabled={!recipeLibrary.data?.recipes.length}>
                 {recipeLibrary.data?.recipes.map((recipe) => (
                   <option key={recipe.id} value={recipe.id}>
-                    {recipe.name} · {recipeSummary(recipe) || "amounts unavailable"}{recipe.reference ? "" : " · no color reference"}
+                    {recipe.name} · {recipeSummary(recipe) || "amounts unavailable"}{recipe.custom ? " · custom" : ""}{recipe.reference ? "" : " · no color reference"}
                   </option>
                 ))}
               </select>
@@ -390,6 +437,31 @@ export default function LinePage() {
               <input type="number" min={1} max={100} value={draftVials} onChange={(event) => setDraftVials(Math.max(1, Number(event.target.value) || 1))} />
             </label>
             <button className="ln-primary" type="button" onClick={addRecipeToOrder} disabled={!recipeLibrary.data}>Add to order</button>
+            <button type="button" onClick={() => setNewRecipe(newRecipe ? null : { name: "", t100_ml: 0, t200_ml: 0, t400_ml: 0 })}>
+              {newRecipe ? "Cancel" : "New recipe"}
+            </button>
+          </div>
+          {newRecipe && (
+            <div className="ln-recipe-picker ln-new-recipe">
+              <label>Name
+                <input value={newRecipe.name} maxLength={80} placeholder="e.g. Blue 50" onChange={(e) => setNewRecipe({ ...newRecipe, name: e.target.value })} />
+              </label>
+              {([["t100_ml", "Clear (T100) mL"], ["t200_ml", "Orange (T200) mL"], ["t400_ml", "Blue (T400) mL"]] as const).map(([key, label]) => (
+                <label key={key}>{label}
+                  <input type="number" min={0} max={1000} value={newRecipe[key]} onChange={(e) => setNewRecipe({ ...newRecipe, [key]: Math.max(0, Number(e.target.value) || 0) })} />
+                </label>
+              ))}
+              <button className="ln-primary" type="button" onClick={() => void createRecipe()}
+                disabled={!newRecipe.name.trim() || !(newRecipe.t100_ml + newRecipe.t200_ml + newRecipe.t400_ml)}>Create recipe</button>
+            </div>
+          )}
+          <div className={`ln-create-mode${capture ? " armed" : ""}`}>
+            <p>{capture
+              ? <><b>CREATE MODE</b> · the next vial the live cameras decide sets the reference for <b>{recipeLibrary.data?.recipes.find((r) => r.id === capture)?.name ?? capture}</b>.</>
+              : <>CREATE mode: send a vial of the selected recipe through and its measured colour becomes that recipe's reference.</>}</p>
+            <button type="button" className={capture ? "" : "ln-primary"} onClick={() => void toggleCapture()} disabled={!capture && !draftRecipeId}>
+              {capture ? "Cancel CREATE" : "CREATE reference from next vial"}
+            </button>
           </div>
           <div className="ln-recipe-draft">
             {selectedPlan.isLoading && !newRecipeOrder ? <p>Loading selected recipe order…</p> : null}

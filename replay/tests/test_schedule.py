@@ -1,6 +1,6 @@
 import unittest
 
-from replay.schedule import density, plan, simulate
+from replay.schedule import MAX_FREE_RUNS, SHIFT_FOR_LONG, density, plan, runs_of, simulate, suggest
 
 LIBRARY = {"blue": [32, 18, -58], "navy": [38, 8, -42], "yellow": [88, -4, 78], "green": [55, -48, 32]}
 REFS = {k: (density(v), v) for k, v in LIBRARY.items()}
@@ -45,6 +45,40 @@ class ScheduleTest(unittest.TestCase):
         self.assertEqual(lagged[1]["predicted_scraps"], 1)
         _, flushed = simulate([("blue", 1), ("yellow", 3)], REFS, 0.9, dict(model="lag"), flushes=[0, 1])
         self.assertEqual(flushed[1]["predicted_scraps"], 1)   # the vial after the water flush is diluted
+
+
+    def test_runs_of_groups_consecutive_vials(self):
+        self.assertEqual(runs_of(["a", "a", "b", "a"]), [("a", 2), ("b", 1), ("a", 1)])
+
+
+class SuggestTest(unittest.TestCase):
+    LIB = {"recipes": [{"id": k, "reference": {"lab": v}} for k, v in LIBRARY.items()] + [{"id": "new", "reference": None}]}
+
+    def test_compares_entered_and_proposed(self):
+        ids = ["blue"] * 2 + ["yellow"] * 2 + ["navy"] * 2
+        out = suggest(ids, self.LIB, 0.3)
+        self.assertEqual(out["missing"], [])
+        self.assertEqual(len(out["proposed"]["order"]), len(ids))
+        self.assertEqual(sorted(out["proposed"]["order"]), sorted(ids))
+        self.assertLessEqual(out["proposed"]["cost"], out["entered"]["cost"])
+        self.assertLessEqual(out["entered"]["cost"], out["entered_no_flush"]["cost"])
+        self.assertEqual(out["entered_no_flush"]["flushes"], 0)
+
+    def test_recipe_without_reference_is_not_planned(self):
+        out = suggest(["blue", "new"], self.LIB, 0.3)
+        self.assertEqual(out["missing"], ["new"])
+        self.assertNotIn("proposed", out)
+
+    def test_long_orders_limit_moves(self):
+        ids = [k for _ in range(4) for k in LIBRARY]        # 16 runs
+        self.assertGreater(len(runs_of(ids)), MAX_FREE_RUNS)
+        out = suggest(ids, self.LIB, 0.3)
+        self.assertEqual(out["max_shift"], SHIFT_FOR_LONG)
+        self.assertEqual(sorted(out["proposed"]["order"]), sorted(ids))
+
+    def test_replans_from_measured_line_colour(self):
+        out = suggest(["yellow", "navy"], self.LIB, 0.3, line_lab=LIBRARY["blue"])
+        self.assertEqual(out["proposed"]["order"][0], "navy")
 
 
 if __name__ == "__main__":

@@ -211,6 +211,17 @@ fallback.
   (`no_reference`) until a reference exists. The plan's "expected colour" is operator intent,
   not a measured reference, and is not used for verdicts.
 
+**Order check** (below the order) forecasts the first vials after each recipe change from what the
+line holds ([schedule.py](../replay/schedule.py)) and suggests a run order and water flushes. It
+shows the order as entered (without and with the best flushes) against the suggestion, with each
+run's first-vial ΔE and predicted scraps. **Use suggested order** only rewrites the draft; nothing
+changes until **Save & use on line**. During a live session, **Re-plan from V*n*** plans the vials
+not yet filled from the last decided vial's measured colour. Every recipe needs a reference;
+orders longer than 12 runs only move runs by up to 2 places. The line model comes from the station's
+optional `"recipe_order"` entry (`{"f": 0.3, "model": "lag", "max_shift": null, "flush_cost": 0.5,
+"max_flushes": 2}` by default) and can be changed on the panel. f is assumed, not measured on CSI's
+line, so the savings are forecasts ([evaluation](evaluation.md)).
+
 ## What the page shows
 
 - **Fill camera:**
@@ -338,6 +349,8 @@ paths.
 | `GET /api/v1/line/runs/{id}/video/{fill\|tray}` | The recording, with range requests |
 | `GET /api/v1/line/runs/{id}/frame/{fill\|tray}?t=S` | One JPEG frame of the recording at S seconds (Recipe check's vial photos); for `live`, the end-of-fill photo kept for the decided vial nearest S |
 | `GET /api/v1/line/orders` | Inspection runs with a recipe plan, newest first |
+| `GET /api/v1/line/recipe-order/settings` | The station's line model for the order planner |
+| `POST /api/v1/line/recipe-order/suggest` | Body `{recipes, f?, model?, max_shift?, line_lab?}` (recipe-plan recipes, one per vial; `max_shift` -1 moves runs freely): forecast and suggested order with flushes |
 | `GET /api/v1/line/preview/{key}/{fill\|fill_mask\|tray\|tray_detection}` | Raw or evidence-overlay MJPEG stream of a live camera session |
 | `GET /api/v1/line/explain` | The explainer model and whether a key is configured |
 | `POST /api/v1/line/explain` | Body `{run_id, vial, actions, decided, next_recipe}`: advisory AI explanation of one vial |

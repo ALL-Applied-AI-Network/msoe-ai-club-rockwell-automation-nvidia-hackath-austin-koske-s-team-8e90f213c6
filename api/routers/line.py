@@ -2,6 +2,7 @@ import asyncio
 import json
 import threading
 from pathlib import Path
+from typing import Literal
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisconnect
@@ -58,6 +59,33 @@ async def set_capture(body: Capture, runs=Depends(get_line_runs)):
         return {"capture": runs.arm(body.recipe_id)}
     except KeyError as error:
         raise HTTPException(404, "Unknown recipe or no live station") from error
+
+
+class OrderCheck(BaseModel):
+    recipes: list[dict] = Field(min_length=1, max_length=500)
+    f: float | None = Field(default=None, ge=0, le=0.95)
+    model: Literal["mix", "lag"] | None = None
+    max_shift: int | None = Field(default=None, ge=-1, le=20)     # -1: move runs freely
+    line_lab: list[float] | None = Field(default=None, min_length=3, max_length=3)
+
+
+@router.get("/recipe-order/settings")
+async def recipe_order_settings(runs=Depends(get_line_runs)):
+    """The station's line model for the recipe-order planner (f is assumed, not measured)."""
+    return runs.order_settings()
+
+
+@router.post("/recipe-order/suggest")
+async def suggest_recipe_order(body: OrderCheck, runs=Depends(get_line_runs)):
+    """Forecast an order (recipe-plan recipes, one per vial) and propose a run order with flushes.
+    Advice only: the order changes only if the operator saves it."""
+    try:
+        return await asyncio.to_thread(runs.suggest_order, body.recipes, body.f, body.model,
+                                       body.max_shift, body.line_lab)
+    except KeyError as error:
+        raise HTTPException(404, "No recipe library configured") from error
+    except ValueError as error:
+        raise HTTPException(400, str(error)) from error
 
 
 async def recipe_plan(service, order: str):

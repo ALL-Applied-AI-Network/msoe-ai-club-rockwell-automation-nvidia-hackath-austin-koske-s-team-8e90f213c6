@@ -1,6 +1,7 @@
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import PageChrome from "@/components/PageChrome";
+import RecipeOrderCheck from "@/components/RecipeOrderCheck";
 import type { RecipeContext } from "@/models/inspection";
 import { createInspectionSession, listRecipePlan, replaceRecipePlan } from "@/services/inspectionService";
 import { deltaE2000, loadRecipeLibrary, recipeSummary, type RecipeDefinition } from "@/services/recipeCheck";
@@ -271,6 +272,21 @@ export default function LinePage() {
     }
   }
 
+  /** Put the suggested order into the draft: rows from `from` on, matched by library recipe id. */
+  function applySuggestedOrder(ids: string[], from: number, enteredIds: string[]) {
+    setRecipeDraft((current) => {
+      const pools = new Map<string, RecipeContext[]>();
+      current.slice(from).forEach((row, index) => {
+        const id = enteredIds[index];
+        pools.set(id, [...(pools.get(id) ?? []), row]);
+      });
+      const tail = ids.map((id) => pools.get(id)?.shift());
+      if (tail.some((row) => !row) || tail.length !== current.length - from) return current;
+      return normalizePlan([...current.slice(0, from), ...(tail as RecipeContext[])]);
+    });
+    setRecipeMessage("Suggested order is in the draft. Press Save & use on line to follow it.");
+  }
+
   /** Ask the server to end the session (a camera session then saves itself and says so), then close. */
   function finish() {
     const ws = socket.current;
@@ -323,6 +339,10 @@ export default function LinePage() {
   const view = useMemo(() => viewAt(events.current, t), [t, eventCount]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const live = mode === "live";
+  // Live re-plan: the vials decided so far fill rows V1..Vn of the followed order.
+  const lastDecided = live && status === "live" && order && !newRecipeOrder
+    ? view.vials.reduce<LineVial | null>((last, v) => (v.endpoint_lab && (!last || v.seq > last.seq) ? v : last), null)
+    : null;
   return (
     <PageChrome>
       <main className="ln-main">
@@ -490,6 +510,8 @@ export default function LinePage() {
               );
             })}
           </div>
+          <RecipeOrderCheck draft={recipeDraft} decided={lastDecided?.seq ?? 0}
+            lineLab={lastDecided?.endpoint_lab ?? null} onApply={applySuggestedOrder} />
           <div className="ln-recipe-save">
             <p>{recipeMessage ?? (newRecipeOrder ? "Building a new order." : order ? "Editing the recipe order selected above." : "Create an order for the live line.")}</p>
             <button className="ln-primary" type="button" disabled={recipeSaving || !recipeDraft.length} onClick={() => void saveRecipeOrder()}>

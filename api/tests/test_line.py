@@ -250,3 +250,17 @@ def test_live_events_and_photos_of_the_running_camera_session(tmp_path):
         assert test_client.get("/api/v1/line/runs/live/frame/fill", params={"t": 30.0}).content == b"jpeg"
         assert test_client.get("/api/v1/line/runs/live/frame/fill", params={"t": 50.0}).status_code == 404
     app.dependency_overrides.clear()
+
+
+def test_recipe_order_suggestion(client):
+    plan = [{"current_recipe_id": r} for r in ("1", "1", "2", "2", "1")]
+    body = client.post("/api/v1/line/recipe-order/suggest", json={"recipes": plan, "f": 0.3}).json()
+    assert body["entered_ids"] == ["1", "1", "2", "2", "1"]
+    assert body["missing"] == [] and body["model"] == "lag"
+    assert sorted(body["proposed"]["order"]) == sorted(body["entered_ids"])
+    assert body["proposed"]["cost"] <= body["entered"]["cost"]
+    replan = client.post("/api/v1/line/recipe-order/suggest",
+                         json={"recipes": plan[2:], "line_lab": [50.0, 10.0, 10.0], "max_shift": -1}).json()
+    assert replan["proposed"]["order"][0] == "1"        # the line already holds recipe 1
+    assert client.post("/api/v1/line/recipe-order/suggest", json={"recipes": []}).status_code == 422
+    assert client.get("/api/v1/line/recipe-order/settings").json()["f"] == 0.3

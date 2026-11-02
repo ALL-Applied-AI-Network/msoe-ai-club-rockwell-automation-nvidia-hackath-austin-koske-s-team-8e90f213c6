@@ -1,4 +1,5 @@
 import { api } from "./api";
+import type { RecipeContext } from "@/models/inspection";
 import type { Lab, RecipeDefinition } from "./recipeCheck";
 
 // Events from the live line engine (replay/live.py). "t" is the video time at which each is known.
@@ -177,6 +178,38 @@ export async function createLineRecipe(name: string, ml: { t100_ml: number; t200
 /** CREATE mode: the next vial the live cameras decide sets this recipe's reference (null turns it off). */
 export async function setLineCapture(recipeId: string | null): Promise<string | null> {
   return (await api.put<{ capture: string | null }>("/line/recipes/capture", { recipe_id: recipeId })).data.capture;
+}
+
+/** Recipe-order planner (replay/schedule.py): forecast colour per vial from what the line holds. */
+export interface OrderStep {
+  recipe: string;
+  vials: number;
+  flushes: number;
+  predicted_de: number[];
+  predicted_scraps: number;
+}
+export interface OrderPlan { cost: number; scraps: number; flushes: number; steps: OrderStep[]; order: string[] }
+export interface OrderSuggestion {
+  f: number;
+  assumed_f: number;
+  model: "mix" | "lag";
+  settings: { band: number; flush_cost: number; max_flushes: number };
+  runs: number;
+  vials: number;
+  max_shift: number | null;
+  missing: string[];
+  names: Record<string, string>;
+  entered_ids: string[];      // library recipe id of each entered vial
+  entered_no_flush?: OrderPlan;
+  entered?: OrderPlan;
+  proposed?: OrderPlan;
+}
+export interface OrderOptions { f?: number; model?: "mix" | "lag"; max_shift?: number | null; line_lab?: Lab | null }
+
+export async function suggestRecipeOrder(recipes: RecipeContext[], options: OrderOptions = {}): Promise<OrderSuggestion> {
+  const { max_shift, ...rest } = options;
+  const body = { recipes, ...rest, max_shift: max_shift === null ? -1 : max_shift };
+  return (await api.post<OrderSuggestion>("/line/recipe-order/suggest", body, { timeout: 60_000 })).data;
 }
 
 /** Advisory AI explanation of a decided vial (api/services/explain.py); never changes its verdict. */

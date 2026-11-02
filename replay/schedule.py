@@ -137,6 +137,55 @@ def references(library):
             for r in library["recipes"] if r.get("reference")}
 
 
+MAX_FREE_RUNS = 12      # beyond this many runs the search is limited to moves of SHIFT_FOR_LONG
+SHIFT_FOR_LONG = 2
+MAX_RUNS = 60
+
+
+def runs_of(recipe_ids):
+    """Consecutive vials of one recipe as (recipe, count) runs."""
+    runs = []
+    for recipe in recipe_ids:
+        if runs and runs[-1][0] == recipe:
+            runs[-1] = (recipe, runs[-1][1] + 1)
+        else:
+            runs.append((recipe, 1))
+    return runs
+
+
+def suggest(recipe_ids, library, f, settings=None, max_shift=None, line_lab=None):
+    """An order as entered (one recipe id per vial) against the proposed run order, for the app.
+
+    Three costs: as entered without flushes, as entered with the best flushes, and the proposed
+    order with its flushes. line_lab is the measured colour of the last decided vial (re-plan the
+    rest from what the line holds). Recipes without a reference cannot be forecast: they are
+    returned in `missing` and nothing is proposed.
+    """
+    s = {**SETTINGS, **(settings or {})}
+    runs = runs_of([str(r) for r in recipe_ids])
+    refs = references(library)
+    out = dict(f=f, settings=s, runs=len(runs), vials=len(recipe_ids), max_shift=max_shift,
+               missing=sorted({r for r, _ in runs} - set(refs)))
+    if out["missing"] or not runs:
+        return out
+    if len(runs) > MAX_RUNS:
+        raise ValueError(f"Too many recipe runs to plan ({len(runs)} > {MAX_RUNS})")
+    if len(runs) > MAX_FREE_RUNS and (max_shift is None or max_shift > SHIFT_FOR_LONG):
+        out["max_shift"] = max_shift = SHIFT_FOR_LONG
+    line = density(line_lab) if line_lab is not None else None
+
+    def summary(cost_steps):
+        cost, steps = cost_steps
+        return dict(cost=round(cost, 2), scraps=sum(step["predicted_scraps"] for step in steps),
+                    flushes=sum(step["flushes"] for step in steps), steps=steps,
+                    order=[step["recipe"] for step in steps for _ in range(step["vials"])])
+
+    out["entered_no_flush"] = summary(simulate(runs, refs, f, s, line, flushes=[0] * len(runs)))
+    out["entered"] = summary(simulate(runs, refs, f, s, line))
+    out["proposed"] = summary(plan(runs, refs, f, s, max_shift, line)[1])
+    return out
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("library", type=Path)

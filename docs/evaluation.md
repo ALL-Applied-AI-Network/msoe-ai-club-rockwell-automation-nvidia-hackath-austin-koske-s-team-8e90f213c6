@@ -391,7 +391,8 @@ fewer scraps) and reordering is the only lever (−29 to −41%). Which model fi
 f, needs one recorded changeover with repeat vials and known contents.
 
 The line's f is unknown and is not fitted to Run 5; whether CSI may reorder runs is a question for
-CSI. Neither is in the app yet.
+CSI. The planner is in the app as advice (LINE page, **Order check**, 2026-11-02) with an assumed
+f; its savings are these synthetic forecasts, not measured on the line.
 
 Annotated video: `python -m replay.annotate --video V --run DIR --library L --out annotated.mp4`
 redraws the run from its saved outputs (about 2 min for Run 5, no models): the vial region,

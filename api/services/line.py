@@ -45,6 +45,8 @@ ORDER_S = 1.0           # wall seconds between re-reads of a followed recipe pla
 SPEEDS = (0.5, 1, 2, 4, 8, 16, 32)
 FRAME_BUFFER_S = 180    # fill-camera frames kept so a decided vial gets its end-of-fill photo
 MAX_SESSIONS = 4
+# Recipe-order planner (replay.schedule): the lag model fits CSI's flush clips best; f is assumed.
+ORDER_DEFAULTS = {"f": 0.3, "model": "lag", "max_shift": None, "flush_cost": 0.5, "max_flushes": 2}
 
 
 LIVE = "live"
@@ -236,6 +238,35 @@ class LineRuns:
             self._write_site(recipes)
         if self.capture == event["recipe_id"]:
             self.capture = None
+
+    def order_settings(self):
+        """Line model for the recipe-order planner: the station's "recipe_order" entry over the
+        defaults. f is assumed, not measured on CSI's line (docs/evaluation.md)."""
+        settings = dict(ORDER_DEFAULTS)
+        if self.station is not None:
+            settings.update(self.manifest(LIVE).get("recipe_order") or {})
+        return settings
+
+    def suggest_order(self, plan, f=None, model=None, max_shift=None, line_lab=None):
+        """Forecast an order (recipe-plan recipe dicts, one per vial) and propose a run order with
+        flushes (replay.schedule.suggest). Advice only; the order is not changed here."""
+        from replay.recipes_order import schedule_from_plan
+        from replay.schedule import suggest
+        # The live station's library; without a station, the first run that has one.
+        manifests = (self.manifest(r["id"]) for r in self.list())
+        manifest = next((m for m in manifests if m.get("library")), None)
+        if manifest is None:
+            raise KeyError("library")
+        library = self.library(manifest)
+        s = self.order_settings()
+        f = s["f"] if f is None else f
+        model = model or s["model"]
+        max_shift = s.get("max_shift") if max_shift is None else (None if max_shift < 0 else max_shift)
+        names = {str(r["id"]): r.get("name") or str(r["id"]) for r in library["recipes"]}
+        ids = schedule_from_plan(plan, library)
+        out = suggest(ids, library, f, dict(model=model, flush_cost=s["flush_cost"], max_flushes=s["max_flushes"]),
+                      max_shift, line_lab)
+        return {**out, "model": model, "names": names, "assumed_f": s["f"], "entered_ids": ids}
 
     def schedule(self, manifest, plan=None):
         """Recipe ids in order: from a recipe plan (list of recipe dicts) if given, else the manifest."""

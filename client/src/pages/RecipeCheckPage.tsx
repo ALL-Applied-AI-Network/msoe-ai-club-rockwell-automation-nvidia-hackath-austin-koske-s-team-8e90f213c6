@@ -141,8 +141,8 @@ export default function RecipeCheckPage() {
               <small>ΔE2000 ≤ {band}</small>
             </div>
             <div className="rc-stat rc-failure">
-              <strong>{escaped}</strong>
-              <span>out-of-spec vials that reached the Good tray</span>
+              <strong>{meta.tray_routing === false ? trays.filter((t) => t.seq && t.capped === false).length : escaped}</strong>
+              <span>{meta.tray_routing === false ? "vials placed without a cap" : "out-of-spec vials that reached the Good tray"}</span>
               <small>{outOfSpec.length} out of spec · {vials.filter((v) => v.actions.includes("FLUSH")).length} FLUSH calls</small>
             </div>
           </section>

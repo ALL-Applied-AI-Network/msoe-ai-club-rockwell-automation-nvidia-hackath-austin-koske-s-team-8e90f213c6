@@ -12,7 +12,8 @@ from replay.measurement import delta_e, optical_density
 
 DEFAULT_LINE = {
     "band_de2000": 5.0,          # ΔE2000 to the intended recipe's reference
-    "direction_cos": 0.8,        # Lab direction toward the previous recipe = carryover
+    "direction_cos": 0.75,       # direction toward the previous recipe = carryover
+    "direction_space": "either", # larger of the Lab and optical-density cosines (replay.carryover_benchmark)
     "scrap_deadline_s": 120.0,   # CSI: a vial reaches the sorter 2-3 min after fill end
     "persistent_count": 3,       # consecutive non-carryover deviations -> stop and check dosing
     "proactive_flush_de": 15.0,  # previous->next reference distance that warrants a flush first
@@ -55,8 +56,11 @@ def toward_previous(lab, reference, previous, space="lab"):
 
     Dyes mix in optical density, so a carryover mix lies on the straight line reference -> previous
     in density but on a curve in Lab: for very different recipes the Lab cosine of a pure mix can
-    be about 0.5 (Run 5 recipe 7 after 6). "density" measures the direction where the mix is linear.
+    be about 0.5 (Run 5 recipe 7 after 6). "density" measures the direction where the mix is linear;
+    "either" takes the larger of the two.
     """
+    if space == "either":
+        return max(toward_previous(lab, reference, previous), toward_previous(lab, reference, previous, "density"))
     if space == "density":
         lab, reference, previous = (optical_density(x) for x in (lab, reference, previous))
     u = np.subtract(lab, reference)

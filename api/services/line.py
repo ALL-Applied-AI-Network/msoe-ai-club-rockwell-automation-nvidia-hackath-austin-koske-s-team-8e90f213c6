@@ -50,7 +50,8 @@ MAX_SESSIONS = 4
 LIVE = "live"
 MOCK = "mock"
 # Station keys that describe where the real cameras look; a mock camera's video brings its own.
-GEOMETRY = ("fill_vial_box", "tray_slots", "tray_clear_thumbnail", "tray_empty_slot_gray")
+GEOMETRY = ("fill_vial_box", "tray_slots", "tray_clear_thumbnail", "tray_empty_slot_gray", "tray_cap_slots",
+            "tray_slot_occupied_diff", "tray_routing")
 
 
 class LineRuns:
@@ -250,7 +251,10 @@ class LineRuns:
                         manifest.get("line"), runtime, fallback_vial_box=manifest.get("fill_vial_box"),
                         tray_slots=manifest.get("tray_slots"),
                         tray_clear_thumbnail=manifest.get("tray_clear_thumbnail"),
-                        tray_empty_slot_gray=manifest.get("tray_empty_slot_gray"))
+                        tray_empty_slot_gray=manifest.get("tray_empty_slot_gray"),
+                        tray_cap_slots=manifest.get("tray_cap_slots"),
+                        tray_slot_occupied_diff=manifest.get("tray_slot_occupied_diff"),
+                        tray_routing=manifest.get("tray_routing", True))
 
     def review(self, run_id: str, plan=None):
         """Every event of the recorded run, computed by the live engine without pacing."""
@@ -470,6 +474,9 @@ class LineRuns:
             manifest["tray_clear_thumbnail"] = station["tray_clear_thumbnail"]
         if station.get("tray_empty_slot_gray") is not None:
             manifest["tray_empty_slot_gray"] = station["tray_empty_slot_gray"]
+        for key in ("tray_cap_slots", "tray_slot_occupied_diff", "tray_routing"):
+            if station.get(key) is not None:
+                manifest[key] = station[key]
         if (folder / "fill.mp4").is_file():
             manifest["fill_video"] = f"{run_id}/fill.mp4"
         if live.tray_samples:

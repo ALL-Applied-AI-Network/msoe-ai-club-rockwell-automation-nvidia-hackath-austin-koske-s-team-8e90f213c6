@@ -84,6 +84,20 @@ class LiveLineTest(unittest.TestCase):
         self.assertEqual((arrival["tray"], arrival["slot"], arrival["status"]),
                          ("bad", "R5C6", "routed_as_decided"))
 
+    def test_station_without_tray_routing_reports_slot_only(self):
+        # CSI's Good/Bad trays follow its legacy sorting, not our decision: no routed/escaped verdict.
+        live = LiveLine(["1"], LIBRARY, fps=FPS, tray_routing=False)
+        live.waiting.append({"seq": 1, "departure_s": 0.0, "decision": "PASS",
+                             "verdict": "IN_SPEC", "recipe_id": "1"})
+        events = []
+        for i in range(6):
+            events.extend(live.tray_sample(tray_sample(40 + i / 3, [])))
+        for i in range(SLOT_STABLE):
+            events.extend(live.tray_sample(tray_sample(50 + i / 3, [], [29])))
+        arrival = next(event for event in events if event["type"] == "tray_arrival")
+        self.assertEqual((arrival["seq"], arrival["slot"], arrival["status"]), (1, "R5C6", "placed"))
+        self.assertFalse(live.meta()["tray_routing"])
+
 
 class FillTrackerPreviewTest(unittest.TestCase):
     class Runtime:

@@ -12,6 +12,8 @@ export interface LineMeta {
   roi: [number, number, number, number];
   good_slots: [number, number][];
   tray_slots: { good: [number, number][]; bad: [number, number][] };
+  /** False where the Good/Bad trays are not driven by Linewatch's decision: report slot and cap only. */
+  tray_routing?: boolean;
   trays: Record<string, [number, number, number, number]>;
   transit_window_s: [number, number];
 }
@@ -73,7 +75,7 @@ export interface TrayArrival {
   decision?: string | null;
   verdict?: string;
   transit_s?: number;
-  status: "routed_as_decided" | "escaped" | "good_vial_in_bad_tray" | "unmatched_arrival";
+  status: "routed_as_decided" | "escaped" | "good_vial_in_bad_tray" | "unmatched_arrival" | "placed";
 }
 
 export type LineEvent =

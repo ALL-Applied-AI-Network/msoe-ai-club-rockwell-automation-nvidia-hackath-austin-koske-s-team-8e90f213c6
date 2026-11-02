@@ -96,9 +96,12 @@ class TrayScanner:
     """One sample every STEP frames. The first arm-free frame at/after empty_frame is the baseline."""
 
     def __init__(self, fps, empty_frame=0, tray_slots=None, clear_thumbnail=None,
-                 empty_slot_gray=None):
+                 empty_slot_gray=None, cap_slots=None, occupied_diff=None):
         self.fps, self.empty_frame, self.empty, self.next_sample = fps, empty_frame, None, None
         self.tray_slots = validate_tray_slots(tray_slots)
+        # Tilted tray: where each seated vial's cap appears (station profile), else the hole centre.
+        self.cap_slots = validate_tray_slots(cap_slots, "tray_cap_slots") if cap_slots else self.tray_slots
+        self.occupied_diff = float(occupied_diff) if occupied_diff is not None else BASELINE_INVENTORY_GRAY
         self.clear_thumbnail = validate_clear_thumbnail(clear_thumbnail)
         self.empty_slot_gray = validate_empty_slot_gray(empty_slot_gray)
         self.baseline_occupied = None
@@ -115,7 +118,7 @@ class TrayScanner:
                 return None
             self.empty = bgr.copy()
             self.baseline_occupied = baseline_inventory(
-                bgr, self.tray_slots, self.empty_slot_gray) if self.empty_slot_gray is not None else None
+                bgr, self.tray_slots, self.empty_slot_gray, self.occupied_diff) if self.empty_slot_gray is not None else None
             self.next_sample = index + (-index) % STEP
         # Next multiple of STEP at or after this frame, so dropped live frames do not stop sampling.
         if self.empty is None or index < self.next_sample:
@@ -123,7 +126,7 @@ class TrayScanner:
         self.next_sample = index + STEP - index % STEP
         per = caps(bgr)
         measured = {
-            tray: (profile_slots(bgr, centers, self.empty_slot_gray[tray])
+            tray: (profile_slots(bgr, centers, self.empty_slot_gray[tray], self.cap_slots[tray])
                    if self.empty_slot_gray is not None else slots(bgr, self.empty, centers))
             for tray, centers in self.tray_slots.items()
         }
@@ -134,7 +137,7 @@ class TrayScanner:
                 # slots merely because the yellow robot remains visible elsewhere in the scene.
                 "arm": False if self.empty_slot_gray is not None else arm_over_trays(bgr, self.empty),
                 "slots_against_empty_profile": self.empty_slot_gray is not None,
-                "slot_occupied_diff": BASELINE_INVENTORY_GRAY,
+                "slot_occupied_diff": self.occupied_diff,
                 # `slots` is the legacy Good-tray field retained for old review files.
                 "slots": measured["good"], "good_slots": measured["good"],
                 "bad_slots": measured["bad"],
@@ -143,23 +146,23 @@ class TrayScanner:
                    if self.baseline_occupied is not None else {})}
 
 
-def validate_tray_slots(config=None):
+def validate_tray_slots(config=None, name="tray_slots"):
     """Return a validated 640x480 two-tray profile, preserving configured point order."""
     raw = config or TRAY_SLOTS
     if set(raw) != set(TRAYS):
-        raise ValueError("Station tray_slots must contain good and bad grids")
+        raise ValueError(f"Station {name} must contain good and bad grids")
     out = {}
     for tray in TRAYS:
         points = raw[tray]
         if not isinstance(points, (list, tuple)) or len(points) != 30:
-            raise ValueError(f"Station tray_slots.{tray} must contain 30 [x, y] points")
+            raise ValueError(f"Station {name}.{tray} must contain 30 [x, y] points")
         clean = []
         for point in points:
             if not isinstance(point, (list, tuple)) or len(point) != 2:
-                raise ValueError(f"Station tray_slots.{tray} points must be [x, y]")
+                raise ValueError(f"Station {name}.{tray} points must be [x, y]")
             x, y = map(int, point)
             if not (SLOT_HALF <= x < 640 - SLOT_HALF and SLOT_HALF <= y < 480 - SLOT_HALF):
-                raise ValueError(f"Station tray_slots.{tray} point is outside the native 640x480 profile")
+                raise ValueError(f"Station {name}.{tray} point is outside the native 640x480 profile")
             clean.append((x, y))
         out[tray] = clean
     return out
@@ -191,7 +194,7 @@ def validate_empty_slot_gray(config=None):
     return out
 
 
-def baseline_inventory(bgr, tray_slots, empty_slot_gray):
+def baseline_inventory(bgr, tray_slots, empty_slot_gray, occupied_diff=BASELINE_INVENTORY_GRAY):
     """Reserve arbitrary starting slots by comparing them with the station's empty-hole profile."""
     grey = cv2.cvtColor(bgr, cv2.COLOR_BGR2GRAY)
     out = {}
@@ -200,7 +203,7 @@ def baseline_inventory(bgr, tray_slots, empty_slot_gray):
         # shift before deciding which individual slots differ from the commissioned profile;
         # otherwise an untouched empty grid can turn into a row of uncapped-vial detections.
         differences = profile_gray_differences(grey, centers, empty_slot_gray[tray])
-        out[tray] = [difference > BASELINE_INVENTORY_GRAY for difference in differences]
+        out[tray] = [bool(difference > occupied_diff) for difference in differences]
     return out
 
 
@@ -217,13 +220,15 @@ def profile_gray_differences(grey, centers, expected_gray):
     return np.abs(signed - illumination_shift)
 
 
-def profile_slots(bgr, centers, expected_gray):
-    """Per slot: direct difference from the station empty-hole signature and yellow fraction."""
+def profile_slots(bgr, centers, expected_gray, cap_centers=None):
+    """Per slot: direct difference from the station empty-hole signature and yellow fraction.
+    Yellow is read where a seated vial's cap appears (cap_centers), which differs from the hole
+    centre when the tray is tilted to the camera; by default it is the hole centre."""
     grey = cv2.cvtColor(bgr, cv2.COLOR_BGR2GRAY)
     hsv = cv2.cvtColor(bgr, cv2.COLOR_BGR2HSV)
     differences = profile_gray_differences(grey, centers, expected_gray)
     out = []
-    for (x, y), difference in zip(centers, differences):
+    for (x, y), difference in zip(cap_centers or centers, differences):
         window = np.s_[y - SLOT_HALF:y + SLOT_HALF, x - SLOT_HALF:x + SLOT_HALF]
         yellow = float((cv2.inRange(hsv[window], *YELLOW) > 0).mean())
         out.append((round(float(difference), 1), round(yellow, 2)))
@@ -347,6 +352,7 @@ class SlotTracker:
         self.baseline_key = f"{tray}_baseline_occupied"
         self.state = [False] * len(self.centers)
         self.baseline_occupied = [False] * len(self.centers)
+        self.capped = [None] * len(self.centers)   # per occupied slot, for the operator preview
         self.runs = [[] for _ in self.centers]
         self.initialized = False
 
@@ -361,6 +367,8 @@ class SlotTracker:
             self.baseline_occupied = ([bool(value) for value in declared] if declared is not None else
                                       [yellow >= BASELINE_CAPPED_YELLOW for _, yellow in values])
             self.state = list(self.baseline_occupied)
+            self.capped = [yellow >= CAPPED_YELLOW if occupied else None
+                           for occupied, (_, yellow) in zip(self.state, values)]
             self.initialized = True
             return []
         out, state, runs = [], self.state, self.runs
@@ -382,6 +390,7 @@ class SlotTracker:
                 if occupied:
                     event["yellow"] = float(np.median([y for _, y in runs[k]]))
                     event["capped"] = event["yellow"] >= CAPPED_YELLOW
+                self.capped[k] = event.get("capped")
                 out.append(event)
                 runs[k] = []
         return out
@@ -392,32 +401,39 @@ def slot_events(samples, tray="good", centers=None):
     return [e for s in samples for e in tracker.push(s)], sum(tracker.state)
 
 
-def render_overlay(bgr, trackers, baseline_ready, sample=None):
-    """Operator preview: candidate profile regions and solid boxes only for occupied slots."""
+def render_overlay(bgr, trackers, baseline_ready, sample=None, routing=True):
+    """Operator preview: the raw tray camera with a box on each occupied slot. With routing the
+    box carries the tray's colour and name; without it (the station's own sorter fills the trays)
+    the box shows only whether the vial has a cap."""
     rendered = bgr.copy()
     colors = {"good": (80, 220, 80), "bad": (80, 100, 255)}
-    for tray, region in TRAYS.items():
-        x0, y0, x1, y1 = region
-        color = colors[tray]
-        # Thin region outline is a station profile, not a detected vial box.
-        cv2.rectangle(rendered, (x0, y0), (x1, y1), color, 1)
-        cv2.putText(rendered, f"{tray.upper()} SORT REGION", (x0 + 4, y0 - 6),
-                    cv2.FONT_HERSHEY_SIMPLEX, .43, color, 1, cv2.LINE_AA)
-        tracker = trackers[tray]
+    capped_color, no_cap_color = (255, 255, 255), (0, 180, 255)
+    no_cap = 0
+    for tray, tracker in trackers.items():
         for index, ((x, y), occupied) in enumerate(zip(tracker.centers, tracker.state)):
             if not occupied:
                 continue
             row, col = divmod(index, 6)
+            if routing:
+                color, label = colors[tray], f"{tray[0].upper()}{row + 1}:{col + 1}"
+            elif tracker.capped[index] is False:
+                color, label = no_cap_color, "NO CAP"
+                no_cap += 1
+            else:
+                color, label = capped_color, None
             cv2.rectangle(rendered, (x - 13, y - 13), (x + 13, y + 13), color, 2)
-            cv2.putText(rendered, f"{tray[0].upper()}{row + 1}:{col + 1}", (x - 16, y - 17),
-                        cv2.FONT_HERSHEY_SIMPLEX, .34, color, 1, cv2.LINE_AA)
+            if label:
+                cv2.putText(rendered, label, (x - 16, y - 17), cv2.FONT_HERSHEY_SIMPLEX, .34, color, 1, cv2.LINE_AA)
     if not baseline_ready:
-        message, color = "WAITING FOR CLEAR VIEW OF BOTH SORT TRAYS", (0, 180, 255)
+        message, color = "WAITING FOR CLEAR VIEW OF THE TRAYS", (0, 180, 255)
     elif sample and sample.get("arm"):
         message, color = "ROBOT ARM OCCLUDING TRAYS - DETECTIONS HELD", (0, 180, 255)
-    else:
+    elif routing:
         counts = {tray: sum(tracker.state) for tray, tracker in trackers.items()}
         message, color = f"VIAL BOXES  GOOD {counts['good']}  BAD {counts['bad']}", (255, 255, 255)
+    else:
+        total = sum(sum(tracker.state) for tracker in trackers.values())
+        message, color = f"VIALS {total}  NO CAP {no_cap}", (255, 255, 255)
     cv2.putText(rendered, message, (10, 23), cv2.FONT_HERSHEY_SIMPLEX, .5, color, 2, cv2.LINE_AA)
     return rendered
 

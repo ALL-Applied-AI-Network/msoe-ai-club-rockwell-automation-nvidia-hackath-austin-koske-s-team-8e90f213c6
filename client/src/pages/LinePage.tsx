@@ -152,7 +152,7 @@ export default function LinePage() {
     setSaved(null);
     setCameraStats(null);
     setStatus("connecting");
-    const start = source === "recorded" || (camera && simulate) ? startMin * 60 : 0;
+    const start = source === "recorded" ? startMin * 60 : 0;
     const ws = liveSocket(run.id, source, camera ? 1 : speed, start, order, camera ? simulate || null : null);
     socket.current = ws;
     ws.onmessage = (message) => {
@@ -386,12 +386,12 @@ export default function LinePage() {
                   <select value={simulate} onChange={(e) => setSimulate(e.target.value)}>
                     <option value="">Station cameras</option>
                     {runs.data?.filter((r) => r.sources.includes("video")).map((r) => (
-                      <option key={r.id} value={r.id}>Simulate with {r.title}</option>
+                      <option key={r.id} value={r.id}>{r.title}</option>
                     ))}
                   </select>
                 </label>
               )}
-              {(source === "recorded" || (camera && simulate)) && (
+              {source === "recorded" && (
                 <label>Start at (min)
                   <input type="number" min={0} max={28} value={startMin} onChange={(e) => setStartMin(Math.max(0, Number(e.target.value)))} />
                 </label>
@@ -601,7 +601,7 @@ function TrayCamera({ view, runId, videoRef, preview, detectionPreview }: { view
         </svg>
         {showLatest && (
           <div className={`ln-overlay-banner ln-bottom ln-tone-${latest.capped === false ? "nocap" : latest.status === "escaped" ? "failure" : "muted"}`}>
-            <strong>Vial {latest.seq ?? "?"} → {latest.tray} tray {latest.slot ?? ""}{latest.transit_s ? ` after ${Math.round(latest.transit_s)} s` : ""}</strong>
+            <strong>Vial {latest.seq ?? "?"} → {latest.status === "placed" ? "slot" : `${latest.tray} tray`} {latest.slot ?? ""}{latest.transit_s ? ` after ${Math.round(latest.transit_s)} s` : ""}</strong>
             <span>{latest.capped === false ? "NO CAP" : arrivalNote(latest)}</span>
           </div>
         )}
@@ -614,6 +614,7 @@ function arrivalNote(a: TrayArrival) {
   if (a.status === "escaped") return `we said ${a.decision}: should have been diverted`;
   if (a.status === "good_vial_in_bad_tray") return "good vial in Bad tray";
   if (a.status === "unmatched_arrival") return "no matching vial left the fill station";
+  if (a.status === "placed") return "cap present";
   return "as decided";
 }
 
@@ -712,7 +713,8 @@ function Panel({ view, runId }: { view: LineView; runId: string }) {
             <dl>
               <div><dt>in tray</dt><dd>{arrived.length}</dd></div>
               <div><dt>in transit</dt><dd>{Math.max(0, inTransit)}</dd></div>
-              <div><dt>should have been diverted</dt><dd className={escaped ? "ln-tone-failure" : ""}>{escaped}</dd></div>
+              {meta?.tray_routing !== false &&
+                <div><dt>should have been diverted</dt><dd className={escaped ? "ln-tone-failure" : ""}>{escaped}</dd></div>}
               <div><dt>missing cap</dt><dd className={noCap.length ? "ln-tone-nocap" : ""}>{noCap.length ? noCap.join(", ") : 0}</dd></div>
             </dl>
           </div>
@@ -813,7 +815,7 @@ function Ledger({ view, runId }: { view: LineView; runId: string }) {
                   <td className={`ln-tone-${VERDICT_TONE[v.verdict]}`}>{v.verdict.replaceAll("_", " ")}</td>
                   <td>{v.pattern.replaceAll("_", " ")}</td>
                   <td>{v.actions.replaceAll("+", " + ")}</td>
-                  <td>{a ? `${a.tray}${a.slot ? ` ${a.slot}` : ""}${a.capped === false ? " · NO CAP" : ""}${a.status === "escaped" ? " · escaped" : ""}` : view.missed.includes(v.seq) ? "not seen" : "in transit"}</td>
+                  <td>{a ? `${a.status === "placed" ? "" : a.tray}${a.slot ? `${a.status === "placed" ? "" : " "}${a.slot}` : ""}${a.capped === false ? " · NO CAP" : ""}${a.status === "escaped" ? " · escaped" : ""}` : view.missed.includes(v.seq) ? "not seen" : "in transit"}</td>
                 </tr>
                 {open === v.seq && (
                   <tr className="ln-row-detail"><td colSpan={9}>

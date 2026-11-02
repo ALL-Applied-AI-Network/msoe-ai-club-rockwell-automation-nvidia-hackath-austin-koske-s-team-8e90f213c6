@@ -2,9 +2,9 @@ import unittest
 
 import numpy as np
 
-from replay.tray import (BAD_SLOTS, GOOD_SLOTS, SLOT_STABLE, STABLE, TRAY_SLOTS, CapTracker,
-                         TrayScanner, align, arm_over_trays, baseline_inventory, clear_view,
-                         profile_slots, slot_events)
+from replay.tray import (BAD_SLOTS, CAPPED_YELLOW, GOOD_SLOTS, SLOT_STABLE, STABLE, TRAY_SLOTS, CapTracker,
+                         SlotTracker, TrayScanner, align, arm_over_trays, baseline_inventory, clear_view,
+                         profile_slots, render_overlay, slot_events)
 
 
 def sample(t, occupied, yellow=0.6, arm=False):
@@ -79,6 +79,28 @@ class SlotTest(unittest.TestCase):
         self.assertEqual([index for index, occupied in enumerate(inventory["good"]) if occupied], [17])
         self.assertFalse(any(inventory["bad"]))
 
+    def test_tilted_tray_reads_cap_where_the_profile_puts_it(self):
+        # A tray at an angle shows the cap beside the hole; yellow at the hole centre reads uncapped.
+        frame = np.full((480, 640, 3), 90, dtype=np.uint8)
+        x, y = BAD_SLOTS[14]
+        frame[y + 4:y + 20, x + 6:x + 22] = (0, 220, 230)   # BGR yellow cap, 13 px right / 12 px down
+        caps_at = list(BAD_SLOTS)
+        caps_at[14] = (x + 13, y + 12)
+        at_hole = profile_slots(frame, BAD_SLOTS, [50.0] * 30)[14][1]
+        at_cap = profile_slots(frame, BAD_SLOTS, [50.0] * 30, caps_at)[14][1]
+        self.assertLess(at_hole, CAPPED_YELLOW)
+        self.assertGreaterEqual(at_cap, CAPPED_YELLOW)
+
+    def test_profile_occupancy_threshold_is_configurable(self):
+        frame = np.full((480, 640, 3), 90, dtype=np.uint8)
+        x, y = GOOD_SLOTS[3]
+        frame[y - 5:y + 5, x - 5:x + 5] = 122                # +32: marginal exposure drift, not a vial
+        expected = {tray: [90.0] * 30 for tray in TRAY_SLOTS}
+        self.assertTrue(baseline_inventory(frame, TRAY_SLOTS, expected)["good"][3])
+        self.assertFalse(baseline_inventory(frame, TRAY_SLOTS, expected, 64.8)["good"][3])
+        scanner = TrayScanner(30, tray_slots=TRAY_SLOTS, empty_slot_gray=expected, occupied_diff=64.8)
+        self.assertEqual(scanner.push(0, frame)["slot_occupied_diff"], 64.8)
+
     def test_slot_profile_initializes_without_global_clear_scene(self):
         frame = np.zeros((480, 640, 3), dtype=np.uint8)
         scanner = TrayScanner(30, tray_slots=TRAY_SLOTS,
@@ -118,6 +140,18 @@ class SlotTest(unittest.TestCase):
         self.assertEqual([(event["tray"], event["slot"], event["capped"]) for event in arrivals],
                          [("bad", "R5C6", False)])
         self.assertEqual(occupied, 1)
+
+    def test_preview_without_routing_marks_only_the_uncapped_vial(self):
+        tracker = SlotTracker("good")
+        for s in [sample(i / 3, []) for i in range(6)] + [sample(10 + i / 3, [3], yellow=0.0) for i in range(SLOT_STABLE)]:
+            tracker.push(s)
+        self.assertEqual(tracker.capped[3], False)
+        blank = np.zeros((480, 640, 3), np.uint8)
+        routed = render_overlay(blank, {"good": tracker, "bad": SlotTracker("bad")}, baseline_ready=True)
+        plain = render_overlay(blank, {"good": tracker, "bad": SlotTracker("bad")}, baseline_ready=True, routing=False)
+        x, y = tracker.centers[3]
+        self.assertEqual(tuple(routed[y - 13, x]), (80, 220, 80))    # Good tray colour
+        self.assertEqual(tuple(plain[y - 13, x]), (0, 180, 255))     # NO CAP colour, no tray
 
 
 class CapTest(unittest.TestCase):

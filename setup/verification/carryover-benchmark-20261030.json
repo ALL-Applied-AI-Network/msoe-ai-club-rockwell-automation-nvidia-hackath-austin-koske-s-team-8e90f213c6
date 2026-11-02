@@ -1,0 +1,1075 @@
+{
+ "schema": "linewatch-carryover-benchmark/v1",
+ "date": "2026-10-30",
+ "command": "python -m replay.carryover_benchmark carryover-v2/renders/shard-* carryover-v3/renders/shard-* --rows-cache rows.json --out benchmark.json --recolour setup/verification/recolour-run5-20261030.json --library client/public/data/run5/recipe-library.json",
+ "renders": "/mnt/c/Users/Austin/ai-club-tools/results/carryover-v{2,3}-brev (14,400 Isaac renders)",
+ "frozen_line": {
+  "band_de2000": 5.0,
+  "direction_cos": 0.75,
+  "direction_space": "either",
+  "from": "seed 0 train selection; set in replay.decide.DEFAULT_LINE"
+ },
+ "run5_check": {
+  "command": "python -m replay.line --samples run5-v3/frames.jsonl ... --out run5-v4-frozen-either",
+  "output_dir": "/mnt/c/Users/Austin/ai-club-tools/results/line-runner-20261027/run5-v4-frozen-either",
+  "result": "Run 5 read once after freezing: verdicts, patterns and actions identical to run5-v3 on all 30 vials"
+ },
+ "spec_de2000": 5.0,
+ "sigma": 1.0,
+ "seeds": 3,
+ "max_false_alarm": 0.05,
+ "changeovers": 4776,
+ "dev_changeovers": 1195,
+ "dev_positive": 202,
+ "dev_clean": 374,
+ "truth": "positive = true colour (optical-density mix of clean reference and previous at the true f) more than \u0394E2000 5.0 from the intended reference",
+ "note": "Synthetic renders only; thresholds selected on train families, reported on dev families. No Run 5.",
+ "runs": [
+  {
+   "seed": 0,
+   "selected_on_train": {
+    "scrap": {
+     "band_de2000": 5.0
+    },
+    "carryover": {
+     "band_de2000": 5.0,
+     "direction_cos": 0.75,
+     "space": "either"
+    }
+   },
+   "metrics": {
+    "scrap_shipped": {
+     "band_de2000": 5.0,
+     "tp": 189,
+     "fn": 13,
+     "fp": 43,
+     "tn": 950,
+     "recall": 0.9356435643564357,
+     "precision": 0.8146551724137931,
+     "false_alarm_rate": 0.0433031218529708,
+     "false_alarm_rate_clean": 0.0053475935828877,
+     "by_true_de": [
+      {
+       "true_de": [
+        5,
+        10
+       ],
+       "n": 114,
+       "flagged": 101
+      },
+      {
+       "true_de": [
+        10,
+        20
+       ],
+       "n": 62,
+       "flagged": 62
+      },
+      {
+       "true_de": [
+        20,
+        null
+       ],
+       "n": 26,
+       "flagged": 26
+      }
+     ]
+    },
+    "scrap_selected": {
+     "band_de2000": 5.0,
+     "tp": 189,
+     "fn": 13,
+     "fp": 43,
+     "tn": 950,
+     "recall": 0.9356435643564357,
+     "precision": 0.8146551724137931,
+     "false_alarm_rate": 0.0433031218529708,
+     "false_alarm_rate_clean": 0.0053475935828877,
+     "by_true_de": [
+      {
+       "true_de": [
+        5,
+        10
+       ],
+       "n": 114,
+       "flagged": 101
+      },
+      {
+       "true_de": [
+        10,
+        20
+       ],
+       "n": 62,
+       "flagged": 62
+      },
+      {
+       "true_de": [
+        20,
+        null
+       ],
+       "n": 26,
+       "flagged": 26
+      }
+     ]
+    },
+    "baseline_any_recipe": {
+     "band_de2000": 5.0,
+     "tp": 154,
+     "fn": 48,
+     "fp": 39,
+     "tn": 954,
+     "recall": 0.7623762376237624,
+     "precision": 0.7979274611398963,
+     "false_alarm_rate": 0.03927492447129909,
+     "false_alarm_rate_clean": 0.00267379679144385,
+     "by_true_de": [
+      {
+       "true_de": [
+        5,
+        10
+       ],
+       "n": 114,
+       "flagged": 90
+      },
+      {
+       "true_de": [
+        10,
+        20
+       ],
+       "n": 62,
+       "flagged": 49
+      },
+      {
+       "true_de": [
+        20,
+        null
+       ],
+       "n": 26,
+       "flagged": 15
+      }
+     ]
+    },
+    "carryover_shipped": {
+     "band_de2000": 5.0,
+     "direction_cos": 0.8,
+     "space": "lab",
+     "tp": 185,
+     "fn": 17,
+     "fp": 30,
+     "tn": 963,
+     "recall": 0.9158415841584159,
+     "precision": 0.8604651162790697,
+     "false_alarm_rate": 0.030211480362537766,
+     "false_alarm_rate_clean": 0.00267379679144385,
+     "by_true_de": [
+      {
+       "true_de": [
+        5,
+        10
+       ],
+       "n": 114,
+       "flagged": 97
+      },
+      {
+       "true_de": [
+        10,
+        20
+       ],
+       "n": 62,
+       "flagged": 62
+      },
+      {
+       "true_de": [
+        20,
+        null
+       ],
+       "n": 26,
+       "flagged": 26
+      }
+     ]
+    },
+    "carryover_selected": {
+     "band_de2000": 5.0,
+     "direction_cos": 0.75,
+     "space": "either",
+     "tp": 187,
+     "fn": 15,
+     "fp": 36,
+     "tn": 957,
+     "recall": 0.9257425742574258,
+     "precision": 0.8385650224215246,
+     "false_alarm_rate": 0.03625377643504532,
+     "false_alarm_rate_clean": 0.00267379679144385,
+     "by_true_de": [
+      {
+       "true_de": [
+        5,
+        10
+       ],
+       "n": 114,
+       "flagged": 99
+      },
+      {
+       "true_de": [
+        10,
+        20
+       ],
+       "n": 62,
+       "flagged": 62
+      },
+      {
+       "true_de": [
+        20,
+        null
+       ],
+       "n": 26,
+       "flagged": 26
+      }
+     ]
+    }
+   }
+  },
+  {
+   "seed": 1,
+   "selected_on_train": {
+    "scrap": {
+     "band_de2000": 5.0
+    },
+    "carryover": {
+     "band_de2000": 5.0,
+     "direction_cos": 0.7,
+     "space": "either"
+    }
+   },
+   "metrics": {
+    "scrap_shipped": {
+     "band_de2000": 5.0,
+     "tp": 184,
+     "fn": 18,
+     "fp": 48,
+     "tn": 945,
+     "recall": 0.9108910891089109,
+     "precision": 0.7931034482758621,
+     "false_alarm_rate": 0.04833836858006042,
+     "false_alarm_rate_clean": 0.016042780748663103,
+     "by_true_de": [
+      {
+       "true_de": [
+        5,
+        10
+       ],
+       "n": 114,
+       "flagged": 96
+      },
+      {
+       "true_de": [
+        10,
+        20
+       ],
+       "n": 62,
+       "flagged": 62
+      },
+      {
+       "true_de": [
+        20,
+        null
+       ],
+       "n": 26,
+       "flagged": 26
+      }
+     ]
+    },
+    "scrap_selected": {
+     "band_de2000": 5.0,
+     "tp": 184,
+     "fn": 18,
+     "fp": 48,
+     "tn": 945,
+     "recall": 0.9108910891089109,
+     "precision": 0.7931034482758621,
+     "false_alarm_rate": 0.04833836858006042,
+     "false_alarm_rate_clean": 0.016042780748663103,
+     "by_true_de": [
+      {
+       "true_de": [
+        5,
+        10
+       ],
+       "n": 114,
+       "flagged": 96
+      },
+      {
+       "true_de": [
+        10,
+        20
+       ],
+       "n": 62,
+       "flagged": 62
+      },
+      {
+       "true_de": [
+        20,
+        null
+       ],
+       "n": 26,
+       "flagged": 26
+      }
+     ]
+    },
+    "baseline_any_recipe": {
+     "band_de2000": 5.0,
+     "tp": 149,
+     "fn": 53,
+     "fp": 41,
+     "tn": 952,
+     "recall": 0.7376237623762376,
+     "precision": 0.7842105263157895,
+     "false_alarm_rate": 0.041289023162134945,
+     "false_alarm_rate_clean": 0.008021390374331552,
+     "by_true_de": [
+      {
+       "true_de": [
+        5,
+        10
+       ],
+       "n": 114,
+       "flagged": 86
+      },
+      {
+       "true_de": [
+        10,
+        20
+       ],
+       "n": 62,
+       "flagged": 47
+      },
+      {
+       "true_de": [
+        20,
+        null
+       ],
+       "n": 26,
+       "flagged": 16
+      }
+     ]
+    },
+    "carryover_shipped": {
+     "band_de2000": 5.0,
+     "direction_cos": 0.8,
+     "space": "lab",
+     "tp": 180,
+     "fn": 22,
+     "fp": 29,
+     "tn": 964,
+     "recall": 0.8910891089108911,
+     "precision": 0.861244019138756,
+     "false_alarm_rate": 0.02920443101711984,
+     "false_alarm_rate_clean": 0.0,
+     "by_true_de": [
+      {
+       "true_de": [
+        5,
+        10
+       ],
+       "n": 114,
+       "flagged": 92
+      },
+      {
+       "true_de": [
+        10,
+        20
+       ],
+       "n": 62,
+       "flagged": 62
+      },
+      {
+       "true_de": [
+        20,
+        null
+       ],
+       "n": 26,
+       "flagged": 26
+      }
+     ]
+    },
+    "carryover_selected": {
+     "band_de2000": 5.0,
+     "direction_cos": 0.7,
+     "space": "either",
+     "tp": 182,
+     "fn": 20,
+     "fp": 39,
+     "tn": 954,
+     "recall": 0.900990099009901,
+     "precision": 0.8235294117647058,
+     "false_alarm_rate": 0.03927492447129909,
+     "false_alarm_rate_clean": 0.0053475935828877,
+     "by_true_de": [
+      {
+       "true_de": [
+        5,
+        10
+       ],
+       "n": 114,
+       "flagged": 94
+      },
+      {
+       "true_de": [
+        10,
+        20
+       ],
+       "n": 62,
+       "flagged": 62
+      },
+      {
+       "true_de": [
+        20,
+        null
+       ],
+       "n": 26,
+       "flagged": 26
+      }
+     ]
+    }
+   }
+  },
+  {
+   "seed": 2,
+   "selected_on_train": {
+    "scrap": {
+     "band_de2000": 5.0
+    },
+    "carryover": {
+     "band_de2000": 5.0,
+     "direction_cos": 0.55,
+     "space": "lab"
+    }
+   },
+   "metrics": {
+    "scrap_shipped": {
+     "band_de2000": 5.0,
+     "tp": 189,
+     "fn": 13,
+     "fp": 35,
+     "tn": 958,
+     "recall": 0.9356435643564357,
+     "precision": 0.84375,
+     "false_alarm_rate": 0.035246727089627394,
+     "false_alarm_rate_clean": 0.00267379679144385,
+     "by_true_de": [
+      {
+       "true_de": [
+        5,
+        10
+       ],
+       "n": 114,
+       "flagged": 101
+      },
+      {
+       "true_de": [
+        10,
+        20
+       ],
+       "n": 62,
+       "flagged": 62
+      },
+      {
+       "true_de": [
+        20,
+        null
+       ],
+       "n": 26,
+       "flagged": 26
+      }
+     ]
+    },
+    "scrap_selected": {
+     "band_de2000": 5.0,
+     "tp": 189,
+     "fn": 13,
+     "fp": 35,
+     "tn": 958,
+     "recall": 0.9356435643564357,
+     "precision": 0.84375,
+     "false_alarm_rate": 0.035246727089627394,
+     "false_alarm_rate_clean": 0.00267379679144385,
+     "by_true_de": [
+      {
+       "true_de": [
+        5,
+        10
+       ],
+       "n": 114,
+       "flagged": 101
+      },
+      {
+       "true_de": [
+        10,
+        20
+       ],
+       "n": 62,
+       "flagged": 62
+      },
+      {
+       "true_de": [
+        20,
+        null
+       ],
+       "n": 26,
+       "flagged": 26
+      }
+     ]
+    },
+    "baseline_any_recipe": {
+     "band_de2000": 5.0,
+     "tp": 151,
+     "fn": 51,
+     "fp": 31,
+     "tn": 962,
+     "recall": 0.7475247524752475,
+     "precision": 0.8296703296703297,
+     "false_alarm_rate": 0.03121852970795569,
+     "false_alarm_rate_clean": 0.00267379679144385,
+     "by_true_de": [
+      {
+       "true_de": [
+        5,
+        10
+       ],
+       "n": 114,
+       "flagged": 88
+      },
+      {
+       "true_de": [
+        10,
+        20
+       ],
+       "n": 62,
+       "flagged": 47
+      },
+      {
+       "true_de": [
+        20,
+        null
+       ],
+       "n": 26,
+       "flagged": 16
+      }
+     ]
+    },
+    "carryover_shipped": {
+     "band_de2000": 5.0,
+     "direction_cos": 0.8,
+     "space": "lab",
+     "tp": 186,
+     "fn": 16,
+     "fp": 26,
+     "tn": 967,
+     "recall": 0.9207920792079208,
+     "precision": 0.8773584905660378,
+     "false_alarm_rate": 0.026183282980866064,
+     "false_alarm_rate_clean": 0.0,
+     "by_true_de": [
+      {
+       "true_de": [
+        5,
+        10
+       ],
+       "n": 114,
+       "flagged": 98
+      },
+      {
+       "true_de": [
+        10,
+        20
+       ],
+       "n": 62,
+       "flagged": 62
+      },
+      {
+       "true_de": [
+        20,
+        null
+       ],
+       "n": 26,
+       "flagged": 26
+      }
+     ]
+    },
+    "carryover_selected": {
+     "band_de2000": 5.0,
+     "direction_cos": 0.55,
+     "space": "lab",
+     "tp": 188,
+     "fn": 14,
+     "fp": 32,
+     "tn": 961,
+     "recall": 0.9306930693069307,
+     "precision": 0.8545454545454545,
+     "false_alarm_rate": 0.032225579053373615,
+     "false_alarm_rate_clean": 0.0,
+     "by_true_de": [
+      {
+       "true_de": [
+        5,
+        10
+       ],
+       "n": 114,
+       "flagged": 100
+      },
+      {
+       "true_de": [
+        10,
+        20
+       ],
+       "n": 62,
+       "flagged": 62
+      },
+      {
+       "true_de": [
+        20,
+        null
+       ],
+       "n": 26,
+       "flagged": 26
+      }
+     ]
+    }
+   }
+  }
+ ],
+ "recolour": {
+  "record": "setup/verification/recolour-run5-20261030.json",
+  "frozen_from_seed": 0,
+  "targets": 24,
+  "measured": 21,
+  "cant_verify": {
+   "positive": 2,
+   "negative": 1
+  },
+  "vials": [
+   {
+    "seq": 6,
+    "f": 0.0,
+    "true_de": 0.0,
+    "positive": false,
+    "de": 1.8729314458067476,
+    "de_prev": 26.088848957875076,
+    "cos": -0.5739610053686148,
+    "cos_either": -0.29546841344942915
+   },
+   {
+    "seq": 8,
+    "f": 0.0,
+    "true_de": 0.0,
+    "positive": false,
+    "de": 1.0584697790049167,
+    "de_prev": 34.0766066960267,
+    "cos": -0.23426326496982475,
+    "cos_either": -0.23426326496982475
+   },
+   {
+    "seq": 9,
+    "f": 0.0,
+    "true_de": 0.0,
+    "positive": false,
+    "de": 2.343803909400549,
+    "de_prev": 33.87146042217036,
+    "cos": 0.09366988081818194,
+    "cos_either": 0.691662326420241
+   },
+   {
+    "seq": 20,
+    "f": 0.0,
+    "true_de": 0.0,
+    "positive": false,
+    "de": 2.310874459281128,
+    "de_prev": 15.263992298261652,
+    "cos": 0.14617582236375307,
+    "cos_either": 0.8149191587788811
+   },
+   {
+    "seq": 21,
+    "f": 0.0,
+    "true_de": 0.0,
+    "positive": false,
+    "de": 3.2996346539959833,
+    "de_prev": 16.25241084668853,
+    "cos": -0.10237683858930793,
+    "cos_either": 0.6960978385063084
+   },
+   {
+    "seq": 24,
+    "f": 0.0,
+    "true_de": 0.0,
+    "positive": false,
+    "de": 1.5467778831342147,
+    "de_prev": 23.9012574435921,
+    "cos": 0.5603648955094201,
+    "cos_either": 0.5603648955094201
+   },
+   {
+    "seq": 6,
+    "f": 0.1,
+    "true_de": 2.4496141922973003,
+    "positive": false,
+    "de": 1.8772713874024656,
+    "de_prev": 24.405572231368907,
+    "cos": 0.8780445722974041,
+    "cos_either": 0.8780445722974041
+   },
+   {
+    "seq": 8,
+    "f": 0.1,
+    "true_de": 4.040918849091479,
+    "positive": false,
+    "de": 5.264321158106408,
+    "de_prev": 31.785540412394905,
+    "cos": 0.44769359499093697,
+    "cos_either": 0.7509276006069654
+   },
+   {
+    "seq": 9,
+    "f": 0.1,
+    "true_de": 4.040918849091479,
+    "positive": false,
+    "de": 4.198023397083201,
+    "de_prev": 31.72828275912399,
+    "cos": 0.43680507798940565,
+    "cos_either": 0.9710984944169706
+   },
+   {
+    "seq": 20,
+    "f": 0.1,
+    "true_de": 1.4121342023104624,
+    "positive": false,
+    "de": 1.3005860872566029,
+    "de_prev": 14.030739702886741,
+    "cos": 0.8646727478328277,
+    "cos_either": 0.9609439362091706
+   },
+   {
+    "seq": 21,
+    "f": 0.1,
+    "true_de": 1.4121342023104624,
+    "positive": false,
+    "de": 1.3528757980761719,
+    "de_prev": 13.963113731437092,
+    "cos": 0.8689574853388103,
+    "cos_either": 0.9611884792427209
+   },
+   {
+    "seq": 24,
+    "f": 0.1,
+    "true_de": 3.646973316372028,
+    "positive": false,
+    "de": 4.0263901161030935,
+    "de_prev": 20.827044956891086,
+    "cos": 0.9056486701665339,
+    "cos_either": 0.9056486701665339
+   },
+   {
+    "seq": 8,
+    "f": 0.2,
+    "true_de": 7.665741603416605,
+    "positive": true,
+    "de": 8.764266207428973,
+    "de_prev": 32.486855925927784,
+    "cos": 0.45294102765853506,
+    "cos_either": 0.7219384212118763
+   },
+   {
+    "seq": 9,
+    "f": 0.2,
+    "true_de": 7.665741603416605,
+    "positive": true,
+    "de": 7.759346805834877,
+    "de_prev": 32.021094608829195,
+    "cos": 0.4981108226513633,
+    "cos_either": 0.9975378378179833
+   },
+   {
+    "seq": 20,
+    "f": 0.2,
+    "true_de": 2.7110050180372784,
+    "positive": false,
+    "de": 1.7905640559635534,
+    "de_prev": 13.558294218549046,
+    "cos": 0.9516324939827124,
+    "cos_either": 0.9798440289854883
+   },
+   {
+    "seq": 21,
+    "f": 0.2,
+    "true_de": 2.7110050180372784,
+    "positive": false,
+    "de": 2.460559322307805,
+    "de_prev": 12.922222988189587,
+    "cos": 0.9786817301000824,
+    "cos_either": 0.9870797579360967
+   },
+   {
+    "seq": 24,
+    "f": 0.2,
+    "true_de": 7.561938916831466,
+    "positive": true,
+    "de": 7.765123530878206,
+    "de_prev": 16.183749645322976,
+    "cos": 0.9587713607362203,
+    "cos_either": 0.9587713607362203
+   },
+   {
+    "seq": 8,
+    "f": 0.3,
+    "true_de": 10.83586725584978,
+    "positive": true,
+    "de": 12.45504570617977,
+    "de_prev": 32.76848680990507,
+    "cos": 0.5268040706927202,
+    "cos_either": 0.9818529580126693
+   },
+   {
+    "seq": 20,
+    "f": 0.3,
+    "true_de": 3.928195159975648,
+    "positive": false,
+    "de": 3.9147922725766335,
+    "de_prev": 11.879419247282662,
+    "cos": 0.9520073427490412,
+    "cos_either": 0.9875782732202886
+   },
+   {
+    "seq": 21,
+    "f": 0.3,
+    "true_de": 3.928195159975648,
+    "positive": false,
+    "de": 4.620765911489888,
+    "de_prev": 11.094085248715261,
+    "cos": 0.9780352363951281,
+    "cos_either": 0.9934128274641253
+   },
+   {
+    "seq": 24,
+    "f": 0.3,
+    "true_de": 11.596808353279034,
+    "positive": true,
+    "de": 10.074360500192022,
+    "de_prev": 13.358059770489882,
+    "cos": 0.9827644321343012,
+    "cos_either": 0.9827644321343012
+   },
+   {
+    "seq": 6,
+    "f": 0.2,
+    "true_de": 4.931671441010926,
+    "positive": false,
+    "de": null
+   },
+   {
+    "seq": 6,
+    "f": 0.3,
+    "true_de": 7.4763006745008305,
+    "positive": true,
+    "de": null
+   },
+   {
+    "seq": 9,
+    "f": 0.3,
+    "true_de": 10.83586725584978,
+    "positive": true,
+    "de": null
+   }
+  ],
+  "metrics": {
+   "scrap_shipped": {
+    "band_de2000": 5.0,
+    "tp": 5,
+    "fn": 0,
+    "fp": 1,
+    "tn": 15,
+    "recall": 1.0,
+    "precision": 0.8333333333333334,
+    "false_alarm_rate": 0.0625,
+    "false_alarm_rate_clean": 0.0,
+    "by_true_de": [
+     {
+      "true_de": [
+       5,
+       10
+      ],
+      "n": 3,
+      "flagged": 3
+     },
+     {
+      "true_de": [
+       10,
+       20
+      ],
+      "n": 2,
+      "flagged": 2
+     },
+     {
+      "true_de": [
+       20,
+       null
+      ],
+      "n": 0,
+      "flagged": 0
+     }
+    ]
+   },
+   "scrap_selected": {
+    "band_de2000": 5.0,
+    "tp": 5,
+    "fn": 0,
+    "fp": 1,
+    "tn": 15,
+    "recall": 1.0,
+    "precision": 0.8333333333333334,
+    "false_alarm_rate": 0.0625,
+    "false_alarm_rate_clean": 0.0,
+    "by_true_de": [
+     {
+      "true_de": [
+       5,
+       10
+      ],
+      "n": 3,
+      "flagged": 3
+     },
+     {
+      "true_de": [
+       10,
+       20
+      ],
+      "n": 2,
+      "flagged": 2
+     },
+     {
+      "true_de": [
+       20,
+       null
+      ],
+      "n": 0,
+      "flagged": 0
+     }
+    ]
+   },
+   "baseline_any_recipe": {
+    "band_de2000": 5.0,
+    "tp": 5,
+    "fn": 0,
+    "fp": 1,
+    "tn": 15,
+    "recall": 1.0,
+    "precision": 0.8333333333333334,
+    "false_alarm_rate": 0.0625,
+    "false_alarm_rate_clean": 0.0,
+    "by_true_de": [
+     {
+      "true_de": [
+       5,
+       10
+      ],
+      "n": 3,
+      "flagged": 3
+     },
+     {
+      "true_de": [
+       10,
+       20
+      ],
+      "n": 2,
+      "flagged": 2
+     },
+     {
+      "true_de": [
+       20,
+       null
+      ],
+      "n": 0,
+      "flagged": 0
+     }
+    ]
+   },
+   "carryover_shipped": {
+    "band_de2000": 5.0,
+    "direction_cos": 0.8,
+    "space": "lab",
+    "tp": 2,
+    "fn": 3,
+    "fp": 0,
+    "tn": 16,
+    "recall": 0.4,
+    "precision": 1.0,
+    "false_alarm_rate": 0.0,
+    "false_alarm_rate_clean": 0.0,
+    "by_true_de": [
+     {
+      "true_de": [
+       5,
+       10
+      ],
+      "n": 3,
+      "flagged": 1
+     },
+     {
+      "true_de": [
+       10,
+       20
+      ],
+      "n": 2,
+      "flagged": 1
+     },
+     {
+      "true_de": [
+       20,
+       null
+      ],
+      "n": 0,
+      "flagged": 0
+     }
+    ]
+   },
+   "carryover_selected": {
+    "band_de2000": 5.0,
+    "direction_cos": 0.75,
+    "space": "either",
+    "tp": 4,
+    "fn": 1,
+    "fp": 1,
+    "tn": 15,
+    "recall": 0.8,
+    "precision": 0.8,
+    "false_alarm_rate": 0.0625,
+    "false_alarm_rate_clean": 0.0,
+    "by_true_de": [
+     {
+      "true_de": [
+       5,
+       10
+      ],
+      "n": 3,
+      "flagged": 2
+     },
+     {
+      "true_de": [
+       10,
+       20
+      ],
+      "n": 2,
+      "flagged": 2
+     },
+     {
+      "true_de": [
+       20,
+       null
+      ],
+      "n": 0,
+      "flagged": 0
+     }
+    ]
+   }
+  }
+ }
+}

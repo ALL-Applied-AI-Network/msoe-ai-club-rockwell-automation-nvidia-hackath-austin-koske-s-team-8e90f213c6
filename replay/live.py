@@ -32,7 +32,8 @@ ROI = (256, 240, 368, 432)          # x0, y0, x1, y1: the fill-station vial regi
 
 class LiveLine:
     def __init__(self, schedule, library, line=None, runtime=None, fps=30.0, fallback_vial_box=None,
-                 tray_slots=None, tray_clear_thumbnail=None, tray_empty_slot_gray=None):
+                 tray_slots=None, tray_clear_thumbnail=None, tray_empty_slot_gray=None,
+                 tray_cap_slots=None, tray_slot_occupied_diff=None, tray_routing=True):
         self.schedule, self.library = list(schedule), library
         self.line = {**DEFAULT_LINE, **(line or {})}
         self.fps = fps
@@ -40,6 +41,10 @@ class LiveLine:
         self.tray_slots = validate_tray_slots(tray_slots)
         self.tray_clear_thumbnail = tray_clear_thumbnail
         self.tray_empty_slot_gray = tray_empty_slot_gray
+        self.tray_cap_slots, self.tray_slot_occupied_diff = tray_cap_slots, tray_slot_occupied_diff
+        # False where the station's Good/Bad trays are not driven by our decision (CSI's legacy
+        # sorting): arrivals then report slot and cap only, never routed/escaped.
+        self.tray_routing = tray_routing
         self.scanner = None
         self.caps = CapTracker()
         self.slots = {tray: SlotTracker(tray, centers) for tray, centers in self.tray_slots.items()}
@@ -55,7 +60,7 @@ class LiveLine:
         references = {str(r["id"]): r.get("reference") and r["reference"]["lab"] for r in self.library["recipes"]}
         return {"type": "meta", "t": 0.0, "schedule": self.schedule, "scheduled_vials": len(self.schedule),
                 "references": references, "line": self.line, "roi": ROI,
-                "good_slots": self.tray_slots["good"], "tray_slots": self.tray_slots,
+                "good_slots": self.tray_slots["good"], "tray_slots": self.tray_slots, "tray_routing": self.tray_routing,
                 "trays": TRAYS, "transit_window_s": TRANSIT_WINDOW}
 
     def set_schedule(self, schedule, t):
@@ -162,13 +167,15 @@ class LiveLine:
         if self.scanner is None:
             self.scanner = TrayScanner(self.fps, empty_frame=index, tray_slots=self.tray_slots,
                                        clear_thumbnail=self.tray_clear_thumbnail,
-                                       empty_slot_gray=self.tray_empty_slot_gray)
+                                       empty_slot_gray=self.tray_empty_slot_gray,
+                                       cap_slots=self.tray_cap_slots, occupied_diff=self.tray_slot_occupied_diff)
         sample = self.scanner.push(index, bgr)
         if sample:
             self.tray_samples.append(sample)
         events = self.tray_sample(sample) if sample else []
         self.tray_preview_bgr = render_overlay(
-            bgr, self.slots, baseline_ready=self.scanner.empty is not None, sample=sample)
+            bgr, self.slots, baseline_ready=self.scanner.empty is not None, sample=sample,
+            routing=self.tray_routing)
         return events
 
     def tray_sample(self, s):
@@ -196,7 +203,7 @@ class LiveLine:
             if TRANSIT_WINDOW[0] < transit < TRANSIT_WINDOW[1]:
                 skipped, self.waiting = self.waiting[:i], self.waiting[i + 1:]
                 expected = EXPECTED_TRAY.get(vial["decision"])
-                status = "routed_as_decided" if expected == arrival["tray"] else \
+                status = "placed" if not self.tray_routing else "routed_as_decided" if expected == arrival["tray"] else \
                     "escaped" if vial["decision"] in ("SCRAP", "HOLD") else "good_vial_in_bad_tray"
                 event.update(seq=vial["seq"], decision=vial["decision"], verdict=vial["verdict"],
                              recipe_id=vial["recipe_id"], transit_s=round(transit, 1), status=status,

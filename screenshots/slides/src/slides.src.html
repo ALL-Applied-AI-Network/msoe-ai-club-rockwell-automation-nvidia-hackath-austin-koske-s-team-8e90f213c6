@@ -144,10 +144,10 @@ function Changeover() {
         <Arrow x1={302} y1={225} x2={198} y2={225} color="var(--blue)" />
         <Arrow x1={548} y1={225} x2={652} y2={225} color="var(--red)" />
       </svg>
-      {/* blue left in the line + red = green */}
+      {/* blue left in the line + red = a dark blue-brown */}
       <div style={{ position: "absolute", left: 20, top: 505, width: 810, display: "flex", alignItems: "center", justifyContent: "center", gap: 18,
                     fontSize: 34, fontWeight: 700, color: "var(--char)" }}>
-        <Swatch color="#1f86a8" /> + <Swatch color="#c4531c" /> = <Swatch color="#2c5a3a" />
+        <Swatch color="#1f86a8" /> + <Swatch color="#c4531c" /> = <Swatch color="#2f2836" />
       </div>
 
       <div style={{ position: "absolute", left: 900, top: 40, width: 680 }}>
@@ -224,35 +224,123 @@ function SimToReal() {
   );
 }
 
+// Results scored against out-of-spec truth, the same definitions in every column
+// (replay/carryover_benchmark.py; setup/verification/carryover-benchmark-20261030.json, seed 0).
+// Positive = the vial's true colour is more than ΔE 5 from its ordered recipe.
+const CONF = { tp: 189, fn: 13, fp: 43, tn: 950 };
+const BY_SEVERITY = [   // out-of-spec vials caught, by how far off they truly are
+  { label: "ΔE 5–10", n: 114, lw: 101, base: 90 },
+  { label: "ΔE 10–20", n: 62, lw: 62, base: 49 },
+  { label: "ΔE > 20", n: 26, lw: 26, base: 15 },
+];
+const SCORECARD = {
+  cols: ["Synthetic held-out", "Run 5 + known carryover", "Run 5 as recorded", "CSI final run"],
+  sub: ["1,195 changeovers", "real footage, 4 levels", "30 vials", "8 vials, live"],
+  rows: [
+    ["Colour measurable", "1,195 / 1,195", "21 / 24", "24 / 30", "8 / 8"],
+    ["Out-of-spec caught", "189 / 202", "5 / 5", "7 / 11", "4 / 4"],
+    ["False scraps", "43 / 993", "1 / 16", "0 / 9", "0 / 4"],
+    ["Baseline caught", "154 / 202", "5 / 5", "6 / 11", "4 / 4"],
+    ["Scrapped before the sorter", "—", "—", "9 / 9", "4 / 4"],
+  ],
+};
+
 function Results() {
-  const W = 1600, H = 440;
-  const tile = (big, label) => (
-    <div className="card" style={{ padding: "26px 24px", borderTop: "7px solid var(--green)" }}>
-      <div className="num" style={{ fontSize: 64, lineHeight: 1, color: "var(--green-dark)" }}>{big}</div>
-      <div style={{ fontSize: 22, fontWeight: 700, marginTop: 14, lineHeight: 1.2 }}>{label}</div>
+  const W = 1600, H = 820;
+  const cell = (v, label, tone) => (
+    <div style={{ background: `var(--${tone}-soft, #f1f1f1)`, borderRadius: 10, padding: "16px 10px", textAlign: "center",
+                  border: `2px solid ${tone === "muted" ? "#e2e2e2" : `var(--${tone})`}` }}>
+      <div className="num" style={{ fontSize: 46, lineHeight: 1, color: tone === "muted" ? "var(--char)" : `var(--${tone === "green" ? "green-dark" : tone})` }}>{v}</div>
+      <div style={{ fontSize: 16, marginTop: 6, color: "var(--muted)" }}>{label}</div>
     </div>
   );
-  const group = (x, title, tiles) => (
-    <div style={{ position: "absolute", left: x, top: 24, width: 750 }}>
-      <div className="kicker" style={{ fontSize: 19 }}>{title}</div>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginTop: 20 }}>{tiles}</div>
-    </div>
-  );
+  const chartX = 820, chartW = 740, plotTop = 92, plotH = 250, groupW = chartW / 3, barW = 70;
   return (
     <div className="canvas" style={{ width: W, height: H }}>
-      {group(30, "Run 5 · recorded", <>
-        {tile("30/30", "vials, right recipe")}
-        {tile("5/5", "first vials caught")}
-        {tile("9/9", "scraps before the sorter")}
-        {tile("18 s", "earlier warning")}
-      </>)}
-      <div style={{ position: "absolute", left: 799, top: 30, height: 390, borderLeft: "2px solid #dcdcdc" }} />
-      {group(820, "Live at CSI · 30 Oct", <>
-        {tile("8/8", "vials decided live")}
-        {tile("2/2", "carryover caught")}
-        {tile("4/4", "off-spec scrapped")}
-        {tile("25 s", "warning before decision")}
-      </>)}
+      {/* Confusion matrix */}
+      <div style={{ position: "absolute", left: 30, top: 20, width: 740 }}>
+        <div className="kicker" style={{ fontSize: 18 }}>Held-out synthetic · Linewatch SCRAP decision</div>
+        <div style={{ display: "grid", gridTemplateColumns: "150px 1fr 1fr", gap: 10, marginTop: 18, alignItems: "stretch" }}>
+          <div />
+          <div style={{ textAlign: "center", fontWeight: 700, fontSize: 18 }}>Scrapped</div>
+          <div style={{ textAlign: "center", fontWeight: 700, fontSize: 18 }}>Passed</div>
+          <div style={{ fontWeight: 700, fontSize: 18, alignSelf: "center" }}>Truly out of spec<br /><span style={{ fontWeight: 400, color: "var(--muted)", fontSize: 15 }}>n = 202</span></div>
+          {cell(CONF.tp, "caught", "green")}
+          {cell(CONF.fn, "missed", "bad")}
+          <div style={{ fontWeight: 700, fontSize: 18, alignSelf: "center" }}>Truly in spec<br /><span style={{ fontWeight: 400, color: "var(--muted)", fontSize: 15 }}>n = 993</span></div>
+          {cell(CONF.fp, "false scrap", "warn")}
+          {cell(CONF.tn, "passed", "muted")}
+        </div>
+        <div style={{ display: "flex", gap: 36, marginTop: 18, fontSize: 20 }}>
+          <span><b className="num" style={{ fontSize: 30, color: "var(--green-dark)" }}>94%</b> recall</span>
+          <span><b className="num" style={{ fontSize: 30, color: "var(--warn)" }}>4.3%</b> false scraps</span>
+          <span style={{ color: "var(--muted)", fontSize: 16, alignSelf: "center" }}>3 noise seeds: 91–94% · 3.5–4.8%</span>
+        </div>
+      </div>
+
+      {/* Recall by severity vs order-unaware baseline */}
+      <div style={{ position: "absolute", left: chartX, top: 20, width: chartW }}>
+        <div className="kicker" style={{ fontSize: 18 }}>Out-of-spec vials caught, by how far off</div>
+        <div style={{ display: "flex", gap: 22, marginTop: 12, fontSize: 16 }}>
+          <span><span style={{ display: "inline-block", width: 14, height: 14, borderRadius: 3, background: "var(--green)", marginRight: 6, verticalAlign: -1 }} />Linewatch (knows the recipe order)</span>
+          <span><span style={{ display: "inline-block", width: 14, height: 14, borderRadius: 3, background: "#8a8a8a", marginRight: 6, verticalAlign: -1 }} />Colour check without the order</span>
+        </div>
+      </div>
+      <svg style={{ position: "absolute", left: chartX, top: 20 }} width={chartW} height={plotTop + plotH + 60}>
+        {[0, 50, 100].map((v) => (
+          <g key={v}>
+            <line x1={0} x2={chartW} y1={plotTop + plotH - v / 100 * plotH} y2={plotTop + plotH - v / 100 * plotH} stroke={v ? "#ececec" : "#bbb"} strokeWidth={v ? 1 : 1.5} />
+          </g>
+        ))}
+        {BY_SEVERITY.map((g, i) => {
+          const cx = i * groupW + groupW / 2;
+          return (
+            <g key={g.label}>
+              {[["lw", "var(--green)", -barW / 2 - 2], ["base", "#8a8a8a", barW / 2 + 2]].map(([k, color, dx]) => {
+                const pct = g[k] / g.n * 100, h = pct / 100 * plotH, x = cx + dx - barW / 2;
+                return (
+                  <g key={k}>
+                    <path d={`M${x},${plotTop + plotH} V${plotTop + plotH - h + 4} q0,-4 4,-4 H${x + barW - 4} q4,0 4,4 V${plotTop + plotH} Z`} fill={color} />
+                    <text x={x + barW / 2} y={plotTop + plotH - h - 8} textAnchor="middle" fontSize={20} fontWeight={700} fill="var(--ink)">{Math.round(pct)}%</text>
+                  </g>
+                );
+              })}
+              <text x={cx} y={plotTop + plotH + 26} textAnchor="middle" fontSize={18} fontWeight={700} fill="var(--ink)">{g.label}</text>
+              <text x={cx} y={plotTop + plotH + 48} textAnchor="middle" fontSize={15} fill="var(--muted)">n = {g.n}</text>
+            </g>
+          );
+        })}
+      </svg>
+
+      {/* Same metrics, every run */}
+      <div style={{ position: "absolute", left: 30, top: 450, width: 1540 }}>
+        <div className="kicker" style={{ fontSize: 18 }}>Same definitions, every run</div>
+        <table style={{ width: "100%", borderCollapse: "collapse", marginTop: 12, fontSize: 20 }}>
+          <thead>
+            <tr>
+              <th style={{ width: 330 }} />
+              {SCORECARD.cols.map((c, i) => (
+                <th key={c} style={{ textAlign: "center", padding: "6px 8px", borderBottom: "2px solid var(--char)" }}>
+                  {c}<div style={{ fontWeight: 400, fontSize: 15, color: "var(--muted)" }}>{SCORECARD.sub[i]}</div>
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {SCORECARD.rows.map(([label, ...vals]) => (
+              <tr key={label}>
+                <td style={{ padding: "11px 8px", fontWeight: 700, borderBottom: "1px solid #e4e4e4" }}>{label}</td>
+                {vals.map((v, i) => (
+                  <td key={i} className={v ? "num" : ""} style={{ textAlign: "center", padding: "11px 8px", borderBottom: "1px solid #e4e4e4",
+                                            color: v ? "var(--ink)" : "var(--muted)", fontSize: v ? 22 : 16, fontStyle: v ? "normal" : "italic" }}>
+                    {v ?? "needs human labels"}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

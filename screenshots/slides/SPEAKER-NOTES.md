@@ -10,8 +10,8 @@ Run 5 evaluation. "Say" lines are suggestions; "If asked" lines are backup.
 
 **Say:**
 - "This is a real vial from our run at CSI yesterday. We ordered four blue, then four red."
-- "Vial 5 is the first red one. Look at it: it's green."
-- "Blue was still in the line, and blue plus red makes green." *(point at the swatches)*
+- "Vial 5 is the first red one. Look at it: it's a dark blue-brown, not red."
+- "Blue was still in the line, and blue plus red makes this dark blue-brown." *(point at the swatches; on camera it looks greenish)*
 - "A colour check that doesn't know the order sees a perfectly valid colour and lets it through."
 - "Linewatch knows the order. This vial is 32 away from red and only 10 from blue, so the colour
   moved toward the previous recipe. That's carryover."
@@ -43,8 +43,8 @@ Run 5 evaluation. "Say" lines are suggestions; "If asked" lines are backup.
 **Be careful:**
 - Vials 1–2 are labelled "deviation" in the app, not carryover: that session had no previous recipe
   on record. Say "leftover from earlier runs" and don't count them as carryover catches.
-- In this run every vial went to the Bad tray, because the vials had no caps. Don't claim tray
-  sorting results from this run.
+- Every vial went to the Bad tray. That is CSI's legacy sorting, not our decision, so don't
+  claim tray routing results.
 
 **Takeaway:** the line lags one to two vials behind each recipe change. A single water flush isn't
 always enough, and that's what the FLUSH/SCRAP logic is built for.
@@ -101,25 +101,37 @@ always enough, and that's what the FLUSH/SCRAP logic is built for.
 
 ## Results: `fig-results.png`
 
-**Say:**
-- "Two kinds of evidence."
-- **Left, the organizers' Run 5:** "28 minutes of recorded video, with only the recipe order given.
-  All 30 vials found and assigned the right recipe. Every measurable first vial after a change was
-  caught, and the line itself had passed all of them. All 9 scraps landed before the sorter. The
-  early warning fires a median 18 seconds before the end-of-fill decision."
-- **Right, live at CSI yesterday:** "8 of 8 vials decided live. 2 of 2 carryover vials caught,
-  all 4 off-spec vials scrapped, and a warning 25 seconds before the decision."
+Every number is scored against the spec: a vial is out of spec when its true colour is more than
+ΔE 5 from the recipe it was ordered as. The same definitions apply in every column
+(`replay/carryover_benchmark.py`, `setup/verification/carryover-benchmark-20261030.json`).
 
-**Be honest if pushed:**
-- No per-vial ground truth exists, so these are detection counts, not accuracy.
-- The live run is one 8-vial session.
+**Say:**
+- "1,195 held-out synthetic changeovers, with camera noise matched to our real repeat vials.
+  Linewatch scraps 189 of the 202 out-of-spec vials, 94%, with 4% false scraps. The thresholds
+  were chosen on the training families only."
+- "A colour check that doesn't know the recipe order catches 76%, and only 58% of the worst vials,
+  because heavy carryover looks like the previous recipe. That's vial 5."
+- "On real Run 5 footage with carryover injected at known amounts: 5 of 5 caught, 1 false scrap in
+  16."
+- "On the real runs we don't have per-vial labels yet, so we report coverage and timing: every
+  scrap reached the operator before the vial reached the sorter."
+
+**If asked:**
+- **Why not 100%?** The misses are vials just over the line (ΔE 5–10), within camera noise of the
+  band. Anything more than ΔE 10 off is caught every time.
+- **Carryover cause:** the direction test that names carryover (and triggers FLUSH) uses Lab or
+  optical density, selected on synthetic training data and then frozen. On the injected Run 5
+  footage it names the cause for 4 of 5 (the old Lab-only rule: 2 of 5). Re-deciding Run 5 with the
+  frozen rule changed no verdict or action.
+- **Early warning** on Run 5 (6 of 8 warned, median 18 s) is not a blind result: its rule was
+  changed twice after looking at Run 5.
 
 ---
 
 ## Suggested order (3-minute talk)
 
 1. Title
-2. `fig-changeover` (the green vial)
+2. `fig-changeover` (vial 5, the carryover vial)
 3. `fig-architecture`
 4. `fig-sim2real`
 5. `fig-live`

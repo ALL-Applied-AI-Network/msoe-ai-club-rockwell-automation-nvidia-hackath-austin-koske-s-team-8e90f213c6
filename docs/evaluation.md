@@ -220,6 +220,41 @@ models, nothing tuned) reproduces segmentation, alignment, actions and timelines
 vials excluded the second / third vials are 3 / 1 IN SPEC, 3 / 0 OUT OF SPEC, 3 / 3 CAN'T VERIFY,
 and all 7 checkable first vials keep their verdict under every alternative reference.
 
+## Out-of-spec benchmark with confusion matrices (2026-10-30)
+
+`replay/carryover_benchmark.py`; [record](../setup/verification/carryover-benchmark-20261030.json).
+The earlier synthetic tables count any residue f > 0 as a positive, so an in-spec vial with a little
+residue counts as a miss. Here **truth is the spec**: a changeover vial is positive when its true
+colour (the optical-density mix of the clean reference and previous renders at the true f) is more
+than ΔE2000 5 from the ordered reference. Measured colours get σ = 1.0 Lab noise (matched to Runs
+1–4), 3 seeds; thresholds are selected on the train families (highest recall, false alarms ≤ 5% on
+in-spec vials) and reported once on the 1,195 dev changeovers (202 out of spec, 993 in spec). The
+baseline is a colour check with no recipe order: it accepts any vial within ΔE 5 of a known recipe
+(here only the ordered and previous recipes are known, which flatters it).
+
+| Dev, seed 0 | TP | FN | FP | TN | Recall | False alarms | Recall ΔE 5–10 / 10–20 / > 20 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| SCRAP (out of band, ΔE 5) | 189 | 13 | 43 | 950 | 93.6% | 4.3% | 89% / 100% / 100% |
+| Baseline, no recipe order | 154 | 48 | 39 | 954 | 76.2% | 3.9% | 79% / 79% / 58% |
+| Carryover call, shipped (Lab cos 0.8) | 185 | 17 | 30 | 963 | 91.6% | 3.0% | |
+| Carryover call, selected (either space, cos 0.75) | 187 | 15 | 36 | 957 | 92.6% | 3.6% | |
+
+Across seeds: SCRAP recall 91.1–93.6%, false alarms 3.5–4.8%; baseline 73.8–76.2%. Selection on
+train is unstable between seeds for the carryover call (either 0.75, either 0.70, Lab 0.55, all with
+band 5); seed 0's choice, **band 5, cosine 0.75, `direction_space: either`**, is frozen in
+`replay.decide.DEFAULT_LINE`. False alarms on clean (f = 0) vials are 0–1.6%; most false scraps are
+in-spec vials with true ΔE 4–5.
+
+**Run 5 recolour, same truth, thresholds frozen first** (21 measured targets, 3 refused by QA:
+2 truly out of spec, held as CAN'T VERIFY): SCRAP TP 5, FN 0, FP 1, TN 15 (the false scrap is vial 8
+at f = 0.1, true ΔE 4.0, measured 5.3); baseline identical. Carryover named: shipped rule 2/5,
+frozen rule 4/5 (vials 8 and 9, recipe 7 after 6, move toward the previous recipe in optical
+density but bend in Lab), with that same one false scrap.
+
+**Run 5 re-decided once with the frozen rule** (`replay.line --samples run5-v3/frames.jsonl`,
+output `run5-v4-frozen-either`): verdicts, patterns and actions identical to run5-v3 on all 30
+vials. The early warning's Run 5 numbers are not blind (its rule changed twice after viewing Run 5).
+
 ## Synthetic carryover: FLUSH rule and residue estimate (2026-10-29)
 
 14,400 Isaac renders on Brev (v2: residue 0–30%; v3: 0–100%), 4,800 changeovers of three

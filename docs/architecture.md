@@ -7,26 +7,27 @@ existing line; the software does not command its PLC, sorter or valves.
 
 ## System overview
 
-The per-frame perception and measurement feed two consumers. The operator app checks one
-vial at a time, and a person confirms each vial. The line runner processes a whole run from
-the recipe schedule. It adds actions with deadlines, finished-tray reconciliation and
-root-cause packets. It runs as a batch command or live: `replay.live` emits each decision when
-the carrier moves the vial on, and the app's LINE page shows it as it happens
-([line view](line-view.md)). The dotted links are planned, not built.
+The per-frame perception and measurement feed the line runner, which processes a run from the
+recipe order. It adds actions with deadlines, finished-tray reconciliation and root-cause
+packets. It runs as a batch command or live: `replay.live` emits each decision when the carrier
+moves the vial on, and the app's LINE page shows it as it happens ([line view](line-view.md)).
+The same ledger fills RECIPE CHECK (vials grouped by recipe change) and RUN HISTORY. On request,
+**Explain with AI** sends one vial's evidence to Nemotron 3 Ultra for an advisory explanation.
+The older one-vial operator check (`/monitor`) is still in the app but hidden from navigation.
 
 ```mermaid
 flowchart LR
     FC[Fill camera video] --> PER
-    subgraph PER["Per-frame perception · unchanged"]
+    subgraph PER["Per-frame perception"]
         Y[YOLO11n vial] --> Q[Measurement QA<br/>RGB/Lab sample or unavailable]
         U[Temporal U-Net liquid mask] --> Q
     end
     subgraph APP["Operator app"]
-        LV[LINE page · new<br/>live and review]
-        OP[Recipe-first vial check<br/>operator confirms GOOD/SCRAP/HOLD] --> J[(History and<br/>operator responses)]
-        INV[Investigation panel]
+        LV[LINE page<br/>live and review]
+        RC[RECIPE CHECK<br/>and RUN HISTORY]
+        AI[Explain with AI<br/>Nemotron 3 Ultra, advisory]
     end
-    subgraph LINE["Line runner · new, batch and live"]
+    subgraph LINE["Line runner · batch and live"]
         SCH[schedule.csv] --> LR[replay.line<br/>dwells, vials, decide]
         LR --> L[Ledger and actions<br/>with deadlines]
         LR --> P[RCA packets] --> X[replay.explain]
@@ -35,12 +36,12 @@ flowchart LR
         L --> AN[replay.annotate MP4]
         R --> AN
     end
-    Q --> OP
     Q --> LR
     L --> LV
     R --> LV
-    L -. planned .-> OP
-    X -. planned .-> INV
+    L --> RC
+    LV --> AI
+    P --> AI
 ```
 
 [SVG](assets/architecture-system.svg) · [PNG](assets/architecture-system.png)
@@ -54,7 +55,7 @@ The models do the perception; every decision on top of them is a fixed, auditabl
 | Find the vial | YOLO11n vial detector (or the station's fixed vial region) | Yes, trained on Isaac Sim renders only |
 | Find the liquid | Temporal U-Net liquid segmenter | Yes, trained on Isaac Sim renders only |
 | Trust a colour | Measurement QA: refuses glare, clipping, too few pixels, unstable tracks | No: fixed checks |
-| Vial verdict | Endpoint Lab vs the recipe's reference (ΔE2000 band 5), direction toward the previous recipe (cos 0.8) | No: fixed thresholds |
+| Vial verdict | Endpoint Lab vs the recipe's reference (ΔE2000 band 5), direction toward the previous recipe (cos 0.75, the larger of the Lab and optical-density cosines; frozen from synthetic train families) | No: fixed thresholds |
 | Early warning | Each sample during the fill vs the reference vial's colour at the same time since fill start; 3 in a row beyond the band ([replay/early.py](../replay/early.py)) | No: fixed rule, one reference vial |
 | Actions and deadlines | SCRAP before the sorter (120 s), FLUSH before the next fill, STOP after 3 deviations, HOLD | No: fixed rules ([replay/decide.py](../replay/decide.py)) |
 | Cause | Rule baseline decides (pattern and `rule_cause`, shown with each action's reason). On request, the LINE page's **Explain with AI** asks Nemotron 3 Ultra (build.nvidia.com) for a cause, explanation and next check from the same evidence ([api/services/explain.py](../api/services/explain.py)); answers the numbers rule out are flagged | The AI answer is advisory: it never changes a verdict or action |
@@ -126,7 +127,7 @@ frames. Recording replay may instead import authoritative timestamped segments.
 
 | Component | Implementation | Status |
 | --- | --- | --- |
-| Vial geometry | Released YOLO11n checkpoint; invocation in [the benchmark](../setup/vision/benchmark_temporal_pipeline.py) | Tested in recorded-frame experiments |
+| Vial geometry | Released YOLO11n checkpoint; invocation in [the benchmark](../setup/vision/benchmark_temporal_pipeline.py) | Live on CSI's GB10 fill camera; recorded-frame experiments |
 | Liquid mask and presence | [TemporalPool](../setup/vision/temporal_pool.py) and [frozen U-Net definition](../setup/vision/train_pair_masks.py) | Portable paired-image inference and example verification |
 | Sampling | [VialGeometry](../replay/geometry.py), [Extractor](../replay/measurement.py), [Config](../replay/config.py) | Existing geometry, tracking and color QA |
 | Reference qualification | [ReferenceGate](../replay/operator/commissioning.py) | Evidence checks; capture/alignment must be supplied by an adapter |
@@ -136,8 +137,11 @@ frames. Recording replay may instead import authoritative timestamped segments.
 | Asset-bundle adapter | [temporal.py](../api/pipelines/temporal.py) and [runtime](../integration/runtime.py) | Model mode when `APP__MODEL_ASSETS` is set (GB10 kit, Docker): the same models from the hash-checked release bundle |
 | Frame worker and operator loop | [InspectionService](../api/services/inspection.py), [Temporal CNN bridge](../api/pipelines/temporal_cnn_bridge.py) | Load-once model mode connects queued frames to the shared model core and stored render/mask artifacts |
 | Line runner | [line](../replay/line.py), [decide](../replay/decide.py), [explain](../replay/explain.py), [tray](../replay/tray.py), [annotate](../replay/annotate.py), [live](../replay/live.py) | Video + recipe schedule → vial ledger, actions with deadlines, RCA packets/explanations, finished-tray reconciliation, annotated video. Batch, or live through the app's [LINE page](line-view.md), on the station cameras or MOCK videos. Recipes created at the line and CREATE-mode references are kept in the data folder over the shipped library |
+| Station profile | [csi-station.json](../setup/csi-station.json), [tray_commission](../replay/tray_commission.py) | Camera devices, fill vial box, tray grids and empty-hole profile per station (`APP__LINE_STATION`). `tray_commission` fits the cap positions of a tilted tray and the occupancy threshold from tray video before the first vial arrives |
+| Explain with AI | [explain service](../api/services/explain.py) | Nemotron 3 Ultra on build.nvidia.com with `NVIDIA_API_KEY`; advisory text beside the rule reasons, never a verdict or action |
+| Out-of-spec benchmark | [carryover_benchmark](../replay/carryover_benchmark.py) | Synthetic changeovers scored against the spec; selects the frozen carryover threshold on train families ([evaluation](evaluation.md#out-of-spec-benchmark-with-confusion-matrices-2026-10-30)) |
 | Recipe order (offline, not in the app) | [schedule](../replay/schedule.py), [carryover forecast](../replay/carryover_forecast.py) | Recipe queue + reference colours + residue fraction f → forecast ΔE per vial from what the line holds, flushes per changeover, and a proposed run order (or a re-plan from the last vial's measured colour). Advice only; f is a line setting |
-| Recording ingestion | Browser-sampled decode, millisecond seek timestamps, original recording storage and recipe-segment import | Integrated with the frame queue; native PTS/time-base backend decoding and a full rehearsal remain pending |
+| Recording ingestion | Browser-sampled decode, millisecond seek timestamps, original recording storage and recipe-segment import | `/monitor` path; the LINE page reads station cameras or recorded fill and tray videos directly |
 
 Model mode is opt-in and requires the released checkpoints plus an explicit
 reference image. The default remains deterministic mock mode. This table
@@ -262,8 +266,9 @@ The monitor asks the operator for the next vial's recipe before filling, standin
 future recipe feed. When a vial finishes (end of a one-vial recording, or FINISH VIAL on the
 camera), the UI takes the median Lab of QA-valid samples in its last 6 s and computes CIEDE2000
 to the recipe's reference colour and to the last different recipe
-([recipeCheck.ts](../client/src/services/recipeCheck.ts)). Band 5 and direction cosine 0.8
-are research settings. The result maps to a simulated GOOD/SCRAP/HOLD action that the operator
+([recipeCheck.ts](../client/src/services/recipeCheck.ts)). It uses the recipe library's band 5
+and Lab direction cosine 0.8; the line runner's frozen rule (cosine 0.75 in Lab or optical
+density) is not ported to this page. The result maps to a simulated GOOD/SCRAP/HOLD action that the operator
 confirms or overrides; the decision is stored as an attributed acknowledgement. No line
 equipment is contacted. References come from the Run5 retrospective proxies or from vials the
 operator accepts (browser-local). Model inference and measurement QA are unchanged.
@@ -273,13 +278,16 @@ operator accepts (browser-local). Model inference and measurement QA are unchang
 `python -m replay.line` takes one fill video, a `schedule.csv` (`seq,recipe_id`) and the recipe
 library:
 
-1. **Vial dwells.** It finds them from carrier motion.
+1. **Vial dwells.** It finds them from carrier motion (live: the station's fill vial box).
 2. **Reference.** The frame just after the carrier settles is the empty-vial reference.
 3. **Sampling.** It runs the unchanged YOLO/U-Net/QA path every 15 frames.
 4. **Endpoint.** It takes the endpoint Lab for each vial. The n-th filled vial is schedule
    row n.
 5. **Decision.** `decide` compares the endpoint against the intended recipe and the previous
-   recipe (ΔE2000). It issues simulated actions with deadlines.
+   recipe (ΔE2000 band 5; carryover when the shift points toward the previous recipe with
+   cosine ≥ 0.75 in Lab or optical density). It issues simulated actions with deadlines.
+   During the fill, `replay.early` raises an early warning against the reference vial's
+   trajectory.
 
 `--samples` reruns stages 4 and 5 from an earlier `frames.jsonl` without the models.
 
@@ -290,8 +298,12 @@ assuming R1C1. Per-grid median illumination correction removes camera-wide expos
 individual holes are compared with their empty-slot profile, so an unchanged empty grid does not
 become a set of uncapped vials. Large connected changes relative to that baseline hold detections while the robot
 arm occludes the trays. It matches arrivals to departures in the ledger, then reports routing,
-escapes, vials in transit and missing caps. The deployed CSI grids are an explicit station-profile
-candidate; their coordinates and transfer evidence do not establish source-matched accuracy.
+escapes, vials in transit and missing caps. On a tilted tray a seated vial's cap is offset from
+its hole, so the cap check reads the profile's `tray_cap_slots` and occupancy uses
+`tray_slot_occupied_diff` (both from `replay.tray_commission`). Where the Good/Bad trays are
+filled by the station's own sorter rather than by our decision (CSI's legacy sorting),
+`tray_routing: false` reports each arrival's slot and cap only, never routed or escaped. The CSI
+grids are a station-profile candidate; their coordinates do not establish source-matched accuracy.
 
 `replay.explain` scores RCA backends on the evidence packets. The rule baseline is the
 default and works offline. See [evaluation](evaluation.md) for the comparison.
@@ -327,12 +339,12 @@ flowchart TB
 `python -m replay.line` decides after the whole video. `replay.live` runs the same stages one
 frame or stored sample at a time and emits events as they become known. On Run 5 it gives the
 same 30 verdicts, the same 39 actions and the same 26 tray matches as the batch path; the
-differences are listed in [line view](line-view.md). On-site deployment is in
-[the GB10 line plan](archive/deploy-gb10-line-plan.md).
+differences are listed in [line view](line-view.md). It ran live on CSI's GB10 with the
+station's fill and tray cameras; setup is in [the GB10 README](../setup/gb10/README.md).
 
 ## Investigation
 
-The [Investigation panel](investigation.md) consumes separately imported,
+The [Investigation panel](investigation.md) (a component no page mounts at present) consumes separately imported,
 source-bound completed-vial endpoints after QA. `replay.diagnostics` produces
 candidate explanations, supporting evidence and next checks. Frames do not become
 vials automatically. The run remains unavailable until the required inputs exist;

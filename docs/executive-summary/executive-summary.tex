@@ -1,4 +1,4 @@
-% Linewatch executive summary (one page). Build: pdflatex executive-summary.tex (twice, for the header band)
+% LineWatch executive summary (one page). Build: pdflatex executive-summary.tex (twice, for the header band)
 % Numbers match the slide deck's results figure and docs/evaluation.md.
 \documentclass[10pt]{article}
 \usepackage[letterpaper,margin=0.55in,top=0.5in,bottom=0.45in]{geometry}
@@ -39,21 +39,21 @@
 \end{tikzpicture}
 
 % ---------- header ----------
-{\fontsize{24}{26}\selectfont\bfseries Linewatch}\par\vspace{1pt}
+{\fontsize{24}{26}\selectfont\bfseries LineWatch}\par\vspace{1pt}
 {\large\color{muted} Recipe-aware inspection at the edge}\hfill{\footnotesize\color{muted}Rockwell Automation $\times$ NVIDIA Physical AI Hackathon $\cdot$ MSOE}\par
 \vspace{3pt}
 {\footnotesize Reagan Burkemper $\cdot$ Cameron Delpage $\cdot$ Hayden Fons $\cdot$ Zoe Kirkman $\cdot$ Srijan Kumar $\cdot$ Josiah Mathews $\cdot$ Alayna Ostler $\cdot$ Austin Koske}\par
 \vspace{6pt}
-Linewatch catches off-recipe vials while they are being filled. Using the station's existing cameras and the recipe order, it tells
+LineWatch catches off-recipe vials while they are being filled. Using the station's existing cameras and the recipe order, it tells
 the operator to scrap, flush or hold, with a deadline and a reason. It is trained only in simulation and runs on an NVIDIA GB10.\par
 \vspace{8pt}
 
 % ---------- headline numbers ----------
-\noindent\kpi{76\%\,$\rightarrow$\,94\%}{carryover vials caught}{color check vs Linewatch}\hfill
+\noindent\kpi{76\%\,$\rightarrow$\,94\%}{out-of-spec vials caught}{color check vs LineWatch}\hfill
 \kpi{8 s}{fill end to the call}{median; 120\,s deadline, 100+\,s spare}\hfill
 \kpi{0 s}{added per vial}{vs 20+\,s at CSI's sorter}\hfill
 \kpi{\$10M}{average food recall}{caught at the fill instead}\par
-\vspace{2pt}{\scriptsize\color{muted}Same 202 held-out synthetic carryover vials for both catch rates. Decision time: Run 5, every SCRAP before its vial reached the tray. Recall cost:
+\vspace{2pt}{\scriptsize\color{muted}Same 202 held-out synthetic out-of-spec vials for both catch rates. Decision time: Run 5, every SCRAP before its vial reached the tray. Recall cost:
 \href{https://www.food-safety.com/signature-series/recall-the-food-industrys-biggest-threat-to-profitability/}{FMI/GMA}.}\par
 
 % ---------- two columns ----------
@@ -92,7 +92,7 @@ vial for over 20\,s to say only pass or fail.
 \begin{itemize}
   \item \textbf{Sim-to-real:} trained on Isaac Sim renders of the station's twin, run on CSI's real cameras.
   \item \textbf{Synthetic data:} 14,400 carryover renders on NVIDIA Brev set the thresholds.
-  \item \textbf{Edge AI:} 86\,ms per frame on the GB10; 0 of 50,941 frames dropped live.
+  \item \textbf{Edge AI:} 86\,ms per frame on the GB10; 0 of 50,941 frames dropped over Run 5 at real-time speed.
   \item \textbf{Bring your own line:} new recipe, one reference vial (no retraining); new station, a config file
         and a short tray video; new product, render its twin and retrain.
 \end{itemize}
@@ -111,7 +111,7 @@ vial for over 20\,s to say only pass or fail.
   legend image code/.code={\fill (0cm,-0.06cm) rectangle (0.17cm,0.11cm);}]
 \addplot[fill=nv] coordinates {(a,89) (b,100) (c,100)};
 \addplot[fill=base] coordinates {(a,79) (b,79) (c,58)};
-\legend{Linewatch, color check without the order}
+\legend{LineWatch, color check without the order}
 \end{axis}
 \end{tikzpicture}\par
 {\scriptsize\color{muted}The color check gets \emph{worse} on big shifts: they look like another valid recipe.}\par
@@ -130,7 +130,7 @@ Baseline caught & 154/202 & 5/5 & 6/11 & 4/4 \\
 SCRAP before the tray & -- & -- & 9/9 & \textbf{4/4} \\
 \bottomrule
 \end{tabular*}}\par
-{\scriptsize\color{muted}Run 5 is the organizers' 30-vial run; \emph{carryover added} recolors its real footage with known amounts. Baseline: accepts any vial within $\Delta E$ 5 of a known recipe, without the order.}
+{\scriptsize\color{muted}Run 5 is the organizers' 30-vial run; \emph{carryover added} recolors its real footage with known amounts. Real vials were judged by our team with the measured $\Delta E$. Baseline: passes any vial within $\Delta E$ 5 of a known recipe, without the order.}
 
 \sect{How we scored it}
 \textbf{Truth is the spec:} a vial is out of spec when its true color, the optical-density mix of the clean and previous

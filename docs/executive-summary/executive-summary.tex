@@ -66,7 +66,7 @@ CSI's sorter is never told the order, so a vial of the previous recipe still pas
 vial for over 20\,s to say only pass or fail.
 
 \vspace{2pt}
-{\centering\includegraphics[width=0.42\linewidth]{vial5.png}\par\vspace{1pt}
+{\centering\includegraphics[width=0.38\linewidth]{vial5.png}\par\vspace{1pt}
 {\scriptsize\color{muted}Vial 5 at CSI: red ordered, blue still in the line.}\par}
 
 \sect{Technical approach}
@@ -74,17 +74,19 @@ vial for over 20\,s to say only pass or fail.
   \item \textbf{Perception.} A YOLO11n detector (COCO-pretrained) finds the vial; a temporal U-Net segments the liquid across
         consecutive frames as it fills. Both are trained only on Isaac Sim renders.
   \item \textbf{Measurement QA.} Glare, clipping, too few liquid pixels or an unstable track give \emph{can't verify}, never a guess.
-  \item \textbf{Spec check.} The fill-end color is compared with one reference vial of the ordered recipe: more than $\Delta E_{00}$\,5 away is out of spec ($\Delta E_{00}$ is the standard color-difference measure; 5 is clearly visible side by side).
+  \item \textbf{Spec check.} The fill-end color is compared with one reference vial of the ordered recipe: more than $\Delta E_{00}$\,5 away is out of spec ($\Delta E_{00}$ is the standard color-difference measure).
   \item \textbf{Carryover.} If the shift points toward the previous recipe (cosine of at least 0.75 in Lab or optical density, where dyes mix
         linearly), the cause is carryover.
   \item \textbf{Action.} SCRAP before the sorter (120\,s deadline), FLUSH before the next fill, STOP after 3 deviations, or HOLD.
-        Nemotron words the explanation; the rules decide. Our rule explainer matched the evidence on 20/20 vials, Cosmos-Reason1 on 6--9/20.
+        Nemotron words the explanation; the rules decide.
+  \item \textbf{Tray check (Dataset 1).} The cap camera matches each tray arrival to its fill (which slot to pull) and flags
+        missing caps. Run 5: 26/26 matched, open vial flagged (settings tuned on Run 5).
 \end{enumerate}
 
 \sect{How we used the CSI equipment}
 \begin{itemize}
-  \item Ran on \textbf{CSI's GB10} with the station's \textbf{fill and tray cameras}: 3 visits (5\,h) of integration testing,
-        then final runs (4 blue vials, then 4 red).
+  \item Ran on \textbf{CSI's GB10} with its \textbf{fill and tray cameras}: 3 visits (5\,h) of integration testing,
+        then final runs (4 blue, then 4 red).
 \end{itemize}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.475\textwidth}
